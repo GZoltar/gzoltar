@@ -1,0 +1,107 @@
+<html>
+
+    <head>
+
+        <title>GradX</title>
+
+        <script src="lib/js/jquery.js"></script>
+        <!--  <script src="lib/js/jquery-ui.js"></script>
+        -->
+
+        <!-- <link type="text/css" rel="stylesheet" href="lib/css/jquery-ui.css" />-->
+        <link type="text/css" rel="stylesheet" href="gradX.css" />
+        <link type="text/css" rel="stylesheet" href="colorpicker/css/colorpicker.css" />
+        <script src="colorpicker/js/colorpicker.js"></script>
+        <script src="dom-drag.js"></script>
+
+        <script src="gradX.js"></script>
+
+
+        <style>
+
+
+
+            .targets {
+                margin:0 auto;
+                text-align: center;
+                border: 1px solid #ccc;
+                background: #f8f8f8;
+                margin: 0 auto;
+                border-radius: 4px;
+                width:auto;
+                padding:10px;
+            }
+
+            .target_text {
+                margin: 0px auto;
+                margin-top: 40%;
+                background: #f8f8f8;
+                width: 70px;
+                border: 1px solid #ddd;
+                padding: 2px;
+                border-radius: 2px;
+                color: #111;
+            }
+
+            .target {
+                border: 1px solid;
+                margin: 0px 10%;
+                width: 150px;
+                height: 150px;
+                display:inline-block;
+            }
+            #target {
+                border-radius: 150px;
+            }
+
+            .result {
+                text-align: center;
+                text-transform: uppercase;
+                font-weight: bold;
+                padding:12px;
+                padding-left: 15px;
+                margin: 10px 0px;
+                border: 1px solid #ddd;
+                background: #f8f8f8;
+            }
+
+
+            #gradX {
+                height: 200px; 
+                margin: 100px 34%;            
+            }   
+
+        </style>
+    </head>
+
+
+    <body>
+
+        <!--     <input type='text' id="basic" value='red' /> -->
+
+
+        <div id="gradX" ></div>
+
+        <div class="result"> Result [Target elements]</div>
+
+        <div class="targets">
+            <div class="target" id="target"><div class="target_text">Target #1</div></div>
+            <div class="target" id="target2"><div class="target_text">Target #2</div></div>
+
+        </div>
+
+
+
+        <script>
+
+            gradX("#gradX", {
+                targets: [".target"]
+            });
+
+        </script>
+
+
+    </body>
+
+
+</html>
