@@ -1,0 +1,40 @@
+package pt.up.fe.aes.base.instrumentation.matchers;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.LinkedList;
+
+import javassist.CtClass;
+import javassist.CtMethod;
+
+
+public class PrefixMatcher implements Matcher {
+    private List<String> prefix = new LinkedList<String> ();
+
+    public PrefixMatcher (String... strings) {
+        prefix.addAll(Arrays.asList(strings));
+    }
+
+    public PrefixMatcher (List<String> strings) {
+        prefix.addAll(strings);
+    }
+
+    @Override
+    public final boolean matches (CtClass c) {
+        return matches(c.getName());
+    }
+
+    @Override
+    public final boolean matches (CtClass c, CtMethod m) {
+        return matches(m.getName());
+    }
+
+    private boolean matches (String name) {
+        for (String s : prefix) {
+            if (name.startsWith(s))
+                return true;
+        }
+
+        return false;
+    }
+}
