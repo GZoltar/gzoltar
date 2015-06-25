@@ -14,9 +14,10 @@ import pt.up.fe.aes.base.instrumentation.granularity.Granularity;
 import pt.up.fe.aes.base.instrumentation.granularity.GranularityFactory;
 import pt.up.fe.aes.base.instrumentation.granularity.GranularityFactory.GranularityLevel;
 import pt.up.fe.aes.base.model.Node;
+import pt.up.fe.aes.base.runtime.Collector;
 import pt.up.fe.aes.base.runtime.ProbeGroup.HitProbe;
 
-public class InstrumentationPass extends AbstractPass {
+public class InstrumentationPass implements Pass {
 
 	private static final String HIT_VECTOR_TYPE = "[Z";
 	public static final String HIT_VECTOR_NAME = "$__AES_HIT_VECTOR__";
@@ -70,7 +71,7 @@ public class InstrumentationPass extends AbstractPass {
 					continue;
 
 				if(g.instrumentAtIndex(index, instrSize)) {
-					Node n = getNode(c, b, curLine);
+					Node n = g.getNode(c, b, curLine);
 					Bytecode bc = getInstrumentationCode(c, n, info.getConstPool());
 					ci.insert(index, bc.get());
 					instrSize += bc.length();
@@ -94,4 +95,9 @@ public class InstrumentationPass extends AbstractPass {
 		return b;
 	}
 
+	public HitProbe getHitProbe(CtClass cls, Node n) {
+		Collector c = Collector.instance();
+		
+		return c.createHitProbe(cls.getName(), n.getId());
+	}
 }

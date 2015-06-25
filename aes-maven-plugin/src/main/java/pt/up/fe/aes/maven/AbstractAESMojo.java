@@ -1,5 +1,6 @@
 package pt.up.fe.aes.maven;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
@@ -23,6 +24,9 @@ public abstract class AbstractAESMojo extends AbstractMojo {
 	
 	@Parameter(defaultValue = " ")
 	protected String argLine;
+	
+	@Parameter(defaultValue = "${project.build.directory}/aes-report/")
+	protected File reportDirectory;
 	
 	protected boolean shouldInstrument() {
 		return project != null && !"pom".equals(project.getPackaging());

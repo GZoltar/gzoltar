@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.spectrum;
 
+import pt.up.fe.aes.base.model.Tree;
+
 public interface Spectrum {
 
 	public int getComponentsSize();
@@ -10,5 +12,7 @@ public interface Spectrum {
 
 	public boolean isError(int t);
 
+	public Tree getTree();
+	
 	public void print();
 }

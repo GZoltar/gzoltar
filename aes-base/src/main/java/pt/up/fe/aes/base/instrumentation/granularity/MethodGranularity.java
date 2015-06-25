@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation.granularity;
 
+import pt.up.fe.aes.base.model.Node;
+import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.bytecode.CodeIterator;
 import javassist.bytecode.MethodInfo;
@@ -20,4 +22,8 @@ public class MethodGranularity extends AbstractGranularity {
 		return true;
 	}
 
+	@Override
+	public Node getNode(CtClass cls, CtBehavior m, int line) {
+		return super.getNode(cls, m);
+	}
 }

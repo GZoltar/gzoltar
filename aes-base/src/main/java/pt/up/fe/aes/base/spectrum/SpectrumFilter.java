@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import pt.up.fe.aes.base.model.Tree;
+
 public class SpectrumFilter implements Spectrum {
 
 	private List<Integer> componentsFilter;
@@ -107,5 +109,10 @@ public class SpectrumFilter implements Spectrum {
 	@Override
 	public void print() {
 		
+	}
+
+	@Override
+	public Tree getTree() {
+		return delegate.getTree();
 	}
 }

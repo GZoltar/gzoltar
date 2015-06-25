@@ -63,7 +63,19 @@ public class Node {
 		
 		return null;
 	}
+	
+	public Node getParent() {
+		return this.parent;
+	}
 
+	public int getParentId() {
+		if (isRoot()) {
+			return -1;
+		}
+		
+		return this.parent.id;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -78,6 +90,10 @@ public class Node {
 	
 	public List<Node> getChildren() {
 		return children;
+	}
+	
+	public String toString() {
+		return "{\"n\":\"" + getName() + "\",\"p\":" + getParentId() + "}";
 	}
 
 }

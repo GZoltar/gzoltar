@@ -58,6 +58,7 @@ public class SpectrumImpl implements Spectrum {
 		transactions.add(new Transaction(transactionName, activity, isError));
 	}
 	
+	@Override
 	public Tree getTree() {
 		return tree;
 	}
