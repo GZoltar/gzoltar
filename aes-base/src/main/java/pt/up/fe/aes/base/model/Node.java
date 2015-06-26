@@ -53,6 +53,10 @@ public class Node {
 	private boolean isRoot() {
 		return parent == null;
 	}
+	
+	public boolean isLeaf() {
+		return children.isEmpty();
+	}
 
 	public Node getChild(String name) {
 		for (Node n : children) {

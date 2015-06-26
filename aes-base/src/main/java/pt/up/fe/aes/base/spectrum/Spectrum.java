@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.spectrum;
 
+import java.util.List;
+
 import pt.up.fe.aes.base.model.Tree;
 
 public interface Spectrum {
@@ -15,4 +17,8 @@ public interface Spectrum {
 	public Tree getTree();
 	
 	public void print();
+
+	List<Integer> getTestFrequencyPerProbe();
+
+	List<Integer> getTestFrequencyPerNode();
 }

@@ -21,7 +21,7 @@ public class ReportGenerator {
 		
 		System.out.println("Reporting " + reportDirectory);
 		spectrum.print();
-		VisualizationData vd= new VisualizationData(spectrum);
+		VisualizationData vd = new VisualizationData(spectrum);
 		System.out.println(vd.serialize());
 		
 		try {

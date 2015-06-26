@@ -2,6 +2,9 @@ package pt.up.fe.aes.base.spectrum;
 
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import pt.up.fe.aes.base.model.Tree;
 
@@ -73,6 +76,49 @@ public class SpectrumImpl implements Spectrum {
 		probes.set(id, nodeId);
 	}
 
+	@Override
+	public List<Integer> getTestFrequencyPerProbe() {
+		ArrayList<Integer> testFrequency = new ArrayList<Integer>();
+		testFrequency.ensureCapacity(getComponentsSize());
+		
+		for(int p = 0; p < getComponentsSize(); p++) {
+			
+			Set<Integer> s = new HashSet<Integer>();
+			
+			for(Transaction t : transactions) {
+				if(t.activity.get(p)) {
+					s.add(t.activity.hashCode());
+				}
+			}
+			
+			testFrequency.add(s.size());
+		}
+		
+		return testFrequency;
+	}
+	
+	@Override
+	public List<Integer> getTestFrequencyPerNode() {
+		
+		ArrayList<Integer> nodeTestFrequency = new ArrayList<Integer>();
+		nodeTestFrequency.ensureCapacity(getComponentsSize());
+		
+		for(int i = 0; i < tree.size(); i++) {
+			nodeTestFrequency.add(0);
+		}
+		
+		List<Integer> testFrequency = getTestFrequencyPerProbe();
+		
+		for(int p = 0; p < getComponentsSize(); p++) {
+			int freq = testFrequency.get(p);
+			int nodeId = probes.get(p);
+			
+			nodeTestFrequency.set(nodeId, freq + nodeTestFrequency.get(nodeId));
+		}
+		
+		return nodeTestFrequency;
+	}
+	
 	public void print() {
 		/*tree.print();
 		System.out.println("Probe mapping:" + probes);

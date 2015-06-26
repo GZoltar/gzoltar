@@ -1,5 +1,7 @@
 package pt.up.fe.aes.report;
 
+import java.util.List;
+
 import pt.up.fe.aes.base.model.Tree;
 import pt.up.fe.aes.base.spectrum.Spectrum;
 
@@ -16,6 +18,8 @@ public class VisualizationData {
 		Tree t = spectrum.getTree();
 		int size = t.size();
 		
+		List<Integer> nodeFrequency = spectrum.getTestFrequencyPerNode();
+		
 		StringBuilder sb = new StringBuilder("\"type\":\"visualization\",");
 		sb.append(t.toString());
 		sb.append(",");
@@ -24,7 +28,10 @@ public class VisualizationData {
 			if (i != 0) {
 				sb.append(",");
 			}
-			sb.append("0");
+			
+			if(t.getNode(i).isLeaf()) {
+				sb.append(nodeFrequency.get(i) / 10d);
+			}
 		}
 		sb.append("]");
 		

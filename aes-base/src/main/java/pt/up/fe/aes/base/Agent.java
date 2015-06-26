@@ -56,7 +56,7 @@ public class Agent implements ClassFileTransformer {
 		
 		instrumentationPasses.add(fp);
 		instrumentationPasses.add(new TestFilterPass());
-		instrumentationPasses.add(new InstrumentationPass(GranularityLevel.METHOD));
+		instrumentationPasses.add(new InstrumentationPass(GranularityLevel.LINE));
 		instrumentationPasses.add(new StackSizePass());
 		
 		Agent a = new Agent();

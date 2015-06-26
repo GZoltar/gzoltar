@@ -16,7 +16,6 @@ public class LineGranularity extends AbstractGranularity {
 	public boolean instrumentAtIndex(int index, int instrumentationSize) {
 		int previousLine = currentLine;
 		currentLine = mi.getLineNumber(index);
-		System.out.println(c.getName() + " instrument at index " + previousLine + " " + currentLine);
 		return currentLine != previousLine;
 	}
 
