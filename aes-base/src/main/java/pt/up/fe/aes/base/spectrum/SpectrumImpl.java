@@ -145,4 +145,9 @@ public class SpectrumImpl implements Spectrum {
 		tree.print();
 		System.out.println("Number of probes: " + probes.size() + " number of transactions: " + transactions.size() );
 	}
+
+	@Override
+	public BitSet getTransactionActivity(int t) {
+		return transactions.get(t).activity;
+	}
 }

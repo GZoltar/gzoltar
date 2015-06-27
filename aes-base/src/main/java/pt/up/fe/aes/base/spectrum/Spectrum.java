@@ -1,5 +1,6 @@
 package pt.up.fe.aes.base.spectrum;
 
+import java.util.BitSet;
 import java.util.List;
 
 import pt.up.fe.aes.base.model.Tree;
@@ -21,4 +22,6 @@ public interface Spectrum {
 	List<Integer> getTestFrequencyPerProbe();
 
 	List<Integer> getTestFrequencyPerNode();
+	
+	public BitSet getTransactionActivity(int t);
 }
