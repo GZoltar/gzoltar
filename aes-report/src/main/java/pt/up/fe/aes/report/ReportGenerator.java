@@ -23,47 +23,71 @@ import pt.up.fe.aes.report.metrics.SimpsonMetric;
 public class ReportGenerator {
 
 	private static final String DATA_FILE = "report-data.zip";
-	private static final String INDEX_FILE = "index.html";
+	private static final String INDEX_FILE = "visualization.html";
+	private static final String METRICS_FILE = "metrics.txt";
 	private static final String SEARCH_TOKEN = "window.data_ex={";
-		
-	public static void generate(File reportDirectory, Spectrum spectrum) {
-		
-		System.out.println("Reporting " + reportDirectory);
-		spectrum.print();
+
+	private final Spectrum spectrum;
+	private List<Metric> metrics;
+
+	public ReportGenerator(Spectrum spectrum) {
+		this.spectrum = spectrum;
+	}
+
+
+	public List<Metric> getMetrics() {
+		if(metrics == null) {
+			metrics = new ArrayList<Metric>();
+			Collections.addAll(metrics, new RhoMetric(), new SimpsonMetric(),
+					new AmbiguityMetric(), new EntropyMetric(), new ApproximateEntropyMetric());
+
+			for(Metric metric : metrics) {
+				metric.setSpectrum(spectrum);
+			}
+		}
+		return metrics;
+	}
+
+	public void generate(File reportDirectory) {
+
 		VisualizationData vd = new VisualizationData(spectrum);
-		System.out.println(vd.serialize());
-		
+		//System.out.println(vd.serialize());
+
 		try {
-			writeReport(reportDirectory, vd.serialize());
+			writeMetrics(reportDirectory);
+			writeVisualization(reportDirectory, vd.serialize());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		List<Metric> metrics = new ArrayList<Metric>();
-		Collections.addAll(metrics, new RhoMetric(), new SimpsonMetric(),
-				new AmbiguityMetric(), new EntropyMetric(), new ApproximateEntropyMetric());
-		
-		for(Metric metric : metrics) {
-			metric.setSpectrum(spectrum);
-			System.out.println(metric.getName() + ": " + metric.calculate());
-		}
 	}
-	
-	
-	private static File writeReport(File targetDir, String reportLine) throws IOException {
+
+
+	private void writeMetrics(File reportDirectory) throws IOException {
+		File metricsFile = new File(reportDirectory, METRICS_FILE);
 		
+		List<String> scores = new ArrayList<String>();
+		for(Metric metric : getMetrics()) {
+			scores.add(metric.getName() + ": " + metric.calculate());
+		}
+		
+		FileUtils.writeLines(metricsFile, scores, false);
+	}
+
+
+	private void writeVisualization(File targetDir, String reportLine) throws IOException {
+
 		ClassLoader classLoader = ReportGenerator.class.getClassLoader();
-				
+
 		File temp = File.createTempFile("aes-temp-file", ".zip"); 
 		temp.deleteOnExit();
 		FileUtils.copyInputStreamToFile(classLoader.getResourceAsStream(DATA_FILE), temp);
 		try {
 			ZipFile zipFile = new ZipFile(temp);
-			 zipFile.extractAll(targetDir.getAbsolutePath());
+			zipFile.extractAll(targetDir.getAbsolutePath());
 		} catch (ZipException e) {
 			e.printStackTrace();
 		}
-		
+
 		String indexData = IOUtils.toString(classLoader.getResourceAsStream(INDEX_FILE));
 		int i = indexData.indexOf(SEARCH_TOKEN);
 		if (i != -1) {
@@ -71,11 +95,9 @@ public class ReportGenerator {
 			sb.insert(i + SEARCH_TOKEN.length(), reportLine);
 			indexData = sb.toString();
 		}
-		
+
 		File reportIndexDestination = new File(targetDir, INDEX_FILE);
 		FileUtils.write(reportIndexDestination, indexData);
-		
-		return reportIndexDestination;
 	}
 
 }
