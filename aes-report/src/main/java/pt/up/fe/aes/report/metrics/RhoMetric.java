@@ -1,7 +1,7 @@
 package pt.up.fe.aes.report.metrics;
 
 public class RhoMetric extends AbstractMetric {
-
+	
 	@Override
 	public double calculate() {
 		
@@ -24,6 +24,11 @@ public class RhoMetric extends AbstractMetric {
 		double rho = (double) activity_counter / ( ((double) components) * ((double) transactions) );
 		
 		return rho;
+	}
+
+	@Override
+	public String getName() {
+		return "Rho";
 	}
 	
 }

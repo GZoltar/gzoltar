@@ -8,4 +8,5 @@ public interface Metric {
 	
 	public double calculate();
 	
+	public String getName();
 }

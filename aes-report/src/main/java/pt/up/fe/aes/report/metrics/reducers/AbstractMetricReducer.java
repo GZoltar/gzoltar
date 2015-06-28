@@ -29,6 +29,11 @@ public abstract class AbstractMetricReducer implements Metric {
 		return tmp;
 	}
 	
+	@Override
+	public String getName() {
+		return "Reducer";
+	}
+	
 	protected abstract double startValue();
 
 	protected abstract double reduce(double value1, double value2);

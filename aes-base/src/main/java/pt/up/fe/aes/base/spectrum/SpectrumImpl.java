@@ -120,7 +120,7 @@ public class SpectrumImpl implements Spectrum {
 	}
 	
 	public void print() {
-		/*tree.print();
+		tree.print();
 		System.out.println("Probe mapping:" + probes);
 		
 		for(int t = 0; t < getTransactionsSize(); t++) {
@@ -140,9 +140,8 @@ public class SpectrumImpl implements Spectrum {
 				System.out.println(".");
 			}
 			
-		}*/
-		
-		tree.print();
+		}
+	
 		System.out.println("Number of probes: " + probes.size() + " number of transactions: " + transactions.size() );
 	}
 

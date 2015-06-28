@@ -30,12 +30,22 @@ public class SimpsonMetric extends AbstractMetric {
 		double diversity = ( (N == 0.0) || ((N - 1) == 0) ) ? 1.0 : n / (N * (N - 1));
 		return diversity;
 	}
-
+	
+	@Override
+	public String getName() {
+		return "Simpson";
+	}
 	
 	public static class InvertedSimpsonMetric extends SimpsonMetric {
 		@Override
 		public double calculate() {
 			return 1d - super.calculate();
 		}
+		
+		@Override
+		public String getName() {
+			return "Inverted Simpson";
+		}
 	}
+
 }

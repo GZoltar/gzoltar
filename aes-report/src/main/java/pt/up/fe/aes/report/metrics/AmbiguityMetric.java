@@ -33,4 +33,9 @@ public class AmbiguityMetric extends AbstractMetric {
 		return ambiguity;
 	}
 
+	@Override
+	public String getName() {
+		return "Ambiguity";
+	}
+
 }

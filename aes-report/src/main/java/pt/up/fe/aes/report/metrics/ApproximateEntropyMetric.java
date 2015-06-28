@@ -21,4 +21,9 @@ public class ApproximateEntropyMetric implements Metric {
 		return metric.calculate();
 	}
 
+	@Override
+	public String getName() {
+		return "Approximate Entropy";
+	}
+
 }

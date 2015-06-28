@@ -2,6 +2,9 @@ package pt.up.fe.aes.report;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -10,6 +13,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import pt.up.fe.aes.base.spectrum.Spectrum;
+import pt.up.fe.aes.report.metrics.AmbiguityMetric;
+import pt.up.fe.aes.report.metrics.ApproximateEntropyMetric;
+import pt.up.fe.aes.report.metrics.EntropyMetric;
+import pt.up.fe.aes.report.metrics.Metric;
+import pt.up.fe.aes.report.metrics.RhoMetric;
+import pt.up.fe.aes.report.metrics.SimpsonMetric;
 
 public class ReportGenerator {
 
@@ -28,6 +37,15 @@ public class ReportGenerator {
 			writeReport(reportDirectory, vd.serialize());
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		List<Metric> metrics = new ArrayList<Metric>();
+		Collections.addAll(metrics, new RhoMetric(), new SimpsonMetric(),
+				new AmbiguityMetric(), new EntropyMetric(), new ApproximateEntropyMetric());
+		
+		for(Metric metric : metrics) {
+			metric.setSpectrum(spectrum);
+			System.out.println(metric.getName() + ": " + metric.calculate());
 		}
 	}
 	

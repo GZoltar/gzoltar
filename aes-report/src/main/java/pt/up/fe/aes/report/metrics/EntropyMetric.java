@@ -32,10 +32,15 @@ public class EntropyMetric extends AbstractMetric {
 		
 		entropy = -entropy / components;
 
-		return (1.0-entropy);
+		return entropy;
 	}
 
 	private static double log2(double value) {
 		return Math.log(value) / Math.log(2);
+	}
+
+	@Override
+	public String getName() {
+		return "Entropy";
 	}
 }
