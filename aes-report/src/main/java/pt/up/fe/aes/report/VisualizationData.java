@@ -20,17 +20,23 @@ public class VisualizationData {
 		
 		List<Integer> nodeFrequency = spectrum.getTestFrequencyPerNode();
 		
+		double max = (double) spectrum.getComponentsSize();
+		for(int i = 0; i < size; i++) {
+			max = Math.max(max, (double) nodeFrequency.get(i));
+		}
+		
 		StringBuilder sb = new StringBuilder("\"type\":\"visualization\",");
 		sb.append(t.toString());
 		sb.append(",");
 		sb.append("\"scores\":[");
+		
 		for(int i = 0; i < size; i++) {
 			if (i != 0) {
 				sb.append(",");
 			}
-			
+						
 			if(t.getNode(i).isLeaf()) {
-				sb.append(nodeFrequency.get(i) / 10d);
+				sb.append(nodeFrequency.get(i) / max);
 			}
 		}
 		sb.append("]");

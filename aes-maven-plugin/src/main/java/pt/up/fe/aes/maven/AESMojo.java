@@ -1,5 +1,7 @@
 package pt.up.fe.aes.maven;
 
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -8,27 +10,28 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import pt.up.fe.aes.base.spectrum.Spectrum;
 import pt.up.fe.aes.report.ReportGenerator;
-import pt.up.fe.aes.report.metrics.Metric;
 
 @Mojo(name = "test")
 @Execute(lifecycle = "aes", phase = LifecyclePhase.TEST)
 public class AESMojo extends AbstractAESMojo {
 
 	public void executeAESMojo() throws MojoExecutionException, MojoFailureException {
-		getLog().info("");
-		getLog().info("Metric scores for project " + project.getName() + ":");
 
 		Spectrum spectrum = retrieveCurrentSpectrum();
-
-		ReportGenerator reportGenerator = new ReportGenerator(project.getName(), spectrum);
 		
-		for (Metric metric : reportGenerator.getMetrics()) {
-			getLog().info(metric.getName() + ": " + metric.calculate());
+		if (spectrum == null || spectrum.getTransactionsSize() == 0) {
+			throw new MojoFailureException("Could not gather coverage information. Exiting AES analysis.");
+		}
+		
+		ReportGenerator reportGenerator = new ReportGenerator(project.getName(), spectrum);		
+		List<String> metrics = reportGenerator.generate(reportDirectory, classesToInstrument);
+		
+		getLog().info("");
+		for(String metricDescription : metrics) {
+			getLog().info(metricDescription);
 		}
 		getLog().info("");
-		
 		getLog().info("Writing report at " + reportDirectory.getAbsolutePath() + ".");
-		reportGenerator.generate(reportDirectory, classesToInstrument);
 	}
 
 }

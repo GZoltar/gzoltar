@@ -50,30 +50,51 @@ public class ReportGenerator {
 		return metrics;
 	}
 
-	public void generate(File reportDirectory, List<String> classesToInstrument) {
+	public List<String> generate(File reportDirectory, List<String> classesToInstrument) {
 
+		List<String> result = null; 
 		VisualizationData vd = new VisualizationData(spectrum);
-		//System.out.println(vd.serialize());
 
 		try {
-			writeMetrics(reportDirectory, classesToInstrument);
+			result = writeMetrics(reportDirectory, classesToInstrument);
 			writeVisualization(reportDirectory, vd.serialize());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		return result;
 	}
 
 
-	private void writeMetrics(File reportDirectory, List<String> classesToInstrument) throws IOException {
+	private List<String> writeMetrics(File reportDirectory, List<String> classesToInstrument) throws IOException {
 		File metricsFile = new File(reportDirectory, METRICS_FILE);
 		
-		//TODO: add class name, or name of project
 		List<String> scores = new ArrayList<String>();
+		
+		String instrumentationDescription = "";
+		
+		if (classesToInstrument != null && !classesToInstrument.isEmpty()) {
+			StringBuilder sb = new StringBuilder(" [ ");
+			
+			for(int i = 0; i < classesToInstrument.size(); i++) {
+				if (i != 0) {
+					sb.append(" , ");
+				}
+				sb.append(classesToInstrument.get(i));
+			}
+			
+			sb.append(" ] ");
+			instrumentationDescription = sb.toString();
+		}
+		
+		scores.add("Metric scores for project " + projectName  + instrumentationDescription + ":");
 		for(Metric metric : getMetrics()) {
 			scores.add(metric.getName() + ": " + metric.calculate());
 		}
 		
 		FileUtils.writeLines(metricsFile, scores, false);
+		
+		return scores;
 	}
 
 
