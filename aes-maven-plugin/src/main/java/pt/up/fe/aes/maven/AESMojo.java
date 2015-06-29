@@ -20,7 +20,7 @@ public class AESMojo extends AbstractAESMojo {
 
 		Spectrum spectrum = retrieveCurrentSpectrum();
 
-		ReportGenerator reportGenerator = new ReportGenerator(spectrum);
+		ReportGenerator reportGenerator = new ReportGenerator(project.getName(), spectrum);
 		
 		for (Metric metric : reportGenerator.getMetrics()) {
 			getLog().info(metric.getName() + ": " + metric.calculate());
@@ -28,7 +28,7 @@ public class AESMojo extends AbstractAESMojo {
 		getLog().info("");
 		
 		getLog().info("Writing report at " + reportDirectory.getAbsolutePath() + ".");
-		reportGenerator.generate(reportDirectory);
+		reportGenerator.generate(reportDirectory, classesToInstrument);
 	}
 
 }

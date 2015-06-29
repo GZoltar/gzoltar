@@ -27,10 +27,12 @@ public class ReportGenerator {
 	private static final String METRICS_FILE = "metrics.txt";
 	private static final String SEARCH_TOKEN = "window.data_ex={";
 
+	private final String projectName;
 	private final Spectrum spectrum;
 	private List<Metric> metrics;
 
-	public ReportGenerator(Spectrum spectrum) {
+	public ReportGenerator(String projectName, Spectrum spectrum) {
+		this.projectName = projectName;
 		this.spectrum = spectrum;
 	}
 
@@ -48,13 +50,13 @@ public class ReportGenerator {
 		return metrics;
 	}
 
-	public void generate(File reportDirectory) {
+	public void generate(File reportDirectory, List<String> classesToInstrument) {
 
 		VisualizationData vd = new VisualizationData(spectrum);
 		//System.out.println(vd.serialize());
 
 		try {
-			writeMetrics(reportDirectory);
+			writeMetrics(reportDirectory, classesToInstrument);
 			writeVisualization(reportDirectory, vd.serialize());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -62,9 +64,10 @@ public class ReportGenerator {
 	}
 
 
-	private void writeMetrics(File reportDirectory) throws IOException {
+	private void writeMetrics(File reportDirectory, List<String> classesToInstrument) throws IOException {
 		File metricsFile = new File(reportDirectory, METRICS_FILE);
 		
+		//TODO: add class name, or name of project
 		List<String> scores = new ArrayList<String>();
 		for(Metric metric : getMetrics()) {
 			scores.add(metric.getName() + ": " + metric.calculate());

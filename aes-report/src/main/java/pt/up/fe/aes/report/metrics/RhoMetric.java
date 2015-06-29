@@ -5,13 +5,11 @@ public class RhoMetric extends AbstractMetric {
 	@Override
 	public double calculate() {
 		
-		int transactions = spectrum.getTransactionsSize();
-		if (transactions == 0)
+		if(!validMatrix())
 			return 0;
 		
+		int transactions = spectrum.getTransactionsSize();
 		int components = spectrum.getComponentsSize();
-		if (components == 0)
-			return 0;
 		
 		int activity_counter = 0;
 		for(int t = 0; t < transactions; t++) {

@@ -10,6 +10,9 @@ public class AmbiguityMetric extends AbstractMetric {
 	@Override
 	public double calculate() {
 				
+		if(!validMatrix())
+			return 0;
+		
 		Set<Integer> ambiguityGroups = new HashSet<Integer>();
 		
 		for(int c = 0; c < spectrum.getComponentsSize(); c++) {

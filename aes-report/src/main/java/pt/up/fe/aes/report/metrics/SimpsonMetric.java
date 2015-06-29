@@ -7,6 +7,9 @@ public class SimpsonMetric extends AbstractMetric {
 	@Override
 	public double calculate() {
 		
+		if(!validMatrix())
+			return 0;
+		
 		LinkedHashMap<Integer, Integer> species = new LinkedHashMap<Integer, Integer>();
 		for (int t = 0; t < spectrum.getTransactionsSize(); t++) {
 			int hash = spectrum.getTransactionActivity(t).hashCode();

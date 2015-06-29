@@ -11,4 +11,11 @@ public abstract class AbstractMetric implements Metric {
 		this.spectrum = spectrum;
 	}
 
+	protected boolean validMatrix() {
+		if (spectrum != null) {
+			return spectrum.getComponentsSize() > 0 && spectrum.getTransactionsSize() > 0;
+		}
+		return false;
+	}
+	
 }
