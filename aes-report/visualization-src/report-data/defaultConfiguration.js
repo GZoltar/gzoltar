@@ -2,16 +2,22 @@ DEFAULT_CONFIG = {
     defaultView: 0,
     animationTransitionTime: 700,
     zoomAnimationTime: 500,
-    filterMostRelevamtNodes: 400,
+    filterMostRelevamtNodes: 0,
     filterMinProbability: 0,
     normalGradiante: [{
-        color: "rgba(93,220,74,1)",
+        color: "rgba(0,0,255,1)", //blue
         position: 1
     }, {
-        color: "rgba(218,196,113,1)",
+        color: "rgba(0,255,255,1)", //cyan
+        position: 25
+    }, {
+        color: "rgba(0,205,0,1)", //green
         position: 50
     }, {
-        color: "rgba(211,49,49,1)",
+        color: "rgba(255,255,0,1)", //yellow
+        position: 75
+    }, {
+        color: "rgba(229,0,0,1)", //red
         position: 99
     }],
     scriptsLoad: [],
