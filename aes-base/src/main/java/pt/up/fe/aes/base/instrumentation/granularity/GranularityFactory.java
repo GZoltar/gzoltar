@@ -7,18 +7,18 @@ import javassist.bytecode.MethodInfo;
 public class GranularityFactory {
 
 	public static enum GranularityLevel {
-		LINE,
-		METHOD,
-		BASIC_BLOCK
+		line,
+		method,
+		basicblock
 	}
 
 	public static Granularity getGranularity(CtClass c, MethodInfo mi, CodeIterator ci, GranularityLevel level) {
 		switch(level) {
-		case LINE:
+		case line:
 			return new LineGranularity(c, mi, ci);
-		case METHOD:
+		case method:
 			return new MethodGranularity(c, mi, ci);
-		case BASIC_BLOCK:
+		case basicblock:
 		default:
 			return new BasicBlockGranularity(c, mi, ci);
 		}

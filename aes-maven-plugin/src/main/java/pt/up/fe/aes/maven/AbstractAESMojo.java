@@ -1,6 +1,7 @@
 package pt.up.fe.aes.maven;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
@@ -10,6 +11,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
+import pt.up.fe.aes.base.instrumentation.granularity.GranularityFactory;
 import pt.up.fe.aes.base.spectrum.Spectrum;
 
 public abstract class AbstractAESMojo extends AbstractMojo {
@@ -24,6 +26,12 @@ public abstract class AbstractAESMojo extends AbstractMojo {
 	
 	@Parameter(defaultValue = " ")
 	protected String argLine;
+	
+	@Parameter(defaultValue = "method")
+	protected GranularityFactory.GranularityLevel granularityLevel;
+	
+	@Parameter
+	protected List<String> classesToInstrument;
 	
 	@Parameter(defaultValue = "${project.build.directory}/aes-report/")
 	protected File reportDirectory;
@@ -44,6 +52,7 @@ public abstract class AbstractAESMojo extends AbstractMojo {
 		project.getProperties().setProperty(key, value);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void storeCurrentSpectrum(Spectrum spectrum) {
 		getPluginContext().put(SPECTRUM_KEY, spectrum);
 	}

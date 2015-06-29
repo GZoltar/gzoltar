@@ -20,6 +20,13 @@
 			<artifactId>javassist</artifactId>
 			<version>3.19.0-GA</version>
 		</dependency>
+		
+		<dependency>
+      <groupId>net.sf.flexjson</groupId>
+      <artifactId>flexjson</artifactId>
+      <version>3.2</version>
+    </dependency>
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -51,6 +58,10 @@
 						<relocation>
 							<pattern>javassist</pattern>
 							<shadedPattern>pt.up.fe.aes.javassist</shadedPattern>
+						</relocation>
+						<relocation>
+						  <pattern>flexjson</pattern>
+						  <shadedPattern>pt.up.fe.aes.flexjson</shadedPattern>
 						</relocation>
 					</relocations>
 				</configuration>

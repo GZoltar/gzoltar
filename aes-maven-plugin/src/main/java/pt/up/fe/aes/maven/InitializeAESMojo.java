@@ -7,6 +7,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import pt.up.fe.aes.base.AgentConfigs;
 import pt.up.fe.aes.base.messaging.Server;
 import pt.up.fe.aes.maven.messaging.ServiceHandlerFactory;
 
@@ -18,14 +19,26 @@ public class InitializeAESMojo extends AbstractAESMojo {
 
 	public void executeAESMojo() throws MojoExecutionException, MojoFailureException {
 
+		System.out.println("Chosen granularity is " + granularityLevel);
+		System.out.println("Classes to instrument " + classesToInstrument); // test if null or empty
+		System.out.println("Report directory " + reportDirectory);
+		
+		
 		try {
+			AgentConfigs agentConfigs = new AgentConfigs();
+			
 			ServerSocket serverSocket = new ServerSocket(0);
 			Server s = new Server(serverSocket, new ServiceHandlerFactory(this));
 			s.start();
 
 			getLog().info("Setting up instrumentation agent.");
 			String agentFilename = this.getArtifact(AES_ARTIFACT).getFile().getAbsolutePath();
-			setAgent(agentFilename, serverSocket.getLocalPort());
+			
+			agentConfigs.setPort(serverSocket.getLocalPort());
+			agentConfigs.setGranularityLevel(granularityLevel);
+			agentConfigs.setClassesToInstrument(classesToInstrument);
+			
+			setAgent(agentFilename, agentConfigs);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -33,7 +46,7 @@ public class InitializeAESMojo extends AbstractAESMojo {
 
 	}
 
-	private void setAgent(String agentFilename, int port) {
+	private void setAgent(String agentFilename, AgentConfigs agentConfigs) {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(getProjectProperty(SUREFIRE_ARG_LINE))
@@ -42,7 +55,7 @@ public class InitializeAESMojo extends AbstractAESMojo {
 			.append(" -javaagent:\"")
 			.append(agentFilename)
 			.append("\"=")
-			.append(port);
+			.append(agentConfigs.serialize());
 
 		this.setProjectProperty(SUREFIRE_ARG_LINE, sb.toString());
 	}
