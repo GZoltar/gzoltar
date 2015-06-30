@@ -33,6 +33,9 @@ public abstract class AbstractAESMojo extends AbstractMojo {
 	@Parameter
 	protected List<String> classesToInstrument;
 	
+	@Parameter
+	protected List<String> prefixesToFilter;
+	
 	@Parameter(defaultValue = "${project.build.directory}/aes-report/")
 	protected File reportDirectory;
 	

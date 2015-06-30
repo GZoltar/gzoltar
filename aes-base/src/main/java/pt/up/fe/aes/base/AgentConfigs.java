@@ -30,6 +30,7 @@ public class AgentConfigs {
 	private int port = 1234;
 	private GranularityLevel granularityLevel = GranularityLevel.method;
 	private List<String> classesToInstrument = null;
+	private List<String> prefixesToFilter = null;
 
 	public void setPort (int port) {
         this.port = port;
@@ -54,6 +55,14 @@ public class AgentConfigs {
 	public void setClassesToInstrument(List<String> classesToInstrument) {
 		this.classesToInstrument = classesToInstrument;
 	}
+	
+	public List<String> getPrefixesToFilter() {
+		return prefixesToFilter;
+	}
+
+	public void setPrefixesToFilter(List<String> prefixesToFilter) {
+		this.prefixesToFilter = prefixesToFilter;
+	}
 
     @JSON(include = false)
 	public List<Pass> getInstrumentationPasses() {
@@ -70,6 +79,9 @@ public class AgentConfigs {
 		List<String> prefixes = new ArrayList<String> ();
         Collections.addAll(prefixes, "javax.", "java.", "sun.", "com.sun.", 
         		"junit.", "org.junit.", "org.apache.maven", "pt.up.fe.aes.");
+        
+        if (prefixesToFilter != null)
+        	prefixes.addAll(prefixesToFilter);
 
         PrefixMatcher pMatcher = new PrefixMatcher(prefixes);
 
