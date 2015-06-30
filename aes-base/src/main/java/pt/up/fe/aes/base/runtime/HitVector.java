@@ -34,6 +34,11 @@ class HitVector {
     }
 
     public final boolean[] get (String groupName) {
+    	if (groups.get(groupName) == null) {
+    		// registerProbe has not been called before for this groupName
+    		// so we can return a boolean array stub of size zero
+    		return new boolean[0];
+    	}
         return groups.get(groupName).get();
     }
 
