@@ -18,11 +18,6 @@ public class InitializeAESMojo extends AbstractAESMojo {
 	static final String AES_ARTIFACT = "pt.up.fe.aes:aes-base";
 
 	public void executeAESMojo() throws MojoExecutionException, MojoFailureException {
-
-		System.out.println("Chosen granularity is " + granularityLevel);
-		System.out.println("Classes to instrument " + classesToInstrument); // test if null or empty
-		System.out.println("Report directory " + reportDirectory);
-		
 		
 		try {
 			AgentConfigs agentConfigs = new AgentConfigs();

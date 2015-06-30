@@ -261,10 +261,10 @@ function probabilityCalculator(node) {
     if (node.score >= 0)
         return node.score;
 
-    var p = 0;
+    var p = 100;
     if (node.hasOwnProperty('children')) {
         for (var i = node.children.length - 1; i >= 0; i--) {
-            p = Math.max(p, probabilityCalculator(node.children[i]));
+            p = Math.min(p, probabilityCalculator(node.children[i]));
         }
     }
 
