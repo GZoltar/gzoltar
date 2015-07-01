@@ -23,7 +23,7 @@ public class AESMojo extends AbstractAESMojo {
 			throw new MojoFailureException("Could not gather coverage information. Exiting AES analysis.");
 		}
 		
-		ReportGenerator reportGenerator = new ReportGenerator(project.getName(), spectrum);		
+		ReportGenerator reportGenerator = new ReportGenerator(project.getName(), spectrum, granularityLevel.name());		
 		List<String> metrics = reportGenerator.generate(reportDirectory, classesToInstrument);
 		
 		getLog().info("");

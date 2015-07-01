@@ -9,7 +9,8 @@ The plugin generates a report for the following metrics:
 * Simpson's diversity index;
 * Component ambiguity score;
 * Entropy;
-* Approximate Entropy.
+* Approximate Entropy;
+* Coverage with respect to the chosen instrumentation granularity.
  
 Also generated is a heatmap-like tree visualization that depicts the amount of unique test coverage traces exercising each component in the system.
 

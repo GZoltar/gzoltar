@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import pt.up.fe.aes.base.spectrum.Spectrum;
 import pt.up.fe.aes.report.metrics.AmbiguityMetric;
 import pt.up.fe.aes.report.metrics.ApproximateEntropyMetric;
+import pt.up.fe.aes.report.metrics.CoverageMetric;
 import pt.up.fe.aes.report.metrics.EntropyMetric;
 import pt.up.fe.aes.report.metrics.Metric;
 import pt.up.fe.aes.report.metrics.RhoMetric;
@@ -29,10 +30,12 @@ public class ReportGenerator {
 
 	private final String projectName;
 	private final Spectrum spectrum;
+	private final String granularity;
 	private List<Metric> metrics;
 
-	public ReportGenerator(String projectName, Spectrum spectrum) {
+	public ReportGenerator(String projectName, Spectrum spectrum, String granularity) {
 		this.projectName = projectName;
+		this.granularity = granularity;
 		this.spectrum = spectrum;
 	}
 
@@ -41,7 +44,8 @@ public class ReportGenerator {
 		if(metrics == null) {
 			metrics = new ArrayList<Metric>();
 			Collections.addAll(metrics, new RhoMetric(), new SimpsonMetric(),
-					new AmbiguityMetric(), new EntropyMetric(), new ApproximateEntropyMetric());
+					new AmbiguityMetric(), new EntropyMetric(), new ApproximateEntropyMetric(),
+					new CoverageMetric(granularity));
 
 			for(Metric metric : metrics) {
 				metric.setSpectrum(spectrum);
