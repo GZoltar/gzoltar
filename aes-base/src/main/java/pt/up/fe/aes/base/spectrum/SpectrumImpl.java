@@ -55,10 +55,17 @@ public class SpectrumImpl implements Spectrum {
 					activity.set(i);
 			}
 		}
+		
+		public boolean hasActivations() {
+			return activity.cardinality() != 0;
+		}
 	}
 
 	public void addTransaction(String transactionName, boolean[] activity, boolean isError) {
-		transactions.add(new Transaction(transactionName, activity, isError));
+		Transaction t = new Transaction(transactionName, activity, isError);
+		if (t.hasActivations()) {
+			transactions.add(t);
+		}
 	}
 	
 	@Override
