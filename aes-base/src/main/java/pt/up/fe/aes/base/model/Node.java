@@ -99,5 +99,34 @@ public class Node {
 	public String toString() {
 		return "{\"n\":\"" + getName() + "\",\"p\":" + getParentId() + "}";
 	}
+	
+	public Node getNodeOfType(Type type) {
+		if (this.type == type) {
+			return this;
+		}
+		else if (this.parent != null) {
+			return this.parent.getNodeOfType(type);
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public List<Node> getLeafNodes() {
+		List<Node> nodes = new ArrayList<Node>();
+		getLeafNodes(nodes);
+		return nodes;
+	}
+
+	private void getLeafNodes(List<Node> nodes) {
+		if (isLeaf()) {
+			nodes.add(this);
+		}
+		else {
+			for(Node c : children) {
+				c.getLeafNodes(nodes);
+			}
+		}
+	}
 
 }

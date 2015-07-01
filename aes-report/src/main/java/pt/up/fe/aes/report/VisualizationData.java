@@ -2,6 +2,8 @@ package pt.up.fe.aes.report;
 
 import java.util.List;
 
+import pt.up.fe.aes.base.model.Node;
+import pt.up.fe.aes.base.model.Node.Type;
 import pt.up.fe.aes.base.model.Tree;
 import pt.up.fe.aes.base.spectrum.Spectrum;
 
@@ -19,12 +21,7 @@ public class VisualizationData {
 		int size = t.size();
 		
 		List<Integer> nodeFrequency = spectrum.getTestFrequencyPerNode();
-		
-		double max = (double) spectrum.getComponentsSize();
-		for(int i = 0; i < size; i++) {
-			max = Math.max(max, (double) nodeFrequency.get(i));
-		}
-		
+				
 		StringBuilder sb = new StringBuilder("\"type\":\"visualization\",");
 		sb.append(t.toString());
 		sb.append(",");
@@ -36,6 +33,7 @@ public class VisualizationData {
 			}
 						
 			if(t.getNode(i).isLeaf()) {
+				double max = Math.max(nodeFrequency.get(i), getMaxFrequencyEstimate(t.getNode(i)));
 				sb.append(nodeFrequency.get(i) / max);
 			}
 		}
@@ -45,4 +43,13 @@ public class VisualizationData {
 		
 	}
 	
+	private double getMaxFrequencyEstimate(Node n) {
+		Node classNode = n.getNodeOfType(Type.CLASS);
+		
+		if (classNode != null) {
+			return classNode.getLeafNodes().size();
+		}
+		else return 1;
+	}
+
 }
