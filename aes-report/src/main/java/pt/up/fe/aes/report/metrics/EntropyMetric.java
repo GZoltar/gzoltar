@@ -33,7 +33,7 @@ public class EntropyMetric extends AbstractMetric {
 			entropy += prob_i * log2(prob_i);
 		}
 		
-		entropy = -entropy / components;
+		entropy = Math.abs( entropy / components );
 
 		return entropy;
 	}
