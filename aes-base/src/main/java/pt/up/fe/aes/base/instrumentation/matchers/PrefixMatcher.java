@@ -1,8 +1,9 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
 import java.util.Arrays;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -20,7 +21,7 @@ public class PrefixMatcher implements Matcher {
     }
 
     @Override
-    public final boolean matches (CtClass c) {
+    public final boolean matches (CtClass c, ProtectionDomain d) {
         return matches(c.getName());
     }
 

@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -29,8 +31,8 @@ public class InstrumentationPass implements Pass {
 	}
 
 	@Override
-	public Outcome transform(CtClass c) throws Exception {
-
+	public Outcome transform(CtClass c, ProtectionDomain d) throws Exception {
+		
 		for(CtBehavior b : c.getDeclaredBehaviors()) {
 			handleBehavior(c, b);
 		}

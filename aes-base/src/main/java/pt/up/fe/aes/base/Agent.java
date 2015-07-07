@@ -51,7 +51,7 @@ public class Agent implements ClassFileTransformer {
 			cp.importPackage("pt.up.fe.aes.base.runtime");
 
 			for (Pass p : instrumentationPasses) {
-				switch (p.transform(c)) {
+				switch (p.transform(c, protectionDomain)) {
 				case CANCEL:
 					c.detach();
 					return null;

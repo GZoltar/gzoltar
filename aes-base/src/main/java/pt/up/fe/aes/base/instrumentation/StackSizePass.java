@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.bytecode.CodeAttribute;
@@ -8,7 +10,7 @@ import javassist.bytecode.MethodInfo;
 public class StackSizePass implements Pass {
 
 	@Override
-	public final Outcome transform (CtClass c) throws Exception {
+	public final Outcome transform (CtClass c, ProtectionDomain d) throws Exception {
 		for (CtBehavior b : c.getDeclaredBehaviors()) {
 			MethodInfo info = b.getMethodInfo();
 			CodeAttribute ca = info.getCodeAttribute();

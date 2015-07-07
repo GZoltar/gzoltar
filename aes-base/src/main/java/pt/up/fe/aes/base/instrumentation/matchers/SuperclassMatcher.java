@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
@@ -13,7 +15,7 @@ public class SuperclassMatcher implements Matcher {
     }
 
     @Override
-    public final boolean matches (CtClass c) {
+    public final boolean matches (CtClass c, ProtectionDomain d) {
         return matchesSuperclass (c);
     }
 

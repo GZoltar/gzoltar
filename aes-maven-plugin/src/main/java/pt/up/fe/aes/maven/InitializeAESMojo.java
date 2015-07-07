@@ -33,6 +33,7 @@ public class InitializeAESMojo extends AbstractAESMojo {
 			agentConfigs.setGranularityLevel(granularityLevel);
 			agentConfigs.setClassesToInstrument(classesToInstrument);
 			agentConfigs.setPrefixesToFilter(prefixesToFilter);
+			agentConfigs.setFilterTargetLocation(restrictOutputDirectory);
 			
 			setAgent(agentFilename, agentConfigs);
 
@@ -46,7 +47,11 @@ public class InitializeAESMojo extends AbstractAESMojo {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(getProjectProperty(SUREFIRE_ARG_LINE))
-			.append(" ")
+			.append(" -D")
+			.append(AgentConfigs.BUILD_LOCATION_KEY)
+			.append("='")
+			.append(project.getBuild().getDirectory())
+			.append("' ")
 			.append(argLine)
 			.append(" -javaagent:\"")
 			.append(agentFilename)

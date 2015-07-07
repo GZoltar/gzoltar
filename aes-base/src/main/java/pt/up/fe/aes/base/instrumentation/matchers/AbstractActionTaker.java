@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtClass;
 import javassist.CtMethod;
 
@@ -12,8 +14,8 @@ public abstract class AbstractActionTaker implements ActionTaker {
     }
 
     @Override
-    public final Action getAction (CtClass c) {
-        return getAction(matcher.matches(c));
+    public final Action getAction (CtClass c, ProtectionDomain d) {
+        return getAction(matcher.matches(c, d));
     }
 
     @Override

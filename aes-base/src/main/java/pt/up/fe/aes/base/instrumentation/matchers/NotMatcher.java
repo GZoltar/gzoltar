@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtClass;
 import javassist.CtMethod;
 
@@ -10,8 +12,8 @@ public class NotMatcher implements Matcher {
     }
 
     @Override
-    public final boolean matches (CtClass c) {
-        return !matcher.matches(c);
+    public final boolean matches (CtClass c, ProtectionDomain d) {
+        return !matcher.matches(c, d);
     }
 
     @Override

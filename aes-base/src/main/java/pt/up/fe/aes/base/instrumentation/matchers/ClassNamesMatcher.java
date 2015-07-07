@@ -1,5 +1,6 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +20,7 @@ public class ClassNamesMatcher implements Matcher {
     }
 
     @Override
-    public final boolean matches (CtClass c) {
+    public final boolean matches (CtClass c, ProtectionDomain d) {
         return matches(c.getName());
     }
 

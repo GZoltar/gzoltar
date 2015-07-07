@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtClass;
 import javassist.CtMethod;
 
@@ -11,7 +13,7 @@ public class FieldNameMatcher implements Matcher {
     }
 
     @Override
-    public boolean matches (CtClass c) {
+    public boolean matches (CtClass c, ProtectionDomain d) {
         try {
             return c.getDeclaredField(fieldName) != null;
         }

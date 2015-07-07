@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtClass;
 import javassist.CtMethod;
 
@@ -8,6 +10,6 @@ public interface ActionTaker {
         ACCEPT, NEXT, REJECT
     }
 
-    Action getAction (CtClass c);
+    Action getAction (CtClass c, ProtectionDomain d);
     Action getAction (CtClass c, CtMethod m);
 }

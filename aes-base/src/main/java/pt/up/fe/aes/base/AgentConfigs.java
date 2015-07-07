@@ -20,6 +20,7 @@ import pt.up.fe.aes.base.instrumentation.matchers.ModifierMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.NotMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.OrMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.PrefixMatcher;
+import pt.up.fe.aes.base.instrumentation.matchers.SourceLocationMatcher;
 import pt.up.fe.aes.base.messaging.Client;
 import flexjson.JSON;
 import flexjson.JSONDeserializer;
@@ -27,10 +28,13 @@ import flexjson.JSONSerializer;
 
 public class AgentConfigs {
 
+	public static final String BUILD_LOCATION_KEY = "AESbuildLocationKey";
+	
 	private int port = 1234;
 	private GranularityLevel granularityLevel = GranularityLevel.method;
 	private List<String> classesToInstrument = null;
 	private List<String> prefixesToFilter = null;
+	private boolean filterTargetLocation = false;
 
 	public void setPort (int port) {
         this.port = port;
@@ -63,6 +67,14 @@ public class AgentConfigs {
 	public void setPrefixesToFilter(List<String> prefixesToFilter) {
 		this.prefixesToFilter = prefixesToFilter;
 	}
+	
+	public boolean getFilterTargetLocation() {
+		return filterTargetLocation;
+	}
+
+	public void setFilterTargetLocation(boolean filterTargetLocation) {
+		this.filterTargetLocation = filterTargetLocation;
+	}
 
     @JSON(include = false)
 	public List<Pass> getInstrumentationPasses() {
@@ -78,10 +90,21 @@ public class AgentConfigs {
 		// Ignores classes in particular packages
 		List<String> prefixes = new ArrayList<String> ();
         Collections.addAll(prefixes, "javax.", "java.", "sun.", "com.sun.", 
-        		"junit.", "org.junit.", "org.apache.maven", "pt.up.fe.aes.");
+        		"org.apache.maven", "pt.up.fe.aes.");
         
         if (prefixesToFilter != null)
         	prefixes.addAll(prefixesToFilter);
+        
+        String location = System.getProperty(BUILD_LOCATION_KEY, null);
+        
+        if (filterTargetLocation && location != null) {
+        	SourceLocationMatcher slm = new SourceLocationMatcher(location);
+        	FilterPass locationFilter = new FilterPass(new BlackList(new NotMatcher(slm)));
+        	instrumentationPasses.add(locationFilter);
+        }
+        else {
+        	Collections.addAll(prefixes, "junit.", "org.junit.");
+        }
 
         PrefixMatcher pMatcher = new PrefixMatcher(prefixes);
 

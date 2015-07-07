@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtClass;
 import javassist.CtMethod;
 
@@ -11,9 +13,9 @@ public class OrMatcher implements Matcher {
     }
 
     @Override
-    public final boolean matches (CtClass c) {
+    public final boolean matches (CtClass c, ProtectionDomain d) {
         for (Matcher mat : matchers) {
-            if (mat.matches(c))
+            if (mat.matches(c, d))
                 return true;
         }
 

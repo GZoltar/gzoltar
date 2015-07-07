@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base.instrumentation.matchers;
 
+import java.security.ProtectionDomain;
+
 import javassist.CtClass;
 import javassist.CtMethod;
 
@@ -12,7 +14,7 @@ public class MethodAnnotationMatcher implements Matcher {
     }
 
     @Override
-    public final boolean matches (CtClass c) {
+    public final boolean matches (CtClass c, ProtectionDomain d) {
         return false;
     }
 

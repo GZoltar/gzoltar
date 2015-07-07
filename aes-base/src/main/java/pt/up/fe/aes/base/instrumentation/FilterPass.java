@@ -1,5 +1,6 @@
 package pt.up.fe.aes.base.instrumentation;
 
+import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,9 +44,9 @@ public class FilterPass implements Pass {
     }
 
     @Override
-    public Outcome transform (CtClass c) throws Exception {
+    public Outcome transform (CtClass c, ProtectionDomain d) throws Exception {
         for (ActionTaker at : actionTakers) {
-            ActionTaker.Action ret = at.getAction(c);
+            ActionTaker.Action ret = at.getAction(c, d);
 
             switch (ret) {
             case ACCEPT:
