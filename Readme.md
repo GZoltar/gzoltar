@@ -111,3 +111,7 @@ For Junit3 test cases, the appropriate test runner will still be used.
 
 If there is an `argLine` parameter set in the declaration of `maven-surefire-plugin`, that will override `aes-maven-plugin`'s request to add an agent to the test JVM. 
 To circumvent this, you can add your JVM options in `aes-maven-plugin`'s `argLine` parameter detailed [here](#other-useful-configurations).
+
+#### restrictOutputDirectory
+
+To now the location of each class at runtime, we use the `java.security.ProtectionDomain` API. Depending on the security policiy being enforced, access to that specific API may be blocked.
