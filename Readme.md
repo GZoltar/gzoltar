@@ -83,6 +83,11 @@ Restrict classes allowed for instrumentation:
 </classesToInstrument>
 ```
 
+Only instrument classes located inside `${project.build.directory}` (default is false):
+```
+<restrictOutputDirectory>true</restrictOutputDirectory>
+```
+
 Report directory (default is `${project.build.directory}/aes-report`):
 ```
 <reportDirectory>/temp/reports</reportDirectory>
