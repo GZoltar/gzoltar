@@ -15,6 +15,11 @@ public class MethodAnnotationMatcher implements Matcher {
 
     @Override
     public final boolean matches (CtClass c, ProtectionDomain d) {
+    	for(CtMethod m : c.getDeclaredMethods()) {
+    		if (matches(c, m)) {
+    			return true;
+    		}
+    	}
         return false;
     }
 
