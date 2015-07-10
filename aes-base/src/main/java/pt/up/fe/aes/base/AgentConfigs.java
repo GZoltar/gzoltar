@@ -1,5 +1,7 @@
 package pt.up.fe.aes.base;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -96,6 +98,12 @@ public class AgentConfigs {
         	prefixes.addAll(prefixesToFilter);
         
         String location = System.getProperty(BUILD_LOCATION_KEY, null);
+        if (location != null) {
+        	try {
+        		File f = new File(location);
+				location = f.toURI().toURL().getPath();
+			} catch (MalformedURLException e) { }
+        }
         
         if (filterTargetLocation && location != null) {
         	SourceLocationMatcher slm = new SourceLocationMatcher(location);
