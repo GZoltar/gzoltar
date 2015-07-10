@@ -11,9 +11,28 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <server.id>crowbar-io</server.id>
+    <server.name>crowbar-io</server.name>
+    <server.sftp>sftp://sftp.dc2.gpaas.net/vhosts/crowbar.io/htdocs/maven</server.sftp>
+    <server.url>http://crowbar.io/maven/</server.url>
 	</properties>
+  
+  <distributionManagement>
+    <repository>
+      <id>${server.id}</id>
+      <name>${server.name}</name>
+      <url>${server.sftp}</url>
+    </repository>
+  </distributionManagement>
 
 	<build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh</artifactId>
+        <version>2.6</version>
+      </extension>
+    </extensions>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
