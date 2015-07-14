@@ -5,7 +5,7 @@ import pt.up.fe.aes.base.model.Node.Type;
 
 public class SpectrumBuilder implements EventListener {
 
-	private SpectrumImpl spectrum;
+	protected SpectrumImpl spectrum;
 	
 	public SpectrumBuilder() {
 		resetSpectrum();

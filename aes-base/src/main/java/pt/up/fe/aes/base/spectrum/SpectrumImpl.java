@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import pt.up.fe.aes.base.model.Node;
 import pt.up.fe.aes.base.model.Tree;
 
 public class SpectrumImpl implements Spectrum {
@@ -71,6 +72,10 @@ public class SpectrumImpl implements Spectrum {
 	@Override
 	public Tree getTree() {
 		return tree;
+	}
+	
+	public void setTree(Tree tree) {
+		this.tree = tree;
 	}
 
 	public void addProbe(int id, int nodeId) {
@@ -156,4 +161,16 @@ public class SpectrumImpl implements Spectrum {
 	public BitSet getTransactionActivity(int t) {
 		return transactions.get(t).activity;
 	}
+	
+	@Override
+	public String getTransactionName(int t) {
+		return transactions.get(t).name;
+	}
+	
+	@Override
+	public Node getNodeOfProbe(int probeId) {
+		int nodeId = probes.get(probeId);
+		return tree.getNode(nodeId);
+	}
+	
 }

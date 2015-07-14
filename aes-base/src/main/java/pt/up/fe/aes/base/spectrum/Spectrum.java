@@ -3,25 +3,30 @@ package pt.up.fe.aes.base.spectrum;
 import java.util.BitSet;
 import java.util.List;
 
+import pt.up.fe.aes.base.model.Node;
 import pt.up.fe.aes.base.model.Tree;
 
 public interface Spectrum {
 
-	public int getComponentsSize();
+	int getComponentsSize();
 
-	public int getTransactionsSize();
+	int getTransactionsSize();
 
-	public boolean isInvolved(int t, int c);
+	boolean isInvolved(int t, int c);
 
-	public boolean isError(int t);
+	boolean isError(int t);
 
-	public Tree getTree();
+	Tree getTree();
 	
-	public void print();
+	void print();
 
 	List<Integer> getTestFrequencyPerProbe();
 
 	List<Integer> getTestFrequencyPerNode();
 	
-	public BitSet getTransactionActivity(int t);
+	BitSet getTransactionActivity(int t);
+
+	String getTransactionName(int t);
+
+	Node getNodeOfProbe(int probeId);
 }
