@@ -7,7 +7,7 @@ public class Node {
 	public static enum Type {
 		PACKAGE("."),
 		CLASS("$"),
-		METHOD("!"),
+		METHOD("#"),
 		LINE(":");
 
 		private final String symbol;
@@ -129,4 +129,19 @@ public class Node {
 		}
 	}
 
+	public String getFullName() {
+		Node p = getParent();
+
+        if (p == null || p.isRoot())
+            return name;
+
+        return p.getFullName() + getSymbol(p.type, type) + name;
+	}
+	
+	private static String getSymbol(Type t1, Type t2) {
+		if (t1 == Type.PACKAGE) {
+			return t1.getSymbol();
+		}
+		else return t2.getSymbol();
+	}
 }

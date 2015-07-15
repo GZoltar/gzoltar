@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import pt.up.fe.aes.base.model.Node.Type;
+
 public class Tree implements Iterable<Node> {
 
 	private ArrayList<Node> nodes = new ArrayList<Node> ();
@@ -57,7 +59,7 @@ public class Tree implements Iterable<Node> {
 	}
 
 	private void print(Node n, String padding) {
-		System.out.println(padding + n.getId() + " " + n.getName());
+		System.out.println(padding + n.getId() + " " + n.getFullName());
 		for(Node c : n.getChildren()) {
 			print(c, padding + "  ");
 		}
@@ -74,5 +76,16 @@ public class Tree implements Iterable<Node> {
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+	
+	public List<Node> getNodesOfType(Type t) {
+		List<Node> nodesOfType = new ArrayList<Node>();
+		
+		for(Node node : nodes) {
+			if(node.getType() == t)
+				nodesOfType.add(node);
+		}
+		
+		return nodesOfType;
 	}
 }
