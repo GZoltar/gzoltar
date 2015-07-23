@@ -15,7 +15,6 @@ import pt.up.fe.aes.base.instrumentation.StackSizePass;
 import pt.up.fe.aes.base.instrumentation.TestFilterPass;
 import pt.up.fe.aes.base.instrumentation.granularity.GranularityFactory.GranularityLevel;
 import pt.up.fe.aes.base.instrumentation.matchers.BlackList;
-import pt.up.fe.aes.base.instrumentation.matchers.ClassNamesMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.FieldNameMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.Matcher;
 import pt.up.fe.aes.base.instrumentation.matchers.ModifierMatcher;
@@ -34,7 +33,6 @@ public class AgentConfigs {
 	
 	private int port = 1234;
 	private GranularityLevel granularityLevel = GranularityLevel.method;
-	private List<String> classesToInstrument = null;
 	private List<String> prefixesToFilter = null;
 	private boolean filterTargetLocation = false;
 
@@ -52,14 +50,6 @@ public class AgentConfigs {
 
 	public void setGranularityLevel(GranularityLevel granularityLevel) {
 		this.granularityLevel = granularityLevel;
-	}
-	
-	public List<String> getClassesToInstrument() {
-		return classesToInstrument;
-	}
-
-	public void setClassesToInstrument(List<String> classesToInstrument) {
-		this.classesToInstrument = classesToInstrument;
 	}
 	
 	public List<String> getPrefixesToFilter() {
@@ -81,13 +71,6 @@ public class AgentConfigs {
     @JSON(include = false)
 	public List<Pass> getInstrumentationPasses() {
 		List<Pass> instrumentationPasses = new ArrayList<Pass>();
-		
-		// Whitelist classes to instrument if they exist
-		if (classesToInstrument != null && !classesToInstrument.isEmpty()) {
-			ClassNamesMatcher cnm = new ClassNamesMatcher(classesToInstrument);
-			FilterPass classesFilter = new FilterPass(new BlackList(new NotMatcher(cnm)));
-			instrumentationPasses.add(classesFilter);
-		}
 		
 		// Ignores classes in particular packages
 		List<String> prefixes = new ArrayList<String> ();

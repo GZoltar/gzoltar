@@ -109,6 +109,11 @@ public class Client implements EventListener {
 	public void endTransaction(String transactionName, boolean[] activity, boolean isError) {
 		postMessage(new EndTransactionMessage(transactionName, activity, isError));
 	}
+	
+	@Override
+	public void endTransaction(String transactionName, boolean[] activity, int hashCode, boolean isError) {
+		postMessage(new EndTransactionMessage(transactionName, activity, isError));
+	}
 
 	@Override
 	public void endSession() {

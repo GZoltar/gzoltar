@@ -14,7 +14,7 @@ public class EntropyMetric extends AbstractMetric {
 		LinkedHashMap<Integer, Integer> counter = new LinkedHashMap<Integer, Integer>();
 		
 		for(int t = 0; t < spectrum.getTransactionsSize(); t++) {
-			int hash = spectrum.getTransactionActivity(t).hashCode();
+			int hash = getHash(t);
 			
 			if(counter.containsKey(hash)) {
 				counter.put(hash, counter.get(hash) + 1);
@@ -42,8 +42,25 @@ public class EntropyMetric extends AbstractMetric {
 		return Math.log(value) / Math.log(2);
 	}
 
+	protected int getHash(int t) {
+		return spectrum.getTransactionActivity(t).hashCode();
+	}
+	
 	@Override
 	public String getName() {
 		return "Entropy";
+	}
+	
+	public static class NewEntropyMetric extends EntropyMetric {
+		
+		@Override
+		protected int getHash(int t) {
+			return spectrum.getTransactionHashCode(t);
+		}
+		
+		@Override
+		public String getName() {
+			return "(New) Entropy";
+		}
 	}
 }

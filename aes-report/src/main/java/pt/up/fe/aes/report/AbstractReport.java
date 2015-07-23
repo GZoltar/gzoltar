@@ -7,11 +7,14 @@ import java.util.List;
 import pt.up.fe.aes.base.spectrum.Spectrum;
 import pt.up.fe.aes.report.metrics.AmbiguityMetric;
 import pt.up.fe.aes.report.metrics.ApproximateEntropyMetric;
+import pt.up.fe.aes.report.metrics.ApproximateEntropyMetric.NewApproximateEntropyMetric;
 import pt.up.fe.aes.report.metrics.CoverageMetric;
 import pt.up.fe.aes.report.metrics.EntropyMetric;
+import pt.up.fe.aes.report.metrics.EntropyMetric.NewEntropyMetric;
 import pt.up.fe.aes.report.metrics.Metric;
 import pt.up.fe.aes.report.metrics.RhoMetric;
 import pt.up.fe.aes.report.metrics.SimpsonMetric;
+import pt.up.fe.aes.report.metrics.SimpsonMetric.NewSimpsonMetric;
 
 public abstract class AbstractReport {
 
@@ -29,12 +32,17 @@ public abstract class AbstractReport {
 		return spectrum;
 	}
 	
+	protected boolean hasActiveTransactions() {
+		return getSpectrum().getTransactionsSize() > 0;
+	}
+	
 	protected List<Metric> getMetrics() {
 		if(metrics == null) {
 			metrics = new ArrayList<Metric>();
 			Collections.addAll(metrics, new RhoMetric(), new SimpsonMetric(),
-					new AmbiguityMetric(), new EntropyMetric(), new ApproximateEntropyMetric(),
-					new CoverageMetric(granularity));
+					new AmbiguityMetric(), new ApproximateEntropyMetric(), new EntropyMetric(),
+					new CoverageMetric(granularity), new NewSimpsonMetric(), new NewApproximateEntropyMetric(),
+					new NewEntropyMetric());
 
 			for(Metric metric : metrics) {
 				metric.setSpectrum(getSpectrum());
@@ -48,7 +56,7 @@ public abstract class AbstractReport {
 		
 		addDescription(scores);
 		for(Metric metric : getMetrics()) {
-			scores.add(metric.getName() + ": " + metric.calculate());
+			scores.add(metric.getName() + ": " + String.format("%.4f", metric.calculate()));
 		}
 
 		return scores;

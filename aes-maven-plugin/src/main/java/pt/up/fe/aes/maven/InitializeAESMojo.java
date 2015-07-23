@@ -31,7 +31,6 @@ public class InitializeAESMojo extends AbstractAESMojo {
 			
 			agentConfigs.setPort(serverSocket.getLocalPort());
 			agentConfigs.setGranularityLevel(granularityLevel);
-			agentConfigs.setClassesToInstrument(classesToInstrument);
 			agentConfigs.setPrefixesToFilter(prefixesToFilter);
 			agentConfigs.setFilterTargetLocation(restrictOutputDirectory);
 			

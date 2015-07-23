@@ -12,7 +12,7 @@ public class SimpsonMetric extends AbstractMetric {
 		
 		LinkedHashMap<Integer, Integer> species = new LinkedHashMap<Integer, Integer>();
 		for (int t = 0; t < spectrum.getTransactionsSize(); t++) {
-			int hash = spectrum.getTransactionActivity(t).hashCode();
+			int hash = getHash(t);
 			if (species.containsKey(hash)) {
 				species.put(hash, species.get(hash) + 1);
 			}
@@ -34,6 +34,10 @@ public class SimpsonMetric extends AbstractMetric {
 		return diversity;
 	}
 	
+	protected int getHash(int t) {
+		return spectrum.getTransactionActivity(t).hashCode();
+	}
+	
 	@Override
 	public String getName() {
 		return "Simpson";
@@ -48,6 +52,30 @@ public class SimpsonMetric extends AbstractMetric {
 		@Override
 		public String getName() {
 			return "Inverted Simpson";
+		}
+	}
+	
+	public static class NewInvertedSimpsonMetric extends InvertedSimpsonMetric {
+		@Override
+		protected int getHash(int t) {
+			return spectrum.getTransactionHashCode(t);
+		}
+		
+		@Override
+		public String getName() {
+			return "(New) Inverted Simpson";
+		}
+	}
+	
+	public static class NewSimpsonMetric extends SimpsonMetric {
+		@Override
+		protected int getHash(int t) {
+			return spectrum.getTransactionHashCode(t);
+		}
+		
+		@Override
+		public String getName() {
+			return "(New) Simpson";
 		}
 	}
 

@@ -88,4 +88,13 @@ public class Tree implements Iterable<Node> {
 		
 		return nodesOfType;
 	}
+
+	public Node findNode(String name) {
+		for (Node node : nodes) {
+			if (name.equals( node.getFullName() )) {
+				return node;
+			}
+		}
+		return null;
+	}
 }

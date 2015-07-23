@@ -23,6 +23,11 @@ public class SpectrumBuilder implements EventListener {
 	public void endTransaction(String transactionName, boolean[] activity, boolean isError) {
 		spectrum.addTransaction(transactionName, activity, isError);
 	}
+	
+	@Override
+	public void endTransaction(String transactionName, boolean[] activity, int hashCode, boolean isError) {
+		spectrum.addTransaction(transactionName, activity, hashCode, isError);
+	}
 
 	@Override
 	public void addNode(int id, String name, Type type, int parentId) {

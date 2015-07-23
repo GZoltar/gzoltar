@@ -45,7 +45,10 @@ public class OverallReport extends AbstractReport {
 		List<AbstractReport> reports = new ArrayList<AbstractReport>();
 		
 		for (Node node : classNodes) {
-			reports.add(new FilteredReport(getSpectrum(), granularity, node));
+			FilteredReport fr = new FilteredReport(getSpectrum(), granularity, node);
+			if (fr.hasActiveTransactions()) {
+				reports.add(fr);
+			}
 		}
 		
 		return reports;

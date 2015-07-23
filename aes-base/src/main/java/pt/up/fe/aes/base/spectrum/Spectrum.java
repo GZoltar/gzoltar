@@ -29,4 +29,6 @@ public interface Spectrum {
 	String getTransactionName(int t);
 
 	Node getNodeOfProbe(int probeId);
+	
+	int getTransactionHashCode(int t);
 }

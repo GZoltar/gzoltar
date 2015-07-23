@@ -26,6 +26,8 @@ public class FilteredSpectrumBuilder extends SpectrumBuilder {
 	}
 
 	public FilteredSpectrumBuilder includeNode(Node node) {
+		if (node == null)
+			return this;
 		return includeNode(node.getId());
 	}
 
@@ -35,6 +37,8 @@ public class FilteredSpectrumBuilder extends SpectrumBuilder {
 	}
 
 	public FilteredSpectrumBuilder excludeNode(Node node) {
+		if (node == null)
+			return this;
 		return excludeNode(node.getId());
 	}
 
@@ -82,13 +86,14 @@ public class FilteredSpectrumBuilder extends SpectrumBuilder {
 				boolean isError = source.isError(t);
 				boolean newActivity[] = new boolean[numberOfProbes];
 				BitSet oldActivity = source.getTransactionActivity(t);
+				int hashCode = source.getTransactionHashCode(t);
 
 				for (int p = 0; p < numberOfProbes; p++) {
 					int oldProbeId = newProbeMapping.get(p);
 					newActivity[p] = oldActivity.get(oldProbeId);
 				}
 
-				endTransaction(transactionName, newActivity, isError);
+				endTransaction(transactionName, newActivity, hashCode, isError);
 			}
 		}
 		return spectrum;

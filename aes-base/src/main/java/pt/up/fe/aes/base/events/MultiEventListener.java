@@ -24,6 +24,13 @@ public class MultiEventListener implements EventListener {
 			el.endTransaction(transactionName, activity, isError);
 		}
 	}
+	
+	@Override
+	public void endTransaction(String transactionName, boolean[] activity, int hashCode, boolean isError) {
+		for(EventListener el : eventListeners) {
+			el.endTransaction(transactionName, activity, hashCode, isError);
+		}
+	}
 
 	@Override
 	public void addNode(int id, String name, Type type, int parentId) {
