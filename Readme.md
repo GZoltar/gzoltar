@@ -33,7 +33,7 @@ Add the following to a Java project's `pom.xml`:
       <plugin>
         <groupId>pt.up.fe.aes</groupId>
         <artifactId>aes-maven-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.1-SNAPSHOT</version>
       </plugin>
     </plugins>
   </pluginManagement>
