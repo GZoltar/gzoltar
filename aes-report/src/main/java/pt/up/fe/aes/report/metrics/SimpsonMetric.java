@@ -55,7 +55,7 @@ public class SimpsonMetric extends AbstractMetric {
 		}
 	}
 	
-	public static class NewInvertedSimpsonMetric extends InvertedSimpsonMetric {
+	public static class GlobalInvertedSimpsonMetric extends InvertedSimpsonMetric {
 		@Override
 		protected int getHash(int t) {
 			return spectrum.getTransactionHashCode(t);
@@ -63,11 +63,11 @@ public class SimpsonMetric extends AbstractMetric {
 		
 		@Override
 		public String getName() {
-			return "(New) Inverted Simpson";
+			return "(Global) Inverted Simpson";
 		}
 	}
 	
-	public static class NewSimpsonMetric extends SimpsonMetric {
+	public static class GlobalSimpsonMetric extends SimpsonMetric {
 		@Override
 		protected int getHash(int t) {
 			return spectrum.getTransactionHashCode(t);
@@ -75,7 +75,7 @@ public class SimpsonMetric extends AbstractMetric {
 		
 		@Override
 		public String getName() {
-			return "(New) Simpson";
+			return "(Global) Simpson";
 		}
 	}
 

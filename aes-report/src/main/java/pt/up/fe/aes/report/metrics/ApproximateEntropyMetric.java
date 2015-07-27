@@ -1,8 +1,8 @@
 package pt.up.fe.aes.report.metrics;
 
 import pt.up.fe.aes.base.spectrum.Spectrum;
+import pt.up.fe.aes.report.metrics.SimpsonMetric.GlobalInvertedSimpsonMetric;
 import pt.up.fe.aes.report.metrics.SimpsonMetric.InvertedSimpsonMetric;
-import pt.up.fe.aes.report.metrics.SimpsonMetric.NewInvertedSimpsonMetric;
 import pt.up.fe.aes.report.metrics.reducers.MultiplicationReducer;
 
 public class ApproximateEntropyMetric implements Metric {
@@ -35,18 +35,18 @@ public class ApproximateEntropyMetric implements Metric {
 		return "Approximate Entropy";
 	}
 	
-	public static class NewApproximateEntropyMetric extends ApproximateEntropyMetric {
+	public static class GlobalApproximateEntropyMetric extends ApproximateEntropyMetric {
 		@Override
 		protected Metric generateMetric() {
 			return new MultiplicationReducer(
 						new RhoMetric(), 
-						new NewInvertedSimpsonMetric(), 
+						new GlobalInvertedSimpsonMetric(), 
 						new AmbiguityMetric());
 		}
 		
 		@Override
 		public String getName() {
-			return "(New) Approximate Entropy";
+			return "(Global) Approximate Entropy";
 		}
 	}
 }

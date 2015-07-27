@@ -62,7 +62,7 @@ public class EntropyMetric extends AbstractMetric {
 		return "Entropy";
 	}
 
-	public static class NewEntropyMetric extends EntropyMetric {
+	public static class GlobalEntropyMetric extends EntropyMetric {
 		@Override
 		protected int getComponentsSize() {
 			int delta = globalCounter.size() - localCounter.size();
@@ -76,7 +76,7 @@ public class EntropyMetric extends AbstractMetric {
 
 		@Override
 		public String getName() {
-			return "(New) Entropy";
+			return "(Global) Entropy";
 		}
 	}
 }
