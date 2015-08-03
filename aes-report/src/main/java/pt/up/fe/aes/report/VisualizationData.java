@@ -34,7 +34,12 @@ public class VisualizationData {
 						
 			if(t.getNode(i).isLeaf()) {
 				double max = Math.max(nodeFrequency.get(i), getMaxFrequencyEstimate(t.getNode(i)));
-				sb.append(nodeFrequency.get(i) / max);
+				//sb.append(nodeFrequency.get(i) / max);
+
+				double hue = nodeFrequency.get(i) / (double)spectrum.getTransactionsSize();
+				hue = 2.0 * Math.abs(0.5 - hue);
+				sb.append(hue * nodeFrequency.get(i) / max);
+				
 			}
 		}
 		sb.append("]");

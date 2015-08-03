@@ -18,7 +18,7 @@ public class SourceLocationMatcher implements Matcher {
 	public boolean matches(CtClass c, ProtectionDomain d) {
 		if (d != null) {
 			CodeSource cs = d.getCodeSource();
-			if (cs != null) {
+			if (cs != null && cs.getLocation() != null) {
 				return cs.getLocation().getPath().startsWith(location);
 			}
 		}

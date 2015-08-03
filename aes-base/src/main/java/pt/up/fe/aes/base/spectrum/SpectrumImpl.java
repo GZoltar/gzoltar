@@ -194,4 +194,32 @@ public class SpectrumImpl implements Spectrum {
 		return transactions.get(t).hashCode;
 	}
 
+	public double getMaxCompTrans(int c) {
+		double n = 0;
+		for(int t = 0; t < getTransactionsSize(); t++) {
+			int cc = probes.indexOf(c);
+			if(cc != -1 && isInvolved(t,cc)) {
+				int nact = transactions.get(t).activity.cardinality();
+				n = nact > n ? nact : n;
+			}
+		}
+		return n;
+	}
+
+	public double getMinCompTrans(int c) {
+		double n = getComponentsSize() + 1;
+		for(int t = 0; t < getTransactionsSize(); t++) {
+			int cc = probes.indexOf(c);
+			if(cc != -1 && isInvolved(t,cc)) {
+				int nact = transactions.get(t).activity.cardinality();
+				n = nact < n ? nact : n;
+			}
+		}
+		if(n == getComponentsSize() + 1 ) {
+			return 0;
+		} 
+		else {
+			return n;
+		}
+	}
 }

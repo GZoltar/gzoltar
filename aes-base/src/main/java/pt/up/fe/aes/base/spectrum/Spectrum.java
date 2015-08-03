@@ -31,4 +31,8 @@ public interface Spectrum {
 	Node getNodeOfProbe(int probeId);
 	
 	int getTransactionHashCode(int t);
+	
+	double getMinCompTrans(int c) ;
+	
+	double getMaxCompTrans(int c) ;
 }
