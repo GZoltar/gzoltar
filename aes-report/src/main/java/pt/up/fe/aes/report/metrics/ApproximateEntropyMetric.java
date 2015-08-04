@@ -43,10 +43,5 @@ public class ApproximateEntropyMetric implements Metric {
 						new GlobalInvertedSimpsonMetric(), 
 						new AmbiguityMetric());
 		}
-		
-		@Override
-		public String getName() {
-			return "(Global) Approximate Entropy";
-		}
 	}
 }

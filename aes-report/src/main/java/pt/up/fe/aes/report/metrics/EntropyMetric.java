@@ -73,10 +73,5 @@ public class EntropyMetric extends AbstractMetric {
 		protected LinkedHashMap<Integer, Integer> getCounter() {
 			return globalCounter;
 		}
-
-		@Override
-		public String getName() {
-			return "(Global) Entropy";
-		}
 	}
 }
