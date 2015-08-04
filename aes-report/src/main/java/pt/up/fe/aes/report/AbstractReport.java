@@ -11,7 +11,7 @@ import pt.up.fe.aes.report.metrics.CoverageMetric;
 import pt.up.fe.aes.report.metrics.EntropyMetric.GlobalEntropyMetric;
 import pt.up.fe.aes.report.metrics.Metric;
 import pt.up.fe.aes.report.metrics.RhoMetric;
-import pt.up.fe.aes.report.metrics.SimpsonMetric.GlobalSimpsonMetric;
+import pt.up.fe.aes.report.metrics.SimpsonMetric.GlobalInvertedSimpsonMetric;
 
 public abstract class AbstractReport {
 
@@ -38,7 +38,7 @@ public abstract class AbstractReport {
 			metrics = new ArrayList<Metric>();
 			Collections.addAll(metrics, 
 					new RhoMetric(), 
-					new GlobalSimpsonMetric(),
+					new GlobalInvertedSimpsonMetric(),
 					new AmbiguityMetric(), 
 					new GlobalApproximateEntropyMetric(),
 					new GlobalEntropyMetric(),

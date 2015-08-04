@@ -51,7 +51,7 @@ public class SimpsonMetric extends AbstractMetric {
 		
 		@Override
 		public String getName() {
-			return "Inverted Simpson";
+			return "Inverse Simpson";
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class SimpsonMetric extends AbstractMetric {
 		
 		@Override
 		public String getName() {
-			return "Inverted Simpson";
+			return "Inverse Simpson";
 		}
 	}
 	
