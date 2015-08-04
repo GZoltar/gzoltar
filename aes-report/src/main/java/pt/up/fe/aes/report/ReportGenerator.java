@@ -19,6 +19,7 @@ public class ReportGenerator {
 	private static final String INDEX_FILE = "visualization.html";
 	private static final String METRICS_FILE = "metrics.txt";
 	private static final String CLASS_METRICS_FILE = "class-metrics.txt";
+	private static final String PACKAGE_METRICS_FILE = "package-metrics.txt";
 	private static final String SEARCH_TOKEN = "window.data_ex={";
 
 	private final OverallReport report;
@@ -38,29 +39,37 @@ public class ReportGenerator {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
 
 
 	private List<String> writeMetrics(File reportDirectory) throws IOException {
 		File metricsFile = new File(reportDirectory, METRICS_FILE);
-		
+
 		List<String> scores = report.getReport();
 		FileUtils.writeLines(metricsFile, scores, false);
 
+		//per-package metrics
+		writeFilteredReport(reportDirectory, PACKAGE_METRICS_FILE, report.getPerPackageReports());
+
 		//per-class metrics
-		File classMetricsFile = new File(reportDirectory, CLASS_METRICS_FILE);
-		List<String> classScores = new ArrayList<String>();
-		for(AbstractReport r : report.getPerClassReports()) {
-			classScores.addAll(r.getReport());
-			classScores.add("");
-		}
-		FileUtils.writeLines(classMetricsFile, classScores, false);
-		
+		writeFilteredReport(reportDirectory, CLASS_METRICS_FILE, report.getPerClassReports());
+
 		return scores;
 	}
 
+
+	private static void writeFilteredReport(File reportDirectory, String metricsFilename, 
+			List<AbstractReport> reports) throws IOException {
+		File metricsFile = new File(reportDirectory, metricsFilename);
+		List<String> scores = new ArrayList<String>();
+		for(AbstractReport r : reports) {
+			scores.addAll(r.getReport());
+			scores.add("");
+		}
+		FileUtils.writeLines(metricsFile, scores, false);
+	}
 
 	private void writeVisualization(File targetDir, VisualizationData vd) throws IOException {
 

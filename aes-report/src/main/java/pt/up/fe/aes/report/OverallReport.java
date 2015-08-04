@@ -43,14 +43,30 @@ public class OverallReport extends AbstractReport {
 	public List<AbstractReport> getPerClassReports() {
 		List<Node> classNodes = getSpectrum().getTree().getNodesOfType(Type.CLASS);
 		List<AbstractReport> reports = new ArrayList<AbstractReport>();
-		
+
 		for (Node node : classNodes) {
 			FilteredReport fr = new FilteredReport(getSpectrum(), granularity, node);
 			if (fr.hasActiveTransactions()) {
 				reports.add(fr);
 			}
 		}
-		
+
+		return reports;
+	}
+
+	public List<AbstractReport> getPerPackageReports() {
+		List<Node> classNodes = getSpectrum().getTree().getNodesOfType(Type.PACKAGE);
+		List<AbstractReport> reports = new ArrayList<AbstractReport>();
+
+		for (Node node : classNodes) {
+			if (node.hasChildrenOfType(Type.CLASS)) {
+				FilteredReport fr = new FilteredReport(getSpectrum(), granularity, node);
+				if (fr.hasActiveTransactions()) {
+					reports.add(fr);
+				}
+			}
+		}
+
 		return reports;
 	}
 }

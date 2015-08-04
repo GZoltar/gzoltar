@@ -144,4 +144,13 @@ public class Node {
 		}
 		else return t2.getSymbol();
 	}
+	
+	public boolean hasChildrenOfType(Type t) {
+		for (Node child : children) {
+			if(child.type == t) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
