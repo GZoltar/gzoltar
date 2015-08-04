@@ -83,7 +83,7 @@ Restrict classes allowed for instrumentation:
 </classesToInstrument>
 ```
 
-Only instrument classes located inside `${project.build.directory}` (default is `false`):
+Only instrument classes located inside `${project.build.directory}` (default is `true`):
 ```
 <restrictOutputDirectory>true</restrictOutputDirectory>
 ```
@@ -114,4 +114,4 @@ To circumvent this, you can add your JVM options in `aes-maven-plugin`'s `argLin
 
 #### restrictOutputDirectory
 
-To now the location of each class at runtime, we use the `java.security.ProtectionDomain` API. Depending on the security policy being enforced, access to that specific API may be blocked.
+To know the location of each class at runtime, we use the `java.security.ProtectionDomain` API. Depending on the security policy being enforced, access to that specific API may be blocked.

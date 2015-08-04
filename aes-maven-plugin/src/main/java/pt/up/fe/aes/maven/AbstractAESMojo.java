@@ -39,7 +39,7 @@ public abstract class AbstractAESMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project.build.directory}/aes-report/")
 	protected File reportDirectory;
 	
-	@Parameter(defaultValue = "false")
+	@Parameter(defaultValue = "true")
 	protected boolean restrictOutputDirectory;
 	
 	protected boolean shouldInstrument() {
