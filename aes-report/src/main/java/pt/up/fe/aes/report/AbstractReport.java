@@ -65,4 +65,38 @@ public abstract class AbstractReport {
 
 	protected abstract void addDescription(List<String> scores);
 	
+	public abstract String getName();
+	
+	public List<String> exportSpectrum() {
+		
+		List<String> output = new ArrayList<String>();
+		Spectrum spectrum = getSpectrum();
+		
+		int transactions = spectrum.getTransactionsSize();
+		int components = spectrum.getComponentsSize();
+		
+		StringBuilder sb = new StringBuilder();
+		for (int c = 0; c < components; c++) {
+			sb.append(";");
+			sb.append(spectrum.getNodeOfProbe(c).getFullName());
+		}
+		output.add(sb.toString());
+		
+		for (int t = 0; t < transactions ; t++) {
+			sb.setLength(0);
+			sb.append(spectrum.getTransactionName(t));
+			
+			for (int c = 0; c < components; c++) {
+				if (spectrum.isInvolved(t, c)) {
+					sb.append(";1");
+				}
+				else {
+					sb.append(";0");
+				}
+			}
+			output.add(sb.toString());
+		}
+		
+		return output;
+	}
 }

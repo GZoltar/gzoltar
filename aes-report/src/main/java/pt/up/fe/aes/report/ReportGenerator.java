@@ -18,8 +18,8 @@ public class ReportGenerator {
 	private static final String DATA_FILE = "report-data.zip";
 	private static final String INDEX_FILE = "visualization.html";
 	private static final String METRICS_FILE = "metrics.txt";
-	private static final String CLASS_METRICS_FILE = "class-metrics.txt";
-	private static final String PACKAGE_METRICS_FILE = "package-metrics.txt";
+	private static final String SPECTRA_DIRECTORY = "spectra";
+	private static final String SPECTRA_EXT = ".csv";
 	private static final String SEARCH_TOKEN = "window.data_ex={";
 
 	private final OverallReport report;
@@ -49,24 +49,31 @@ public class ReportGenerator {
 
 		List<String> scores = report.getReport();
 		FileUtils.writeLines(metricsFile, scores, false);
+		
+		File spectraDirectory = new File(reportDirectory, SPECTRA_DIRECTORY);
+		File projectSpectrum = new File(spectraDirectory, "spectrum" + SPECTRA_EXT);
+		FileUtils.writeLines(projectSpectrum, report.exportSpectrum(), false);
 
 		//per-package metrics
-		writeFilteredReport(reportDirectory, PACKAGE_METRICS_FILE, report.getPerPackageReports());
+		writeFilteredReport(reportDirectory, spectraDirectory, "package", report.getPerPackageReports());
 
 		//per-class metrics
-		writeFilteredReport(reportDirectory, CLASS_METRICS_FILE, report.getPerClassReports());
+		writeFilteredReport(reportDirectory, spectraDirectory, "class", report.getPerClassReports());
 
 		return scores;
 	}
 
 
-	private static void writeFilteredReport(File reportDirectory, String metricsFilename, 
+	private static void writeFilteredReport(File reportDirectory, File spectraDirectory, String granularity, 
 			List<AbstractReport> reports) throws IOException {
-		File metricsFile = new File(reportDirectory, metricsFilename);
+		File granularitySpectraDirectory = new File(spectraDirectory, "per-" + granularity);
+		File metricsFile = new File(reportDirectory, granularity + "-metrics.txt");
 		List<String> scores = new ArrayList<String>();
 		for(AbstractReport r : reports) {
 			scores.addAll(r.getReport());
 			scores.add("");
+			File f = new File(granularitySpectraDirectory, r.getName() + SPECTRA_EXT);
+			FileUtils.writeLines(f, r.exportSpectrum(), false);
 		}
 		FileUtils.writeLines(metricsFile, scores, false);
 	}

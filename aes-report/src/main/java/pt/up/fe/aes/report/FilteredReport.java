@@ -29,7 +29,12 @@ public class FilteredReport extends AbstractReport {
 
 	@Override
 	protected void addDescription(List<String> scores) {
-		scores.add("Metric scores for node " + node.getFullName() + ":");
+		scores.add("Metric scores for node " + this.getName() + ":");
+	}
+
+	@Override
+	public String getName() {
+		return node.getFullName();
 	}
 
 }
