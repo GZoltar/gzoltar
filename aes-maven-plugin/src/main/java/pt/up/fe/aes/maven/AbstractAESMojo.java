@@ -42,6 +42,9 @@ public abstract class AbstractAESMojo extends AbstractMojo {
 	@Parameter(defaultValue = "true")
 	protected boolean restrictOutputDirectory;
 	
+	@Parameter(defaultValue = "false")
+	protected boolean restrictToPublicMethods;
+	
 	protected boolean shouldInstrument() {
 		return project != null && !"pom".equals(project.getPackaging());
 	}

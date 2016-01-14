@@ -88,6 +88,11 @@ Only instrument classes located inside `${project.build.directory}` (default is 
 <restrictOutputDirectory>true</restrictOutputDirectory>
 ```
 
+Only instrument public methods (default is `false`):
+```
+<restrictToPublicMethods>true</restrictToPublicMethods>
+```
+
 Report directory (default is `${project.build.directory}/aes-report`):
 ```
 <reportDirectory>/temp/reports</reportDirectory>

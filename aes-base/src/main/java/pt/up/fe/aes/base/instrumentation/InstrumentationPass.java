@@ -6,6 +6,7 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
+import javassist.Modifier;
 import javassist.bytecode.Bytecode;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.CodeIterator;
@@ -25,9 +26,11 @@ public class InstrumentationPass implements Pass {
 	public static final String HIT_VECTOR_NAME = "$__AES_HIT_VECTOR__";
 
 	private final GranularityLevel granularity;
+	private final boolean filterPublicModifier;
 
-	public InstrumentationPass(GranularityLevel granularity) {
+	public InstrumentationPass(GranularityLevel granularity, boolean filterPublicModifier) {
 		this.granularity = granularity;
+		this.filterPublicModifier = filterPublicModifier;
 	}
 
 	@Override
@@ -51,7 +54,11 @@ public class InstrumentationPass implements Pass {
 	private void handleBehavior(CtClass c, CtBehavior b) throws Exception {
 		MethodInfo info = b.getMethodInfo();
 		CodeAttribute ca = info.getCodeAttribute();
-
+		
+		if (filterPublicModifier && !Modifier.isPublic(b.getModifiers())) {
+			return;
+		}
+		
 		if(ca != null) {
 			CodeIterator ci = ca.iterator();
 

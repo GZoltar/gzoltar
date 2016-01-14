@@ -35,6 +35,7 @@ public class AgentConfigs {
 	private GranularityLevel granularityLevel = GranularityLevel.method;
 	private List<String> prefixesToFilter = null;
 	private boolean filterTargetLocation = false;
+	private boolean filterModifier = false;
 
 	public void setPort (int port) {
         this.port = port;
@@ -68,6 +69,14 @@ public class AgentConfigs {
 		this.filterTargetLocation = filterTargetLocation;
 	}
 
+	public boolean getFilterModifier() {
+		return filterModifier;
+	}
+	
+	public void setFilterModifier(boolean filterModifier) {
+		this.filterModifier = filterModifier;
+	}
+	
     @JSON(include = false)
 	public List<Pass> getInstrumentationPasses() {
 		List<Pass> instrumentationPasses = new ArrayList<Pass>();
@@ -110,7 +119,7 @@ public class AgentConfigs {
 		
 		instrumentationPasses.add(fp);
 		instrumentationPasses.add(new TestFilterPass());
-		instrumentationPasses.add(new InstrumentationPass(granularityLevel));
+		instrumentationPasses.add(new InstrumentationPass(granularityLevel, filterModifier));
 		instrumentationPasses.add(new StackSizePass());
 		
 		return instrumentationPasses;

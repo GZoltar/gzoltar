@@ -33,6 +33,7 @@ public class InitializeAESMojo extends AbstractAESMojo {
 			agentConfigs.setGranularityLevel(granularityLevel);
 			agentConfigs.setPrefixesToFilter(prefixesToFilter);
 			agentConfigs.setFilterTargetLocation(restrictOutputDirectory);
+			agentConfigs.setFilterModifier(restrictToPublicMethods);
 			
 			setAgent(agentFilename, agentConfigs);
 
