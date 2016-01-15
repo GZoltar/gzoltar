@@ -12,6 +12,8 @@ import pt.up.fe.aes.report.metrics.EntropyMetric.GlobalEntropyMetric;
 import pt.up.fe.aes.report.metrics.Metric;
 import pt.up.fe.aes.report.metrics.RhoMetric;
 import pt.up.fe.aes.report.metrics.SimpsonMetric.GlobalInvertedSimpsonMetric;
+import pt.up.fe.aes.report.metrics.experimental.DTApproximateEntropyMetric;
+import pt.up.fe.aes.report.metrics.experimental.DistinctTransactionsRho;
 
 public abstract class AbstractReport {
 
@@ -42,6 +44,8 @@ public abstract class AbstractReport {
 					new AmbiguityMetric(), 
 					new GlobalApproximateEntropyMetric(),
 					new GlobalEntropyMetric(),
+					new DistinctTransactionsRho(),
+					new DTApproximateEntropyMetric(),
 					new CoverageMetric(granularity)
 					);
 
