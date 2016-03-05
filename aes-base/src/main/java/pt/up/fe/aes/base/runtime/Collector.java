@@ -1,18 +1,21 @@
 package pt.up.fe.aes.base.runtime;
 
 import pt.up.fe.aes.base.events.EventListener;
+import pt.up.fe.aes.base.events.MultiEventListener;
 import pt.up.fe.aes.base.model.Node;
 import pt.up.fe.aes.base.model.Node.Type;
 import pt.up.fe.aes.base.model.Tree;
 import pt.up.fe.aes.base.runtime.ProbeGroup.HitProbe;
+import pt.up.fe.aes.base.spectrum.SpectrumBuilder;
 
 public class Collector {
 
 	private static Collector collector;
 	
-	private EventListener listener;
+	private MultiEventListener listener;
 	private Tree tree;
 	private HitVector hitVector;
+	private SpectrumBuilder builder;
 	
 	public static Collector instance() {
 		return collector;
@@ -25,9 +28,23 @@ public class Collector {
 	}
 	
 	private Collector(EventListener listener) {
-		this.listener = listener;
+		this.listener = new MultiEventListener();
+		this.builder = new SpectrumBuilder();
+		addListener(this.builder);
+		addListener(listener);
+		
 		this.tree = new Tree();
 		this.hitVector = new HitVector();
+	}
+	
+	public void addListener(EventListener listener) {
+		if (listener != null) {
+			this.listener.add(listener);
+		}
+	}
+	
+	public SpectrumBuilder getBuilder() {
+		return this.builder;
 	}
 
 	public synchronized Node createNode(Node parent, String name, Type type) {

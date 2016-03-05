@@ -8,7 +8,7 @@ import pt.up.fe.aes.base.model.Node.Type;
 
 public class MultiEventListener implements EventListener {
 
-	private List<EventListener> eventListeners = new ArrayList<EventListener>();;
+	private List<EventListener> eventListeners = new ArrayList<EventListener>();
 	
 	public MultiEventListener(EventListener... els) {
 		Collections.addAll(eventListeners, els);

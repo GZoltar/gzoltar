@@ -23,6 +23,7 @@ import pt.up.fe.aes.base.instrumentation.matchers.OrMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.PrefixMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.SourceLocationMatcher;
 import pt.up.fe.aes.base.messaging.Client;
+import pt.up.fe.aes.base.model.Node.Type;
 import flexjson.JSON;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -31,7 +32,7 @@ public class AgentConfigs {
 
 	public static final String BUILD_LOCATION_KEY = "AESbuildLocationKey";
 	
-	private int port = 1234;
+	private int port = -1;
 	private GranularityLevel granularityLevel = GranularityLevel.method;
 	private List<String> prefixesToFilter = null;
 	private boolean filterTargetLocation = false;
@@ -127,7 +128,28 @@ public class AgentConfigs {
 
     @JSON(include = false)
 	public EventListener getEventListener() {
-		return new Client(getPort());
+    	if (getPort() != -1) {
+    		return new Client(getPort());
+    	}
+    	else {
+    		return new EventListener() {
+				
+				@Override
+				public void endTransaction(String transactionName, boolean[] activity, int hashCode, boolean isError) { }
+				
+				@Override
+				public void endTransaction(String transactionName, boolean[] activity, boolean isError) { }
+				
+				@Override
+				public void endSession() { }
+				
+				@Override
+				public void addProbe(int id, int nodeId) { }
+				
+				@Override
+				public void addNode(int id, String name, Type type, int parentId) { }
+			};
+    	}
 	}
 	
 	public String serialize () {
