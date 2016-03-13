@@ -102,6 +102,9 @@ public class ReportGenerator {
 
 		File reportIndexDestination = new File(targetDir, INDEX_FILE);
 		FileUtils.write(reportIndexDestination, indexData);
+		
+		File jsonTreeFile = new File(targetDir, "json.js");
+		FileUtils.write(jsonTreeFile, vd.serializeSpectrum());
 	}
 
 }

@@ -17,22 +17,26 @@ public interface Spectrum {
 	boolean isError(int t);
 
 	Tree getTree();
-	
+
 	void print();
 
 	List<Integer> getTestFrequencyPerProbe();
 
 	List<Integer> getTestFrequencyPerNode();
-	
+
 	BitSet getTransactionActivity(int t);
 
 	String getTransactionName(int t);
 
+	List<Integer> getActiveComponentsInTransaction(int t);
+
 	Node getNodeOfProbe(int probeId);
-	
+
 	int getTransactionHashCode(int t);
-	
+
 	double getMinCompTrans(int c) ;
-	
+
 	double getMaxCompTrans(int c) ;
+
+	int getProbeOfNode(int nodeId);
 }

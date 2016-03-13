@@ -14,18 +14,18 @@ public class SpectrumImpl implements Spectrum {
 	private Tree tree;
 	private ArrayList<Integer> probes;
 	private ArrayList<Transaction> transactions;
-	
+
 	public SpectrumImpl() {
 		tree = new Tree();
 		probes = new ArrayList<Integer>();
 		transactions = new ArrayList<Transaction>();
 	}
-	
+
 	@Override
 	public int getComponentsSize() {
 		return probes.size();
 	}
-	
+
 	@Override
 	public int getTransactionsSize() {
 		return transactions.size();
@@ -46,12 +46,12 @@ public class SpectrumImpl implements Spectrum {
 		private final BitSet activity;
 		private final boolean isError;
 		private int hashCode;
-		
+
 		public Transaction(String name, boolean[] activityArray, boolean isError) {
 			this.name = name;
 			this.activity = new BitSet(activityArray.length);
 			this.isError = isError;
-			
+
 			for (int i = 0; i < activityArray.length; i++) {
 				if(activityArray[i])
 					activity.set(i);
@@ -64,9 +64,21 @@ public class SpectrumImpl implements Spectrum {
 			this(name, activityArray, isError);
 			this.hashCode = hashCode;
 		}
-		
+
 		public boolean hasActivations() {
 			return activity.cardinality() != 0;
+		}
+
+		public List<Integer> getActiveComponents() {
+			List<Integer> list = new ArrayList<Integer>();
+
+			for(int i = 0; i < activity.length(); i++) {
+				if(activity.get(i)) {
+					list.add(i);
+				}
+			}
+
+			return list;
 		}
 	}
 
@@ -76,7 +88,7 @@ public class SpectrumImpl implements Spectrum {
 			transactions.add(t);
 		}
 	}
-	
+
 	public void addTransaction(String transactionName, boolean[] activity, int hashCode, boolean isError) {
 		Transaction t = new Transaction(transactionName, activity, hashCode, isError);
 		if (t.hasActivations()) {
@@ -88,18 +100,18 @@ public class SpectrumImpl implements Spectrum {
 	public Tree getTree() {
 		return tree;
 	}
-	
+
 	public void setTree(Tree tree) {
 		this.tree = tree;
 	}
-	
+
 	public void addProbe(int id, int nodeId) {
 		probes.ensureCapacity(id + 1);
 
 		while(probes.size() <= id) {
 			probes.add(null);
 		}
-		
+
 		probes.set(id, nodeId);
 	}
 
@@ -166,7 +178,7 @@ public class SpectrumImpl implements Spectrum {
 			else {
 				System.out.print(".");
 			}
-			
+
 			System.out.println(" hc: " + getTransactionActivity(t).hashCode() + " / " + getTransactionHashCode(t));
 		}
 
@@ -181,6 +193,11 @@ public class SpectrumImpl implements Spectrum {
 	@Override
 	public String getTransactionName(int t) {
 		return transactions.get(t).name;
+	}
+
+	@Override
+	public List<Integer> getActiveComponentsInTransaction(int t) {
+		return transactions.get(t).getActiveComponents();
 	}
 
 	@Override
@@ -221,5 +238,10 @@ public class SpectrumImpl implements Spectrum {
 		else {
 			return n;
 		}
+	}
+
+	@Override
+	public int getProbeOfNode(int nodeId) {
+		return probes.indexOf(nodeId);
 	}
 }
