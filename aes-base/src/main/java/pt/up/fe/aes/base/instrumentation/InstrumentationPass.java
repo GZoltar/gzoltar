@@ -7,6 +7,7 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.Modifier;
+import javassist.bytecode.AccessFlag;
 import javassist.bytecode.Bytecode;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.CodeIterator;
@@ -42,6 +43,7 @@ public class InstrumentationPass implements Pass {
 
 		//make field
 		CtField f = CtField.make("private static boolean[] " + HIT_VECTOR_NAME + ";", c);
+		f.setModifiers(f.getModifiers() | AccessFlag.SYNTHETIC);
 		c.addField(f);
 
 		//make class initializer
