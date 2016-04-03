@@ -76,6 +76,10 @@ public class Collector {
         return hitVector.get(className);
     }
 	
+	public synchronized boolean existsHitVector (String className) {
+		return hitVector.existsHitVector(className);
+	}
+
 	public Node getRootNode() {
 		return tree.getRoot();
 	}

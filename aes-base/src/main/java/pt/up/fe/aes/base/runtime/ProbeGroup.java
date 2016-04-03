@@ -66,4 +66,8 @@ public final class ProbeGroup {
             hitVector[j] = false;
         }
     }
+
+	public boolean existsHitVector() {
+		return hitVector != null;
+	}
 }

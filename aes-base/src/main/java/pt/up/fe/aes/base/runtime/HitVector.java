@@ -65,4 +65,12 @@ class HitVector {
             e.getValue().reset();
         }
     }
+
+	public boolean existsHitVector(String groupName) {
+		if (exists(groupName)) {
+			ProbeGroup pg = groups.get(groupName);
+			return pg.existsHitVector();
+		}
+		return false;
+	}
 }

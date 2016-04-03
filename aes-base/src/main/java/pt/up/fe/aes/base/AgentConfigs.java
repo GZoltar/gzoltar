@@ -15,6 +15,7 @@ import pt.up.fe.aes.base.instrumentation.StackSizePass;
 import pt.up.fe.aes.base.instrumentation.TestFilterPass;
 import pt.up.fe.aes.base.instrumentation.granularity.GranularityFactory.GranularityLevel;
 import pt.up.fe.aes.base.instrumentation.matchers.BlackList;
+import pt.up.fe.aes.base.instrumentation.matchers.DuplicateCollectorReferenceMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.FieldNameMatcher;
 import pt.up.fe.aes.base.instrumentation.matchers.Matcher;
 import pt.up.fe.aes.base.instrumentation.matchers.ModifierMatcher;
@@ -112,7 +113,8 @@ public class AgentConfigs {
         Matcher mMatcher = new OrMatcher(new ModifierMatcher(Modifier.NATIVE),
                                          new ModifierMatcher(Modifier.INTERFACE));
 
-        Matcher alreadyInstrumented = new FieldNameMatcher(InstrumentationPass.HIT_VECTOR_NAME);
+        Matcher alreadyInstrumented = new OrMatcher(new FieldNameMatcher(InstrumentationPass.HIT_VECTOR_NAME),
+                                                    new DuplicateCollectorReferenceMatcher());
 
         FilterPass fp = new FilterPass(new BlackList(mMatcher), 
         							   new BlackList(pMatcher),
