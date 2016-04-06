@@ -1,7 +1,7 @@
 # Approximate Entropy Score (AES) maven plugin
 
 A maven plugin that runs a Java project's test cases and computes several runtime metrics.
-It runs test cases via [Surefire](https://maven.apache.org/surefire/maven-surefire-plugin/), so it supports both JUnit3 and Junit4 (See [Caveats section](#caveats)).
+It runs test cases via [Surefire](https://maven.apache.org/surefire/maven-surefire-plugin/), so it supports both JUnit3 and Junit4 (see [Caveats section](#caveats)).
 
 The plugin generates a report for the following metrics:
 
