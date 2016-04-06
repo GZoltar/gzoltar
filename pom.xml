@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <server.id>crowbar-io</server.id>
     <server.name>crowbar-io</server.name>
-    <server.sftp>sftp://sftp.dc2.gpaas.net/vhosts/crowbar.io/htdocs/maven</server.sftp>
+    <server.sftp>sftp://sftp.dc2.gpaas.net/vhosts/crowbar.io/htdocs/maven/</server.sftp>
     <server.url>http://crowbar.io/maven/</server.url>
 	</properties>
   
