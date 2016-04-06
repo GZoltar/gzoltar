@@ -1,7 +1,7 @@
 # Approximate Entropy Score (AES) maven plugin
 
-A maven plugin that runs a Java project's test cases and computes several runtime metrics. 
-It runs test cases via [Surefire](https://maven.apache.org/surefire/maven-surefire-plugin/), so it supports both JUnit3 and Junit4 (see [Caveats section](#caveats)).
+A maven plugin that runs a Java project's test cases and computes several runtime metrics.
+It runs test cases via [Surefire](https://maven.apache.org/surefire/maven-surefire-plugin/), so it supports both JUnit3 and Junit4 (See [Caveats section](#caveats)).
 
 The plugin generates a report for the following metrics:
 
@@ -11,7 +11,7 @@ The plugin generates a report for the following metrics:
 * Entropy;
 * Approximate Entropy;
 * Coverage with respect to the chosen instrumentation granularity.
- 
+
 Also generated is a heatmap-like tree visualization that depicts the amount of unique test coverage traces exercising each component in the system.
 
 This plugin uses some of the internals of [Crowbar](http://crowbar.io/) and [GZoltar](http://gzoltar.com/).
@@ -108,13 +108,13 @@ Add arbitrary JVM options:
 #### Junit3 and Junit4 Compatibility
 
 Although `aes-maven-plugin` works for both Junit3 and Junit4 test cases, please make sure that the Junit dependency included in the project's `pom.xml` is at least **version 4.6**.
- 
+
 This requirement is due to the fact that Junit only provides their `org.junit.runner.notification.RunListener` API after version 4.6. The listener API is used so that per-test coverage can be gathered.
 For Junit3 test cases, the appropriate test runner will still be used.
 
 #### argLine
 
-If there is an `argLine` parameter set in the declaration of `maven-surefire-plugin`, that will override `aes-maven-plugin`'s request to add an agent to the test JVM. 
+If there is an `argLine` parameter set in the declaration of `maven-surefire-plugin`, that will override `aes-maven-plugin`'s request to add an agent to the test JVM.
 To circumvent this, you can add your JVM options in `aes-maven-plugin`'s `argLine` parameter detailed [here](#other-useful-configurations).
 
 #### restrictOutputDirectory
