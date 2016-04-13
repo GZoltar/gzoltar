@@ -69,11 +69,10 @@ public class VisualizationData {
 	}
 
 	private void serializeNode(Node n, StringBuilder sb) {
-		sb.append("{");
-
-		sb.append(String.format("\"name\":\"%s\",", n.getName()));
 
 		if (n.isLeaf()) {
+			sb.append("{");
+			sb.append(String.format("\"name\":\"%s\",", n.getShortName()));
 			//probe id and score
 			int id = spectrum.getProbeOfNode(n.getId());
 
@@ -84,18 +83,27 @@ public class VisualizationData {
 			score = hue * nodeFrequency.get(n.getId()) / max;
 
 			sb.append(String.format("\"cid\":%d,\"score\":%f", id, score));
+			sb.append("}");
 		}
 		else {
-			//children
-			sb.append("\"children\":[");
-			for (Node child : n.getChildren()) {
-				serializeNode(child, sb);
-				sb.append(",");
+			List<Node> children = n.getChildren();
+			if (children.size() < 2 && children.get(0).getType() == Type.PACKAGE) {
+				//TODO: pass the name of the node to child
+				serializeNode(children.get(0), sb);
+			} else {
+				sb.append("{");
+				sb.append(String.format("\"name\":\"%s\",", n.getShortName()));
+				//children
+				sb.append("\"children\":[");
+				for (Node child : n.getChildren()) {
+					serializeNode(child, sb);
+					sb.append(",");
+				}
+				sb.append("]");
+				sb.append("}");
 			}
-			sb.append("]");
 		}
 
-		sb.append("}");
 	}
 
 	private void serializeTransaction(int t, StringBuilder sb) {

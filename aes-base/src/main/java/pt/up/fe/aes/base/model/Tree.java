@@ -13,9 +13,14 @@ public class Tree implements Iterable<Node> {
 	private ArrayList<Node> nodes = new ArrayList<Node> ();
 
 	public Tree () {
-		Node node = new Node("root", Node.Type.PACKAGE, nodes.size(), null);
+		this(true);
+	}
 
-		nodes.add(node);
+	public Tree (boolean createRoot) {
+		if (createRoot) {
+			Node node = new Node("root", Node.Type.PACKAGE, nodes.size(), null);
+			nodes.add(node);
+		}
 	}
 
 	public int size() {
@@ -77,15 +82,15 @@ public class Tree implements Iterable<Node> {
 		sb.append("]");
 		return sb.toString();
 	}
-	
+
 	public List<Node> getNodesOfType(Type t) {
 		List<Node> nodesOfType = new ArrayList<Node>();
-		
+
 		for(Node node : nodes) {
 			if(node.getType() == t)
 				nodesOfType.add(node);
 		}
-		
+
 		return nodesOfType;
 	}
 
