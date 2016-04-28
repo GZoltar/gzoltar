@@ -17,6 +17,7 @@ public class ReportGenerator {
 
 	private static final String DATA_FILE = "report-data.zip";
 	private static final String INDEX_FILE = "visualization.html";
+	private static final String TREE_INDEX_FILE = "tree-visualization.html";
 	private static final String METRICS_FILE = "metrics.txt";
 	private static final String SPECTRA_DIRECTORY = "spectra";
 	private static final String SPECTRA_EXT = ".csv";
@@ -82,7 +83,7 @@ public class ReportGenerator {
 
 		ClassLoader classLoader = ReportGenerator.class.getClassLoader();
 
-		File temp = File.createTempFile("aes-temp-file", ".zip"); 
+		/*File temp = File.createTempFile("aes-temp-file", ".zip"); 
 		temp.deleteOnExit();
 		FileUtils.copyInputStreamToFile(classLoader.getResourceAsStream(DATA_FILE), temp);
 		try {
@@ -101,10 +102,14 @@ public class ReportGenerator {
 		}
 
 		File reportIndexDestination = new File(targetDir, INDEX_FILE);
-		FileUtils.write(reportIndexDestination, indexData);
+		FileUtils.write(reportIndexDestination, indexData);*/
 		
 		File jsonTreeFile = new File(targetDir, "json.js");
 		FileUtils.write(jsonTreeFile, vd.serializeSpectrum());
+		
+		String treeIndexData = IOUtils.toString(classLoader.getResourceAsStream(TREE_INDEX_FILE));
+		File reportTreeIndexDestination = new File(targetDir, TREE_INDEX_FILE);
+		FileUtils.write(reportTreeIndexDestination, treeIndexData);
 	}
 
 }
