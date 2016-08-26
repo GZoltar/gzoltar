@@ -1,4 +1,4 @@
-# Approximate Entropy Score (AES) maven plugin
+# Density-Diversity-Uniqueness (DDU) maven plugin
 
 A maven plugin that runs a Java project's test cases and computes several runtime metrics.
 It runs test cases via [Surefire](https://maven.apache.org/surefire/maven-surefire-plugin/), so it supports both JUnit3 and Junit4 (See [Caveats section](#caveats)).
@@ -7,12 +7,10 @@ The plugin generates a report for the following metrics:
 
 * Matrix density (Rho);
 * Simpson's diversity index;
-* Component ambiguity score;
+* Component ambiguity score (Uniqueness);
+* DDU;
 * Entropy;
-* Approximate Entropy;
 * Coverage with respect to the chosen instrumentation granularity.
-
-Also generated is a heatmap-like tree visualization that depicts the amount of unique test coverage traces exercising each component in the system.
 
 This plugin uses some of the internals of [Crowbar](http://crowbar.io/) and [GZoltar](http://gzoltar.com/).
 
@@ -31,8 +29,8 @@ Add the following to a Java project's `pom.xml`:
   <pluginManagement>
     <plugins>
       <plugin>
-        <groupId>pt.up.fe.aes</groupId>
-        <artifactId>aes-maven-plugin</artifactId>
+        <groupId>pt.up.fe.ddu</groupId>
+        <artifactId>ddu-maven-plugin</artifactId>
         <version>1.1-SNAPSHOT</version>
       </plugin>
     </plugins>
@@ -42,19 +40,19 @@ Add the following to a Java project's `pom.xml`:
 
 To run the project's test cases and the metrics analysis, execute the command:
 ```
-mvn aes:test
+mvn ddu:test
 ```
 
 
 ### Instrumentation Granularity Configuration
-By default, `aes-maven-plugin` instruments classes at the `method` granularity level. The `line` and `basicblock` granularity levels are also available. To use them, simply add the following configuration to the plugin declaration:
+By default, `ddu-maven-plugin` instruments classes at the `method` granularity level. The `line` and `basicblock` granularity levels are also available. To use them, simply add the following configuration to the plugin declaration:
 ```
 <build>
   <pluginManagement>
     <plugins>
       <plugin>
-        <groupId>pt.up.fe.aes</groupId>
-        <artifactId>aes-maven-plugin</artifactId>
+        <groupId>pt.up.fe.ddu</groupId>
+        <artifactId>ddu-maven-plugin</artifactId>
         <version>1.1-SNAPSHOT</version>
         <configuration>
           <granularityLevel>line</granularityLevel>
@@ -93,7 +91,7 @@ Only instrument public methods (default is `false`):
 <restrictToPublicMethods>true</restrictToPublicMethods>
 ```
 
-Report directory (default is `${project.build.directory}/aes-report`):
+Report directory (default is `${project.build.directory}/ddu-report`):
 ```
 <reportDirectory>/temp/reports</reportDirectory>
 ```
@@ -107,15 +105,15 @@ Add arbitrary JVM options:
 
 #### Junit3 and Junit4 Compatibility
 
-Although `aes-maven-plugin` works for both Junit3 and Junit4 test cases, please make sure that the Junit dependency included in the project's `pom.xml` is at least **version 4.6**.
+Although `ddu-maven-plugin` works for both Junit3 and Junit4 test cases, please make sure that the Junit dependency included in the project's `pom.xml` is at least **version 4.6**.
 
 This requirement is due to the fact that Junit only provides their `org.junit.runner.notification.RunListener` API after version 4.6. The listener API is used so that per-test coverage can be gathered.
 For Junit3 test cases, the appropriate test runner will still be used.
 
 #### argLine
 
-If there is an `argLine` parameter set in the declaration of `maven-surefire-plugin`, that will override `aes-maven-plugin`'s request to add an agent to the test JVM.
-To circumvent this, you can add your JVM options in `aes-maven-plugin`'s `argLine` parameter detailed [here](#other-useful-configurations).
+If there is an `argLine` parameter set in the declaration of `maven-surefire-plugin`, that will override `ddu-maven-plugin`'s request to add an agent to the test JVM.
+To circumvent this, you can add your JVM options in `ddu-maven-plugin`'s `argLine` parameter detailed [here](#other-useful-configurations).
 
 #### restrictOutputDirectory
 

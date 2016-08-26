@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>pt.up.fe.aes</groupId>
-	<artifactId>aes-parent</artifactId>
+	<groupId>pt.up.fe.ddu</groupId>
+	<artifactId>ddu-parent</artifactId>
 	<version>1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>AES Parent Project</name>
+	<name>DDU Parent Project</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,9 +47,9 @@
 	</build>
 
   <modules>
-    <module>aes-base</module>
-    <module>aes-report</module>
-    <module>aes-maven-plugin</module>
+    <module>ddu-base</module>
+    <module>ddu-report</module>
+    <module>ddu-maven-plugin</module>
   </modules>
   
 </project>
