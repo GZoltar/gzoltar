@@ -1,0 +1,3 @@
+[submodule ".style"]
+	path = .style
+	url = https://github.com/google/styleguide.git
