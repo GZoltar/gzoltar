@@ -6,7 +6,6 @@ import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import com.gzoltar.core.instrumentation.Pass;
@@ -14,63 +13,63 @@ import com.gzoltar.core.runtime.Collector;
 
 public class Agent implements ClassFileTransformer {
 
-	private static List<Pass> instrumentationPasses = new ArrayList<Pass>();
-	
-	public static void premain(String agentArgs, Instrumentation inst) {
-		
-		AgentConfigs agentConfigs = AgentConfigs.deserialize(agentArgs);
+  private static List<Pass> instrumentationPasses = new ArrayList<Pass>();
 
-		Collector.start(agentConfigs.getEventListener());
-		instrumentationPasses = agentConfigs.getInstrumentationPasses();
-		
-		Agent a = new Agent();
-		inst.addTransformer(a);
-	}
+  public static void premain(String agentArgs, Instrumentation inst) {
 
-	public byte[] transform(ClassLoader loader, String className,
-			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
-			byte[] classfileBuffer) throws IllegalClassFormatException {
+    AgentConfigs agentConfigs = AgentConfigs.deserialize(agentArgs);
 
-		if (loader == null)
-			return null;
+    Collector.start(agentConfigs.getEventListener());
+    instrumentationPasses = agentConfigs.getInstrumentationPasses();
 
-		CtClass c = null;
-		ClassPool cp = null;
-		byte[] ret = null;
+    Agent a = new Agent();
+    inst.addTransformer(a);
+  }
 
-		try {
-			cp = ClassPool.getDefault();
-			c = cp.makeClass(new java.io.ByteArrayInputStream(classfileBuffer));
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+  public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+      ProtectionDomain protectionDomain, byte[] classfileBuffer)
+      throws IllegalClassFormatException {
 
-		try {
-			cp.importPackage("com.gzoltar.core.runtime");
+    if (loader == null)
+      return null;
 
-			for (Pass p : instrumentationPasses) {
-				switch (p.transform(c, protectionDomain)) {
-				case CANCEL:
-					c.detach();
-					return null;
-					
-				case CONTINUE: continue;
-				case FINISH:
-				default: break;
-				}
-			}
+    CtClass c = null;
+    ClassPool cp = null;
+    byte[] ret = null;
 
-			ret = c.toBytecode();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+    try {
+      cp = ClassPool.getDefault();
+      c = cp.makeClass(new java.io.ByteArrayInputStream(classfileBuffer));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
 
-		c.detach();
-		return ret;
-	}
+    try {
+      cp.importPackage("com.gzoltar.core.runtime");
+
+      for (Pass p : instrumentationPasses) {
+        switch (p.transform(c, protectionDomain)) {
+          case CANCEL:
+            c.detach();
+            return null;
+
+          case CONTINUE:
+            continue;
+          case FINISH:
+          default:
+            break;
+        }
+      }
+
+      ret = c.toBytecode();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+
+    c.detach();
+    return ret;
+  }
 
 }

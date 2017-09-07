@@ -1,15 +1,15 @@
 package com.gzoltar.core.instrumentation.matchers;
 
 public class WhiteList extends AbstractActionTaker {
-    public WhiteList (Matcher m) {
-        super(m);
-    }
+  public WhiteList(Matcher m) {
+    super(m);
+  }
 
-    @Override
-    public final Action getAction (boolean matches) {
-        if (matches)
-            return Action.ACCEPT;
+  @Override
+  public final Action getAction(boolean matches) {
+    if (matches)
+      return Action.ACCEPT;
 
-        return Action.NEXT;
-    }
+    return Action.NEXT;
+  }
 }
