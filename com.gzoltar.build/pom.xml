@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.gzoltar</groupId>
+  <artifactId>com.gzoltar.build</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>GZoltar</name>
+  <description>GZoltar - Java Library for Automatic Debugging</description>
+  <url>http://www.gzoltar.com</url>
+  <inceptionYear>2010</inceptionYear>
+  <organization>
+    <name>GZoltar</name>
+  </organization>
+
+  <developers>
+    <developer>
+      <id>rui</id>
+      <name>Rui Abreu</name>
+      <email>rui@computer.org</email>
+      <timezone>Europe/London</timezone>
+      <roles>
+        <role>Project Lead</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>alex</id>
+      <name>Alexandre Perez</name>
+      <email>alexandrecperez@gmail.com</email>
+      <timezone>Europe/London</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>jose</id>
+      <name>José Campos</name>
+      <email>zecapistolas@gmail.com</email>
+      <timezone>Europe/London</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>nuno</id>
+      <name>Nuno Cardoso</name>
+      <email>nunopcardoso@gmail.com</email>
+      <timezone>Europe/London</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Carlos Gouveia</name>
+    </contributor>
+  </contributors>
+
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+
+  <modules>
+    <!-- Order it might be important if, e.g., module X depends on module Y -->
+    <module>../com.gzoltar.core</module>
+    <module>../com.gzoltar.report</module>
+    <module>../com.gzoltar.maven</module>
+
+  </modules>
+
+  <scm>
+    <connection>scm:git:git://github.com/gzoltar/gzoltar.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:gzoltar/gzoltar.git</developerConnection>
+    <url>https://github.com/gzoltar/gzoltar</url>
+  </scm>
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/gzoltar/gzoltar/issues</url>
+  </issueManagement>
+  <distributionManagement>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Nexus Release Repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <maven.build.timestamp.format>yyyyMMddhhmm</maven.build.timestamp.format>
+    <gzoltar.home.url>http://www.gzoltar.com</gzoltar.home.url>
+    <copyright.years>${project.inceptionYear}, 2017</copyright.years>
+
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+
+    <jvm.args></jvm.args>
+    <argLine>${jvm.args}</argLine>
+
+    <!-- Dependencies versions -->
+    <junit.version>4.12</junit.version>
+    <testng.version>6.11</testng.version>
+    <javassist.version>3.22.0-CR2</javassist.version>
+    <flexjson.version>3.3</flexjson.version>
+    <commons-io.version>2.5</commons-io.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Project dependencies -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>com.gzoltar.core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>com.gzoltar.report</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>com.gzoltar.maven</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.6.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>3.5</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
