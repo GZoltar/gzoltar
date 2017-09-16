@@ -1,6 +1,6 @@
 package com.gzoltar.report.metrics;
 
-import com.gzoltar.core.spectrum.Spectrum;
+import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.report.metrics.RhoMetric.NormalizedRho;
 import com.gzoltar.report.metrics.SimpsonMetric.GlobalInvertedSimpsonMetric;
 import com.gzoltar.report.metrics.SimpsonMetric.InvertedSimpsonMetric;
@@ -20,7 +20,7 @@ public class DDUMetric implements Metric {
   }
 
   @Override
-  public void setSpectrum(Spectrum spectrum) {
+  public void setSpectrum(ISpectrum spectrum) {
     metric.setSpectrum(spectrum);
   }
 

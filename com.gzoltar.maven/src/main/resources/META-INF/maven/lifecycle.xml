@@ -19,7 +19,7 @@
           <properties>
             <property>
               <name>listener</name>
-              <value>com.gzoltar.core.runtime.TestListener</value>
+              <value>com.gzoltar.internal.core.runtime.TestListener</value>
             </property>
           </properties>
         </configuration>

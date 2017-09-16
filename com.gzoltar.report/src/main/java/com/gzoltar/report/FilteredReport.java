@@ -3,15 +3,15 @@ package com.gzoltar.report;
 import java.util.List;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.spectrum.FilteredSpectrumBuilder;
-import com.gzoltar.core.spectrum.Spectrum;
+import com.gzoltar.core.spectrum.ISpectrum;
 
 public class FilteredReport extends AbstractReport {
 
   private final FilteredSpectrumBuilder fsb = new FilteredSpectrumBuilder();
   private final Node node;
-  private Spectrum generatedSpectrum;
+  private ISpectrum generatedSpectrum;
 
-  public FilteredReport(Spectrum spectrum, String granularity, Node node) {
+  public FilteredReport(ISpectrum spectrum, String granularity, Node node) {
     super(spectrum, granularity);
     this.node = node;
 
@@ -19,7 +19,7 @@ public class FilteredReport extends AbstractReport {
   }
 
   @Override
-  protected Spectrum getSpectrum() {
+  protected ISpectrum getSpectrum() {
     if (generatedSpectrum == null) {
       generatedSpectrum = fsb.getSpectrum();
     }

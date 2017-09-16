@@ -26,12 +26,12 @@ public class ServiceHandler implements Service {
 
   @Override
   public void interrupted() {
-
+    // empty
   }
 
   @Override
   public void terminated() {
-    mojo.storeCurrentSpectrum(spectrumBuilder.getSpectrum());
+    // get Spectrum
   }
 
 }

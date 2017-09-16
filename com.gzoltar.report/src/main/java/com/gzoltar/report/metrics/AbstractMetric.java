@@ -1,13 +1,13 @@
 package com.gzoltar.report.metrics;
 
-import com.gzoltar.core.spectrum.Spectrum;
+import com.gzoltar.core.spectrum.ISpectrum;
 
 public abstract class AbstractMetric implements Metric {
 
-  protected Spectrum spectrum;
+  protected ISpectrum spectrum;
 
   @Override
-  public void setSpectrum(Spectrum spectrum) {
+  public void setSpectrum(ISpectrum spectrum) {
     this.spectrum = spectrum;
   }
 

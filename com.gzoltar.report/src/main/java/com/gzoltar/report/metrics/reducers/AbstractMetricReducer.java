@@ -1,6 +1,6 @@
 package com.gzoltar.report.metrics.reducers;
 
-import com.gzoltar.core.spectrum.Spectrum;
+import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.report.metrics.Metric;
 
 public abstract class AbstractMetricReducer implements Metric {
@@ -12,7 +12,7 @@ public abstract class AbstractMetricReducer implements Metric {
   }
 
   @Override
-  public void setSpectrum(Spectrum spectrum) {
+  public void setSpectrum(ISpectrum spectrum) {
     for (Metric m : metrics) {
       m.setSpectrum(spectrum);
     }

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
-import com.gzoltar.core.spectrum.Spectrum;
+import com.gzoltar.core.spectrum.ISpectrum;
 
 public class ReportGenerator {
 
@@ -15,7 +15,7 @@ public class ReportGenerator {
 
   private final OverallReport report;
 
-  public ReportGenerator(String projectName, Spectrum spectrum, String granularity,
+  public ReportGenerator(String projectName, ISpectrum spectrum, String granularity,
       List<String> classesToInstrument) {
     this.report = new OverallReport(projectName, spectrum, granularity, classesToInstrument);
   }

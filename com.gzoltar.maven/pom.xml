@@ -18,9 +18,14 @@
   <dependencies>
     <dependency>
       <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.agent</artifactId>
+      <version>${project.version}</version>
+      <classifier>runtime</classifier>
+    </dependency>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
       <artifactId>com.gzoltar.core</artifactId>
       <version>${project.version}</version>
-      <classifier>with-dependencies</classifier>
     </dependency>
     <dependency>
       <groupId>com.gzoltar</groupId>

@@ -6,9 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.Tree;
 
-public class SpectrumImpl implements Spectrum {
+public class SpectrumImpl implements ISpectrum {
 
   private Tree tree;
   private ArrayList<Integer> probes;
@@ -32,53 +33,12 @@ public class SpectrumImpl implements Spectrum {
 
   @Override
   public boolean isInvolved(int t, int c) {
-    return transactions.get(t).activity.get(c);
+    return transactions.get(t).getActivity().get(c);
   }
 
   @Override
   public boolean isError(int t) {
-    return transactions.get(t).isError;
-  }
-
-  public class Transaction {
-    private final String name;
-    private final BitSet activity;
-    private final boolean isError;
-    private int hashCode;
-
-    public Transaction(String name, boolean[] activityArray, boolean isError) {
-      this.name = name;
-      this.activity = new BitSet(activityArray.length);
-      this.isError = isError;
-
-      for (int i = 0; i < activityArray.length; i++) {
-        if (activityArray[i])
-          activity.set(i);
-      }
-
-      this.hashCode = activity.hashCode();
-    }
-
-    public Transaction(String name, boolean[] activityArray, int hashCode, boolean isError) {
-      this(name, activityArray, isError);
-      this.hashCode = hashCode;
-    }
-
-    public boolean hasActivations() {
-      return activity.cardinality() != 0;
-    }
-
-    public List<Integer> getActiveComponents() {
-      List<Integer> list = new ArrayList<Integer>();
-
-      for (int i = 0; i < activity.length(); i++) {
-        if (activity.get(i)) {
-          list.add(i);
-        }
-      }
-
-      return list;
-    }
+    return transactions.get(t).isError();
   }
 
   public void addTransaction(String transactionName, boolean[] activity, boolean isError) {
@@ -125,8 +85,8 @@ public class SpectrumImpl implements Spectrum {
       Set<Integer> s = new HashSet<Integer>();
 
       for (Transaction t : transactions) {
-        if (t.activity.get(p)) {
-          s.add(t.activity.hashCode());
+        if (t.getActivity().get(p)) {
+          s.add(t.getActivity().hashCode());
         }
       }
 
@@ -187,12 +147,12 @@ public class SpectrumImpl implements Spectrum {
 
   @Override
   public BitSet getTransactionActivity(int t) {
-    return transactions.get(t).activity;
+    return transactions.get(t).getActivity();
   }
 
   @Override
   public String getTransactionName(int t) {
-    return transactions.get(t).name;
+    return transactions.get(t).getName();
   }
 
   @Override
@@ -208,7 +168,7 @@ public class SpectrumImpl implements Spectrum {
 
   @Override
   public int getTransactionHashCode(int t) {
-    return transactions.get(t).hashCode;
+    return transactions.get(t).hashCode();
   }
 
   public double getMaxCompTrans(int c) {
@@ -216,7 +176,7 @@ public class SpectrumImpl implements Spectrum {
     for (int t = 0; t < getTransactionsSize(); t++) {
       int cc = probes.indexOf(c);
       if (cc != -1 && isInvolved(t, cc)) {
-        int nact = transactions.get(t).activity.cardinality();
+        int nact = transactions.get(t).getActivity().cardinality();
         n = nact > n ? nact : n;
       }
     }
@@ -228,7 +188,7 @@ public class SpectrumImpl implements Spectrum {
     for (int t = 0; t < getTransactionsSize(); t++) {
       int cc = probes.indexOf(c);
       if (cc != -1 && isInvolved(t, cc)) {
-        int nact = transactions.get(t).activity.cardinality();
+        int nact = transactions.get(t).getActivity().cardinality();
         n = nact < n ? nact : n;
       }
     }
@@ -242,5 +202,9 @@ public class SpectrumImpl implements Spectrum {
   @Override
   public int getProbeOfNode(int nodeId) {
     return probes.indexOf(nodeId);
+  }
+
+  public List<Transaction> getTransactions() {
+    return this.transactions;
   }
 }

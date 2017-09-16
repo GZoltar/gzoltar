@@ -15,7 +15,7 @@ public class SpectrumBuilder implements EventListener {
     spectrum = new SpectrumImpl();
   }
 
-  public Spectrum getSpectrum() {
+  public ISpectrum getSpectrum() {
     return spectrum;
   }
 

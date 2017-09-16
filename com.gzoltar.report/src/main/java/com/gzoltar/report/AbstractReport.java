@@ -3,29 +3,28 @@ package com.gzoltar.report;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import com.gzoltar.core.spectrum.Spectrum;
+import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.report.metrics.AmbiguityMetric;
 import com.gzoltar.report.metrics.CoverageMetric;
 import com.gzoltar.report.metrics.DDUMetric;
 import com.gzoltar.report.metrics.EntropyMetric;
 import com.gzoltar.report.metrics.Metric;
 import com.gzoltar.report.metrics.RhoMetric;
-import com.gzoltar.report.metrics.RhoMetric.NormalizedRho;
 import com.gzoltar.report.metrics.SimpsonMetric.InvertedSimpsonMetric;
 
 public abstract class AbstractReport {
 
-  private Spectrum spectrum;
+  private ISpectrum spectrum;
   private List<Metric> metrics;
 
   protected final String granularity;
 
-  public AbstractReport(Spectrum spectrum, String granularity) {
+  public AbstractReport(ISpectrum spectrum, String granularity) {
     this.spectrum = spectrum;
     this.granularity = granularity;
   }
 
-  protected Spectrum getSpectrum() {
+  protected ISpectrum getSpectrum() {
     return spectrum;
   }
 
@@ -65,7 +64,7 @@ public abstract class AbstractReport {
   public List<String> exportSpectrum() {
 
     List<String> output = new ArrayList<String>();
-    Spectrum spectrum = getSpectrum();
+    ISpectrum spectrum = getSpectrum();
 
     int transactions = spectrum.getTransactionsSize();
     int components = spectrum.getComponentsSize();

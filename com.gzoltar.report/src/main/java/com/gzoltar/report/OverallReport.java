@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Node.Type;
-import com.gzoltar.core.spectrum.Spectrum;
+import com.gzoltar.core.spectrum.ISpectrum;
 
 public class OverallReport extends AbstractReport {
 
   private final String projectName;
   private final List<String> classesToInstrument;
 
-  public OverallReport(String projectName, Spectrum spectrum, String granularity,
+  public OverallReport(String projectName, ISpectrum spectrum, String granularity,
       List<String> classesToInstrument) {
     super(spectrum, granularity);
     this.projectName = projectName;

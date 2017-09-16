@@ -1,82 +1,79 @@
 package com.gzoltar.maven;
 
-import java.io.File;
 import java.util.List;
-import java.util.Map;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import com.gzoltar.core.instrumentation.granularity.GranularityFactory;
-import com.gzoltar.core.spectrum.Spectrum;
 
+/**
+ * Base class for GZoltar Mojos.
+ */
 public abstract class AbstractGZoltarMojo extends AbstractMojo {
 
-  private static final String SPECTRUM_KEY = "CurrentSpectrum";
+  /**
+   * Maven project.
+   */
+  @Parameter(property = "project", readonly = true)
+  private MavenProject project;
 
-  @Parameter(property = "plugin.artifactMap")
-  private Map<String, Artifact> pluginArtifactMap;
-
-  @Parameter(property = "project")
-  protected MavenProject project;
-
-  @Parameter(defaultValue = " ")
-  protected String argLine;
-
-  @Parameter(defaultValue = "method")
-  protected GranularityFactory.GranularityLevel granularityLevel;
-
+  /**
+   * A list of class files to include in instrumentation/analysis/reports. May use wildcard
+   * characters (* and ?). When not specified everything will be included.
+   */
   @Parameter
-  protected List<String> classesToInstrument;
+  private List<String> includes;
 
+  /**
+   * A list of class files to exclude from instrumentation/analysis/reports. May use wildcard
+   * characters (* and ?). When not specified nothing will be excluded.
+   */
   @Parameter
-  protected List<String> prefixesToFilter;
+  private List<String> excludes;
 
-  @Parameter(defaultValue = "${project.build.directory}/gzoltar-report/")
-  protected File reportDirectory;
-
-  @Parameter(defaultValue = "true")
-  protected boolean restrictOutputDirectory;
-
-  @Parameter(defaultValue = "false")
-  protected boolean restrictToPublicMethods;
-
-  protected boolean shouldInstrument() {
-    return project != null && !"pom".equals(project.getPackaging());
-  }
-
-  protected Artifact getArtifact(String name) {
-    return pluginArtifactMap.get(name);
-  }
-
-  protected String getProjectProperty(String key) {
-    return project.getProperties().getProperty(key, "");
-  }
-
-  protected void setProjectProperty(String key, String value) {
-    project.getProperties().setProperty(key, value);
-  }
-
-  @SuppressWarnings("unchecked")
-  public void storeCurrentSpectrum(Spectrum spectrum) {
-    getPluginContext().put(SPECTRUM_KEY, spectrum);
-  }
-
-  public Spectrum retrieveCurrentSpectrum() {
-    Object obj = getPluginContext().get(SPECTRUM_KEY);
-    if (obj instanceof Spectrum) {
-      return (Spectrum) obj;
-    }
-    return null;
+  private boolean shouldInstrument() {
+    return this.project != null && !"pom".equals(this.project.getPackaging());
   }
 
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (this.shouldInstrument()) {
-      executeGZoltarMojo();
+      this.executeMojo();
     }
   }
 
-  protected abstract void executeGZoltarMojo() throws MojoExecutionException, MojoFailureException;
+  /**
+   * @return Maven project
+   */
+  protected final MavenProject getProject() {
+    return project;
+  }
+
+  /**
+   * Returns the list of class files to include.
+   * 
+   * @return class files to include, may contain wildcard characters
+   */
+  protected List<String> getIncludes() {
+    return includes;
+  }
+
+  /**
+   * Returns the list of class files to exclude.
+   * 
+   * @return class files to exclude, may contain wildcard characters
+   */
+  protected List<String> getExcludes() {
+    return excludes;
+  }
+
+  /**
+   * Executes Mojo.
+   * 
+   * @throws MojoExecutionException if an unexpected problem occurs. Throwing this exception causes
+   *         a "BUILD ERROR" message to be displayed.
+   * @throws MojoFailureException if an expected problem (such as a compilation failure) occurs.
+   *         Throwing this exception causes a "BUILD FAILURE" message to be displayed.
+   */
+  protected abstract void executeMojo() throws MojoExecutionException, MojoFailureException;
 }

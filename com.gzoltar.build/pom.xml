@@ -68,8 +68,9 @@
     <!-- Order it might be important if, e.g., module X depends on module Y -->
     <module>../com.gzoltar.core</module>
     <module>../com.gzoltar.report</module>
+    <module>../com.gzoltar.agent.rt</module>
+    <module>../com.gzoltar.agent</module>
     <module>../com.gzoltar.maven</module>
-
   </modules>
 
   <scm>
@@ -111,7 +112,6 @@
     <junit.version>4.12</junit.version>
     <testng.version>6.11</testng.version>
     <javassist.version>3.22.0-CR2</javassist.version>
-    <flexjson.version>3.3</flexjson.version>
     <commons-io.version>2.5</commons-io.version>
   </properties>
 
@@ -126,6 +126,22 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>com.gzoltar.report</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>com.gzoltar.agent</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>com.gzoltar.agent</artifactId>
+        <version>${project.version}</version>
+        <classifier>runtime</classifier>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>com.gzoltar.agent.rt</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -153,6 +169,21 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
           <version>3.5</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>maven-bundle-plugin</artifactId>
+          <version>3.3.0</version>
         </plugin>
       </plugins>
     </pluginManagement>

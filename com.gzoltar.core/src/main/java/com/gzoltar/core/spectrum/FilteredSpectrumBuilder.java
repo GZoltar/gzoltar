@@ -10,7 +10,7 @@ import com.gzoltar.core.model.Tree;
 
 public class FilteredSpectrumBuilder extends SpectrumBuilder {
 
-  private Spectrum source;
+  private ISpectrum source;
 
   private HashSet<Integer> includeNodes;
   private HashSet<Integer> excludeNodes;
@@ -19,7 +19,7 @@ public class FilteredSpectrumBuilder extends SpectrumBuilder {
     resetIncludesExcludes();
   }
 
-  public FilteredSpectrumBuilder setSource(Spectrum source) {
+  public FilteredSpectrumBuilder setSource(ISpectrum source) {
     this.source = source;
     return this;
   }
@@ -52,7 +52,7 @@ public class FilteredSpectrumBuilder extends SpectrumBuilder {
   }
 
   @Override
-  public Spectrum getSpectrum() {
+  public ISpectrum getSpectrum() {
     if (source == null)
       return null;
 

@@ -16,8 +16,7 @@ public class TestListener extends RunListener {
 
   @Override
   public void testStarted(Description description) {
-    // System.out.println("Started " + description.getClassName() + "#" +
-    // description.getMethodName());
+    System.out.println("Started " + description.getClassName() + "#" + description.getMethodName());
     this.isError = false;
     Collector.instance().startTransaction();
   }
@@ -26,6 +25,7 @@ public class TestListener extends RunListener {
   public void testFinished(Description description) {
     String transactionName = description.getClassName() + "#" + description.getMethodName();
     Collector.instance().endTransaction(transactionName, this.isError);
+    //Collector.instance().getBuilder().getSpectrum().print();
   }
 
   @Override

@@ -47,9 +47,13 @@ public class Tree implements Iterable<Node> {
   }
 
   public Node addNode(String name, Node.Type type, int parentId) {
+    return addNode(name, type, nodes.size(), parentId);
+  }
+
+  public Node addNode(String name, Node.Type type, int id, int parentId) {
     Node parent = getNode(parentId);
 
-    Node child = new Node(name, type, nodes.size(), parent);
+    Node child = new Node(name, type, id, parent);
 
     nodes.add(child);
     return child;

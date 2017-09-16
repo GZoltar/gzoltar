@@ -25,7 +25,7 @@ public class Node {
   private Node parent;
   private List<Node> children = new ArrayList<Node>();
 
-  Node(String name, Type type, int id, Node parent) {
+  public Node(String name, Type type, int id, Node parent) {
     this.type = type;
     this.name = name;
     this.id = id;
@@ -43,7 +43,7 @@ public class Node {
     children.add(node);
   }
 
-  private int getDepth() {
+  public int getDepth() {
     return this.depth;
   }
 
