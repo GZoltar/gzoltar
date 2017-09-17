@@ -96,7 +96,8 @@ public class InstrumentationPass implements IPass {
     boolean instrumented = false;
 
     for (CtBehavior b : c.getDeclaredBehaviors()) {
-      boolean behaviorInstrumented = this.transform(c, b).equals(IPass.Outcome.CANCEL) ? false : true;
+      boolean behaviorInstrumented =
+          this.transform(c, b).equals(IPass.Outcome.CANCEL) ? false : true;
       instrumented = instrumented || behaviorInstrumented;
     }
 
@@ -127,39 +128,43 @@ public class InstrumentationPass implements IPass {
     MethodInfo info = b.getMethodInfo();
     CodeAttribute ca = info.getCodeAttribute();
 
-    if (ca != null) {
-      CodeIterator ci = ca.iterator();
+    if (ca == null) {
+      // do not instrument methods with no code
+      return instrumented;
+    }
 
-      if (b instanceof CtConstructor) {
-        if (((CtConstructor) b).isClassInitializer()) {
-          return instrumented;
-        }
-        ci.skipConstructor();
+    CodeIterator ci = ca.iterator();
+
+    if (b instanceof CtConstructor) {
+      if (((CtConstructor) b).isClassInitializer()) {
+        return instrumented;
+      }
+      ci.skipConstructor();
+    }
+
+    IGranularity g =
+        GranularityFactory.getGranularity(c, info, ci, this.agentConfigs.getGranularity());
+
+    for (int instrSize = 0, index, curLine; ci.hasNext();) {
+      index = ci.next();
+
+      curLine = info.getLineNumber(index);
+
+      if (curLine == -1) {
+        continue;
       }
 
-      IGranularity g = GranularityFactory.getGranularity(c, info, ci, this.agentConfigs.getGranularity());
+      if (g.instrumentAtIndex(index, instrSize)) {
+        Node n = g.getNode(c, b, curLine);
+        Bytecode bc = getInstrumentationCode(c, n, info.getConstPool());
+        ci.insert(index, bc.get());
+        instrSize += bc.length();
 
-      for (int instrSize = 0, index, curLine; ci.hasNext();) {
-        index = ci.next();
+        instrumented = IPass.Outcome.CONTINUE;
+      }
 
-        curLine = info.getLineNumber(index);
-
-        if (curLine == -1) {
-          continue;
-        }
-
-        if (g.instrumentAtIndex(index, instrSize)) {
-          Node n = g.getNode(c, b, curLine);
-          Bytecode bc = getInstrumentationCode(c, n, info.getConstPool());
-          ci.insert(index, bc.get());
-          instrSize += bc.length();
-
-          instrumented = IPass.Outcome.CONTINUE;
-        }
-
-        if (g.stopInstrumenting()) {
-          break;
-        }
+      if (g.stopInstrumenting()) {
+        break;
       }
     }
 
