@@ -34,29 +34,36 @@ public class InstrumentationPass implements Pass {
 
   @Override
   public Outcome transform(final CtClass c) throws Exception {
+    boolean instrumented = false;
+
     for (CtBehavior b : c.getDeclaredBehaviors()) {
-      this.handleBehavior(c, b);
+      boolean behaviorInstrumented = this.handleBehavior(c, b);
+      instrumented = instrumented || behaviorInstrumented;
     }
 
-    // make field
-    CtField f = CtField.make("private static boolean[] " + HIT_VECTOR_NAME + ";", c);
-    f.setModifiers(f.getModifiers() | AccessFlag.SYNTHETIC);
-    c.addField(f);
+    if (instrumented) {
+      // make field
+      CtField f = CtField.make("private static boolean[] " + HIT_VECTOR_NAME + ";", c);
+      f.setModifiers(f.getModifiers() | AccessFlag.SYNTHETIC);
+      c.addField(f);
 
-    // make class initializer
-    CtConstructor initializer = c.makeClassInitializer();
-    initializer.insertBefore(
-        HIT_VECTOR_NAME + " = Collector.instance().getHitVector(\"" + c.getName() + "\");");
+      // make class initializer
+      CtConstructor initializer = c.makeClassInitializer();
+      initializer.insertBefore(
+          HIT_VECTOR_NAME + " = Collector.instance().getHitVector(\"" + c.getName() + "\");");
+    }
 
     return Outcome.CONTINUE;
   }
 
-  private void handleBehavior(CtClass c, CtBehavior b) throws Exception {
+  private boolean handleBehavior(CtClass c, CtBehavior b) throws Exception {
+    boolean instrumented = false;
+
     MethodInfo info = b.getMethodInfo();
     CodeAttribute ca = info.getCodeAttribute();
 
     if (filterPublicModifier && !Modifier.isPublic(b.getModifiers())) {
-      return;
+      return instrumented;
     }
 
     if (ca != null) {
@@ -64,7 +71,7 @@ public class InstrumentationPass implements Pass {
 
       if (b instanceof CtConstructor) {
         if (((CtConstructor) b).isClassInitializer()) {
-          return;
+          return instrumented;
         }
         ci.skipConstructor();
       }
@@ -85,6 +92,8 @@ public class InstrumentationPass implements Pass {
           Bytecode bc = getInstrumentationCode(c, n, info.getConstPool());
           ci.insert(index, bc.get());
           instrSize += bc.length();
+
+          instrumented = true;
         }
 
         if (g.stopInstrumenting()) {
@@ -92,6 +101,8 @@ public class InstrumentationPass implements Pass {
         }
       }
     }
+
+    return instrumented;
   }
 
   private Bytecode getInstrumentationCode(CtClass c, Node n, ConstPool constPool) {
