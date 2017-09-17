@@ -1,5 +1,6 @@
 package com.gzoltar.core.instr.actions;
 
+import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.matchers.IMatcher;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -13,14 +14,14 @@ public abstract class AbstractAction implements IAction {
   }
 
   @Override
-  public final Action getAction(final CtClass c) {
+  public final Outcome getAction(final CtClass c) {
     return getAction(this.matcher.matches(c));
   }
 
   @Override
-  public final Action getAction(final CtBehavior b) {
+  public final Outcome getAction(final CtBehavior b) {
     return getAction(this.matcher.matches(b));
   }
 
-  protected abstract Action getAction(boolean matches);
+  protected abstract Outcome getAction(boolean matches);
 }

@@ -1,6 +1,6 @@
-package com.gzoltar.core.instr.actions;
+package com.gzoltar.core.instr;
 
-public enum Action {
+public enum Outcome {
 
   /**
    * 

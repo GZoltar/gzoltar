@@ -1,7 +1,7 @@
 package com.gzoltar.core.instr.pass;
 
 import com.gzoltar.core.AgentConfigs;
-import com.gzoltar.core.instr.actions.Action;
+import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.actions.IAction;
 import com.gzoltar.core.instr.actions.WhiteList;
@@ -59,12 +59,12 @@ public class InstrumentationPass implements IPass {
   }
 
   @Override
-  public Action transform(final CtClass ctClass) throws Exception {
+  public Outcome transform(final CtClass ctClass) throws Exception {
     boolean instrumented = false;
 
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
-          this.transform(ctClass, ctBehavior).equals(Action.REJECT) ? false : true;
+          this.transform(ctClass, ctBehavior).equals(Outcome.REJECT) ? false : true;
       instrumented = instrumented || behaviorInstrumented;
     }
 
@@ -80,12 +80,12 @@ public class InstrumentationPass implements IPass {
           + ".instance().getHitVector(\"" + ctClass.getName() + "\");");
     }
 
-    return Action.NEXT;
+    return Outcome.NEXT;
   }
 
   @Override
-  public Action transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
-    Action instrumented = Action.REJECT;
+  public Outcome transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
+    Outcome instrumented = Outcome.REJECT;
 
     // check whether this method should be instrumented
     for (IFilter filter : this.filters) {
@@ -134,7 +134,7 @@ public class InstrumentationPass implements IPass {
         ci.insert(index, bc.get());
         instrSize += bc.length();
 
-        instrumented = Action.NEXT;
+        instrumented = Outcome.NEXT;
       }
 
       if (g.stopInstrumenting()) {

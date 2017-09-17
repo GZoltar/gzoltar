@@ -6,7 +6,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Instrumenter;
-import com.gzoltar.core.instr.actions.Action;
+import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.filter.Filter;
@@ -78,7 +78,7 @@ public class CoverageTransformer implements ClassFileTransformer {
       }
 
       // check whether this class should be instrumented
-      if (this.filter.filter(cc) == Action.REJECT) {
+      if (this.filter.filter(cc) == Outcome.REJECT) {
         return null;
       }
 

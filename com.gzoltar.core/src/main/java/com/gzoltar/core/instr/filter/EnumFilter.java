@@ -1,6 +1,6 @@
 package com.gzoltar.core.instr.filter;
 
-import com.gzoltar.core.instr.actions.Action;
+import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.actions.IAction;
 import com.gzoltar.core.instr.matchers.AndMatcher;
@@ -28,13 +28,13 @@ public final class EnumFilter extends Filter {
    * @param ctClass a class
    */
   @Override
-  public Action filter(final CtClass ctClass) {
+  public Outcome filter(final CtClass ctClass) {
     IAction enumFilter = this.enumFilterAction(ctClass.getName());
     return super.filter(ctClass, enumFilter);
   }
 
   @Override
-  public Action filter(final CtBehavior ctBehavior) {
+  public Outcome filter(final CtBehavior ctBehavior) {
     IAction enumFilter = this.enumFilterAction(ctBehavior.getDeclaringClass().getName());
     return super.filter(ctBehavior, enumFilter);
   }

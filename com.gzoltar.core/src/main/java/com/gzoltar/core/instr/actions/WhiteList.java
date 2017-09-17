@@ -1,5 +1,6 @@
 package com.gzoltar.core.instr.actions;
 
+import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.matchers.IMatcher;
 
 public class WhiteList extends AbstractAction {
@@ -9,10 +10,10 @@ public class WhiteList extends AbstractAction {
   }
 
   @Override
-  public final Action getAction(boolean matches) {
+  public final Outcome getAction(boolean matches) {
     if (matches) {
-      return Action.ACCEPT;
+      return Outcome.ACCEPT;
     }
-    return Action.NEXT;
+    return Outcome.NEXT;
   }
 }
