@@ -18,7 +18,7 @@ public class ModifierMatcher extends AbstractMatcher {
 
   @Override
   public final boolean matches(final CtBehavior b) {
-    return this.matches(b.getModifiers());
+    return this.matches(b.getMethodInfo().getAccessFlags());
   }
 
   private boolean matches(final int modifier) {
