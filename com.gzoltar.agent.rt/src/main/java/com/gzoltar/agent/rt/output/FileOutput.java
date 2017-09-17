@@ -1,13 +1,11 @@
 package com.gzoltar.agent.rt.output;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.spectrum.ISpectrum;
-import com.gzoltar.core.spectrum.SpectrumReader;
 import com.gzoltar.core.spectrum.SpectrumWriter;
 
 public class FileOutput implements IAgentOutput {
@@ -36,10 +34,6 @@ public class FileOutput implements IAgentOutput {
     } finally {
       output.close();
     }
-
-    // read it back
-    SpectrumReader s = new SpectrumReader(new FileInputStream(this.destFile));
-    s.read();
   }
 
   private OutputStream openFile() throws IOException {
