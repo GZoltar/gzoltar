@@ -84,8 +84,8 @@ public class SpectrumReader {
   private void readTransaction() throws IOException {
     String name = this.in.readUTF();
     int numberActivities = this.in.readInt();
-    boolean[] activityArray = new boolean[numberActivities];
-    for (int i = 0; i < activityArray.length; i++) {
+    boolean[] activityArray = new boolean[numberActivities + 1];
+    for (int i = 0; i < numberActivities; i++) {
       int activity = this.in.readInt();
       activityArray[activity] = true;
     }
