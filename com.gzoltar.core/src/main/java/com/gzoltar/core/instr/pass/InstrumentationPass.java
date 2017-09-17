@@ -12,6 +12,7 @@ import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
+import com.gzoltar.core.util.VMUtils;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -124,7 +125,8 @@ public class InstrumentationPass implements IPass {
     IPass.Outcome instrumented = IPass.Outcome.CANCEL;
 
     // check whether this method should be instrumented
-    if (this.filter.transform(c, b) == IPass.Outcome.CANCEL) {
+    if (this.filter.transform(c, b) == IPass.Outcome.CANCEL ||
+        new EnumPass(VMUtils.toVMName(c.getName())).transform(c, b) == IPass.Outcome.CANCEL) {
       return instrumented;
     }
 
