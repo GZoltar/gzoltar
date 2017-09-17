@@ -1,8 +1,8 @@
 package com.gzoltar.core.instr.pass;
 
 import com.gzoltar.core.instr.granularity.IGranularity;
+import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
-import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
@@ -24,12 +24,10 @@ public class InstrumentationPass implements IPass {
   private static final String HIT_VECTOR_TYPE = "[Z";
   public static final String HIT_VECTOR_NAME = "$__GZ_HIT_VECTOR__";
 
-  private final GranularityLevel granularity;
-  private final boolean filterPublicModifier;
+  private final AgentConfigs agentConfigs;
 
-  public InstrumentationPass(GranularityLevel granularity, boolean filterPublicModifier) {
-    this.granularity = granularity;
-    this.filterPublicModifier = filterPublicModifier;
+  public InstrumentationPass(final AgentConfigs agentConfigs) {
+    this.agentConfigs = agentConfigs;
   }
 
   @Override
@@ -59,12 +57,12 @@ public class InstrumentationPass implements IPass {
   private boolean handleBehavior(CtClass c, CtBehavior b) throws Exception {
     boolean instrumented = false;
 
-    MethodInfo info = b.getMethodInfo();
-    CodeAttribute ca = info.getCodeAttribute();
-
-    if (filterPublicModifier && !Modifier.isPublic(b.getModifiers())) {
+    if (!this.agentConfigs.getInclPublicMethods() && Modifier.isPublic(b.getModifiers())) {
       return instrumented;
     }
+
+    MethodInfo info = b.getMethodInfo();
+    CodeAttribute ca = info.getCodeAttribute();
 
     if (ca != null) {
       CodeIterator ci = ca.iterator();
@@ -76,7 +74,7 @@ public class InstrumentationPass implements IPass {
         ci.skipConstructor();
       }
 
-      IGranularity g = GranularityFactory.getGranularity(c, info, ci, granularity);
+      IGranularity g = GranularityFactory.getGranularity(c, info, ci, this.agentConfigs.getGranularity());
 
       for (int instrSize = 0, index, curLine; ci.hasNext();) {
         index = ci.next();

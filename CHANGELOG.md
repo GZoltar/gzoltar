@@ -14,6 +14,7 @@ All notable changes will be documented in this file.
   - exclclassloader -- list of Java ClassLoaders not allowed to be instrumented (wildcards are allowed)
   - inclnolocationclasses -- specifies whether also classes without a source location should be instrumented
   - output -- specifies the output mode, valid options are file, console, or none
+  - inclPublicMethods -- specifies whether public methods of each class under test should be instrumented
 - Remove FlexJSON dependency
 
 ### Non-functional Changes

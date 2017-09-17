@@ -3,7 +3,7 @@ package com.gzoltar.core.instr;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
+import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.pass.InstrumentationPass;
 import com.gzoltar.core.instr.pass.IPass;
 import com.gzoltar.core.instr.pass.StackSizePass;
@@ -12,10 +12,10 @@ import javassist.CtClass;
 
 public class Instrumenter {
 
-  private final GranularityLevel granularity;
+  private final AgentConfigs agentConfigs;
 
-  public Instrumenter(GranularityLevel granularity) {
-    this.granularity = granularity;
+  public Instrumenter(final AgentConfigs agentConfigs) {
+    this.agentConfigs = agentConfigs;
   }
 
   public byte[] instrument(final byte[] classfileBuffer) throws Exception {
@@ -30,7 +30,7 @@ public class Instrumenter {
 
     List<IPass> instrumentationPasses = new ArrayList<IPass>();
     // instrumentationPasses.add(new TestFilterPass()); // do not instrument test classes/cases
-    instrumentationPasses.add(new InstrumentationPass(this.granularity, false)); // TODO false?
+    instrumentationPasses.add(new InstrumentationPass(this.agentConfigs));
     instrumentationPasses.add(new StackSizePass());
 
     for (IPass p : instrumentationPasses) {

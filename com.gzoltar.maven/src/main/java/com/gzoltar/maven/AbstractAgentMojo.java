@@ -67,6 +67,13 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
   @Parameter(defaultValue = "line")
   private String granularity;
 
+  /**
+   * Specifies whether public methods of each class under test should be instrumented. Default is
+   * <code>true</code>.
+   */
+  @Parameter(property = "gzoltar.inclPublicMethods", defaultValue = "true")
+  private Boolean inclPublicMethods;
+
   @Override
   public void executeMojo() {
     final Properties projectProperties = this.getProject().getProperties();
@@ -113,6 +120,10 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
 
     if (this.granularity != null) {
       agentConfigs.setGranularity(this.granularity);
+    }
+
+    if (this.inclPublicMethods != null) {
+      agentConfigs.setInclPublicMethods(this.inclPublicMethods.booleanValue());
     }
 
     return agentConfigs;

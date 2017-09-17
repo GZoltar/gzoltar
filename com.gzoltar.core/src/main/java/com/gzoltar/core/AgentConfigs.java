@@ -104,11 +104,19 @@ public final class AgentConfigs {
 
   public static final GranularityLevel DEFAULT_GRANULARITY = GranularityLevel.line;
 
+  /**
+   * Specifies whether public methods of each class under test should be instrumented. Default is
+   * <code>true</code>.
+   */
+  public static final String INCLPUBLICMETHODS_KEY = "inclpublicmethods";
+
+  public static final boolean DEFAULT_INCLPUBLICMETHODS = true;
+
   private final Map<String, String> configs;
 
   private static final Collection<String> VALID_CONFIGS =
       Arrays.asList(BUILDLOCATION_KEY, DESTFILE_KEY, INCLUDES_KEY, EXCLUDES_KEY,
-          EXCLCLASSLOADER_KEY, INCLNOLOCATIONCLASSES_KEY, OUTPUT_KEY);
+          EXCLCLASSLOADER_KEY, INCLNOLOCATIONCLASSES_KEY, OUTPUT_KEY, INCLPUBLICMETHODS_KEY);
 
   private static final Pattern CONFIG_SPLIT = Pattern.compile(",(?=[a-zA-Z0-9_\\-]+=)");
 
@@ -330,6 +338,24 @@ public final class AgentConfigs {
    */
   public void setGranularity(final GranularityLevel granularity) {
     this.setConfig(GRANULARITY_KEY, granularity.name());
+  }
+
+  /**
+   * Returns whether public methods should be instrumented.
+   * 
+   * @return <code>true</code> if public methods should be instrumented
+   */
+  public Boolean getInclPublicMethods() {
+    return this.getConfig(INCLPUBLICMETHODS_KEY, DEFAULT_INCLPUBLICMETHODS);
+  }
+
+  /**
+   * Sets whether public methods should be instrumented.
+   * 
+   * @param inclPublicMethods <code>true</code> if public methods should be instrumented
+   */
+  public void setInclPublicMethods(final boolean inclPublicMethods) {
+    this.setConfig(INCLPUBLICMETHODS_KEY, inclPublicMethods);
   }
 
   public IEventListener getEventListener() {

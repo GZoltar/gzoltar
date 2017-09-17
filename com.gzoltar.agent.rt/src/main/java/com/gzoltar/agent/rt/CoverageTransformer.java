@@ -27,7 +27,7 @@ public class CoverageTransformer implements ClassFileTransformer {
   private final FilterPass filter;
 
   public CoverageTransformer(final AgentConfigs agentConfigs) throws Exception {
-    this.instrumenter = new Instrumenter(agentConfigs.getGranularity());
+    this.instrumenter = new Instrumenter(agentConfigs);
 
     this.buildLocation = new File(agentConfigs.getBuildLocation()).toURI().toURL().getPath();
     this.inclNoLocationClasses = agentConfigs.getInclNoLocationClasses();
