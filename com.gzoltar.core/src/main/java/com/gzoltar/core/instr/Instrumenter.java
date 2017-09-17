@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
 import com.gzoltar.core.instr.pass.InstrumentationPass;
-import com.gzoltar.core.instr.pass.Pass;
+import com.gzoltar.core.instr.pass.IPass;
 import com.gzoltar.core.instr.pass.StackSizePass;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -28,12 +28,12 @@ public class Instrumenter {
     ClassPool cp = ClassPool.getDefault();
     cp.importPackage("com.gzoltar.core.runtime");
 
-    List<Pass> instrumentationPasses = new ArrayList<Pass>();
+    List<IPass> instrumentationPasses = new ArrayList<IPass>();
     // instrumentationPasses.add(new TestFilterPass()); // do not instrument test classes/cases
     instrumentationPasses.add(new InstrumentationPass(this.granularity, false)); // TODO false?
     instrumentationPasses.add(new StackSizePass());
 
-    for (Pass p : instrumentationPasses) {
+    for (IPass p : instrumentationPasses) {
       switch (p.transform(cc)) {
         case CANCEL:
           cc.detach();

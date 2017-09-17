@@ -6,7 +6,7 @@ import java.util.List;
 import com.gzoltar.core.instr.actions.IActionTaker;
 import javassist.CtClass;
 
-public class FilterPass implements Pass {
+public class FilterPass implements IPass {
 
   private final List<IActionTaker> actionTakers = new LinkedList<IActionTaker>();
 

@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import com.gzoltar.core.events.EventListener;
+import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
 import com.gzoltar.core.model.Node.Type;
 import com.gzoltar.core.util.CommandLineSupport;
@@ -332,8 +332,8 @@ public final class AgentConfigs {
     this.setConfig(GRANULARITY_KEY, granularity.name());
   }
 
-  public EventListener getEventListener() {
-    return new EventListener() {
+  public IEventListener getEventListener() {
+    return new IEventListener() {
       @Override
       public void endTransaction(String transactionName, boolean[] activity, int hashCode,
           boolean isError) {}

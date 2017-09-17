@@ -1,6 +1,6 @@
 package com.gzoltar.core.runtime;
 
-import com.gzoltar.core.events.EventListener;
+import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.events.MultiEventListener;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Tree;
@@ -21,13 +21,13 @@ public class Collector {
     return collector;
   }
 
-  public static void start(EventListener listener) {
+  public static void start(IEventListener listener) {
     if (collector == null) {
       collector = new Collector(listener);
     }
   }
 
-  private Collector(EventListener listener) {
+  private Collector(IEventListener listener) {
     this.listener = new MultiEventListener();
     this.builder = new SpectrumBuilder();
     addListener(this.builder);
@@ -37,7 +37,7 @@ public class Collector {
     this.hitVector = new HitVector();
   }
 
-  public void addListener(EventListener listener) {
+  public void addListener(IEventListener listener) {
     if (listener != null) {
       this.listener.add(listener);
     }

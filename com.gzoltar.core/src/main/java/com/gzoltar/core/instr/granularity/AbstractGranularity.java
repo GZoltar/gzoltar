@@ -9,7 +9,7 @@ import javassist.bytecode.MethodInfo;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
 
-public abstract class AbstractGranularity implements Granularity {
+public abstract class AbstractGranularity implements IGranularity {
 
   protected CtClass c;
   protected MethodInfo mi;

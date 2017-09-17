@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
-import com.gzoltar.core.events.EventListener;
+import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.messaging.Message.AddNodeMessage;
 import com.gzoltar.core.messaging.Message.AddProbeMessage;
 import com.gzoltar.core.messaging.Message.ByeMessage;
@@ -13,7 +13,7 @@ import com.gzoltar.core.messaging.Message.EndTransactionMessage;
 import com.gzoltar.core.messaging.Message.HandshakeMessage;
 import com.gzoltar.core.model.Node.Type;
 
-public class Client implements EventListener {
+public class Client implements IEventListener {
 
   private String host;
   private int port;

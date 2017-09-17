@@ -1,10 +1,10 @@
 package com.gzoltar.core.messaging;
 
-import com.gzoltar.core.events.EventListener;
+import com.gzoltar.core.events.IEventListener;
 
 public interface Service {
 
-  EventListener getEventListener();
+  IEventListener getEventListener();
 
   void interrupted();
 

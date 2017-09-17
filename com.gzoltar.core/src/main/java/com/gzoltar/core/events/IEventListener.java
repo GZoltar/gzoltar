@@ -2,7 +2,7 @@ package com.gzoltar.core.events;
 
 import com.gzoltar.core.model.Node.Type;
 
-public interface EventListener {
+public interface IEventListener {
 
   void endTransaction(String transactionName, boolean[] activity, boolean isError);
 

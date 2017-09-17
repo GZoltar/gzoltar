@@ -1,6 +1,6 @@
 package com.gzoltar.maven.messaging;
 
-import com.gzoltar.core.events.EventListener;
+import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.events.MultiEventListener;
 import com.gzoltar.core.messaging.Service;
 import com.gzoltar.core.spectrum.SpectrumBuilder;
@@ -11,7 +11,7 @@ public class ServiceHandler implements Service {
   private final AbstractGZoltarMojo mojo;
 
   private SpectrumBuilder spectrumBuilder;
-  private EventListener listener;
+  private IEventListener listener;
 
   public ServiceHandler(AbstractGZoltarMojo mojo) {
     this.mojo = mojo;
@@ -20,7 +20,7 @@ public class ServiceHandler implements Service {
   }
 
   @Override
-  public EventListener getEventListener() {
+  public IEventListener getEventListener() {
     return listener;
   }
 

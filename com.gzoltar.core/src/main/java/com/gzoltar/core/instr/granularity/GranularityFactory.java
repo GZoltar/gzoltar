@@ -10,7 +10,7 @@ public class GranularityFactory {
     line, method, basicblock
   }
 
-  public static Granularity getGranularity(CtClass c, MethodInfo mi, CodeIterator ci,
+  public static IGranularity getGranularity(CtClass c, MethodInfo mi, CodeIterator ci,
       GranularityLevel level) {
     switch (level) {
       case line:

@@ -5,21 +5,21 @@ import java.util.Collections;
 import java.util.List;
 import com.gzoltar.core.model.Node.Type;
 
-public class MultiEventListener implements EventListener {
+public class MultiEventListener implements IEventListener {
 
-  private List<EventListener> eventListeners = new ArrayList<EventListener>();
+  private List<IEventListener> eventListeners = new ArrayList<IEventListener>();
 
-  public MultiEventListener(EventListener... els) {
+  public MultiEventListener(IEventListener... els) {
     Collections.addAll(eventListeners, els);
   }
 
-  public void add(EventListener el) {
+  public void add(IEventListener el) {
     eventListeners.add(el);
   }
 
   @Override
   public void endTransaction(String transactionName, boolean[] activity, boolean isError) {
-    for (EventListener el : eventListeners) {
+    for (IEventListener el : eventListeners) {
       el.endTransaction(transactionName, activity, isError);
     }
   }
@@ -27,21 +27,21 @@ public class MultiEventListener implements EventListener {
   @Override
   public void endTransaction(String transactionName, boolean[] activity, int hashCode,
       boolean isError) {
-    for (EventListener el : eventListeners) {
+    for (IEventListener el : eventListeners) {
       el.endTransaction(transactionName, activity, hashCode, isError);
     }
   }
 
   @Override
   public void addNode(int id, String name, Type type, int parentId) {
-    for (EventListener el : eventListeners) {
+    for (IEventListener el : eventListeners) {
       el.addNode(id, name, type, parentId);
     }
   }
 
   @Override
   public void addProbe(int id, int nodeId) {
-    for (EventListener el : eventListeners) {
+    for (IEventListener el : eventListeners) {
       el.addProbe(id, nodeId);
     }
 
@@ -49,7 +49,7 @@ public class MultiEventListener implements EventListener {
 
   @Override
   public void endSession() {
-    for (EventListener el : eventListeners) {
+    for (IEventListener el : eventListeners) {
       el.endSession();
     }
   }

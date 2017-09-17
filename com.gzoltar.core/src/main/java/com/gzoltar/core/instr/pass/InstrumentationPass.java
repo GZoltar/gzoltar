@@ -1,6 +1,6 @@
 package com.gzoltar.core.instr.pass;
 
-import com.gzoltar.core.instr.granularity.Granularity;
+import com.gzoltar.core.instr.granularity.IGranularity;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
 import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
 import com.gzoltar.core.model.Node;
@@ -19,7 +19,7 @@ import javassist.bytecode.ConstPool;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.Opcode;
 
-public class InstrumentationPass implements Pass {
+public class InstrumentationPass implements IPass {
 
   private static final String HIT_VECTOR_TYPE = "[Z";
   public static final String HIT_VECTOR_NAME = "$__GZ_HIT_VECTOR__";
@@ -76,7 +76,7 @@ public class InstrumentationPass implements Pass {
         ci.skipConstructor();
       }
 
-      Granularity g = GranularityFactory.getGranularity(c, info, ci, granularity);
+      IGranularity g = GranularityFactory.getGranularity(c, info, ci, granularity);
 
       for (int instrSize = 0, index, curLine; ci.hasNext();) {
         index = ci.next();

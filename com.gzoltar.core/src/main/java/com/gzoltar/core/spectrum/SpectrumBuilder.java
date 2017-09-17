@@ -1,9 +1,9 @@
 package com.gzoltar.core.spectrum;
 
-import com.gzoltar.core.events.EventListener;
+import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.model.Node.Type;
 
-public class SpectrumBuilder implements EventListener {
+public class SpectrumBuilder implements IEventListener {
 
   protected SpectrumImpl spectrum;
 

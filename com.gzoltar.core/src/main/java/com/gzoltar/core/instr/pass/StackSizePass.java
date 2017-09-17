@@ -5,7 +5,7 @@ import javassist.CtClass;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.MethodInfo;
 
-public class StackSizePass implements Pass {
+public class StackSizePass implements IPass {
 
   @Override
   public final Outcome transform(final CtClass c) throws Exception {

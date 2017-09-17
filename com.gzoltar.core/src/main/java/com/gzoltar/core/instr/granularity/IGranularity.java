@@ -4,7 +4,7 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import com.gzoltar.core.model.Node;
 
-public interface Granularity {
+public interface IGranularity {
 
   public boolean instrumentAtIndex(int index, int instrumentationSize);
 

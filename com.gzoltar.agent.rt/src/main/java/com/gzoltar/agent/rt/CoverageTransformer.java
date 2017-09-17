@@ -12,7 +12,7 @@ import com.gzoltar.core.instr.matchers.ClassNameMatcher;
 import com.gzoltar.core.instr.matchers.PrefixMatcher;
 import com.gzoltar.core.instr.matchers.SourceLocationMatcher;
 import com.gzoltar.core.instr.pass.FilterPass;
-import com.gzoltar.core.instr.pass.Pass;
+import com.gzoltar.core.instr.pass.IPass;
 import javassist.ClassPool;
 import javassist.CtClass;
 
@@ -77,7 +77,7 @@ public class CoverageTransformer implements ClassFileTransformer {
       }
 
       // check whether this class should be instrumented
-      if (this.filter.transform(cc) == Pass.Outcome.CANCEL) {
+      if (this.filter.transform(cc) == IPass.Outcome.CANCEL) {
         return null;
       }
 

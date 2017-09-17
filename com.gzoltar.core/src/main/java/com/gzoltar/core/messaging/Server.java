@@ -3,7 +3,7 @@ package com.gzoltar.core.messaging;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import com.gzoltar.core.events.EventListener;
+import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.messaging.Message.AddNodeMessage;
 import com.gzoltar.core.messaging.Message.AddProbeMessage;
 import com.gzoltar.core.messaging.Message.ByeMessage;
@@ -71,7 +71,7 @@ public class Server extends ThreadedServer {
     }
 
     private boolean dispatch(Object o) {
-      EventListener eventListener = service.getEventListener();
+      IEventListener eventListener = service.getEventListener();
 
       if (o instanceof ByeMessage) {
         eventListener.endSession();

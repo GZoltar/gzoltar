@@ -2,7 +2,7 @@ package com.gzoltar.core.instr.pass;
 
 import javassist.CtClass;
 
-public interface Pass {
+public interface IPass {
 
   public static enum Outcome {
     CONTINUE, CANCEL, FINISH
