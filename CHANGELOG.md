@@ -15,6 +15,9 @@ All notable changes will be documented in this file.
   - inclnolocationclasses -- specifies whether also classes without a source location should be instrumented
   - output -- specifies the output mode, valid options are file, console, or none
   - inclPublicMethods -- specifies whether public methods of each class under test should be instrumented
+- Exclude from instrumentation
+  - methods 'values' and 'valueOf' of enum classes
+  - synthetic methods (unless they represent bodies of lambda expressions)
 - Remove FlexJSON dependency
 
 ### Non-functional Changes
