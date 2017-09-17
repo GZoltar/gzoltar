@@ -1,16 +1,20 @@
 package com.gzoltar.core.instr.pass;
 
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.actions.Action;
 import com.gzoltar.core.instr.actions.BlackList;
-import com.gzoltar.core.instr.actions.IActionTaker;
+import com.gzoltar.core.instr.actions.IAction;
 import com.gzoltar.core.instr.actions.WhiteList;
+import com.gzoltar.core.instr.filter.EnumFilter;
+import com.gzoltar.core.instr.filter.Filter;
+import com.gzoltar.core.instr.filter.IFilter;
+import com.gzoltar.core.instr.filter.SyntheticFilter;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
 import com.gzoltar.core.instr.granularity.IGranularity;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
-import com.gzoltar.core.util.VMUtils;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -30,60 +34,72 @@ public class InstrumentationPass implements IPass {
 
   public static final String HIT_VECTOR_NAME = "$__GZ_HIT_VECTOR__";
 
-  private final AgentConfigs agentConfigs;
+  private final IFilter[] filters;
 
-  private final FilterPass filter;
+  private final AgentConfigs agentConfigs;
 
   public InstrumentationPass(final AgentConfigs agentConfigs) {
     this.agentConfigs = agentConfigs;
 
-    IActionTaker includePublicMethods;
+    IAction includePublicMethods;
     if (this.agentConfigs.getInclPublicMethods()) {
       includePublicMethods = new WhiteList(new MethodModifierMatcher(Modifier.PUBLIC));
     } else {
       includePublicMethods = new BlackList(new MethodModifierMatcher(Modifier.PUBLIC));
     }
 
-    this.filter = new FilterPass(includePublicMethods);
+    this.filters = new IFilter[] {
+        // filter classes/methods according to users preferences
+        new Filter(includePublicMethods),
+        // exclude synthetic methods
+        new SyntheticFilter(),
+        // exclude methods 'values' and 'valuesOf' of enum classes
+        new EnumFilter()};
   }
 
   @Override
-  public Outcome transform(final CtClass c) throws Exception {
+  public Action transform(final CtClass ctClass) throws Exception {
     boolean instrumented = false;
 
-    for (CtBehavior b : c.getDeclaredBehaviors()) {
+    for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
-          this.transform(c, b).equals(IPass.Outcome.CANCEL) ? false : true;
+          this.transform(ctClass, ctBehavior).equals(Action.REJECT) ? false : true;
       instrumented = instrumented || behaviorInstrumented;
     }
 
     if (instrumented) {
       // make field
-      CtField f = CtField.make("private static boolean[] " + HIT_VECTOR_NAME + ";", c);
+      CtField f = CtField.make("private static boolean[] " + HIT_VECTOR_NAME + ";", ctClass);
       f.setModifiers(f.getModifiers() | AccessFlag.SYNTHETIC);
-      c.addField(f);
+      ctClass.addField(f);
 
       // make class initializer
-      CtConstructor initializer = c.makeClassInitializer();
-      initializer.insertBefore(
-          HIT_VECTOR_NAME + " = Collector.instance().getHitVector(\"" + c.getName() + "\");");
+      CtConstructor initializer = ctClass.makeClassInitializer();
+      initializer.insertBefore(HIT_VECTOR_NAME + " = " + Collector.class.getName()
+          + ".instance().getHitVector(\"" + ctClass.getName() + "\");");
     }
 
-    return Outcome.CONTINUE;
+    return Action.NEXT;
   }
 
   @Override
-  public Outcome transform(final CtClass c, final CtBehavior b) throws Exception {
-    IPass.Outcome instrumented = IPass.Outcome.CANCEL;
+  public Action transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
+    Action instrumented = Action.REJECT;
 
     // check whether this method should be instrumented
-    if (this.filter.transform(c, b) == IPass.Outcome.CANCEL ||
-        new SyntheticPass().transform(c, b) == IPass.Outcome.CANCEL ||
-        new EnumPass(VMUtils.toVMName(c.getName())).transform(c, b) == IPass.Outcome.CANCEL) {
-      return instrumented;
+    for (IFilter filter : this.filters) {
+      switch (filter.filter(ctBehavior)) {
+        case REJECT:
+          return instrumented;
+        case NEXT:
+          continue;
+        case ACCEPT:
+        default:
+          break;
+      }
     }
 
-    MethodInfo info = b.getMethodInfo();
+    MethodInfo info = ctBehavior.getMethodInfo();
     CodeAttribute ca = info.getCodeAttribute();
 
     if (ca == null) {
@@ -93,15 +109,15 @@ public class InstrumentationPass implements IPass {
 
     CodeIterator ci = ca.iterator();
 
-    if (b instanceof CtConstructor) {
-      if (((CtConstructor) b).isClassInitializer()) {
+    if (ctBehavior instanceof CtConstructor) {
+      if (((CtConstructor) ctBehavior).isClassInitializer()) {
         return instrumented;
       }
       ci.skipConstructor();
     }
 
     IGranularity g =
-        GranularityFactory.getGranularity(c, info, ci, this.agentConfigs.getGranularity());
+        GranularityFactory.getGranularity(ctClass, info, ci, this.agentConfigs.getGranularity());
 
     for (int instrSize = 0, index, curLine; ci.hasNext();) {
       index = ci.next();
@@ -113,12 +129,12 @@ public class InstrumentationPass implements IPass {
       }
 
       if (g.instrumentAtIndex(index, instrSize)) {
-        Node n = g.getNode(c, b, curLine);
-        Bytecode bc = getInstrumentationCode(c, n, info.getConstPool());
+        Node n = g.getNode(ctClass, ctBehavior, curLine);
+        Bytecode bc = getInstrumentationCode(ctClass, n, info.getConstPool());
         ci.insert(index, bc.get());
         instrSize += bc.length();
 
-        instrumented = IPass.Outcome.CONTINUE;
+        instrumented = Action.NEXT;
       }
 
       if (g.stopInstrumenting()) {

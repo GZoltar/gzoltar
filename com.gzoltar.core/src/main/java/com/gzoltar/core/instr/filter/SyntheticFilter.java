@@ -1,4 +1,4 @@
-package com.gzoltar.core.instr.pass;
+package com.gzoltar.core.instr.filter;
 
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.matchers.AndMatcher;
@@ -13,7 +13,7 @@ import javassist.bytecode.SyntheticAttribute;
 /**
  * Filters synthetic methods unless they represent bodies of lambda expressions.
  */
-public final class SyntheticPass extends FilterPass {
+public final class SyntheticFilter extends Filter {
 
   /**
    * Suppose we compile the following snippet of code with a JDK version < 5.
@@ -55,12 +55,13 @@ public final class SyntheticPass extends FilterPass {
    * static method in Access which simply returns the field from the passed in object. The
    * compiler also replaces the call to "a.y" with "access$000(a)".
    */
-  public SyntheticPass() {
+  public SyntheticFilter() {
     BlackList bridgeSyntheticMethods = new BlackList(new AndMatcher(
         new OrMatcher(new MethodModifierMatcher(AccessFlag.BRIDGE),
             new MethodModifierMatcher(AccessFlag.SYNTHETIC),
             new MethodAttributeMatcher(SyntheticAttribute.tag)),
         new NotMatcher(new PrefixMatcher("lambda$"))));
+
     this.add(bridgeSyntheticMethods);
   }
 

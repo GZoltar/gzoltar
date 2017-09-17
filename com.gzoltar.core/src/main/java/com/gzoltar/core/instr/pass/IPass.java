@@ -1,15 +1,12 @@
 package com.gzoltar.core.instr.pass;
 
+import com.gzoltar.core.instr.actions.Action;
 import javassist.CtBehavior;
 import javassist.CtClass;
 
 public interface IPass {
 
-  public static enum Outcome {
-    CONTINUE, CANCEL, FINISH
-  };
+  public Action transform(final CtClass ctClass) throws Exception;
 
-  public Outcome transform(final CtClass c) throws Exception;
-
-  public Outcome transform(final CtClass c, final CtBehavior m) throws Exception;
+  public Action transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception;
 }

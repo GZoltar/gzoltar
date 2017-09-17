@@ -1,18 +1,19 @@
-package com.gzoltar.core.instr.pass;
+package com.gzoltar.core.instr.filter;
 
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.matchers.MethodAnnotationMatcher;
 import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.instr.matchers.SuperclassMatcher;
 
-public class TestFilterPass extends FilterPass {
+public class TestFilter extends Filter {
 
-  public TestFilterPass() {
+  public TestFilter() {
     BlackList junit3 = new BlackList(new SuperclassMatcher("junit.framework.TestCase"));
     BlackList junit4 = new BlackList(new OrMatcher(new MethodAnnotationMatcher("org.junit.Test"),
         new MethodAnnotationMatcher("org.junit.experimental.theories.Theory")));
 
-    add(junit3);
-    add(junit4);
+    this.add(junit3);
+    this.add(junit4);
   }
+
 }

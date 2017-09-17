@@ -6,13 +6,13 @@ import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Instrumenter;
+import com.gzoltar.core.instr.actions.Action;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.actions.WhiteList;
+import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.matchers.ClassNameMatcher;
 import com.gzoltar.core.instr.matchers.PrefixMatcher;
 import com.gzoltar.core.instr.matchers.SourceLocationMatcher;
-import com.gzoltar.core.instr.pass.FilterPass;
-import com.gzoltar.core.instr.pass.IPass;
 import com.gzoltar.core.util.VMUtils;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -25,7 +25,7 @@ public class CoverageTransformer implements ClassFileTransformer {
 
   private final boolean inclNoLocationClasses;
 
-  private final FilterPass filter;
+  private final Filter filter;
 
   public CoverageTransformer(final AgentConfigs agentConfigs) throws Exception {
     this.instrumenter = new Instrumenter(agentConfigs);
@@ -49,7 +49,7 @@ public class CoverageTransformer implements ClassFileTransformer {
         new BlackList(new ClassNameMatcher(VMUtils.toVMName(agentConfigs.getExclClassloader())));
 
     this.filter =
-        new FilterPass(excludeGZoltarClasses, includeClasses, excludeClasses, excludeClassLoaders);
+        new Filter(excludeGZoltarClasses, includeClasses, excludeClasses, excludeClassLoaders);
   }
 
   public byte[] transform(final ClassLoader loader, final String className,
@@ -78,7 +78,7 @@ public class CoverageTransformer implements ClassFileTransformer {
       }
 
       // check whether this class should be instrumented
-      if (this.filter.transform(cc) == IPass.Outcome.CANCEL) {
+      if (this.filter.filter(cc) == Action.REJECT) {
         return null;
       }
 

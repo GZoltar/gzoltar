@@ -4,8 +4,8 @@ import com.gzoltar.core.instr.matchers.IMatcher;
 
 public class WhiteList extends AbstractActionTaker {
 
-  public WhiteList(IMatcher m) {
-    super(m);
+  public WhiteList(final IMatcher matcher) {
+    super(matcher);
   }
 
   @Override

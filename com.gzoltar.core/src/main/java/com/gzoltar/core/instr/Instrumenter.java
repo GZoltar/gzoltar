@@ -1,21 +1,23 @@
 package com.gzoltar.core.instr;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
 import com.gzoltar.core.AgentConfigs;
-import com.gzoltar.core.instr.pass.InstrumentationPass;
 import com.gzoltar.core.instr.pass.IPass;
+import com.gzoltar.core.instr.pass.InstrumentationPass;
 import com.gzoltar.core.instr.pass.StackSizePass;
 import javassist.ClassPool;
 import javassist.CtClass;
 
 public class Instrumenter {
 
-  private final AgentConfigs agentConfigs;
+  private final IPass[] passes;
 
   public Instrumenter(final AgentConfigs agentConfigs) {
-    this.agentConfigs = agentConfigs;
+    this.passes = new IPass[] {
+        //new TestFilterPass(), // do not instrument test classes/cases
+        new InstrumentationPass(agentConfigs),
+        new StackSizePass()
+    };
   }
 
   public byte[] instrument(final byte[] classfileBuffer) throws Exception {
@@ -25,22 +27,14 @@ public class Instrumenter {
   }
 
   public byte[] instrument(final CtClass cc) throws Exception {
-    ClassPool cp = ClassPool.getDefault();
-    cp.importPackage("com.gzoltar.core.runtime");
-
-    List<IPass> instrumentationPasses = new ArrayList<IPass>();
-    // instrumentationPasses.add(new TestFilterPass()); // do not instrument test classes/cases
-    instrumentationPasses.add(new InstrumentationPass(this.agentConfigs));
-    instrumentationPasses.add(new StackSizePass());
-
-    for (IPass p : instrumentationPasses) {
+    for (IPass p : this.passes) {
       switch (p.transform(cc)) {
-        case CANCEL:
+        case REJECT:
           cc.detach();
           return null;
-        case CONTINUE:
+        case NEXT:
           continue;
-        case FINISH:
+        case ACCEPT:
         default:
           break;
       }

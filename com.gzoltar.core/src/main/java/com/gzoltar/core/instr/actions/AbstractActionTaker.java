@@ -4,21 +4,21 @@ import com.gzoltar.core.instr.matchers.IMatcher;
 import javassist.CtBehavior;
 import javassist.CtClass;
 
-public abstract class AbstractActionTaker implements IActionTaker {
+public abstract class AbstractActionTaker implements IAction {
 
   private final IMatcher matcher;
 
-  public AbstractActionTaker(IMatcher matcher) {
+  public AbstractActionTaker(final IMatcher matcher) {
     this.matcher = matcher;
   }
 
   @Override
-  public final Action getAction(CtClass c) {
+  public final Action getAction(final CtClass c) {
     return getAction(this.matcher.matches(c));
   }
 
   @Override
-  public final Action getAction(CtBehavior b) {
+  public final Action getAction(final CtBehavior b) {
     return getAction(this.matcher.matches(b));
   }
 
