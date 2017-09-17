@@ -1,9 +1,9 @@
 package com.gzoltar.core.instr.matchers;
 
 import java.util.regex.Pattern;
+import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
-import javassist.CtMethod;
 
 public class FieldNameMatcher extends AbstractMatcher {
 
@@ -24,7 +24,7 @@ public class FieldNameMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtMethod m) {
+  public final boolean matches(final CtBehavior b) {
     return false;
   }
 }

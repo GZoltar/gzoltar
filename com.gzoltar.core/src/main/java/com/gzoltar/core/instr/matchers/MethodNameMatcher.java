@@ -1,8 +1,8 @@
 package com.gzoltar.core.instr.matchers;
 
 import java.util.regex.Pattern;
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 
 public class MethodNameMatcher extends AbstractMatcher {
 
@@ -18,8 +18,8 @@ public class MethodNameMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtMethod m) {
-    return this.pattern.matcher(m.getName()).matches();
+  public final boolean matches(final CtBehavior b) {
+    return this.pattern.matcher(b.getName()).matches();
   }
 
 }

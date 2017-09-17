@@ -1,5 +1,6 @@
 package com.gzoltar.core.instr.matchers;
 
+import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtMethod;
 
@@ -22,9 +23,9 @@ public class MethodAnnotationMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtMethod m) {
+  public final boolean matches(final CtBehavior b) {
     try {
-      return m.hasAnnotation(Class.forName(annotation));
+      return b.hasAnnotation(Class.forName(annotation));
     } catch (Exception e) {
       return false;
     }

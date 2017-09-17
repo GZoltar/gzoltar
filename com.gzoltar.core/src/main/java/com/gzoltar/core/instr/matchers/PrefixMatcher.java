@@ -3,8 +3,8 @@ package com.gzoltar.core.instr.matchers;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 
 public class PrefixMatcher extends AbstractMatcher {
 
@@ -24,8 +24,8 @@ public class PrefixMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtMethod m) {
-    return this.matchesPrefix(m.getName());
+  public final boolean matches(final CtBehavior b) {
+    return this.matchesPrefix(b.getName());
   }
 
   private boolean matchesPrefix(String name) {

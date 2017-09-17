@@ -1,8 +1,8 @@
 package com.gzoltar.core.instr.actions;
 
 import com.gzoltar.core.instr.matchers.IMatcher;
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 
 public abstract class AbstractActionTaker implements IActionTaker {
 
@@ -18,8 +18,8 @@ public abstract class AbstractActionTaker implements IActionTaker {
   }
 
   @Override
-  public final Action getAction(CtMethod m) {
-    return getAction(this.matcher.matches(m));
+  public final Action getAction(CtBehavior b) {
+    return getAction(this.matcher.matches(b));
   }
 
   protected abstract Action getAction(boolean matches);

@@ -1,7 +1,7 @@
 package com.gzoltar.core.instr.matchers;
 
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 
 public class OrMatcher extends AbstractMatcher {
 
@@ -22,9 +22,9 @@ public class OrMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtMethod m) {
+  public final boolean matches(final CtBehavior b) {
     for (IMatcher mat : this.matchers) {
-      if (mat.matches(m)) {
+      if (mat.matches(b)) {
         return true;
       }
     }

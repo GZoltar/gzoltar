@@ -1,7 +1,7 @@
 package com.gzoltar.core.instr.matchers;
 
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 
 public class ModifierMatcher extends AbstractMatcher {
 
@@ -17,8 +17,8 @@ public class ModifierMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtMethod m) {
-    return this.matches(m.getModifiers());
+  public final boolean matches(final CtBehavior b) {
+    return this.matches(b.getModifiers());
   }
 
   private boolean matches(final int modifier) {

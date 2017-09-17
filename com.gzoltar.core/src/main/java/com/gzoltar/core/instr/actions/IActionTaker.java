@@ -1,7 +1,7 @@
 package com.gzoltar.core.instr.actions;
 
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 
 public interface IActionTaker {
 
@@ -11,5 +11,5 @@ public interface IActionTaker {
 
   public Action getAction(final CtClass c);
 
-  public Action getAction(final CtMethod m);
+  public Action getAction(final CtBehavior b);
 }

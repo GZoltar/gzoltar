@@ -2,8 +2,8 @@ package com.gzoltar.core.instr.matchers;
 
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 
 public class SourceLocationMatcher extends AbstractMatcher {
 
@@ -49,7 +49,7 @@ public class SourceLocationMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtMethod m) {
+  public final boolean matches(final CtBehavior b) {
     return false;
   }
 

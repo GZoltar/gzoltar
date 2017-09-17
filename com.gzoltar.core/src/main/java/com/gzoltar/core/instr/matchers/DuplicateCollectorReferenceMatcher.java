@@ -1,8 +1,8 @@
 package com.gzoltar.core.instr.matchers;
 
 import com.gzoltar.core.runtime.Collector;
+import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtMethod;
 
 public class DuplicateCollectorReferenceMatcher extends AbstractMatcher {
 
@@ -12,7 +12,7 @@ public class DuplicateCollectorReferenceMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtMethod m) {
+  public final boolean matches(final CtBehavior b) {
     return false;
   }
 }

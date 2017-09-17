@@ -1,8 +1,12 @@
 package com.gzoltar.core.instr.pass;
 
-import com.gzoltar.core.instr.granularity.IGranularity;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.actions.BlackList;
+import com.gzoltar.core.instr.actions.IActionTaker;
+import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
+import com.gzoltar.core.instr.granularity.IGranularity;
+import com.gzoltar.core.instr.matchers.ModifierMatcher;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
@@ -22,12 +26,24 @@ import javassist.bytecode.Opcode;
 public class InstrumentationPass implements IPass {
 
   private static final String HIT_VECTOR_TYPE = "[Z";
+
   public static final String HIT_VECTOR_NAME = "$__GZ_HIT_VECTOR__";
 
   private final AgentConfigs agentConfigs;
 
+  private final FilterPass filter;
+
   public InstrumentationPass(final AgentConfigs agentConfigs) {
     this.agentConfigs = agentConfigs;
+
+    IActionTaker includePublicMethods;
+    if (this.agentConfigs.getInclPublicMethods()) {
+      includePublicMethods = new WhiteList(new ModifierMatcher(Modifier.PUBLIC));
+    } else {
+      includePublicMethods = new BlackList(new ModifierMatcher(Modifier.PUBLIC));
+    }
+
+    this.filter = new FilterPass(includePublicMethods);
   }
 
   @Override
@@ -35,7 +51,7 @@ public class InstrumentationPass implements IPass {
     boolean instrumented = false;
 
     for (CtBehavior b : c.getDeclaredBehaviors()) {
-      boolean behaviorInstrumented = this.handleBehavior(c, b);
+      boolean behaviorInstrumented = this.transform(c, b).equals(IPass.Outcome.CANCEL) ? false : true;
       instrumented = instrumented || behaviorInstrumented;
     }
 
@@ -54,10 +70,12 @@ public class InstrumentationPass implements IPass {
     return Outcome.CONTINUE;
   }
 
-  private boolean handleBehavior(CtClass c, CtBehavior b) throws Exception {
-    boolean instrumented = false;
+  @Override
+  public Outcome transform(final CtClass c, final CtBehavior b) throws Exception {
+    IPass.Outcome instrumented = IPass.Outcome.CANCEL;
 
-    if (!this.agentConfigs.getInclPublicMethods() && Modifier.isPublic(b.getModifiers())) {
+    // check whether this method should be instrumented
+    if (this.filter.transform(c, b) == IPass.Outcome.CANCEL) {
       return instrumented;
     }
 
@@ -91,7 +109,7 @@ public class InstrumentationPass implements IPass {
           ci.insert(index, bc.get());
           instrSize += bc.length();
 
-          instrumented = true;
+          instrumented = IPass.Outcome.CONTINUE;
         }
 
         if (g.stopInstrumenting()) {

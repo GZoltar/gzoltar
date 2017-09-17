@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import com.gzoltar.core.instr.actions.IActionTaker;
+import javassist.CtBehavior;
 import javassist.CtClass;
 
 public class FilterPass implements IPass {
@@ -47,6 +48,25 @@ public class FilterPass implements IPass {
   public Outcome transform(final CtClass c) throws Exception {
     for (IActionTaker at : this.actionTakers) {
       IActionTaker.Action ret = at.getAction(c);
+      switch (ret) {
+        case ACCEPT:
+          return this.acceptOutcome;
+        case NEXT:
+          continue;
+        case REJECT:
+          return this.rejectOutcome;
+        default:
+          continue;
+      }
+    }
+
+    return this.fallbackOutcome;
+  }
+
+  @Override
+  public Outcome transform(final CtClass c, final CtBehavior b) throws Exception {
+    for (IActionTaker at : this.actionTakers) {
+      IActionTaker.Action ret = at.getAction(b);
       switch (ret) {
         case ACCEPT:
           return this.acceptOutcome;
