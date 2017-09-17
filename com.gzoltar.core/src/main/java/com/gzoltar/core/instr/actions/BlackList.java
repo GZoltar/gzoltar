@@ -2,7 +2,7 @@ package com.gzoltar.core.instr.actions;
 
 import com.gzoltar.core.instr.matchers.IMatcher;
 
-public class BlackList extends AbstractActionTaker {
+public class BlackList extends AbstractAction {
 
   public BlackList(final IMatcher matcher) {
     super(matcher);
