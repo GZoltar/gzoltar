@@ -6,7 +6,10 @@ import com.gzoltar.core.instr.matchers.MethodNameMatcher;
 import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.instr.matchers.SuperclassMatcher;
 
-public class EnumPass extends FilterPass {
+/**
+ * Filters methods 'values' and 'valueOf' of enum classes.
+ */
+public final class EnumPass extends FilterPass {
 
   /**
    * The methods:
@@ -15,7 +18,9 @@ public class EnumPass extends FilterPass {
    * added by the compiler to an ENUM class *are not* marked as SYNTHETIC. Therefore, we need to
    * explicit ignore them.
    * 
-   * see https://bugs.openjdk.java.net/browse/JDK-6520153 for more information
+   * see https://bugs.openjdk.java.net/browse/JDK-6520153 for more information.
+   * 
+   * @param className name of class using VM notation, i.e., '/' instead of '.'
    */
   public EnumPass(String className) {
     BlackList enumMethods = new BlackList(new AndMatcher(new SuperclassMatcher("java.lang.Enum"),
