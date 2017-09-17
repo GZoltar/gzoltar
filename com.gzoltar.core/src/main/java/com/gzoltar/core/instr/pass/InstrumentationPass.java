@@ -6,6 +6,7 @@ import com.gzoltar.core.instr.actions.IActionTaker;
 import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
 import com.gzoltar.core.instr.granularity.IGranularity;
+import com.gzoltar.core.instr.matchers.AttributeMatcher;
 import com.gzoltar.core.instr.matchers.ModifierMatcher;
 import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.model.Node;
@@ -23,6 +24,7 @@ import javassist.bytecode.CodeIterator;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.Opcode;
+import javassist.bytecode.SyntheticAttribute;
 
 public class InstrumentationPass implements IPass {
 
@@ -79,7 +81,8 @@ public class InstrumentationPass implements IPass {
      */
     BlackList excludeBridgeSyntheticMethods =
         new BlackList(new OrMatcher(new ModifierMatcher(AccessFlag.BRIDGE),
-            new ModifierMatcher(AccessFlag.SYNTHETIC)));
+            new ModifierMatcher(AccessFlag.SYNTHETIC),
+            new AttributeMatcher(SyntheticAttribute.tag)));
 
     IActionTaker includePublicMethods;
     if (this.agentConfigs.getInclPublicMethods()) {
