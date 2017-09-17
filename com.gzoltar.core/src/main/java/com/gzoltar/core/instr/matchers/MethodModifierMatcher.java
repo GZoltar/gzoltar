@@ -4,10 +4,10 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
 
-public class MethodNameMatcher extends AbstractWildcardMatcher {
+public class MethodModifierMatcher extends AbstractModifiedMatcher {
 
-  public MethodNameMatcher(final String expression) {
-    super(expression);
+  public MethodModifierMatcher(final int modifierMask) {
+    super(modifierMask);
   }
 
   @Override
@@ -22,12 +22,12 @@ public class MethodNameMatcher extends AbstractWildcardMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    return super.matches(ctBehavior.getName());
+    return super.matches(ctBehavior);
   }
 
   @Override
   public final boolean matches(final CtField ctField) {
-    throw new RuntimeException(MethodNameMatcher.class.getSimpleName()
+    throw new RuntimeException(MethodModifierMatcher.class.getSimpleName()
         + " should only be used to filter out methods or classes with methods");
   }
 

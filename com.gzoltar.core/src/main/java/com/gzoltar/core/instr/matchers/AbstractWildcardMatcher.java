@@ -2,14 +2,16 @@ package com.gzoltar.core.instr.matchers;
 
 import java.util.regex.Pattern;
 
-public abstract class AbstractMatcher implements IMatcher {
+public abstract class AbstractWildcardMatcher implements IMatcher {
+
+  private final Pattern pattern;
 
   /**
    * Matches strings against <code>?</code>/<code>*</code> wildcard expressions. Multiple
    * expressions can be separated with a colon (:). In this case the expression matches if at least
    * one part matches.
    */
-  public Pattern matches(final String expression) {
+  protected AbstractWildcardMatcher(final String expression) {
     final String[] parts = expression.split("\\:");
     final StringBuilder regex = new StringBuilder(expression.length() * 2);
     boolean next = false;
@@ -20,7 +22,7 @@ public abstract class AbstractMatcher implements IMatcher {
       regex.append('(').append(toRegex(part)).append(')');
       next = true;
     }
-    return Pattern.compile(regex.toString());
+    this.pattern = Pattern.compile(regex.toString());
   }
 
   private static CharSequence toRegex(final String expression) {
@@ -40,4 +42,9 @@ public abstract class AbstractMatcher implements IMatcher {
     }
     return regex;
   }
+
+  protected boolean matches(final String s) {
+    return this.pattern.matcher(s).matches();
+  }
+
 }

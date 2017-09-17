@@ -4,8 +4,9 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import javassist.CtBehavior;
 import javassist.CtClass;
+import javassist.CtField;
 
-public class SourceLocationMatcher extends AbstractMatcher {
+public class SourceLocationMatcher implements IMatcher {
 
   private final boolean inclNoLocationClasses;
 
@@ -21,7 +22,7 @@ public class SourceLocationMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtClass c) {
+  public final boolean matches(final CtClass ctClass) {
     if (!this.inclNoLocationClasses && !this.hasSourceLocation(this.protectionDomain)) {
       return false;
     }
@@ -49,7 +50,12 @@ public class SourceLocationMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtBehavior b) {
+  public final boolean matches(final CtBehavior ctBehavior) {
+    return false;
+  }
+
+  @Override
+  public final boolean matches(final CtField ctField) {
     return false;
   }
 

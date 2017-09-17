@@ -6,8 +6,8 @@ import com.gzoltar.core.instr.actions.IActionTaker;
 import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
 import com.gzoltar.core.instr.granularity.IGranularity;
-import com.gzoltar.core.instr.matchers.AttributeMatcher;
-import com.gzoltar.core.instr.matchers.ModifierMatcher;
+import com.gzoltar.core.instr.matchers.MethodAttributeMatcher;
+import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
@@ -80,15 +80,15 @@ public class InstrumentationPass implements IPass {
      * compiler also replaces the call to "a.y" with "access$000(a)".
      */
     BlackList excludeBridgeSyntheticMethods =
-        new BlackList(new OrMatcher(new ModifierMatcher(AccessFlag.BRIDGE),
-            new ModifierMatcher(AccessFlag.SYNTHETIC),
-            new AttributeMatcher(SyntheticAttribute.tag)));
+        new BlackList(new OrMatcher(new MethodModifierMatcher(AccessFlag.BRIDGE),
+            new MethodModifierMatcher(AccessFlag.SYNTHETIC),
+            new MethodAttributeMatcher(SyntheticAttribute.tag)));
 
     IActionTaker includePublicMethods;
     if (this.agentConfigs.getInclPublicMethods()) {
-      includePublicMethods = new WhiteList(new ModifierMatcher(Modifier.PUBLIC));
+      includePublicMethods = new WhiteList(new MethodModifierMatcher(Modifier.PUBLIC));
     } else {
-      includePublicMethods = new BlackList(new ModifierMatcher(Modifier.PUBLIC));
+      includePublicMethods = new BlackList(new MethodModifierMatcher(Modifier.PUBLIC));
     }
 
     this.filter = new FilterPass(excludeBridgeSyntheticMethods, includePublicMethods);

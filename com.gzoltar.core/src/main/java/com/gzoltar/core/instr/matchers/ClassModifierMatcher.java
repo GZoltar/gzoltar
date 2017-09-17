@@ -4,27 +4,27 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
 
-public class ClassNameMatcher extends AbstractWildcardMatcher {
+public class ClassModifierMatcher extends AbstractModifiedMatcher {
 
-  public ClassNameMatcher(final String expression) {
-    super(expression);
+  public ClassModifierMatcher(final int modifierMask) {
+    super(modifierMask);
   }
 
   @Override
   public final boolean matches(final CtClass ctClass) {
-    return super.matches(ctClass.getName());
+    return super.matches(ctClass);
   }
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
     throw new RuntimeException(
-        ClassNameMatcher.class.getSimpleName() + " should only be used to filter out classes");
+        ClassModifierMatcher.class.getSimpleName() + " should only be used to filter out classes");
   }
 
   @Override
   public final boolean matches(final CtField ctField) {
     throw new RuntimeException(
-        ClassNameMatcher.class.getSimpleName() + " should only be used to filter out classes");
+        ClassModifierMatcher.class.getSimpleName() + " should only be used to filter out classes");
   }
 
 }

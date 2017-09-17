@@ -5,8 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import javassist.CtBehavior;
 import javassist.CtClass;
+import javassist.CtField;
 
-public class PrefixMatcher extends AbstractMatcher {
+public class PrefixMatcher implements IMatcher {
 
   private List<String> prefix = new LinkedList<String>();
 
@@ -19,18 +20,23 @@ public class PrefixMatcher extends AbstractMatcher {
   }
 
   @Override
-  public final boolean matches(final CtClass c) {
-    return this.matchesPrefix(c.getName());
+  public final boolean matches(final CtClass ctClass) {
+    return this.matchesPrefix(ctClass.getName());
   }
 
   @Override
-  public final boolean matches(final CtBehavior b) {
-    return this.matchesPrefix(b.getName());
+  public final boolean matches(final CtBehavior ctBehavior) {
+    return this.matchesPrefix(ctBehavior.getName());
+  }
+
+  @Override
+  public final boolean matches(final CtField ctField) {
+    return this.matchesPrefix(ctField.getName());
   }
 
   private boolean matchesPrefix(String name) {
-    for (String s : this.prefix) {
-      if (name.startsWith(s)) {
+    for (String p : this.prefix) {
+      if (name.startsWith(p)) {
         return true;
       }
     }

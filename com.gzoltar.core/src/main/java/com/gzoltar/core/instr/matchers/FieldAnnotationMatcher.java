@@ -4,10 +4,10 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
 
-public class FieldNameMatcher extends AbstractWildcardMatcher {
+public class FieldAnnotationMatcher extends AbstractAnnotationMatcher {
 
-  public FieldNameMatcher(String expression) {
-    super(expression);
+  public FieldAnnotationMatcher(final String annotation) {
+    super(annotation);
   }
 
   @Override
@@ -22,13 +22,13 @@ public class FieldNameMatcher extends AbstractWildcardMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    throw new RuntimeException(FieldNameMatcher.class.getSimpleName()
+    throw new RuntimeException(FieldAnnotationMatcher.class.getSimpleName()
         + " should only be used to filter out fields or classes with fields");
   }
 
   @Override
   public final boolean matches(final CtField ctField) {
-    return super.matches(ctField.getName());
+    return super.matches(ctField);
   }
 
 }
