@@ -22,7 +22,7 @@ public class MethodNameMatcher extends AbstractWildcardMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    return super.matches(ctBehavior.getName());
+    return super.matches(ctBehavior.getName() + ctBehavior.getSignature());
   }
 
   @Override
