@@ -114,9 +114,9 @@ public final class AgentConfigs {
 
   private final Map<String, String> configs;
 
-  private static final Collection<String> VALID_CONFIGS =
-      Arrays.asList(BUILDLOCATION_KEY, DESTFILE_KEY, INCLUDES_KEY, EXCLUDES_KEY,
-          EXCLCLASSLOADER_KEY, INCLNOLOCATIONCLASSES_KEY, OUTPUT_KEY, INCLPUBLICMETHODS_KEY);
+  private static final Collection<String> VALID_CONFIGS = Arrays.asList(BUILDLOCATION_KEY,
+      DESTFILE_KEY, INCLUDES_KEY, EXCLUDES_KEY, EXCLCLASSLOADER_KEY, INCLNOLOCATIONCLASSES_KEY,
+      OUTPUT_KEY, GRANULARITY_KEY, INCLPUBLICMETHODS_KEY);
 
   private static final Pattern CONFIG_SPLIT = Pattern.compile(",(?=[a-zA-Z0-9_\\-]+=)");
 
