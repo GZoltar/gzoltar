@@ -14,14 +14,12 @@ public class DuplicateCollectorReferenceMatcher implements IMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    throw new RuntimeException(DuplicateCollectorReferenceMatcher.class.getSimpleName()
-        + " should only be used to filter out duplicate classes from a collector instance");
+    return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
   public final boolean matches(final CtField ctField) {
-    throw new RuntimeException(DuplicateCollectorReferenceMatcher.class.getSimpleName()
-        + " should only be used to filter out duplicate classes from a collector instance");
+    return this.matches(ctField.getDeclaringClass());
   }
 
 }

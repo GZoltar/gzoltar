@@ -22,8 +22,7 @@ public class FieldModifiedMatcher extends AbstractModifiedMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    throw new RuntimeException(FieldModifiedMatcher.class.getSimpleName()
-        + " should only be used to filter out fields or classes with fields");
+    return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override

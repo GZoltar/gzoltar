@@ -27,8 +27,7 @@ public class MethodAttributeMatcher extends AbstractAttributeMatcher {
 
   @Override
   public final boolean matches(final CtField ctField) {
-    throw new RuntimeException(MethodAttributeMatcher.class.getSimpleName()
-        + " should only be used to filter out methods or classes with methods");
+    return this.matches(ctField.getDeclaringClass());
   }
 
 }

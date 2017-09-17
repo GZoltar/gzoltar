@@ -51,12 +51,12 @@ public class SourceLocationMatcher implements IMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    return false;
+    return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
   public final boolean matches(final CtField ctField) {
-    return false;
+    return this.matches(ctField.getDeclaringClass());
   }
 
 }

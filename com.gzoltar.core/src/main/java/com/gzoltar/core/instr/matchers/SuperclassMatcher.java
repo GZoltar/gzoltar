@@ -29,14 +29,12 @@ public class SuperclassMatcher extends AbstractWildcardMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    throw new RuntimeException(SuperclassMatcher.class.getSimpleName()
-        + " should only be used to filter out super classes");
+    return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
   public final boolean matches(final CtField ctField) {
-    throw new RuntimeException(SuperclassMatcher.class.getSimpleName()
-        + " should only be used to filter out super classes");
+    return this.matches(ctField.getDeclaringClass());
   }
 
 }

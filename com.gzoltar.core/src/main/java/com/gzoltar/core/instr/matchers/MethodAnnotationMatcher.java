@@ -27,8 +27,7 @@ public class MethodAnnotationMatcher extends AbstractAnnotationMatcher {
 
   @Override
   public final boolean matches(final CtField ctField) {
-    throw new RuntimeException(MethodAnnotationMatcher.class.getSimpleName()
-        + " should only be used to filter out methods or classes with methods");
+    return this.matches(ctField.getDeclaringClass());
   }
 
 }

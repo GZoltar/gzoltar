@@ -22,8 +22,7 @@ public class FieldNameMatcher extends AbstractWildcardMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    throw new RuntimeException(FieldNameMatcher.class.getSimpleName()
-        + " should only be used to filter out fields or classes with fields");
+    return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override

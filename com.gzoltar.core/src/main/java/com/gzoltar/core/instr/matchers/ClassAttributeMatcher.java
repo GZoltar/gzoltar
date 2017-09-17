@@ -17,14 +17,12 @@ public class ClassAttributeMatcher extends AbstractAttributeMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    throw new RuntimeException(
-        ClassAttributeMatcher.class.getSimpleName() + " should only be used to filter out classes");
+    return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
   public final boolean matches(final CtField ctField) {
-    throw new RuntimeException(
-        ClassAttributeMatcher.class.getSimpleName() + " should only be used to filter out classes");
+    return this.matches(ctField.getDeclaringClass());
   }
 
 }

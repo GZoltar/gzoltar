@@ -27,8 +27,7 @@ public class MethodNameMatcher extends AbstractWildcardMatcher {
 
   @Override
   public final boolean matches(final CtField ctField) {
-    throw new RuntimeException(MethodNameMatcher.class.getSimpleName()
-        + " should only be used to filter out methods or classes with methods");
+    return this.matches(ctField.getDeclaringClass());
   }
 
 }

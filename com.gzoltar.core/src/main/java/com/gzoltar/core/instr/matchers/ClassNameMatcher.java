@@ -17,14 +17,12 @@ public class ClassNameMatcher extends AbstractWildcardMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    throw new RuntimeException(
-        ClassNameMatcher.class.getSimpleName() + " should only be used to filter out classes");
+    return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
   public final boolean matches(final CtField ctField) {
-    throw new RuntimeException(
-        ClassNameMatcher.class.getSimpleName() + " should only be used to filter out classes");
+    return this.matches(ctField.getDeclaringClass());
   }
 
 }

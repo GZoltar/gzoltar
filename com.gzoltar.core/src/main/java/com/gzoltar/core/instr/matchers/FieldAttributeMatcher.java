@@ -22,8 +22,7 @@ public class FieldAttributeMatcher extends AbstractAttributeMatcher {
 
   @Override
   public final boolean matches(final CtBehavior ctBehavior) {
-    throw new RuntimeException(FieldAttributeMatcher.class.getSimpleName()
-        + " should only be used to filter out fields or classes with fields");
+    return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
