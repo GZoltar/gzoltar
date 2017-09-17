@@ -10,6 +10,7 @@ import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.filter.IFilter;
 import com.gzoltar.core.instr.filter.SyntheticFilter;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
+import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
 import com.gzoltar.core.instr.granularity.IGranularity;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.model.Node;
@@ -36,13 +37,13 @@ public class InstrumentationPass implements IPass {
 
   private final IFilter[] filters;
 
-  private final AgentConfigs agentConfigs;
+  private final GranularityLevel granularity;
 
   public InstrumentationPass(final AgentConfigs agentConfigs) {
-    this.agentConfigs = agentConfigs;
+    this.granularity = agentConfigs.getGranularity();
 
     IAction includePublicMethods;
-    if (this.agentConfigs.getInclPublicMethods()) {
+    if (agentConfigs.getInclPublicMethods()) {
       includePublicMethods = new WhiteList(new MethodModifierMatcher(Modifier.PUBLIC));
     } else {
       includePublicMethods = new BlackList(new MethodModifierMatcher(Modifier.PUBLIC));
@@ -116,8 +117,7 @@ public class InstrumentationPass implements IPass {
       ci.skipConstructor();
     }
 
-    IGranularity g =
-        GranularityFactory.getGranularity(ctClass, info, ci, this.agentConfigs.getGranularity());
+    IGranularity g = GranularityFactory.getGranularity(ctClass, info, ci, this.granularity);
 
     for (int instrSize = 0, index, curLine; ci.hasNext();) {
       index = ci.next();
