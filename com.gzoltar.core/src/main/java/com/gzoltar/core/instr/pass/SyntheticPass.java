@@ -1,14 +1,17 @@
 package com.gzoltar.core.instr.pass;
 
 import com.gzoltar.core.instr.actions.BlackList;
+import com.gzoltar.core.instr.matchers.AndMatcher;
 import com.gzoltar.core.instr.matchers.MethodAttributeMatcher;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
+import com.gzoltar.core.instr.matchers.NotMatcher;
 import com.gzoltar.core.instr.matchers.OrMatcher;
+import com.gzoltar.core.instr.matchers.PrefixMatcher;
 import javassist.bytecode.AccessFlag;
 import javassist.bytecode.SyntheticAttribute;
 
 /**
- * Filters synthetic methods.
+ * Filters synthetic methods unless they represent bodies of lambda expressions.
  */
 public final class SyntheticPass extends FilterPass {
 
@@ -53,10 +56,11 @@ public final class SyntheticPass extends FilterPass {
    * compiler also replaces the call to "a.y" with "access$000(a)".
    */
   public SyntheticPass() {
-    BlackList bridgeSyntheticMethods =
-        new BlackList(new OrMatcher(new MethodModifierMatcher(AccessFlag.BRIDGE),
+    BlackList bridgeSyntheticMethods = new BlackList(new AndMatcher(
+        new OrMatcher(new MethodModifierMatcher(AccessFlag.BRIDGE),
             new MethodModifierMatcher(AccessFlag.SYNTHETIC),
-            new MethodAttributeMatcher(SyntheticAttribute.tag)));
+            new MethodAttributeMatcher(SyntheticAttribute.tag)),
+        new NotMatcher(new PrefixMatcher("lambda$"))));
     this.add(bridgeSyntheticMethods);
   }
 
