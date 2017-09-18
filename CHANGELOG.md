@@ -19,6 +19,7 @@ All notable changes will be documented in this file.
   - methods 'values' and 'valueOf' of enum classes
   - synthetic methods (unless they represent bodies of lambda expressions)
 - Remove FlexJSON dependency
+- Listener for test cases written in JUnit and/or TestNG
 
 ### Non-functional Changes
 - Rename all modules to 'com.gzoltar'
