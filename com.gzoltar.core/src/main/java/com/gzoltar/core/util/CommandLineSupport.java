@@ -16,10 +16,6 @@ public final class CommandLineSupport {
   private static final int M_PARSEARGUMENT = 1;
   private static final int M_ESCAPED = 2;
 
-  private CommandLineSupport() {
-    // no instances
-  }
-
   /**
    * Quotes a single command line argument if necessary.
    * 
@@ -109,6 +105,8 @@ public final class CommandLineSupport {
           }
           mode = M_PARSEARGUMENT;
           break;
+        default:
+          continue;
       }
     }
     addArgument(args, current);
