@@ -4,7 +4,7 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
 
-public class MethodModifierMatcher extends AbstractModifiedMatcher {
+public class MethodModifierMatcher extends AbstractModifierMatcher {
 
   public MethodModifierMatcher(final int modifierMask) {
     super(modifierMask);

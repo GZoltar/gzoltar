@@ -4,11 +4,11 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
 
-public abstract class AbstractModifiedMatcher implements IMatcher {
+public abstract class AbstractModifierMatcher implements IMatcher {
 
   private final int modifierMask;
 
-  protected AbstractModifiedMatcher(final int modifierMask) {
+  protected AbstractModifierMatcher(final int modifierMask) {
     this.modifierMask = modifierMask;
   }
 
