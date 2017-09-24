@@ -300,7 +300,7 @@ public final class AgentConfigs {
    * @param output Output mode
    */
   public void setOutput(final String output) {
-    this.setOutput(AgentOutput.valueOf(output));
+    this.setOutput(AgentOutput.valueOf(output.toUpperCase()));
   }
 
   /**
@@ -328,7 +328,7 @@ public final class AgentConfigs {
    * @param granularity Granularity level
    */
   public void setGranularity(final String granularity) {
-    setGranularity(GranularityLevel.valueOf(granularity));
+    setGranularity(GranularityLevel.valueOf(granularity.toUpperCase()));
   }
 
   /**
