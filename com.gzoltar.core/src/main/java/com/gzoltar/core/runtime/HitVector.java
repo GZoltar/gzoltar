@@ -6,69 +6,67 @@ import java.util.List;
 import java.util.Map;
 import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
 
+public class HitVector {
 
-class HitVector {
-  private List<HitProbe> probes = new ArrayList<HitProbe>();
-  private Map<String, ProbeGroup> groups = new HashMap<String, ProbeGroup>();
+  private final List<HitProbe> probes = new ArrayList<HitProbe>();
 
+  private final Map<String, ProbeGroup> groups = new HashMap<String, ProbeGroup>();
 
-  public HitProbe registerProbe(String groupName, int nodeId) {
-    ProbeGroup pg = groups.get(groupName);
-
+  public HitProbe registerProbe(final String groupName, final int nodeId) {
+    ProbeGroup pg = this.groups.get(groupName);
 
     if (pg == null) {
       pg = new ProbeGroup();
-      groups.put(groupName, pg);
+      this.groups.put(groupName, pg);
     }
 
-    HitProbe probe = pg.register(probes.size(), nodeId);
-    probes.add(probe);
+    HitProbe probe = pg.register(this.probes.size(), nodeId);
+    this.probes.add(probe);
 
     return probe;
   }
 
-  public final boolean exists(String groupName) {
-    return groups.containsKey(groupName);
+  public final boolean exists(final String groupName) {
+    return this.groups.containsKey(groupName);
   }
 
-  public final boolean[] get(String groupName) {
-    if (groups.get(groupName) == null) {
+  public final boolean[] get(final String groupName) {
+    if (this.groups.get(groupName) == null) {
       // registerProbe has not been called before for this groupName
       // so we can return null
       return null;
     }
-    return groups.get(groupName).get();
+    return this.groups.get(groupName).get();
   }
 
   public final boolean[] get() {
-    boolean[] ret = new boolean[probes.size()];
+    boolean[] ret = new boolean[this.probes.size()];
     int i = 0;
 
-    for (HitProbe p : probes) {
+    for (HitProbe p : this.probes) {
       ret[i++] = p.getActivation();
     }
 
     return ret;
   }
 
-  public final void hit(int globalId) {
-    HitProbe p = probes.get(globalId);
-
-
+  public final void hit(final int globalId) {
+    HitProbe p = this.probes.get(globalId);
     p.hit();
   }
 
   public final void reset() {
-    for (Map.Entry<String, ProbeGroup> e : groups.entrySet()) {
+    for (Map.Entry<String, ProbeGroup> e : this.groups.entrySet()) {
       e.getValue().reset();
     }
   }
 
-  public boolean existsHitVector(String groupName) {
+  public boolean existsHitVector(final String groupName) {
     if (exists(groupName)) {
-      ProbeGroup pg = groups.get(groupName);
+      ProbeGroup pg = this.groups.get(groupName);
       return pg.existsHitVector();
     }
     return false;
   }
+
 }

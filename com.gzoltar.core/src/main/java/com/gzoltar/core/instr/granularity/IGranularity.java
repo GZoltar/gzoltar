@@ -1,14 +1,15 @@
 package com.gzoltar.core.instr.granularity;
 
+import com.gzoltar.core.model.Node;
 import javassist.CtBehavior;
 import javassist.CtClass;
-import com.gzoltar.core.model.Node;
 
 public interface IGranularity {
 
-  public boolean instrumentAtIndex(int index, int instrumentationSize);
+  public boolean instrumentAtIndex(final int index, final int instrumentationSize);
 
   public boolean stopInstrumenting();
 
-  public Node getNode(CtClass cls, CtBehavior m, int line);
+  public Node getNode(final CtClass ctClass, final CtBehavior ctBehavior, final int line);
+
 }

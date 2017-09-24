@@ -13,66 +13,67 @@ public class FilteredSpectrumBuilder extends SpectrumBuilder {
   private ISpectrum source;
 
   private HashSet<Integer> includeNodes;
+
   private HashSet<Integer> excludeNodes;
 
   public FilteredSpectrumBuilder() {
-    resetIncludesExcludes();
+    this.resetIncludesExcludes();
   }
 
-  public FilteredSpectrumBuilder setSource(ISpectrum source) {
+  public FilteredSpectrumBuilder setSource(final ISpectrum source) {
     this.source = source;
     return this;
   }
 
-  public FilteredSpectrumBuilder includeNode(Node node) {
-    if (node == null)
+  public FilteredSpectrumBuilder includeNode(final Node node) {
+    if (node == null) {
       return this;
-    return includeNode(node.getId());
+    }
+    return this.includeNode(node.getId());
   }
 
-  public FilteredSpectrumBuilder includeNode(int nodeId) {
-    includeNodes.add(nodeId);
+  public FilteredSpectrumBuilder includeNode(final int nodeId) {
+    this.includeNodes.add(nodeId);
     return this;
   }
 
-  public FilteredSpectrumBuilder excludeNode(Node node) {
-    if (node == null)
+  public FilteredSpectrumBuilder excludeNode(final Node node) {
+    if (node == null) {
       return this;
-    return excludeNode(node.getId());
+    }
+    return this.excludeNode(node.getId());
   }
 
-  public FilteredSpectrumBuilder excludeNode(int nodeId) {
-    excludeNodes.add(nodeId);
+  public FilteredSpectrumBuilder excludeNode(final int nodeId) {
+    this.excludeNodes.add(nodeId);
     return this;
   }
 
   public void resetIncludesExcludes() {
-    includeNodes = new HashSet<Integer>();
-    excludeNodes = new HashSet<Integer>();
+    this.includeNodes = new HashSet<Integer>();
+    this.excludeNodes = new HashSet<Integer>();
   }
 
   @Override
   public ISpectrum getSpectrum() {
-    if (source == null)
+    if (this.source == null) {
       return null;
+    }
 
-    resetSpectrum();
+    this.resetSpectrum();
 
-    Tree tree = source.getTree();
-    spectrum.setTree(tree);
+    Tree tree = this.source.getTree();
+    this.spectrum.setTree(tree);
 
     // filter probes
     List<Integer> newProbeMapping = new ArrayList<Integer>();
-
-    for (int probeId = 0; probeId < source.getComponentsSize(); probeId++) {
-
-      Node node = source.getNodeOfProbe(probeId);
+    for (int probeId = 0; probeId < this.source.getComponentsSize(); probeId++) {
+      Node node = this.source.getNodeOfProbe(probeId);
 
       if (isIncluded(node) && !isExcluded(node)) {
         int newProbeId = newProbeMapping.size();
         newProbeMapping.add(probeId);
-
-        addProbe(newProbeId, node.getId());
+        this.addProbe(newProbeId, node.getId());
       }
     }
 
@@ -80,39 +81,40 @@ public class FilteredSpectrumBuilder extends SpectrumBuilder {
     int numberOfProbes = newProbeMapping.size();
 
     if (numberOfProbes > 0) {
-      for (int t = 0; t < source.getTransactionsSize(); t++) {
-        String transactionName = source.getTransactionName(t);
-        boolean isError = source.isError(t);
+      for (int t = 0; t < this.source.getTransactionsSize(); t++) {
+        String transactionName = this.source.getTransactionName(t);
+        boolean isError = this.source.isError(t);
         boolean newActivity[] = new boolean[numberOfProbes];
-        BitSet oldActivity = source.getTransactionActivity(t);
-        int hashCode = source.getTransactionHashCode(t);
+        BitSet oldActivity = this.source.getTransactionActivity(t);
+        int hashCode = this.source.getTransactionHashCode(t);
 
         for (int p = 0; p < numberOfProbes; p++) {
           int oldProbeId = newProbeMapping.get(p);
           newActivity[p] = oldActivity.get(oldProbeId);
         }
 
-        endTransaction(transactionName, newActivity, hashCode, isError);
+        this.endTransaction(transactionName, newActivity, hashCode, isError);
       }
     }
+
     return spectrum;
   }
 
-  private boolean isIncluded(Node node) {
-    return find(this.includeNodes, node);
+  private boolean isIncluded(final Node node) {
+    return this.find(this.includeNodes, node);
   }
 
-  private boolean isExcluded(Node node) {
-    return find(this.excludeNodes, node);
+  private boolean isExcluded(final Node node) {
+    return this.find(this.excludeNodes, node);
   }
 
-  private static boolean find(Set<Integer> set, Node node) {
+  private boolean find(final Set<Integer> set, final Node node) {
     if (node == null) {
       return false;
     } else if (set.contains(node.getId())) {
       return true;
     } else {
-      return find(set, node.getParent());
+      return this.find(set, node.getParent());
     }
   }
 }

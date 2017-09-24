@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import com.gzoltar.core.events.IEventListener;
-import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
+import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.util.CommandLineSupport;
 
@@ -95,14 +95,14 @@ public final class AgentConfigs {
    */
   public static final String OUTPUT_KEY = "output";
 
-  public static final OutputMode DEFAULT_OUTPUT = OutputMode.console;
+  public static final AgentOutput DEFAULT_OUTPUT = AgentOutput.CONSOLE;
 
   /**
    * Specifies the granularity level of instrumentation. Default is {@link GranularityLevel#line}.
    */
   public static final String GRANULARITY_KEY = "granularity";
 
-  public static final GranularityLevel DEFAULT_GRANULARITY = GranularityLevel.line;
+  public static final GranularityLevel DEFAULT_GRANULARITY = GranularityLevel.LINE;
 
   /**
    * Specifies whether public methods of each class under test should be instrumented. Default is
@@ -289,9 +289,9 @@ public final class AgentConfigs {
    * 
    * @return current output mode
    */
-  public OutputMode getOutput() {
+  public AgentOutput getOutput() {
     final String value = this.configs.get(OUTPUT_KEY);
-    return value == null ? DEFAULT_OUTPUT : OutputMode.valueOf(value);
+    return value == null ? DEFAULT_OUTPUT : AgentOutput.valueOf(value);
   }
 
   /**
@@ -300,7 +300,7 @@ public final class AgentConfigs {
    * @param output Output mode
    */
   public void setOutput(final String output) {
-    setOutput(OutputMode.valueOf(output));
+    this.setOutput(AgentOutput.valueOf(output));
   }
 
   /**
@@ -308,7 +308,7 @@ public final class AgentConfigs {
    * 
    * @param output Output mode
    */
-  public void setOutput(final OutputMode output) {
+  public void setOutput(final AgentOutput output) {
     this.setConfig(OUTPUT_KEY, output.name());
   }
 
@@ -439,25 +439,4 @@ public final class AgentConfigs {
     return sb.toString();
   }
 
-  /**
-   * Possible values for {@link AgentConfigs#OUTPUT}.
-   */
-  public static enum OutputMode {
-    /**
-     * Value for the {@link AgentConfigs#OUTPUT} parameter: At VM termination execution data is
-     * written to the file specified by {@link AgentConfigs#DESTFILE}.
-     */
-    file,
-
-    /**
-     * Value for the {@link AgentConfigs#OUTPUT} parameter: At VM termination execution data is
-     * written to the console.
-     */
-    console,
-
-    /**
-     * Value for the {@link AgentConfigs#OUTPUT} parameter: Do not produce any output.
-     */
-    none
-  }
 }

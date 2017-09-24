@@ -9,7 +9,7 @@ import javassist.bytecode.MethodInfo;
 public class StackSizePass implements IPass {
 
   @Override
-  public final Outcome transform(final CtClass ctClass) throws Exception {
+  public Outcome transform(final CtClass ctClass) throws Exception {
     for (CtBehavior b : ctClass.getDeclaredBehaviors()) {
       this.transform(ctClass, b);
     }
@@ -18,7 +18,7 @@ public class StackSizePass implements IPass {
   }
 
   @Override
-  public final Outcome transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
+  public Outcome transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
     MethodInfo info = ctBehavior.getMethodInfo();
     CodeAttribute ca = info.getCodeAttribute();
 
@@ -30,4 +30,5 @@ public class StackSizePass implements IPass {
 
     return Outcome.NEXT;
   }
+
 }

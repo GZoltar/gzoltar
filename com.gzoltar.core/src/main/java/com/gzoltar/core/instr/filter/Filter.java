@@ -12,11 +12,11 @@ public class Filter implements IFilter {
 
   private final List<IAction> actions = new ArrayList<IAction>();
 
-  public Filter(IAction... actions) {
+  public Filter(final IAction... actions) {
     this.actions.addAll(Arrays.asList(actions));
   }
 
-  public void add(IAction action) {
+  public void add(final IAction action) {
     this.actions.add(action);
   }
 
@@ -32,7 +32,7 @@ public class Filter implements IFilter {
 
   protected Outcome filter(final Object object, final List<IAction> actions) {
     for (IAction action : actions) {
-      switch (filter(object, action)) {
+      switch (this.filter(object, action)) {
         case ACCEPT:
           return Outcome.NEXT;
         case NEXT:

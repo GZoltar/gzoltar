@@ -39,7 +39,7 @@ public final class EnumFilter extends Filter {
     return super.filter(ctBehavior, enumFilter);
   }
 
-  private IAction enumFilterAction(String className) {
+  private IAction enumFilterAction(final String className) {
     String classNameWithSlash = VMUtils.toVMName(className);
     IAction enumMethods = new BlackList(new AndMatcher(new SuperclassMatcher("java.lang.Enum"),
         new OrMatcher(new MethodNameMatcher("values" + "()[L" + classNameWithSlash + ";"),

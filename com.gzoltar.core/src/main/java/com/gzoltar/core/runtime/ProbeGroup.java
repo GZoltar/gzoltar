@@ -1,70 +1,75 @@
 package com.gzoltar.core.runtime;
 
-public final class ProbeGroup {
+public class ProbeGroup {
 
   public final class HitProbe {
+
     private final int id;
+
     private final int localId;
+
     private final int nodeId;
 
-    private HitProbe(int globalId, int localId, int nodeId) {
+    private HitProbe(final int globalId, final int localId, final int nodeId) {
       this.id = globalId;
       this.localId = localId;
       this.nodeId = nodeId;
     }
 
     public int getId() {
-      return id;
+      return this.id;
     }
 
     public int getNodeId() {
-      return nodeId;
+      return this.nodeId;
     }
 
     public boolean getActivation() {
-      if (hitVector == null)
+      if (hitVector == null) {
         return false;
+      }
 
-      return hitVector[localId];
+      return hitVector[this.localId];
     }
 
     public int getLocalId() {
-      return localId;
+      return this.localId;
     }
 
     public void hit() {
       assert hitVector != null;
-      hitVector[localId] = true;
+      hitVector[this.localId] = true;
     }
   }
 
   private int size = 0;
+
   private boolean[] hitVector = null;
 
-  ProbeGroup() {}
-
-  public HitProbe register(int globalId, int nodeId) {
-    assert hitVector == null;
-    return new HitProbe(globalId, size++, nodeId);
+  public HitProbe register(final int globalId, final int nodeId) {
+    assert this.hitVector == null;
+    return new HitProbe(globalId, this.size++, nodeId);
   }
 
   public boolean[] get() {
-    if (hitVector == null)
-      hitVector = new boolean[size];
-
-    return hitVector;
+    if (this.hitVector == null) {
+      this.hitVector = new boolean[size];
+    }
+    return this.hitVector;
   }
 
   public void reset() {
-    if (hitVector == null)
+    if (this.hitVector == null) {
       return;
+    }
 
-    for (int j = 0; j < hitVector.length; j++) {
-      hitVector[j] = false;
+    for (int j = 0; j < this.hitVector.length; j++) {
+      this.hitVector[j] = false;
     }
   }
 
   public boolean existsHitVector() {
-    return hitVector != null;
+    return this.hitVector != null;
   }
+
 }

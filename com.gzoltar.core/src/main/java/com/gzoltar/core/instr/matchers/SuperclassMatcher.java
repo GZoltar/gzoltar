@@ -12,7 +12,7 @@ public class SuperclassMatcher extends AbstractWildcardMatcher {
   }
 
   @Override
-  public final boolean matches(final CtClass ctClass) {
+  public boolean matches(final CtClass ctClass) {
     try {
       CtClass superCtClass = ctClass.getSuperclass();
       while (superCtClass != null) {
@@ -28,12 +28,12 @@ public class SuperclassMatcher extends AbstractWildcardMatcher {
   }
 
   @Override
-  public final boolean matches(final CtBehavior ctBehavior) {
+  public boolean matches(final CtBehavior ctBehavior) {
     return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
-  public final boolean matches(final CtField ctField) {
+  public boolean matches(final CtField ctField) {
     return this.matches(ctField.getDeclaringClass());
   }
 

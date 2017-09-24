@@ -20,17 +20,17 @@ public class PrefixMatcher implements IMatcher {
   }
 
   @Override
-  public final boolean matches(final CtClass ctClass) {
+  public boolean matches(final CtClass ctClass) {
     return this.matchesPrefix(ctClass.getName());
   }
 
   @Override
-  public final boolean matches(final CtBehavior ctBehavior) {
+  public boolean matches(final CtBehavior ctBehavior) {
     return this.matchesPrefix(ctBehavior.getName());
   }
 
   @Override
-  public final boolean matches(final CtField ctField) {
+  public boolean matches(final CtField ctField) {
     return this.matchesPrefix(ctField.getName());
   }
 

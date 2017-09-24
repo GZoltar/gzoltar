@@ -11,7 +11,7 @@ public class FieldModifierMatcher extends AbstractModifierMatcher {
   }
 
   @Override
-  public final boolean matches(final CtClass ctClass) {
+  public boolean matches(final CtClass ctClass) {
     for (CtField ctField : ctClass.getDeclaredFields()) {
       if (this.matches(ctField)) {
         return true;
@@ -21,12 +21,12 @@ public class FieldModifierMatcher extends AbstractModifierMatcher {
   }
 
   @Override
-  public final boolean matches(final CtBehavior ctBehavior) {
+  public boolean matches(final CtBehavior ctBehavior) {
     return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
-  public final boolean matches(final CtField ctField) {
+  public boolean matches(final CtField ctField) {
     return super.matches(ctField);
   }
 

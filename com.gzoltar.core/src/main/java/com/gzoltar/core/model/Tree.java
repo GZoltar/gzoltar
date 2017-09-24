@@ -7,74 +7,72 @@ import java.util.List;
 
 public class Tree implements Iterable<Node> {
 
-  private ArrayList<Node> nodes = new ArrayList<Node>();
+  private final ArrayList<Node> nodes = new ArrayList<Node>();
 
   public Tree() {
     this(true);
   }
 
-  public Tree(boolean createRoot) {
+  public Tree(final boolean createRoot) {
     if (createRoot) {
       Node node = new Node("root", NodeType.PACKAGE, nodes.size(), null);
-      nodes.add(node);
+      this.nodes.add(node);
     }
   }
 
   public int size() {
-    return nodes.size();
+    return this.nodes.size();
   }
 
   public Node getRoot() {
-    return getNode(0);
+    return this.getNode(0);
   }
 
-  public Node getNode(int id) {
-    if (id < 0 || id >= nodes.size())
+  public Node getNode(final int id) {
+    if (id < 0 || id >= this.nodes.size()) {
       return null;
-
-    return nodes.get(id);
+    }
+    return this.nodes.get(id);
   }
 
   public List<Node> getNodes() {
-    return Collections.unmodifiableList(nodes);
+    return Collections.unmodifiableList(this.nodes);
   }
 
   @Override
   public Iterator<Node> iterator() {
-    return nodes.iterator();
+    return this.nodes.iterator();
   }
 
-  public Node addNode(String name, NodeType type, int parentId) {
-    return addNode(name, type, nodes.size(), parentId);
+  public Node addNode(final String name, final NodeType type, final int parentId) {
+    return this.addNode(name, type, this.nodes.size(), parentId);
   }
 
-  public Node addNode(String name, NodeType type, int id, int parentId) {
-    Node parent = getNode(parentId);
-
+  public Node addNode(final String name, final NodeType type, final int id, final int parentId) {
+    Node parent = this.getNode(parentId);
     Node child = new Node(name, type, id, parent);
-
-    nodes.add(child);
+    this.nodes.add(child);
     return child;
   }
 
   public void print() {
     System.out.println("~~~~~~~~~~");
-    Node n = getRoot();
-    print(n, "");
+    Node n = this.getRoot();
+    this.print(n, "");
     System.out.println("~~~~~~~~~~");
   }
 
-  private void print(Node n, String padding) {
+  private void print(final Node n, final String padding) {
     System.out.println(padding + n.getId() + " " + n.getFullName());
     for (Node c : n.getChildren()) {
-      print(c, padding + "  ");
+      this.print(c, padding + "  ");
     }
   }
 
   public String toString() {
     StringBuilder sb = new StringBuilder("\"tree\":[");
     int i = 0;
-    for (Node n : nodes) {
+    for (Node n : this.nodes) {
       if (i++ != 0) {
         sb.append(",");
       }
@@ -84,23 +82,25 @@ public class Tree implements Iterable<Node> {
     return sb.toString();
   }
 
-  public List<Node> getNodesOfType(NodeType t) {
+  public List<Node> getNodesOfType(final NodeType t) {
     List<Node> nodesOfType = new ArrayList<Node>();
 
-    for (Node node : nodes) {
-      if (node.getType() == t)
+    for (Node node : this.nodes) {
+      if (node.getType() == t) {
         nodesOfType.add(node);
+      }
     }
 
     return nodesOfType;
   }
 
-  public Node findNode(String name) {
-    for (Node node : nodes) {
+  public Node findNode(final String name) {
+    for (Node node : this.nodes) {
       if (name.equals(node.getFullName())) {
         return node;
       }
     }
     return null;
   }
+
 }

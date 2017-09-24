@@ -5,7 +5,7 @@ import com.gzoltar.agent.rt.output.FileOutput;
 import com.gzoltar.agent.rt.output.IAgentOutput;
 import com.gzoltar.agent.rt.output.NoneOutput;
 import com.gzoltar.core.AgentConfigs;
-import com.gzoltar.core.AgentConfigs.OutputMode;
+import com.gzoltar.core.AgentOutput;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.spectrum.ISpectrum;
 
@@ -45,13 +45,13 @@ public class Agent implements IAgent {
   }
 
   private IAgentOutput createAgentOutput() {
-    final OutputMode controllerType = this.agentConfigs.getOutput();
+    final AgentOutput controllerType = this.agentConfigs.getOutput();
     switch (controllerType) {
-      case file:
+      case FILE:
         return new FileOutput(this.agentConfigs);
-      case console:
+      case CONSOLE:
         return new ConsoleOutput();
-      case none:
+      case NONE:
         return new NoneOutput();
       default:
         throw new AssertionError(controllerType);

@@ -12,22 +12,25 @@ public class Collector {
 
   private static Collector collector;
 
-  private MultiEventListener listener;
-  private Tree tree;
-  private HitVector hitVector;
-  private SpectrumBuilder builder;
+  private final MultiEventListener listener;
+
+  private final Tree tree;
+
+  private final HitVector hitVector;
+
+  private final SpectrumBuilder builder;
 
   public static Collector instance() {
     return collector;
   }
 
-  public static void start(IEventListener listener) {
+  public static void start(final IEventListener listener) {
     if (collector == null) {
       collector = new Collector(listener);
     }
   }
 
-  private Collector(IEventListener listener) {
+  private Collector(final IEventListener listener) {
     this.listener = new MultiEventListener();
     this.builder = new SpectrumBuilder();
     addListener(this.builder);
@@ -37,7 +40,7 @@ public class Collector {
     this.hitVector = new HitVector();
   }
 
-  public void addListener(IEventListener listener) {
+  public void addListener(final IEventListener listener) {
     if (listener != null) {
       this.listener.add(listener);
     }
@@ -47,41 +50,40 @@ public class Collector {
     return this.builder;
   }
 
-  public synchronized Node createNode(Node parent, String name, NodeType type) {
-    Node node = tree.addNode(name, type, parent.getId());
-    listener.addNode(node.getId(), name, type, parent.getId());
+  public synchronized Node createNode(final Node parent, final String name, final NodeType type) {
+    Node node = this.tree.addNode(name, type, parent.getId());
+    this.listener.addNode(node.getId(), name, type, parent.getId());
     return node;
   }
 
-  public synchronized HitProbe createHitProbe(String groupName, int nodeId) {
-    HitProbe p = hitVector.registerProbe(groupName, nodeId);
-    listener.addProbe(p.getId(), p.getNodeId());
+  public synchronized HitProbe createHitProbe(final String groupName, final int nodeId) {
+    HitProbe p = this.hitVector.registerProbe(groupName, nodeId);
+    this.listener.addProbe(p.getId(), p.getNodeId());
     return p;
   }
 
-  public synchronized void endTransaction(String transactionName, boolean isError) {
-    listener.endTransaction(transactionName, hitVector.get(), isError); // hitVector.get()
+  public synchronized void endTransaction(final String transactionName, final boolean isError) {
+    this.listener.endTransaction(transactionName, this.hitVector.get(), isError);
   }
 
   public synchronized void startTransaction() {
-    hitVector.reset();
+    this.hitVector.reset();
   }
 
   public synchronized void endSession() {
-    // tree.print();
-    listener.endSession();
+    this.listener.endSession();
   }
 
-  public synchronized boolean[] getHitVector(String className) {
-    return hitVector.get(className);
+  public synchronized boolean[] getHitVector(final String className) {
+    return this.hitVector.get(className);
   }
 
-  public synchronized boolean existsHitVector(String className) {
-    return hitVector.existsHitVector(className);
+  public synchronized boolean existsHitVector(final String className) {
+    return this.hitVector.existsHitVector(className);
   }
 
   public Node getRootNode() {
-    return tree.getRoot();
+    return this.tree.getRoot();
   }
 
 }

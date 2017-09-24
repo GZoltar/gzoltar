@@ -12,67 +12,69 @@ import com.gzoltar.core.model.Tree;
 public class SpectrumImpl implements ISpectrum {
 
   private Tree tree;
-  private ArrayList<Integer> probes;
-  private ArrayList<Transaction> transactions;
+
+  private final ArrayList<Integer> probes;
+
+  private final List<Transaction> transactions;
 
   public SpectrumImpl() {
-    tree = new Tree();
-    probes = new ArrayList<Integer>();
-    transactions = new ArrayList<Transaction>();
+    this.tree = new Tree();
+    this.probes = new ArrayList<Integer>();
+    this.transactions = new ArrayList<Transaction>();
   }
 
   @Override
   public int getComponentsSize() {
-    return probes.size();
+    return this.probes.size();
   }
 
   @Override
   public int getTransactionsSize() {
-    return transactions.size();
+    return this.transactions.size();
   }
 
   @Override
-  public boolean isInvolved(int t, int c) {
-    return transactions.get(t).getActivity().get(c);
+  public boolean isInvolved(final int transactionId, final int componentID) {
+    return this.transactions.get(transactionId).getActivity().get(componentID);
   }
 
   @Override
-  public boolean isError(int t) {
-    return transactions.get(t).isError();
+  public boolean isError(final int transactionId) {
+    return this.transactions.get(transactionId).isError();
   }
 
-  public void addTransaction(String transactionName, boolean[] activity, boolean isError) {
+  public void addTransaction(final String transactionName, final boolean[] activity,final  boolean isError) {
     Transaction t = new Transaction(transactionName, activity, isError);
     if (t.hasActivations()) {
-      transactions.add(t);
+      this.transactions.add(t);
     }
   }
 
-  public void addTransaction(String transactionName, boolean[] activity, int hashCode,
-      boolean isError) {
+  public void addTransaction(final String transactionName, final boolean[] activity, final int hashCode,
+      final boolean isError) {
     Transaction t = new Transaction(transactionName, activity, hashCode, isError);
     if (t.hasActivations()) {
-      transactions.add(t);
+      this.transactions.add(t);
     }
   }
 
   @Override
   public Tree getTree() {
-    return tree;
+    return this.tree;
   }
 
-  public void setTree(Tree tree) {
+  public void setTree(final Tree tree) {
     this.tree = tree;
   }
 
-  public void addProbe(int id, int nodeId) {
-    probes.ensureCapacity(id + 1);
+  public void addProbe(final int id, final int nodeId) {
+    this.probes.ensureCapacity(id + 1);
 
-    while (probes.size() <= id) {
-      probes.add(null);
+    while (this.probes.size() <= id) {
+      this.probes.add(null);
     }
 
-    probes.set(id, nodeId);
+    this.probes.set(id, nodeId);
   }
 
   @Override
@@ -80,11 +82,9 @@ public class SpectrumImpl implements ISpectrum {
     ArrayList<Integer> testFrequency = new ArrayList<Integer>();
     testFrequency.ensureCapacity(getComponentsSize());
 
-    for (int p = 0; p < getComponentsSize(); p++) {
-
+    for (int p = 0; p < this.getComponentsSize(); p++) {
       Set<Integer> s = new HashSet<Integer>();
-
-      for (Transaction t : transactions) {
+      for (Transaction t : this.transactions) {
         if (t.getActivity().get(p)) {
           s.add(t.getActivity().hashCode());
         }
@@ -98,20 +98,17 @@ public class SpectrumImpl implements ISpectrum {
 
   @Override
   public List<Integer> getTestFrequencyPerNode() {
-
     ArrayList<Integer> nodeTestFrequency = new ArrayList<Integer>();
     nodeTestFrequency.ensureCapacity(getComponentsSize());
 
-    for (int i = 0; i < tree.size(); i++) {
+    for (int i = 0; i < this.tree.size(); i++) {
       nodeTestFrequency.add(0);
     }
 
-    List<Integer> testFrequency = getTestFrequencyPerProbe();
-
-    for (int p = 0; p < getComponentsSize(); p++) {
+    List<Integer> testFrequency = this.getTestFrequencyPerProbe();
+    for (int p = 0; p < this.getComponentsSize(); p++) {
       int freq = testFrequency.get(p);
-      int nodeId = probes.get(p);
-
+      int nodeId = this.probes.get(p);
       nodeTestFrequency.set(nodeId, freq + nodeTestFrequency.get(nodeId));
     }
 
@@ -119,80 +116,80 @@ public class SpectrumImpl implements ISpectrum {
   }
 
   public void print() {
-    tree.print();
+    this.tree.print();
     System.out.println("Probe mapping:" + probes);
 
-    for (int t = 0; t < getTransactionsSize(); t++) {
-      for (int c = 0; c < getComponentsSize(); c++) {
-        if (isInvolved(t, c)) {
+    for (int t = 0; t < this.getTransactionsSize(); t++) {
+      for (int c = 0; c < this.getComponentsSize(); c++) {
+        if (this.isInvolved(t, c)) {
           System.out.print("1 ");
         } else {
           System.out.print("0 ");
         }
       }
 
-      if (isError(t)) {
+      if (this.isError(t)) {
         System.out.print("x");
       } else {
         System.out.print(".");
       }
 
-      System.out.println(
-          " hc: " + getTransactionActivity(t).hashCode() + " / " + getTransactionHashCode(t));
+      System.out.println(" hc: " + this.getTransactionActivity(t).hashCode() + " / "
+          + this.getTransactionHashCode(t));
     }
 
-    System.out.println(
-        "Number of probes: " + probes.size() + " number of transactions: " + transactions.size());
+    System.out.println("Number of probes: " + this.probes.size() + " number of transactions: "
+        + this.transactions.size());
   }
 
   @Override
-  public BitSet getTransactionActivity(int t) {
-    return transactions.get(t).getActivity();
+  public BitSet getTransactionActivity(final int transactionId) {
+    return this.transactions.get(transactionId).getActivity();
   }
 
   @Override
-  public String getTransactionName(int t) {
-    return transactions.get(t).getName();
+  public String getTransactionName(final int transactionId) {
+    return this.transactions.get(transactionId).getName();
   }
 
   @Override
-  public List<Integer> getActiveComponentsInTransaction(int t) {
-    return transactions.get(t).getActiveComponents();
+  public List<Integer> getActiveComponentsInTransaction(final int transactionId) {
+    return this.transactions.get(transactionId).getActiveComponents();
   }
 
   @Override
   public Node getNodeOfProbe(int probeId) {
-    int nodeId = probes.get(probeId);
-    return tree.getNode(nodeId);
+    int nodeId = this.probes.get(probeId);
+    return this.tree.getNode(nodeId);
   }
 
   @Override
-  public int getTransactionHashCode(int t) {
-    return transactions.get(t).hashCode();
+  public int getTransactionHashCode(final int transactionId) {
+    return this.transactions.get(transactionId).hashCode();
   }
 
-  public double getMaxCompTrans(int c) {
+  public double getMaxCompTrans(final int componentID) {
     double n = 0;
-    for (int t = 0; t < getTransactionsSize(); t++) {
-      int cc = probes.indexOf(c);
-      if (cc != -1 && isInvolved(t, cc)) {
-        int nact = transactions.get(t).getActivity().cardinality();
+    for (int t = 0; t < this.getTransactionsSize(); t++) {
+      int cc = this.probes.indexOf(componentID);
+      if (cc != -1 && this.isInvolved(t, cc)) {
+        int nact = this.transactions.get(t).getActivity().cardinality();
         n = nact > n ? nact : n;
       }
     }
     return n;
   }
 
-  public double getMinCompTrans(int c) {
-    double n = getComponentsSize() + 1;
-    for (int t = 0; t < getTransactionsSize(); t++) {
-      int cc = probes.indexOf(c);
-      if (cc != -1 && isInvolved(t, cc)) {
-        int nact = transactions.get(t).getActivity().cardinality();
+  public double getMinCompTrans(final int componentID) {
+    double n = this.getComponentsSize() + 1;
+    for (int t = 0; t < this.getTransactionsSize(); t++) {
+      int cc = this.probes.indexOf(componentID);
+      if (cc != -1 && this.isInvolved(t, cc)) {
+        int nact = this.transactions.get(t).getActivity().cardinality();
         n = nact < n ? nact : n;
       }
     }
-    if (n == getComponentsSize() + 1) {
+    if (n == this.getComponentsSize() + 1) {
       return 0;
     } else {
       return n;
@@ -200,11 +197,12 @@ public class SpectrumImpl implements ISpectrum {
   }
 
   @Override
-  public int getProbeOfNode(int nodeId) {
-    return probes.indexOf(nodeId);
+  public int getProbeOfNode(final int nodeId) {
+    return this.probes.indexOf(nodeId);
   }
 
   public List<Transaction> getTransactions() {
     return this.transactions;
   }
+
 }

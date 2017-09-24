@@ -14,14 +14,15 @@ public abstract class AbstractAction implements IAction {
   }
 
   @Override
-  public final Outcome getAction(final CtClass c) {
-    return getAction(this.matcher.matches(c));
+  public Outcome getAction(final CtClass c) {
+    return this.getAction(this.matcher.matches(c));
   }
 
   @Override
-  public final Outcome getAction(final CtBehavior b) {
-    return getAction(this.matcher.matches(b));
+  public Outcome getAction(final CtBehavior b) {
+    return this.getAction(this.matcher.matches(b));
   }
 
-  protected abstract Outcome getAction(boolean matches);
+  protected abstract Outcome getAction(final boolean matches);
+
 }

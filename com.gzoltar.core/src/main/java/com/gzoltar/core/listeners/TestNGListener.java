@@ -7,47 +7,47 @@ import org.testng.ITestResult;
 /**
  * TestNG listener.
  */
-public class TestNGListener extends Listener implements ITestListener {
+public final class TestNGListener extends Listener implements ITestListener {
 
   @Override
-  public void onStart(ITestContext context) {
+  public void onStart(final ITestContext context) {
     super.onRunStart();
   }
 
   @Override
-  public void onFinish(ITestContext context) {
+  public void onFinish(final ITestContext context) {
     super.onRunFinish();
   }
 
   @Override
-  public void onTestStart(ITestResult result) {
+  public void onTestStart(final ITestResult result) {
     super.onTestStart();
   }
 
   @Override
-  public void onTestSuccess(ITestResult result) {
+  public void onTestSuccess(final ITestResult result) {
     super.onTestFinish(this.getName(result));
   }
 
   @Override
-  public void onTestFailure(ITestResult result) {
+  public void onTestFailure(final ITestResult result) {
     super.onTestFailure();
     super.onTestFinish(this.getName(result));
   }
 
   @Override
-  public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
+  public void onTestFailedButWithinSuccessPercentage(final ITestResult result) {
     super.onTestFailure();
     super.onTestFinish(this.getName(result));
   }
 
   @Override
-  public void onTestSkipped(ITestResult result) {
+  public void onTestSkipped(final ITestResult result) {
     super.onTestSkipped();
     super.onTestFinish(this.getName(result));
   }
 
-  private String getName(ITestResult result) {
+  private String getName(final ITestResult result) {
     return result.getTestClass().getName() + Listener.TEST_CLASS_NAME_SEPARATOR
         + result.getMethod().getMethodName();
   }

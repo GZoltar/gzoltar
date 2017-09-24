@@ -9,4 +9,5 @@ public interface IAction {
   public Outcome getAction(final CtClass c);
 
   public Outcome getAction(final CtBehavior b);
+
 }

@@ -10,7 +10,7 @@ import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.filter.IFilter;
 import com.gzoltar.core.instr.filter.SyntheticFilter;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
-import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
+import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.instr.granularity.IGranularity;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.model.Node;
@@ -130,7 +130,7 @@ public class InstrumentationPass implements IPass {
 
       if (g.instrumentAtIndex(index, instrSize)) {
         Node n = g.getNode(ctClass, ctBehavior, curLine);
-        Bytecode bc = getInstrumentationCode(ctClass, n, info.getConstPool());
+        Bytecode bc = this.getInstrumentationCode(ctClass, n, info.getConstPool());
         ci.insert(index, bc.get());
         instrSize += bc.length();
 
@@ -145,11 +145,11 @@ public class InstrumentationPass implements IPass {
     return instrumented;
   }
 
-  private Bytecode getInstrumentationCode(CtClass c, Node n, ConstPool constPool) {
+  private Bytecode getInstrumentationCode(CtClass ctClass, Node node, ConstPool constPool) {
     Bytecode b = new Bytecode(constPool);
-    HitProbe p = getHitProbe(c, n);
+    HitProbe p = this.getHitProbe(ctClass, node);
 
-    b.addGetstatic(c, HIT_VECTOR_NAME, HIT_VECTOR_TYPE);
+    b.addGetstatic(ctClass, HIT_VECTOR_NAME, HIT_VECTOR_TYPE);
     b.addIconst(p.getLocalId());
     b.addOpcode(Opcode.ICONST_1);
     b.addOpcode(Opcode.BASTORE);
@@ -157,8 +157,9 @@ public class InstrumentationPass implements IPass {
     return b;
   }
 
-  public HitProbe getHitProbe(CtClass cls, Node n) {
+  public HitProbe getHitProbe(CtClass ctClass, Node node) {
     Collector c = Collector.instance();
-    return c.createHitProbe(cls.getName(), n.getId());
+    return c.createHitProbe(ctClass.getName(), node.getId());
   }
+
 }

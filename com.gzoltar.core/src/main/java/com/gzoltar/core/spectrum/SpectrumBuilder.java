@@ -8,39 +8,42 @@ public class SpectrumBuilder implements IEventListener {
   protected SpectrumImpl spectrum;
 
   public SpectrumBuilder() {
-    resetSpectrum();
+    this.resetSpectrum();
   }
 
   public void resetSpectrum() {
-    spectrum = new SpectrumImpl();
+    this.spectrum = new SpectrumImpl();
   }
 
   public ISpectrum getSpectrum() {
-    return spectrum;
+    return this.spectrum;
   }
 
   @Override
-  public void endTransaction(String transactionName, boolean[] activity, boolean isError) {
-    spectrum.addTransaction(transactionName, activity, isError);
+  public void endTransaction(final String transactionName, final boolean[] activity,
+      final boolean isError) {
+    this.spectrum.addTransaction(transactionName, activity, isError);
   }
 
   @Override
-  public void endTransaction(String transactionName, boolean[] activity, int hashCode,
-      boolean isError) {
-    spectrum.addTransaction(transactionName, activity, hashCode, isError);
+  public void endTransaction(final String transactionName, final boolean[] activity,
+      final int hashCode, final boolean isError) {
+    this.spectrum.addTransaction(transactionName, activity, hashCode, isError);
   }
 
   @Override
-  public void addNode(int id, String name, NodeType type, int parentId) {
-    spectrum.getTree().addNode(name, type, parentId);
+  public void addNode(final int id, final String name, final NodeType type, final int parentId) {
+    this.spectrum.getTree().addNode(name, type, parentId);
   }
 
   @Override
-  public void addProbe(int id, int nodeId) {
-    spectrum.addProbe(id, nodeId);
+  public void addProbe(final int id, final int nodeId) {
+    this.spectrum.addProbe(id, nodeId);
   }
 
   @Override
-  public void endSession() {}
+  public void endSession() {
+    // empty
+  }
 
 }

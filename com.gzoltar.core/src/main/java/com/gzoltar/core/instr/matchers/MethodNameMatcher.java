@@ -11,7 +11,7 @@ public class MethodNameMatcher extends AbstractWildcardMatcher {
   }
 
   @Override
-  public final boolean matches(final CtClass ctClass) {
+  public boolean matches(final CtClass ctClass) {
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       if (this.matches(ctBehavior)) {
         return true;
@@ -21,12 +21,12 @@ public class MethodNameMatcher extends AbstractWildcardMatcher {
   }
 
   @Override
-  public final boolean matches(final CtBehavior ctBehavior) {
+  public boolean matches(final CtBehavior ctBehavior) {
     return super.matches(ctBehavior.getName() + ctBehavior.getSignature());
   }
 
   @Override
-  public final boolean matches(final CtField ctField) {
+  public boolean matches(final CtField ctField) {
     return this.matches(ctField.getDeclaringClass());
   }
 

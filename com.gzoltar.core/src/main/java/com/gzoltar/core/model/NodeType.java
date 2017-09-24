@@ -24,7 +24,7 @@ public enum NodeType {
 
   private final String symbol;
 
-  private NodeType(String symbol) {
+  private NodeType(final String symbol) {
     this.symbol = symbol;
   }
 

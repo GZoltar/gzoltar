@@ -5,29 +5,34 @@ import java.util.List;
 
 public class Node {
 
-  private NodeType type;
-  private String name;
-  private int id;
-  private int depth;
-  private Node parent;
-  private List<Node> children = new ArrayList<Node>();
+  private final NodeType type;
 
-  public Node(String name, NodeType type, int id, Node parent) {
+  private final String name;
+
+  private final int id;
+
+  private final int depth;
+
+  private final Node parent;
+
+  private final List<Node> children = new ArrayList<Node>();
+
+  public Node(final String name, final NodeType type, final int id, final Node parent) {
     this.type = type;
     this.name = name;
     this.id = id;
     this.parent = parent;
 
-    if (isRoot())
+    if (isRoot()) {
       this.depth = 0;
-    else {
+    } else {
       this.depth = parent.getDepth() + 1;
       parent.addChild(this);
     }
   }
 
-  private void addChild(Node node) {
-    children.add(node);
+  private void addChild(final Node node) {
+    this.children.add(node);
   }
 
   public int getDepth() {
@@ -35,20 +40,19 @@ public class Node {
   }
 
   private boolean isRoot() {
-    return parent == null;
+    return this.parent == null;
   }
 
   public boolean isLeaf() {
-    return children.isEmpty();
+    return this.children.isEmpty();
   }
 
-  public Node getChild(String name) {
-    for (Node n : children) {
+  public Node getChild(final String name) {
+    for (Node n : this.children) {
       if (n.getName().equals(name)) {
         return n;
       }
     }
-
     return null;
   }
 
@@ -57,31 +61,30 @@ public class Node {
   }
 
   public int getParentId() {
-    if (isRoot()) {
+    if (this.isRoot()) {
       return -1;
     }
-
     return this.parent.id;
   }
 
   public String getName() {
-    return name;
+    return this.name;
   }
 
   public int getId() {
-    return id;
+    return this.id;
   }
 
   public NodeType getType() {
-    return type;
+    return this.type;
   }
 
   public List<Node> getChildren() {
-    return children;
+    return this.children;
   }
 
   public String toString() {
-    return "{\"n\":\"" + getName() + "\",\"p\":" + getParentId() + "}";
+    return "{\"n\":\"" + this.getName() + "\",\"p\":" + this.getParentId() + "}";
   }
 
   public Node getNodeOfType(NodeType type) {
@@ -96,15 +99,15 @@ public class Node {
 
   public List<Node> getLeafNodes() {
     List<Node> nodes = new ArrayList<Node>();
-    getLeafNodes(nodes);
+    this.getLeafNodes(nodes);
     return nodes;
   }
 
-  private void getLeafNodes(List<Node> nodes) {
-    if (isLeaf()) {
+  private void getLeafNodes(final List<Node> nodes) {
+    if (this.isLeaf()) {
       nodes.add(this);
     } else {
-      for (Node c : children) {
+      for (Node c : this.children) {
         c.getLeafNodes(nodes);
       }
     }
@@ -114,32 +117,36 @@ public class Node {
     if (this.type == NodeType.METHOD) {
       String str = this.name.substring(0, this.name.indexOf('('));
       return str;
-    } else
+    } else {
       return this.getName();
+    }
   }
 
   public String getFullName() {
-    Node p = getParent();
+    Node p = this.getParent();
 
-    if (p == null || p.isRoot())
+    if (p == null || p.isRoot()) {
       return name;
+    }
 
-    return p.getFullName() + getSymbol(p.type, type) + name;
+    return p.getFullName() + this.getSymbol(p.type, type) + name;
   }
 
-  private static String getSymbol(NodeType t1, NodeType t2) {
+  private String getSymbol(final NodeType t1, final NodeType t2) {
     if (t1 == NodeType.PACKAGE) {
       return t1.getSymbol();
-    } else
+    } else {
       return t2.getSymbol();
+    }
   }
 
-  public boolean hasChildrenOfType(NodeType t) {
-    for (Node child : children) {
+  public boolean hasChildrenOfType(final NodeType t) {
+    for (Node child : this.children) {
       if (child.type == t) {
         return true;
       }
     }
     return false;
   }
+
 }

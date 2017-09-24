@@ -12,30 +12,32 @@ import javassist.bytecode.MethodInfo;
 
 public abstract class AbstractGranularity implements IGranularity {
 
-  protected CtClass c;
-  protected MethodInfo mi;
-  protected CodeIterator ci;
+  protected CtClass ctClass;
+  protected MethodInfo methodInfo;
+  protected CodeIterator codeIterator;
 
-  public AbstractGranularity(CtClass c, MethodInfo mi, CodeIterator ci) {
-    this.c = c;
-    this.mi = mi;
-    this.ci = ci;
+  public AbstractGranularity(final CtClass ctClass, final MethodInfo methodInfo,
+      final CodeIterator codeIterator) {
+    this.ctClass = ctClass;
+    this.methodInfo = methodInfo;
+    this.codeIterator = codeIterator;
   }
 
-  private Node getNode(Collector c, Node parent, String name, NodeType type) {
+  private Node getNode(final Collector collector, final Node parent, final String name,
+      final NodeType nodeType) {
     Node node = parent.getChild(name);
 
     if (node == null) {
-      node = c.createNode(parent, name, type);
+      node = collector.createNode(parent, name, nodeType);
     }
 
     return node;
   }
 
-  protected Node getNode(CtClass cls) {
-    Collector c = Collector.instance();
-    Node node = c.getRootNode();
-    String tok = cls.getName();
+  protected Node getNode(final CtClass ctClass) {
+    Collector collector = Collector.instance();
+    Node node = collector.getRootNode();
+    String tok = ctClass.getName();
 
     // Extract Package Hierarchy
     int pkgEnd = tok.lastIndexOf(".");
@@ -44,38 +46,36 @@ public abstract class AbstractGranularity implements IGranularity {
       StringTokenizer stok = new StringTokenizer(tok.substring(0, pkgEnd), ".");
 
       while (stok.hasMoreTokens()) {
-        node = getNode(c, node, stok.nextToken(), NodeType.PACKAGE);
+        node = this.getNode(collector, node, stok.nextToken(), NodeType.PACKAGE);
       }
     } else {
       pkgEnd = -1;
     }
-
 
     // Extract Class Hierarchy
     StringTokenizer stok = new StringTokenizer(tok.substring(pkgEnd + 1), "$");
 
     while (stok.hasMoreTokens()) {
       tok = stok.nextToken();
-      node = getNode(c, node, tok, NodeType.CLASS);
+      node = this.getNode(collector, node, tok, NodeType.CLASS);
     }
-
 
     return node;
   }
 
-  protected Node getNode(CtClass cls, CtBehavior m) {
+  protected Node getNode(final CtClass ctClass, final CtBehavior ctBehavior) {
     Collector c = Collector.instance();
-    Node parent = getNode(cls);
+    Node parent = this.getNode(ctClass);
 
-    return getNode(c, parent, m.getName() + Descriptor.toString(m.getSignature()),
+    return getNode(c, parent, ctBehavior.getName() + Descriptor.toString(ctBehavior.getSignature()),
         NodeType.METHOD);
   }
 
-  public Node getNode(CtClass cls, CtBehavior m, int line) {
+  public Node getNode(final CtClass ctClass, final CtBehavior ctBehavior, final int line) {
     Collector c = Collector.instance();
-    Node parent = getNode(cls, m);
+    Node parent = this.getNode(ctClass, ctBehavior);
 
-    return getNode(c, parent, String.valueOf(line), NodeType.LINE);
+    return this.getNode(c, parent, String.valueOf(line), NodeType.LINE);
   }
 
 }

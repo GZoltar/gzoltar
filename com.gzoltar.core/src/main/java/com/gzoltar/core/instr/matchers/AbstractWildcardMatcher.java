@@ -43,7 +43,7 @@ public abstract class AbstractWildcardMatcher implements IMatcher {
     return regex;
   }
 
-  protected boolean matches(final String s) {
+  protected final boolean matches(final String s) {
     return this.pattern.matcher(s).matches();
   }
 

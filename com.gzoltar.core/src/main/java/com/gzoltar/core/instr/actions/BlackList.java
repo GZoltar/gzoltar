@@ -10,10 +10,11 @@ public class BlackList extends AbstractAction {
   }
 
   @Override
-  public final Outcome getAction(boolean matches) {
+  public Outcome getAction(final boolean matches) {
     if (matches) {
       return Outcome.REJECT;
     }
     return Outcome.NEXT;
   }
+
 }

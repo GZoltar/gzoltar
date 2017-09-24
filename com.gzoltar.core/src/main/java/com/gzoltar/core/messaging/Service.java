@@ -4,13 +4,14 @@ import com.gzoltar.core.events.IEventListener;
 
 public interface Service {
 
-  IEventListener getEventListener();
+  public IEventListener getEventListener();
 
-  void interrupted();
+  public void interrupted();
 
-  void terminated();
+  public void terminated();
 
   public interface ServiceFactory {
-    Service create(String id);
+    public Service create(final String id);
   }
+
 }

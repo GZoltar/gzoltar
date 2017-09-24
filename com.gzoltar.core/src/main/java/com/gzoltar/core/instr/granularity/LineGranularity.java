@@ -8,19 +8,21 @@ public class LineGranularity extends AbstractGranularity {
 
   private int currentLine = -1;
 
-  public LineGranularity(CtClass c, MethodInfo mi, CodeIterator ci) {
-    super(c, mi, ci);
+  public LineGranularity(final CtClass ctClass, final MethodInfo methodInfo,
+      final CodeIterator codeIterator) {
+    super(ctClass, methodInfo, codeIterator);
   }
 
   @Override
-  public boolean instrumentAtIndex(int index, int instrumentationSize) {
-    int previousLine = currentLine;
-    currentLine = mi.getLineNumber(index);
-    return currentLine != previousLine;
+  public boolean instrumentAtIndex(final int index, final int instrumentationSize) {
+    int previousLine = this.currentLine;
+    this.currentLine = this.methodInfo.getLineNumber(index);
+    return this.currentLine != previousLine;
   }
 
   @Override
   public boolean stopInstrumenting() {
     return false;
   }
+
 }

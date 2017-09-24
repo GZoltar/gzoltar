@@ -7,44 +7,44 @@ import org.junit.runner.notification.Failure;
 /**
  * JUnit listener.
  */
-public class JUnitListener extends Listener {
+public final class JUnitListener extends Listener {
 
   @Override
-  public void testRunStarted(Description description) {
+  public void testRunStarted(final Description description) {
     super.onRunStart();
   }
 
   @Override
-  public void testRunFinished(Result result) {
+  public void testRunFinished(final Result result) {
     super.onRunFinish();
   }
 
   @Override
-  public void testStarted(Description description) {
+  public void testStarted(final Description description) {
     super.onTestStart();
   }
 
   @Override
-  public void testFinished(Description description) {
+  public void testFinished(final Description description) {
     super.onTestFinish(this.getName(description));
   }
 
   @Override
-  public void testFailure(Failure failure) {
+  public void testFailure(final Failure failure) {
     super.onTestFailure();
   }
 
   @Override
-  public void testAssumptionFailure(Failure failure) {
+  public void testAssumptionFailure(final Failure failure) {
     super.onTestFailure();
   }
 
   @Override
-  public void testIgnored(Description description) {
+  public void testIgnored(final Description description) {
     super.onTestSkipped();
   }
 
-  private String getName(Description description) {
+  private String getName(final Description description) {
     return description.getClassName() + Listener.TEST_CLASS_NAME_SEPARATOR
         + description.getMethodName();
   }

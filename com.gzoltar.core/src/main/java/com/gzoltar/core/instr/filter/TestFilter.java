@@ -5,7 +5,7 @@ import com.gzoltar.core.instr.matchers.MethodAnnotationMatcher;
 import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.instr.matchers.SuperclassMatcher;
 
-public class TestFilter extends Filter {
+public final class TestFilter extends Filter {
 
   public TestFilter() {
     BlackList junit3 = new BlackList(new SuperclassMatcher("junit.framework.TestCase"));

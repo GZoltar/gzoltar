@@ -8,37 +8,38 @@ import com.gzoltar.core.model.Tree;
 
 public interface ISpectrum {
 
-  int getComponentsSize();
+  public int getComponentsSize();
 
-  int getTransactionsSize();
+  public int getTransactionsSize();
 
-  boolean isInvolved(int t, int c);
+  public boolean isInvolved(final int transactionId, final int componentID);
 
-  boolean isError(int t);
+  public boolean isError(final int transactionId);
 
-  Tree getTree();
+  public Tree getTree();
 
-  void print();
+  public void print();
 
-  List<Integer> getTestFrequencyPerProbe();
+  public List<Integer> getTestFrequencyPerProbe();
 
-  List<Integer> getTestFrequencyPerNode();
+  public List<Integer> getTestFrequencyPerNode();
 
-  BitSet getTransactionActivity(int t);
+  public BitSet getTransactionActivity(final int transactionId);
 
-  String getTransactionName(int t);
+  public String getTransactionName(final int transactionId);
 
-  List<Integer> getActiveComponentsInTransaction(int t);
+  public List<Integer> getActiveComponentsInTransaction(final int transactionId);
 
-  Node getNodeOfProbe(int probeId);
+  public Node getNodeOfProbe(final int probeId);
 
-  int getTransactionHashCode(int t);
+  public int getTransactionHashCode(final int transactionId);
 
-  double getMinCompTrans(int c);
+  public double getMinCompTrans(final int componentID);
 
-  double getMaxCompTrans(int c);
+  public double getMaxCompTrans(final int componentID);
 
-  int getProbeOfNode(int nodeId);
+  public int getProbeOfNode(final int nodeId);
 
-  List<Transaction> getTransactions();
+  public List<Transaction> getTransactions();
+
 }

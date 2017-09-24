@@ -64,7 +64,7 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
    * <li>basicblock</li>
    * </ul>
    */
-  @Parameter(defaultValue = "line")
+  @Parameter(property = "gzoltar.granularity")
   private String granularity;
 
   /**

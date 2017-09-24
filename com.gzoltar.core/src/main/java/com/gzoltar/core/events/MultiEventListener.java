@@ -9,47 +9,47 @@ public class MultiEventListener implements IEventListener {
 
   private List<IEventListener> eventListeners = new ArrayList<IEventListener>();
 
-  public MultiEventListener(IEventListener... els) {
-    Collections.addAll(eventListeners, els);
+  public MultiEventListener(final IEventListener... els) {
+    Collections.addAll(this.eventListeners, els);
   }
 
-  public void add(IEventListener el) {
-    eventListeners.add(el);
+  public void add(final IEventListener el) {
+    this.eventListeners.add(el);
   }
 
   @Override
-  public void endTransaction(String transactionName, boolean[] activity, boolean isError) {
-    for (IEventListener el : eventListeners) {
+  public void endTransaction(final String transactionName, final boolean[] activity,
+      final boolean isError) {
+    for (IEventListener el : this.eventListeners) {
       el.endTransaction(transactionName, activity, isError);
     }
   }
 
   @Override
-  public void endTransaction(String transactionName, boolean[] activity, int hashCode,
-      boolean isError) {
-    for (IEventListener el : eventListeners) {
+  public void endTransaction(final String transactionName, final boolean[] activity,
+      final int hashCode, final boolean isError) {
+    for (IEventListener el : this.eventListeners) {
       el.endTransaction(transactionName, activity, hashCode, isError);
     }
   }
 
   @Override
-  public void addNode(int id, String name, NodeType type, int parentId) {
-    for (IEventListener el : eventListeners) {
+  public void addNode(final int id, final String name, final NodeType type, final int parentId) {
+    for (IEventListener el : this.eventListeners) {
       el.addNode(id, name, type, parentId);
     }
   }
 
   @Override
-  public void addProbe(int id, int nodeId) {
-    for (IEventListener el : eventListeners) {
+  public void addProbe(final int id, final int nodeId) {
+    for (IEventListener el : this.eventListeners) {
       el.addProbe(id, nodeId);
     }
-
   }
 
   @Override
   public void endSession() {
-    for (IEventListener el : eventListeners) {
+    for (IEventListener el : this.eventListeners) {
       el.endSession();
     }
   }

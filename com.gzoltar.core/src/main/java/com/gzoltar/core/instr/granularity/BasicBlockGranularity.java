@@ -12,12 +12,13 @@ public class BasicBlockGranularity extends AbstractGranularity {
 
   private Queue<Integer> blocks = new LinkedList<Integer>();
 
-  public BasicBlockGranularity(CtClass c, MethodInfo mi, CodeIterator ci) {
-    super(c, mi, ci);
+  public BasicBlockGranularity(final CtClass ctClass, final MethodInfo methodInfo,
+      final CodeIterator codeIterator) {
+    super(ctClass, methodInfo, codeIterator);
     try {
-      ControlFlow cf = new ControlFlow(c, mi);
+      ControlFlow cf = new ControlFlow(ctClass, methodInfo);
       for (Block block : cf.basicBlocks()) {
-        blocks.add(block.position());
+        this.blocks.add(block.position());
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -25,15 +26,17 @@ public class BasicBlockGranularity extends AbstractGranularity {
   }
 
   @Override
-  public boolean instrumentAtIndex(int index, int instrumentationSize) {
-    boolean outcome = !blocks.isEmpty() && index >= instrumentationSize + blocks.peek();
-    if (outcome)
-      blocks.poll();
+  public boolean instrumentAtIndex(final int index, final int instrumentationSize) {
+    boolean outcome = !this.blocks.isEmpty() && index >= instrumentationSize + this.blocks.peek();
+    if (outcome) {
+      this.blocks.poll();
+    }
     return outcome;
   }
 
   @Override
   public boolean stopInstrumenting() {
-    return blocks.isEmpty();
+    return this.blocks.isEmpty();
   }
+
 }

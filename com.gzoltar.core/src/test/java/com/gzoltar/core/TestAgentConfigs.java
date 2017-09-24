@@ -5,8 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import java.io.File;
 import org.junit.Test;
-import com.gzoltar.core.AgentConfigs.OutputMode;
-import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
+import com.gzoltar.core.instr.granularity.GranularityLevel;
 
 public class TestAgentConfigs {
 
@@ -123,7 +122,7 @@ public class TestAgentConfigs {
   @Test
   public void testOutput() {
     String key = AgentConfigs.OUTPUT_KEY;
-    OutputMode value = OutputMode.file;
+    AgentOutput value = AgentOutput.FILE;
     AgentConfigs agentConfigs = new AgentConfigs(key + "=" + value);
     assertEquals(value, agentConfigs.getOutput());
 
@@ -139,7 +138,7 @@ public class TestAgentConfigs {
   @Test
   public void testGranularity() {
     String key = AgentConfigs.GRANULARITY_KEY;
-    GranularityLevel value = GranularityLevel.basicblock;
+    GranularityLevel value = GranularityLevel.BASICBLOCK;
     AgentConfigs agentConfigs = new AgentConfigs(key + "=" + value);
     assertEquals(value, agentConfigs.getGranularity());
 

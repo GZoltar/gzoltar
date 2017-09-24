@@ -22,7 +22,7 @@ public class SourceLocationMatcher implements IMatcher {
   }
 
   @Override
-  public final boolean matches(final CtClass ctClass) {
+  public boolean matches(final CtClass ctClass) {
     if (!this.inclNoLocationClasses && !this.hasSourceLocation(this.protectionDomain)) {
       return false;
     }
@@ -50,12 +50,12 @@ public class SourceLocationMatcher implements IMatcher {
   }
 
   @Override
-  public final boolean matches(final CtBehavior ctBehavior) {
+  public boolean matches(final CtBehavior ctBehavior) {
     return this.matches(ctBehavior.getDeclaringClass());
   }
 
   @Override
-  public final boolean matches(final CtField ctField) {
+  public boolean matches(final CtField ctField) {
     return this.matches(ctField.getDeclaringClass());
   }
 

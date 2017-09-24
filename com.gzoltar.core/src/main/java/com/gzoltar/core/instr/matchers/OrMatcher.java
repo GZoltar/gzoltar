@@ -13,7 +13,7 @@ public class OrMatcher implements IMatcher {
   }
 
   @Override
-  public final boolean matches(final CtClass ctClass) {
+  public boolean matches(final CtClass ctClass) {
     for (IMatcher mat : this.matchers) {
       if (mat.matches(ctClass)) {
         return true;
@@ -23,7 +23,7 @@ public class OrMatcher implements IMatcher {
   }
 
   @Override
-  public final boolean matches(final CtBehavior ctBehavior) {
+  public boolean matches(final CtBehavior ctBehavior) {
     for (IMatcher mat : this.matchers) {
       if (mat.matches(ctBehavior)) {
         return true;
@@ -33,7 +33,7 @@ public class OrMatcher implements IMatcher {
   }
 
   @Override
-  public final boolean matches(final CtField ctField) {
+  public boolean matches(final CtField ctField) {
     for (IMatcher mat : this.matchers) {
       if (mat.matches(ctField)) {
         return true;

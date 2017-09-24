@@ -4,13 +4,16 @@ import com.gzoltar.core.model.NodeType;
 
 public interface IEventListener {
 
-  void endTransaction(String transactionName, boolean[] activity, boolean isError);
+  public void endTransaction(final String transactionName, final boolean[] activity,
+      final boolean isError);
 
-  void endTransaction(String transactionName, boolean[] activity, int hashCode, boolean isError);
+  public void endTransaction(final String transactionName, final boolean[] activity,
+      final int hashCode, final boolean isError);
 
-  void addNode(int id, String name, NodeType type, int parentId);
+  public void addNode(final int id, final String name, final NodeType type, final int parentId);
 
-  void addProbe(int id, int nodeId);
+  public void addProbe(final int id, final int nodeId);
 
-  void endSession();
+  public void endSession();
+
 }
