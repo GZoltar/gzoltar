@@ -3,7 +3,7 @@ package com.gzoltar.core.events;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import com.gzoltar.core.model.Node.Type;
+import com.gzoltar.core.model.NodeType;
 
 public class MultiEventListener implements IEventListener {
 
@@ -33,7 +33,7 @@ public class MultiEventListener implements IEventListener {
   }
 
   @Override
-  public void addNode(int id, String name, Type type, int parentId) {
+  public void addNode(int id, String name, NodeType type, int parentId) {
     for (IEventListener el : eventListeners) {
       el.addNode(id, name, type, parentId);
     }

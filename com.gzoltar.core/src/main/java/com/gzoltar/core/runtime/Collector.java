@@ -3,8 +3,8 @@ package com.gzoltar.core.runtime;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.events.MultiEventListener;
 import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.model.Tree;
-import com.gzoltar.core.model.Node.Type;
 import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
 import com.gzoltar.core.spectrum.SpectrumBuilder;
 
@@ -47,7 +47,7 @@ public class Collector {
     return this.builder;
   }
 
-  public synchronized Node createNode(Node parent, String name, Type type) {
+  public synchronized Node createNode(Node parent, String name, NodeType type) {
     Node node = tree.addNode(name, type, parent.getId());
     listener.addNode(node.getId(), name, type, parent.getId());
     return node;

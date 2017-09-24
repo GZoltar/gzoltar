@@ -1,11 +1,9 @@
 package com.gzoltar.core.model;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import com.gzoltar.core.model.Node.Type;
 
 public class Tree implements Iterable<Node> {
 
@@ -17,7 +15,7 @@ public class Tree implements Iterable<Node> {
 
   public Tree(boolean createRoot) {
     if (createRoot) {
-      Node node = new Node("root", Node.Type.PACKAGE, nodes.size(), null);
+      Node node = new Node("root", NodeType.PACKAGE, nodes.size(), null);
       nodes.add(node);
     }
   }
@@ -46,11 +44,11 @@ public class Tree implements Iterable<Node> {
     return nodes.iterator();
   }
 
-  public Node addNode(String name, Node.Type type, int parentId) {
+  public Node addNode(String name, NodeType type, int parentId) {
     return addNode(name, type, nodes.size(), parentId);
   }
 
-  public Node addNode(String name, Node.Type type, int id, int parentId) {
+  public Node addNode(String name, NodeType type, int id, int parentId) {
     Node parent = getNode(parentId);
 
     Node child = new Node(name, type, id, parent);
@@ -86,7 +84,7 @@ public class Tree implements Iterable<Node> {
     return sb.toString();
   }
 
-  public List<Node> getNodesOfType(Type t) {
+  public List<Node> getNodesOfType(NodeType t) {
     List<Node> nodesOfType = new ArrayList<Node>();
 
     for (Node node : nodes) {

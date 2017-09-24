@@ -1,13 +1,14 @@
 package com.gzoltar.core.instr.granularity;
 
 import java.util.StringTokenizer;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.runtime.Collector;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.bytecode.CodeIterator;
 import javassist.bytecode.Descriptor;
 import javassist.bytecode.MethodInfo;
-import com.gzoltar.core.model.Node;
-import com.gzoltar.core.runtime.Collector;
 
 public abstract class AbstractGranularity implements IGranularity {
 
@@ -21,7 +22,7 @@ public abstract class AbstractGranularity implements IGranularity {
     this.ci = ci;
   }
 
-  private Node getNode(Collector c, Node parent, String name, Node.Type type) {
+  private Node getNode(Collector c, Node parent, String name, NodeType type) {
     Node node = parent.getChild(name);
 
     if (node == null) {
@@ -43,7 +44,7 @@ public abstract class AbstractGranularity implements IGranularity {
       StringTokenizer stok = new StringTokenizer(tok.substring(0, pkgEnd), ".");
 
       while (stok.hasMoreTokens()) {
-        node = getNode(c, node, stok.nextToken(), Node.Type.PACKAGE);
+        node = getNode(c, node, stok.nextToken(), NodeType.PACKAGE);
       }
     } else {
       pkgEnd = -1;
@@ -55,7 +56,7 @@ public abstract class AbstractGranularity implements IGranularity {
 
     while (stok.hasMoreTokens()) {
       tok = stok.nextToken();
-      node = getNode(c, node, tok, Node.Type.CLASS);
+      node = getNode(c, node, tok, NodeType.CLASS);
     }
 
 
@@ -67,14 +68,14 @@ public abstract class AbstractGranularity implements IGranularity {
     Node parent = getNode(cls);
 
     return getNode(c, parent, m.getName() + Descriptor.toString(m.getSignature()),
-        Node.Type.METHOD);
+        NodeType.METHOD);
   }
 
   public Node getNode(CtClass cls, CtBehavior m, int line) {
     Collector c = Collector.instance();
     Node parent = getNode(cls, m);
 
-    return getNode(c, parent, String.valueOf(line), Node.Type.LINE);
+    return getNode(c, parent, String.valueOf(line), NodeType.LINE);
   }
 
 }

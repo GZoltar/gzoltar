@@ -1,7 +1,7 @@
 package com.gzoltar.core.spectrum;
 
 import com.gzoltar.core.events.IEventListener;
-import com.gzoltar.core.model.Node.Type;
+import com.gzoltar.core.model.NodeType;
 
 public class SpectrumBuilder implements IEventListener {
 
@@ -31,7 +31,7 @@ public class SpectrumBuilder implements IEventListener {
   }
 
   @Override
-  public void addNode(int id, String name, Type type, int parentId) {
+  public void addNode(int id, String name, NodeType type, int parentId) {
     spectrum.getTree().addNode(name, type, parentId);
   }
 

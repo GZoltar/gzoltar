@@ -11,7 +11,7 @@ import com.gzoltar.core.messaging.Message.AddProbeMessage;
 import com.gzoltar.core.messaging.Message.ByeMessage;
 import com.gzoltar.core.messaging.Message.EndTransactionMessage;
 import com.gzoltar.core.messaging.Message.HandshakeMessage;
-import com.gzoltar.core.model.Node.Type;
+import com.gzoltar.core.model.NodeType;
 
 public class Client implements IEventListener {
 
@@ -120,7 +120,7 @@ public class Client implements IEventListener {
   }
 
   @Override
-  public void addNode(int id, String name, Type type, int parentId) {
+  public void addNode(int id, String name, NodeType type, int parentId) {
     postMessage(new AddNodeMessage(id, name, type, parentId));
   }
 

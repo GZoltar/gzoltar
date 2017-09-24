@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.instr.granularity.GranularityFactory.GranularityLevel;
-import com.gzoltar.core.model.Node.Type;
+import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.util.CommandLineSupport;
 
 /**
@@ -374,7 +374,7 @@ public final class AgentConfigs {
       public void addProbe(int id, int nodeId) {}
 
       @Override
-      public void addNode(int id, String name, Type type, int parentId) {}
+      public void addNode(int id, String name, NodeType type, int parentId) {}
     };
   }
 

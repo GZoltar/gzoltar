@@ -4,7 +4,7 @@ import static java.lang.String.format;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import com.gzoltar.core.model.Node.Type;
+import com.gzoltar.core.model.NodeType;
 
 public class SpectrumReader {
 
@@ -78,7 +78,7 @@ public class SpectrumReader {
     //int depth = this.in.readInt();
     int parentId = this.in.readInt();
 
-    this.spectrum.getTree().addNode(name, Type.valueOf(symbol), id, parentId);
+    this.spectrum.getTree().addNode(name, NodeType.valueOf(symbol), id, parentId);
   }
 
   private void readTransaction() throws IOException {

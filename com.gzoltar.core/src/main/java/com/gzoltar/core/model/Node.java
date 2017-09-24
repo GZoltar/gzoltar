@@ -4,28 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Node {
-  public static enum Type {
-    PACKAGE("."), CLASS("$"), METHOD("#"), LINE(":");
 
-    private final String symbol;
-
-    private Type(String symbol) {
-      this.symbol = symbol;
-    }
-
-    public String getSymbol() {
-      return symbol;
-    }
-  }
-
-  private Type type;
+  private NodeType type;
   private String name;
   private int id;
   private int depth;
   private Node parent;
   private List<Node> children = new ArrayList<Node>();
 
-  public Node(String name, Type type, int id, Node parent) {
+  public Node(String name, NodeType type, int id, Node parent) {
     this.type = type;
     this.name = name;
     this.id = id;
@@ -85,7 +72,7 @@ public class Node {
     return id;
   }
 
-  public Type getType() {
+  public NodeType getType() {
     return type;
   }
 
@@ -97,7 +84,7 @@ public class Node {
     return "{\"n\":\"" + getName() + "\",\"p\":" + getParentId() + "}";
   }
 
-  public Node getNodeOfType(Type type) {
+  public Node getNodeOfType(NodeType type) {
     if (this.type == type) {
       return this;
     } else if (this.parent != null) {
@@ -124,7 +111,7 @@ public class Node {
   }
 
   public String getShortName() {
-    if (this.type == Type.METHOD) {
+    if (this.type == NodeType.METHOD) {
       String str = this.name.substring(0, this.name.indexOf('('));
       return str;
     } else
@@ -140,14 +127,14 @@ public class Node {
     return p.getFullName() + getSymbol(p.type, type) + name;
   }
 
-  private static String getSymbol(Type t1, Type t2) {
-    if (t1 == Type.PACKAGE) {
+  private static String getSymbol(NodeType t1, NodeType t2) {
+    if (t1 == NodeType.PACKAGE) {
       return t1.getSymbol();
     } else
       return t2.getSymbol();
   }
 
-  public boolean hasChildrenOfType(Type t) {
+  public boolean hasChildrenOfType(NodeType t) {
     for (Node child : children) {
       if (child.type == t) {
         return true;

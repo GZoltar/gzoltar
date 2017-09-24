@@ -3,7 +3,7 @@ package com.gzoltar.report;
 import java.util.ArrayList;
 import java.util.List;
 import com.gzoltar.core.model.Node;
-import com.gzoltar.core.model.Node.Type;
+import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.spectrum.ISpectrum;
 
 public class OverallReport extends AbstractReport {
@@ -41,7 +41,7 @@ public class OverallReport extends AbstractReport {
 
   // create class-based reports
   public List<AbstractReport> getPerClassReports() {
-    List<Node> classNodes = getSpectrum().getTree().getNodesOfType(Type.CLASS);
+    List<Node> classNodes = getSpectrum().getTree().getNodesOfType(NodeType.CLASS);
     List<AbstractReport> reports = new ArrayList<AbstractReport>();
 
     for (Node node : classNodes) {
@@ -55,11 +55,11 @@ public class OverallReport extends AbstractReport {
   }
 
   public List<AbstractReport> getPerPackageReports() {
-    List<Node> packageNodes = getSpectrum().getTree().getNodesOfType(Type.PACKAGE);
+    List<Node> packageNodes = getSpectrum().getTree().getNodesOfType(NodeType.PACKAGE);
     List<AbstractReport> reports = new ArrayList<AbstractReport>();
 
     for (Node node : packageNodes) {
-      if (node.hasChildrenOfType(Type.CLASS)) {
+      if (node.hasChildrenOfType(NodeType.CLASS)) {
         FilteredReport fr = new FilteredReport(getSpectrum(), granularity, node);
         if (fr.hasActiveTransactions()) {
           reports.add(fr);

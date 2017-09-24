@@ -1,7 +1,7 @@
 package com.gzoltar.core.messaging;
 
 import java.io.Serializable;
-import com.gzoltar.core.model.Node.Type;
+import com.gzoltar.core.model.NodeType;
 
 public interface Message {
 
@@ -48,10 +48,10 @@ public interface Message {
     private static final long serialVersionUID = 3116251573538148450L;
     public final int id;
     public final String name;
-    public Type type;
+    public NodeType type;
     public final int parentId;
 
-    public AddNodeMessage(int id, String name, Type type, int parentId) {
+    public AddNodeMessage(int id, String name, NodeType type, int parentId) {
       this.id = id;
       this.name = name;
       this.type = type;
