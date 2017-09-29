@@ -120,11 +120,20 @@ public final class AgentConfigs {
 
   public static final boolean DEFAULT_INCLSTATICCONSTRUCTORS = true;
 
+  /**
+   * Specifies whether methods annotated with @deprecated of each class under test should be
+   * instrumented. Default is <code>true</code>.
+   */
+  public static final String INCLDEPRECATEDMETHODS_KEY = "incldeprecatedmethods";
+
+  public static final boolean DEFAULT_INCLDEPRECATEDMETHODS = true;
+
   private final Map<String, String> configs;
 
-  private static final Collection<String> VALID_CONFIGS = Arrays.asList(BUILDLOCATION_KEY,
-      DESTFILE_KEY, INCLUDES_KEY, EXCLUDES_KEY, EXCLCLASSLOADER_KEY, INCLNOLOCATIONCLASSES_KEY,
-      OUTPUT_KEY, GRANULARITY_KEY, INCLPUBLICMETHODS_KEY, INCLSTATICCONSTRUCTORS_KEY);
+  private static final Collection<String> VALID_CONFIGS =
+      Arrays.asList(BUILDLOCATION_KEY, DESTFILE_KEY, INCLUDES_KEY, EXCLUDES_KEY,
+          EXCLCLASSLOADER_KEY, INCLNOLOCATIONCLASSES_KEY, OUTPUT_KEY, GRANULARITY_KEY,
+          INCLPUBLICMETHODS_KEY, INCLSTATICCONSTRUCTORS_KEY, INCLDEPRECATEDMETHODS_KEY);
 
   private static final Pattern CONFIG_SPLIT = Pattern.compile(",(?=[a-zA-Z0-9_\\-]+=)");
 
@@ -382,6 +391,25 @@ public final class AgentConfigs {
    */
   public void setInclStaticConstructors(final boolean inclStaticConstructors) {
     this.setConfig(INCLSTATICCONSTRUCTORS_KEY, inclStaticConstructors);
+  }
+
+  /**
+   * Returns whether methods annotated with @deprecated should be instrumented.
+   * 
+   * @return <code>true</code> if methods annotated with @deprecated should be instrumented
+   */
+  public Boolean getInclDeprecatedMethods() {
+    return this.getConfig(INCLDEPRECATEDMETHODS_KEY, DEFAULT_INCLDEPRECATEDMETHODS);
+  }
+
+  /**
+   * Sets whether methods annotated with @deprecated should be instrumented.
+   * 
+   * @param inclDeprecatedMethods <code>true</code> if methods annotated with @deprecated should be
+   *        instrumented
+   */
+  public void setInclDeprecatedMethods(final boolean inclDeprecatedMethods) {
+    this.setConfig(INCLDEPRECATEDMETHODS_KEY, inclDeprecatedMethods);
   }
 
   public IEventListener getEventListener() {

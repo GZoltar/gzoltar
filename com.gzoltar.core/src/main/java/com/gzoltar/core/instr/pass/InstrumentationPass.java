@@ -14,6 +14,7 @@ import com.gzoltar.core.instr.filter.SyntheticFilter;
 import com.gzoltar.core.instr.granularity.GranularityFactory;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.instr.granularity.IGranularity;
+import com.gzoltar.core.instr.matchers.MethodAnnotationMatcher;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.instr.matchers.MethodNameMatcher;
 import com.gzoltar.core.model.Node;
@@ -61,10 +62,18 @@ public class InstrumentationPass implements IPass {
       includeStaticConstructors = new BlackList(new MethodNameMatcher("<clinit>*"));
     }
 
+    IAction includeDeprecatedMethods;
+    if (agentConfigs.getInclDeprecatedMethods()) {
+      includeDeprecatedMethods = new WhiteList(new MethodAnnotationMatcher(Deprecated.class.getCanonicalName()));
+    } else {
+      includeDeprecatedMethods = new BlackList(new MethodAnnotationMatcher(Deprecated.class.getCanonicalName()));
+    }
+
     this.filters = new IFilter[] {
         // filter classes/methods according to users preferences
         new Filter(includePublicMethods),
         new Filter(includeStaticConstructors),
+        new Filter(includeDeprecatedMethods),
         // exclude synthetic methods
         new SyntheticFilter(),
         // exclude methods 'values' and 'valuesOf' of enum classes

@@ -81,6 +81,13 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
   @Parameter(property = "gzoltar.inclStaticConstructors", defaultValue = "true")
   private Boolean inclStaticConstructors;
 
+  /**
+   * Specifies whether methods annotated with @deprecated of each class under test should be
+   * instrumented. Default is <code>true</code>.
+   */
+  @Parameter(property = "gzoltar.inclDeprecatedMethods", defaultValue = "true")
+  private Boolean inclDeprecatedMethods;
+
   @Override
   public void executeMojo() {
     final Properties projectProperties = this.getProject().getProperties();
@@ -135,6 +142,10 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
 
     if (this.inclStaticConstructors != null) {
       agentConfigs.setInclStaticConstructors(this.inclStaticConstructors.booleanValue());
+    }
+
+    if (this.inclDeprecatedMethods != null) {
+      agentConfigs.setInclDeprecatedMethods(this.inclDeprecatedMethods.booleanValue());
     }
 
     return agentConfigs;
