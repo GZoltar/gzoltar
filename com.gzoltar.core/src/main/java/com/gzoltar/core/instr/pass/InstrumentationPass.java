@@ -1,5 +1,7 @@
 package com.gzoltar.core.instr.pass;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
@@ -40,6 +42,8 @@ public class InstrumentationPass implements IPass {
 
   private final GranularityLevel granularity;
 
+  private final Set<Integer> uniqueLineNumbers = new LinkedHashSet<Integer>();
+
   public InstrumentationPass(final AgentConfigs agentConfigs) {
     this.granularity = agentConfigs.getGranularity();
 
@@ -70,6 +74,11 @@ public class InstrumentationPass implements IPass {
   @Override
   public Outcome transform(final CtClass ctClass) throws Exception {
     boolean instrumented = false;
+
+    // as the constructor of this class is only called once, the set of unique line numbers is only
+    // initialised once. and as the instrumentation of previous classes could have populated this
+    // set of unique line numbers, we must restart it
+    this.uniqueLineNumbers.clear();
 
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
@@ -120,12 +129,12 @@ public class InstrumentationPass implements IPass {
     CodeIterator ci = ca.iterator();
     IGranularity g = GranularityFactory.getGranularity(ctClass, info, ci, this.granularity);
 
-    for (int instrSize = 0, index, curLine; ci.hasNext();) {
+    for (int instrSize = 0, index, curLine; ci.hasNext(); this.uniqueLineNumbers.add(curLine)) {
       index = ci.next();
 
       curLine = info.getLineNumber(index);
 
-      if (curLine == -1) {
+      if (curLine == -1 || this.uniqueLineNumbers.contains(curLine)) {
         continue;
       }
 
