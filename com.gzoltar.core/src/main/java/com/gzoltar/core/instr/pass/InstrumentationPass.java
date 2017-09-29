@@ -136,6 +136,10 @@ public class InstrumentationPass implements IPass {
 
       if (curLine == -1 || this.uniqueLineNumbers.contains(curLine)) {
         continue;
+      } else if (ctBehavior instanceof CtConstructor) {
+        if (((CtConstructor) ctBehavior).isConstructor() && curLine == 1) {
+          continue;
+        }
       }
 
       if (g.instrumentAtIndex(index, instrSize)) {
