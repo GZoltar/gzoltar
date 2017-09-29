@@ -1,6 +1,6 @@
 package org.gzoltar.examples;
 
-public interface InterfaceWithoutCode {
+public interface InterfaceClass {
 
   public boolean isNegative(int x);
 

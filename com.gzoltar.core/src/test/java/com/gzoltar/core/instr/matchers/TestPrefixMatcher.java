@@ -2,7 +2,7 @@ package com.gzoltar.core.instr.matchers;
 
 import static org.junit.Assert.assertTrue;
 import org.gzoltar.examples.AbstractClass;
-import org.gzoltar.examples.InterfaceWithoutCode;
+import org.gzoltar.examples.InterfaceClass;
 import org.gzoltar.examples.PublicModifiers;
 import org.junit.Test;
 import javassist.ClassPool;
@@ -24,7 +24,7 @@ public class TestPrefixMatcher {
   @Test
   public void testMethodPrefixMatcher() throws Exception {
     PrefixMatcher prefixMatcher = new PrefixMatcher("is");
-    CtClass ctClass = pool.get(InterfaceWithoutCode.class.getCanonicalName());
+    CtClass ctClass = pool.get(InterfaceClass.class.getCanonicalName());
     CtBehavior ctBehavior = ctClass.getDeclaredMethod("isNegative");
     assertTrue(prefixMatcher.matches(ctBehavior));
   }

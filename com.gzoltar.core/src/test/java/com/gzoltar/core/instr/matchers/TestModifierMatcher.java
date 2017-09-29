@@ -3,7 +3,7 @@ package com.gzoltar.core.instr.matchers;
 import static org.junit.Assert.assertTrue;
 import org.gzoltar.examples.AbstractClass;
 import org.gzoltar.examples.EnumClass;
-import org.gzoltar.examples.InterfaceWithoutCode;
+import org.gzoltar.examples.InterfaceClass;
 import org.gzoltar.examples.PrivateModifiers;
 import org.gzoltar.examples.ProtectedModifiers;
 import org.gzoltar.examples.PublicFinalModifiers;
@@ -122,7 +122,7 @@ public class TestModifierMatcher {
   @Test
   public void testInterfaceModifier() throws Exception {
     ClassModifierMatcher classModifierMatcher = new ClassModifierMatcher(AccessFlag.INTERFACE);
-    CtClass ctClass = pool.get(InterfaceWithoutCode.class.getCanonicalName());
+    CtClass ctClass = pool.get(InterfaceClass.class.getCanonicalName());
     assertTrue(classModifierMatcher.matches(ctClass));
   }
 
