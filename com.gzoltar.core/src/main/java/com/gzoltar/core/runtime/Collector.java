@@ -30,6 +30,12 @@ public class Collector {
     }
   }
 
+  public static void restart() {
+    if (collector != null) {
+      collector = new Collector(collector.listener);
+    }
+  }
+
   private Collector(final IEventListener listener) {
     this.listener = new MultiEventListener();
     this.builder = new SpectrumBuilder();
