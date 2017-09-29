@@ -112,11 +112,19 @@ public final class AgentConfigs {
 
   public static final boolean DEFAULT_INCLPUBLICMETHODS = true;
 
+  /**
+   * Specifies whether public static constructors of each class under test should be instrumented.
+   * Default is <code>true</code>.
+   */
+  public static final String INCLSTATICCONSTRUCTORS_KEY = "inclstaticconstructors";
+
+  public static final boolean DEFAULT_INCLSTATICCONSTRUCTORS = true;
+
   private final Map<String, String> configs;
 
   private static final Collection<String> VALID_CONFIGS = Arrays.asList(BUILDLOCATION_KEY,
       DESTFILE_KEY, INCLUDES_KEY, EXCLUDES_KEY, EXCLCLASSLOADER_KEY, INCLNOLOCATIONCLASSES_KEY,
-      OUTPUT_KEY, GRANULARITY_KEY, INCLPUBLICMETHODS_KEY);
+      OUTPUT_KEY, GRANULARITY_KEY, INCLPUBLICMETHODS_KEY, INCLSTATICCONSTRUCTORS_KEY);
 
   private static final Pattern CONFIG_SPLIT = Pattern.compile(",(?=[a-zA-Z0-9_\\-]+=)");
 
@@ -356,6 +364,24 @@ public final class AgentConfigs {
    */
   public void setInclPublicMethods(final boolean inclPublicMethods) {
     this.setConfig(INCLPUBLICMETHODS_KEY, inclPublicMethods);
+  }
+
+  /**
+   * Returns whether public static constructors should be instrumented.
+   * 
+   * @return <code>true</code> if public static constructors should be instrumented
+   */
+  public Boolean getInclStaticConstructors() {
+    return this.getConfig(INCLSTATICCONSTRUCTORS_KEY, DEFAULT_INCLSTATICCONSTRUCTORS);
+  }
+
+  /**
+   * Sets whether public static constructors should be instrumented.
+   * 
+   * @param inclPublicMethods <code>true</code> if public static constructors should be instrumented
+   */
+  public void setInclStaticConstructors(final boolean inclStaticConstructors) {
+    this.setConfig(INCLSTATICCONSTRUCTORS_KEY, inclStaticConstructors);
   }
 
   public IEventListener getEventListener() {

@@ -13,6 +13,7 @@ import com.gzoltar.core.instr.granularity.GranularityFactory;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.instr.granularity.IGranularity;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
+import com.gzoltar.core.instr.matchers.MethodNameMatcher;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
@@ -49,9 +50,17 @@ public class InstrumentationPass implements IPass {
       includePublicMethods = new BlackList(new MethodModifierMatcher(Modifier.PUBLIC));
     }
 
+    IAction includeStaticConstructors;
+    if (agentConfigs.getInclStaticConstructors()) {
+      includeStaticConstructors = new WhiteList(new MethodNameMatcher("<clinit>*"));
+    } else {
+      includeStaticConstructors = new BlackList(new MethodNameMatcher("<clinit>*"));
+    }
+
     this.filters = new IFilter[] {
         // filter classes/methods according to users preferences
         new Filter(includePublicMethods),
+        new Filter(includeStaticConstructors),
         // exclude synthetic methods
         new SyntheticFilter(),
         // exclude methods 'values' and 'valuesOf' of enum classes
@@ -109,14 +118,6 @@ public class InstrumentationPass implements IPass {
     }
 
     CodeIterator ci = ca.iterator();
-
-    if (ctBehavior instanceof CtConstructor) {
-      if (((CtConstructor) ctBehavior).isClassInitializer()) {
-        return instrumented;
-      }
-      ci.skipConstructor();
-    }
-
     IGranularity g = GranularityFactory.getGranularity(ctClass, info, ci, this.granularity);
 
     for (int instrSize = 0, index, curLine; ci.hasNext();) {

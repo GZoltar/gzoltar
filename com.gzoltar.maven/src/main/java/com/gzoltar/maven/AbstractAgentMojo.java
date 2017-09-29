@@ -74,6 +74,13 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
   @Parameter(property = "gzoltar.inclPublicMethods", defaultValue = "true")
   private Boolean inclPublicMethods;
 
+  /**
+   * Specifies whether public static constructors of each class under test should be instrumented.
+   * Default is <code>true</code>.
+   */
+  @Parameter(property = "gzoltar.inclStaticConstructors", defaultValue = "true")
+  private Boolean inclStaticConstructors;
+
   @Override
   public void executeMojo() {
     final Properties projectProperties = this.getProject().getProperties();
@@ -124,6 +131,10 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
 
     if (this.inclPublicMethods != null) {
       agentConfigs.setInclPublicMethods(this.inclPublicMethods.booleanValue());
+    }
+
+    if (this.inclStaticConstructors != null) {
+      agentConfigs.setInclStaticConstructors(this.inclStaticConstructors.booleanValue());
     }
 
     return agentConfigs;
