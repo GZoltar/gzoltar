@@ -67,6 +67,7 @@
   <modules>
     <!-- Order it might be important if, e.g., module X depends on module Y -->
     <module>../com.gzoltar.core</module>
+    <module>../com.gzoltar.fl</module>
     <module>../com.gzoltar.report</module>
     <module>../com.gzoltar.agent.rt</module>
     <module>../com.gzoltar.agent</module>
@@ -121,6 +122,11 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>com.gzoltar.core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>com.gzoltar.fl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

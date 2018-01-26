@@ -9,30 +9,32 @@
     <relativePath>../com.gzoltar.build</relativePath>
   </parent>
 
-  <artifactId>com.gzoltar.report</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>com.gzoltar.fl</artifactId>
 
-  <name>GZoltar :: Report</name>
-  <description>GZoltar Report</description>
+  <name>GZoltar :: FL</name>
+  <description>GZoltar FL</description>
 
   <dependencies>
     <dependency>
-      <groupId>com.gzoltar</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>com.gzoltar.core</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
+    <!-- Third-party dependencies -->
     <dependency>
-      <groupId>com.gzoltar</groupId>
-      <artifactId>com.gzoltar.fl</artifactId>
-      <version>${project.version}</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons-io.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

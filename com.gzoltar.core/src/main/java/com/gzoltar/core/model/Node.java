@@ -1,7 +1,9 @@
 package com.gzoltar.core.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Node {
 
@@ -16,6 +18,8 @@ public class Node {
   private final Node parent;
 
   private final List<Node> children = new ArrayList<Node>();
+
+  private Map<String, Double> suspiciousnessValues = null;
 
   public Node(final String name, final NodeType type, final int id, final Node parent) {
     this.type = type;
@@ -147,6 +151,24 @@ public class Node {
       }
     }
     return false;
+  }
+
+  public void addSuspiciousnessValues(String formulaName, Double suspiciousnessValue) {
+    if (this.suspiciousnessValues == null) {
+      this.suspiciousnessValues = new LinkedHashMap<String, Double>();
+    }
+    this.suspiciousnessValues.put(formulaName, suspiciousnessValue);
+  }
+
+  public Map<String, Double> getSuspiciousnessValues() {
+    return this.suspiciousnessValues;
+  }
+
+  public Double getSuspiciousnessValue(String formulaName) {
+    if (!this.suspiciousnessValues.containsKey(formulaName)) {
+      return null;
+    }
+    return this.suspiciousnessValues.get(formulaName);
   }
 
 }
