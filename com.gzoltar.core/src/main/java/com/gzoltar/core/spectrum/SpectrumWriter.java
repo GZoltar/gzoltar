@@ -69,7 +69,7 @@ public class SpectrumWriter {
       this.writeNode(node);
     }
     for (final Transaction transaction : spectrum.getTransactions()) {
-      writeTransaction(transaction);
+      this.writeTransaction(transaction);
     }
   }
 

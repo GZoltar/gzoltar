@@ -25,7 +25,7 @@ public class Transaction {
       }
     }
 
-    this.hashCode = activity.hashCode();
+    this.hashCode = this.activity.hashCode();
   }
 
   public Transaction(final String name, final boolean[] activityArray, final int hashCode,
