@@ -6,6 +6,6 @@ public class ConsoleOutput implements IAgentOutput {
 
   @Override
   public void writeSpectrum(final ISpectrum spectrum) throws Exception {
-    spectrum.print();
+    System.out.println(spectrum.toString());
   }
 }

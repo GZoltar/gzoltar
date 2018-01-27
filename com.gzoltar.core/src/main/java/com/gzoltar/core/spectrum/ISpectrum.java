@@ -18,8 +18,6 @@ public interface ISpectrum {
 
   public Tree getTree();
 
-  public void print();
-
   public List<Integer> getTestFrequencyPerProbe();
 
   public List<Integer> getTestFrequencyPerNode();
@@ -41,5 +39,4 @@ public interface ISpectrum {
   public int getProbeOfNode(final int nodeId);
 
   public List<Transaction> getTransactions();
-
 }

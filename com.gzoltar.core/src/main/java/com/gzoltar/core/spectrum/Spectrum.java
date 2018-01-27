@@ -115,33 +115,6 @@ public class Spectrum implements ISpectrum {
     return nodeTestFrequency;
   }
 
-  public void print() {
-    this.tree.print();
-    System.out.println("Probe mapping:" + probes);
-
-    for (int t = 0; t < this.getTransactionsSize(); t++) {
-      for (int c = 0; c < this.getComponentsSize(); c++) {
-        if (this.isInvolved(t, c)) {
-          System.out.print("1 ");
-        } else {
-          System.out.print("0 ");
-        }
-      }
-
-      if (this.isError(t)) {
-        System.out.print("x");
-      } else {
-        System.out.print(".");
-      }
-
-      System.out.println(" hc: " + this.getTransactionActivity(t).hashCode() + " / "
-          + this.getTransactionHashCode(t));
-    }
-
-    System.out.println("Number of probes: " + this.probes.size() + " number of transactions: "
-        + this.transactions.size());
-  }
-
   @Override
   public BitSet getTransactionActivity(final int transactionId) {
     return this.transactions.get(transactionId).getActivity();
@@ -203,6 +176,39 @@ public class Spectrum implements ISpectrum {
 
   public List<Transaction> getTransactions() {
     return this.transactions;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder(this.tree.toString());
+    sb.append("Probe mapping:" + probes);
+    sb.append("\n");
+
+    for (int t = 0; t < this.getTransactionsSize(); t++) {
+      for (int c = 0; c < this.getComponentsSize(); c++) {
+        if (this.isInvolved(t, c)) {
+          sb.append("1 ");
+        } else {
+          sb.append("0 ");
+        }
+      }
+
+      if (this.isError(t)) {
+        sb.append("x");
+      } else {
+        sb.append(".");
+      }
+
+      sb.append(" hc: " + this.getTransactionActivity(t).hashCode() + " / "
+          + this.getTransactionHashCode(t));
+      sb.append("\n");
+    }
+
+    sb.append("Number of probes: " + this.probes.size() + " number of transactions: "
+        + this.transactions.size());
+    sb.append("\n");
+
+    return sb.toString();
   }
 
 }

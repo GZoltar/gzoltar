@@ -69,6 +69,7 @@ public class Tree implements Iterable<Node> {
     }
   }
 
+  @Override
   public String toString() {
     StringBuilder sb = new StringBuilder("\"tree\":[");
     int i = 0;
