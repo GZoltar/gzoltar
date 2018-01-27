@@ -3,16 +3,16 @@ package com.gzoltar.core.spectrum;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.model.NodeType;
 
-public class SpectrumBuilder implements IEventListener {
+public class SpectrumListener implements IEventListener {
 
-  protected SpectrumImpl spectrum;
+  protected Spectrum spectrum;
 
-  public SpectrumBuilder() {
+  public SpectrumListener() {
     this.resetSpectrum();
   }
 
   public void resetSpectrum() {
-    this.spectrum = new SpectrumImpl();
+    this.spectrum = new Spectrum();
   }
 
   public ISpectrum getSpectrum() {

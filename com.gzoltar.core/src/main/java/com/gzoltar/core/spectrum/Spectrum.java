@@ -9,7 +9,7 @@ import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.Tree;
 
-public class SpectrumImpl implements ISpectrum {
+public class Spectrum implements ISpectrum {
 
   private Tree tree;
 
@@ -17,7 +17,7 @@ public class SpectrumImpl implements ISpectrum {
 
   private final List<Transaction> transactions;
 
-  public SpectrumImpl() {
+  public Spectrum() {
     this.tree = new Tree();
     this.probes = new ArrayList<Integer>();
     this.transactions = new ArrayList<Transaction>();

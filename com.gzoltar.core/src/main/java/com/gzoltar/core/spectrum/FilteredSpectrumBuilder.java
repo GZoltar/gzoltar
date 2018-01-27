@@ -8,7 +8,7 @@ import java.util.Set;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Tree;
 
-public class FilteredSpectrumBuilder extends SpectrumBuilder {
+public class FilteredSpectrumBuilder extends SpectrumListener {
 
   private ISpectrum source;
 

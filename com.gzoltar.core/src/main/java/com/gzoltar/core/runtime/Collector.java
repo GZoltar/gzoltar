@@ -6,7 +6,7 @@ import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.model.Tree;
 import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
-import com.gzoltar.core.spectrum.SpectrumBuilder;
+import com.gzoltar.core.spectrum.SpectrumListener;
 
 public class Collector {
 
@@ -18,7 +18,7 @@ public class Collector {
 
   private final HitVector hitVector;
 
-  private final SpectrumBuilder builder;
+  private final SpectrumListener builder;
 
   public static Collector instance() {
     return collector;
@@ -38,7 +38,7 @@ public class Collector {
 
   private Collector(final IEventListener listener) {
     this.listener = new MultiEventListener();
-    this.builder = new SpectrumBuilder();
+    this.builder = new SpectrumListener();
     addListener(this.builder);
     addListener(listener);
 
@@ -52,7 +52,7 @@ public class Collector {
     }
   }
 
-  public SpectrumBuilder getBuilder() {
+  public SpectrumListener getBuilder() {
     return this.builder;
   }
 

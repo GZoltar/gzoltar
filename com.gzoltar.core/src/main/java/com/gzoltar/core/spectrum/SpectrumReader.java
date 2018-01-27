@@ -8,7 +8,7 @@ import com.gzoltar.core.model.NodeType;
 
 public class SpectrumReader {
 
-  private final SpectrumImpl spectrum;
+  private final Spectrum spectrum;
 
   private final DataInputStream in;
 
@@ -21,11 +21,11 @@ public class SpectrumReader {
    * @param input input stream to read execution data from
    */
   public SpectrumReader(final InputStream input) {
-    this.spectrum = new SpectrumImpl();
+    this.spectrum = new Spectrum();
     this.in = new DataInputStream(input);
   }
 
-  public SpectrumImpl getSpectrum() {
+  public Spectrum getSpectrum() {
     return this.spectrum;
   }
 
