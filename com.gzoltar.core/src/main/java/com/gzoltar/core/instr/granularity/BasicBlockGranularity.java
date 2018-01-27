@@ -3,7 +3,6 @@ package com.gzoltar.core.instr.granularity;
 import java.util.LinkedList;
 import java.util.Queue;
 import javassist.CtClass;
-import javassist.bytecode.CodeIterator;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.analysis.ControlFlow;
 import javassist.bytecode.analysis.ControlFlow.Block;
@@ -12,9 +11,8 @@ public class BasicBlockGranularity extends AbstractGranularity {
 
   private Queue<Integer> blocks = new LinkedList<Integer>();
 
-  public BasicBlockGranularity(final CtClass ctClass, final MethodInfo methodInfo,
-      final CodeIterator codeIterator) {
-    super(ctClass, methodInfo, codeIterator);
+  public BasicBlockGranularity(final CtClass ctClass, final MethodInfo methodInfo) {
+    super(ctClass, methodInfo);
     try {
       ControlFlow cf = new ControlFlow(ctClass, methodInfo);
       for (Block block : cf.basicBlocks()) {

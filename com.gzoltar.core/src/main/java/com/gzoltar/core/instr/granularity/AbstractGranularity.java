@@ -6,21 +6,18 @@ import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.runtime.Collector;
 import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.bytecode.CodeIterator;
 import javassist.bytecode.Descriptor;
 import javassist.bytecode.MethodInfo;
 
 public abstract class AbstractGranularity implements IGranularity {
 
   protected CtClass ctClass;
-  protected MethodInfo methodInfo;
-  protected CodeIterator codeIterator;
 
-  public AbstractGranularity(final CtClass ctClass, final MethodInfo methodInfo,
-      final CodeIterator codeIterator) {
+  protected MethodInfo methodInfo;
+
+  public AbstractGranularity(final CtClass ctClass, final MethodInfo methodInfo) {
     this.ctClass = ctClass;
     this.methodInfo = methodInfo;
-    this.codeIterator = codeIterator;
   }
 
   private Node getNode(final Collector collector, final Node parent, final String name,

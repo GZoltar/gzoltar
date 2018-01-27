@@ -1,16 +1,14 @@
 package com.gzoltar.core.instr.granularity;
 
 import javassist.CtClass;
-import javassist.bytecode.CodeIterator;
 import javassist.bytecode.MethodInfo;
 
 public class LineGranularity extends AbstractGranularity {
 
   private int currentLine = -1;
 
-  public LineGranularity(final CtClass ctClass, final MethodInfo methodInfo,
-      final CodeIterator codeIterator) {
-    super(ctClass, methodInfo, codeIterator);
+  public LineGranularity(final CtClass ctClass, final MethodInfo methodInfo) {
+    super(ctClass, methodInfo);
   }
 
   @Override

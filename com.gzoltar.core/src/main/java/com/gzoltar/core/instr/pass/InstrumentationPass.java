@@ -136,7 +136,7 @@ public class InstrumentationPass implements IPass {
     }
 
     CodeIterator ci = ca.iterator();
-    IGranularity g = GranularityFactory.getGranularity(ctClass, info, ci, this.granularity);
+    IGranularity g = GranularityFactory.getGranularity(ctClass, info, this.granularity);
 
     for (int instrSize = 0, index, curLine; ci.hasNext(); this.uniqueLineNumbers.add(curLine)) {
       index = ci.next();

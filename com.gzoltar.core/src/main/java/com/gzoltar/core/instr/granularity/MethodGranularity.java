@@ -3,14 +3,12 @@ package com.gzoltar.core.instr.granularity;
 import com.gzoltar.core.model.Node;
 import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.bytecode.CodeIterator;
 import javassist.bytecode.MethodInfo;
 
 public class MethodGranularity extends AbstractGranularity {
 
-  public MethodGranularity(final CtClass ctClass, final MethodInfo methodInfo,
-      final CodeIterator codeIterator) {
-    super(ctClass, methodInfo, codeIterator);
+  public MethodGranularity(final CtClass ctClass, final MethodInfo methodInfo) {
+    super(ctClass, methodInfo);
   }
 
   @Override
