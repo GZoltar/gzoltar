@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Tree implements Iterable<Node> {
 
-  private final ArrayList<Node> nodes = new ArrayList<Node>();
+  private final List<Node> nodes = new ArrayList<Node>();
 
   public Tree() {
     this(true);
