@@ -1,18 +1,20 @@
 package com.gzoltar.report.metrics;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
+import com.gzoltar.core.model.Transaction;
 
 public class SimpsonMetric extends AbstractMetric {
 
   @Override
   public double calculate() {
 
-    if (!validMatrix())
+    if (!this.validMatrix())
       return 0;
 
-    LinkedHashMap<Integer, Integer> species = new LinkedHashMap<Integer, Integer>();
-    for (int t = 0; t < spectrum.getTransactionsSize(); t++) {
-      int hash = getHash(t);
+    Map<Integer, Integer> species = new LinkedHashMap<Integer, Integer>();
+    for (Transaction transaction : this.spectrum.getTransactions()) {
+      int hash = this.getHash(transaction);
       if (species.containsKey(hash)) {
         species.put(hash, species.get(hash) + 1);
       } else {
@@ -33,8 +35,8 @@ public class SimpsonMetric extends AbstractMetric {
     return diversity;
   }
 
-  protected int getHash(int t) {
-    return spectrum.getTransactionActivity(t).hashCode();
+  protected int getHash(Transaction transaction) {
+    return transaction.getActivity().hashCode();
   }
 
   @Override
@@ -50,26 +52,31 @@ public class SimpsonMetric extends AbstractMetric {
 
     @Override
     public String getName() {
-      return "Diversity";
+      return "Inverted Simpson";
     }
   }
 
   public static class GlobalInvertedSimpsonMetric extends InvertedSimpsonMetric {
     @Override
-    protected int getHash(int t) {
-      return spectrum.getTransactionHashCode(t);
+    protected int getHash(Transaction transaction) {
+      return transaction.hashCode();
     }
 
     @Override
     public String getName() {
-      return "Inverse Simpson";
+      return "Global Inverted Simpson";
     }
   }
 
   public static class GlobalSimpsonMetric extends SimpsonMetric {
     @Override
-    protected int getHash(int t) {
-      return spectrum.getTransactionHashCode(t);
+    protected int getHash(Transaction transaction) {
+      return transaction.hashCode();
+    }
+
+    @Override
+    public String getName() {
+      return "Global Simpson";
     }
   }
 

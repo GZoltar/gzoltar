@@ -8,5 +8,5 @@ public interface IFL {
    * 
    * @param spectrum a {@link com.gzoltar.core.spectrum.ISpectrum} object
    */
-  public void diagnose(ISpectrum spectrum);
+  public void diagnose(final ISpectrum spectrum);
 }

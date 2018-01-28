@@ -1,17 +1,21 @@
 package com.gzoltar.core.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class Node {
+public class Node implements Serializable {
 
-  private final NodeType type;
+  private static final long serialVersionUID = 572345681630726180L;
 
   private final String name;
 
-  private final int id;
+  private final NodeType type;
 
   private final int depth;
 
@@ -21,36 +25,111 @@ public class Node {
 
   private Map<String, Double> suspiciousnessValues = null;
 
-  public Node(final String name, final NodeType type, final int id, final Node parent) {
+  /**
+   * 
+   * @param name
+   * @param type
+   * @param parent
+   */
+  public Node(final String name, final NodeType type, final Node parent) {
     this.type = type;
     this.name = name;
-    this.id = id;
     this.parent = parent;
 
-    if (isRoot()) {
+    if (this.isRoot()) {
       this.depth = 0;
     } else {
       this.depth = parent.getDepth() + 1;
-      parent.addChild(this);
+      parent.children.add(this);
     }
   }
 
-  private void addChild(final Node node) {
-    this.children.add(node);
+  /**
+   * 
+   * @return
+   */
+  public String getName() {
+    return this.name;
   }
 
+  /**
+   * 
+   * @return
+   */
+  public String getShortName() {
+    if (this.type == NodeType.METHOD) {
+      String str = this.name.substring(0, this.name.indexOf('('));
+      return str;
+    } else {
+      return this.getName();
+    }
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String getFullName() {
+    Node p = this.getParent();
+    if (p == null || p.isRoot()) {
+      return this.name;
+    }
+    return p.getFullName() + this.getSymbol(p.type, this.type) + this.name;
+  }
+
+  private String getSymbol(final NodeType type1, final NodeType type2) {
+    if (type1 == NodeType.PACKAGE) {
+      return type1.getSymbol();
+    } else {
+      return type2.getSymbol();
+    }
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public NodeType getNodeType() {
+    return this.type;
+  }
+
+  /**
+   * 
+   * @return
+   */
   public int getDepth() {
     return this.depth;
   }
 
-  private boolean isRoot() {
+  /**
+   * 
+   * @return
+   */
+  public Node getParent() {
+    return this.parent;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean isRoot() {
     return this.parent == null;
   }
 
-  public boolean isLeaf() {
-    return this.children.isEmpty();
+  /**
+   * 
+   * @return
+   */
+  public List<Node> getChildren() {
+    return this.children;
   }
 
+  /**
+   * 
+   * @param name
+   * @return
+   */
   public Node getChild(final String name) {
     for (Node n : this.children) {
       if (n.getName().equals(name)) {
@@ -60,47 +139,32 @@ public class Node {
     return null;
   }
 
-  public Node getParent() {
-    return this.parent;
-  }
-
-  public int getParentId() {
-    if (this.isRoot()) {
-      return -1;
+  /**
+   * 
+   * @param type
+   * @return
+   */
+  public boolean hasChildrenOfType(final NodeType type) {
+    for (Node child : this.children) {
+      if (child.type == type) {
+        return true;
+      }
     }
-    return this.parent.id;
+    return false;
   }
 
-  public String getName() {
-    return this.name;
+  /**
+   * 
+   * @return
+   */
+  public boolean isLeaf() {
+    return this.children.isEmpty();
   }
 
-  public int getId() {
-    return this.id;
-  }
-
-  public NodeType getType() {
-    return this.type;
-  }
-
-  public List<Node> getChildren() {
-    return this.children;
-  }
-
-  public String toString() {
-    return "{\"n\":\"" + this.getName() + "\",\"p\":" + this.getParentId() + "}";
-  }
-
-  public Node getNodeOfType(NodeType type) {
-    if (this.type == type) {
-      return this;
-    } else if (this.parent != null) {
-      return this.parent.getNodeOfType(type);
-    } else {
-      return null;
-    }
-  }
-
+  /**
+   * 
+   * @return
+   */
   public List<Node> getLeafNodes() {
     List<Node> nodes = new ArrayList<Node>();
     this.getLeafNodes(nodes);
@@ -111,64 +175,118 @@ public class Node {
     if (this.isLeaf()) {
       nodes.add(this);
     } else {
-      for (Node c : this.children) {
-        c.getLeafNodes(nodes);
+      for (Node child : this.children) {
+        child.getLeafNodes(nodes);
       }
     }
   }
 
-  public String getShortName() {
-    if (this.type == NodeType.METHOD) {
-      String str = this.name.substring(0, this.name.indexOf('('));
-      return str;
-    } else {
-      return this.getName();
-    }
-  }
-
-  public String getFullName() {
-    Node p = this.getParent();
-
-    if (p == null || p.isRoot()) {
-      return name;
-    }
-
-    return p.getFullName() + this.getSymbol(p.type, type) + name;
-  }
-
-  private String getSymbol(final NodeType t1, final NodeType t2) {
-    if (t1 == NodeType.PACKAGE) {
-      return t1.getSymbol();
-    } else {
-      return t2.getSymbol();
-    }
-  }
-
-  public boolean hasChildrenOfType(final NodeType t) {
-    for (Node child : this.children) {
-      if (child.type == t) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public void addSuspiciousnessValues(String formulaName, Double suspiciousnessValue) {
+  /**
+   * 
+   * @param formulaName
+   * @param suspiciousnessValue
+   */
+  public void addSuspiciousnessValue(String formulaName, Double suspiciousnessValue) {
     if (this.suspiciousnessValues == null) {
       this.suspiciousnessValues = new LinkedHashMap<String, Double>();
     }
     this.suspiciousnessValues.put(formulaName, suspiciousnessValue);
   }
 
+  /**
+   * 
+   * @return
+   */
+  public boolean hasSuspiciousnessValues() {
+    if (this.suspiciousnessValues == null) {
+      return false;
+    }
+    return !this.suspiciousnessValues.isEmpty();
+  }
+
+  /**
+   * 
+   * @return
+   */
   public Map<String, Double> getSuspiciousnessValues() {
     return this.suspiciousnessValues;
   }
 
+  /**
+   * 
+   * @param formulaName
+   * @return
+   */
   public Double getSuspiciousnessValue(String formulaName) {
     if (!this.suspiciousnessValues.containsKey(formulaName)) {
       return null;
     }
     return this.suspiciousnessValues.get(formulaName);
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public int getNumberOfSuspiciousnessValues() {
+    assert this.suspiciousnessValues != null;
+    return this.suspiciousnessValues.size();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder(this.isLeaf() ? "[probe] "  : "");
+    sb.append(this.getFullName());
+
+    if (this.hasSuspiciousnessValues()) {
+      sb.append("  [ ");
+      for (Entry<String, Double> suspiciousness : this.suspiciousnessValues.entrySet()) {
+        sb.append(suspiciousness.getKey() + ":" + suspiciousness.getValue() + " ");
+      }
+      sb.append("]");
+    }
+
+    return sb.toString();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+    HashCodeBuilder builder = new HashCodeBuilder();
+    builder.append(this.type);
+    builder.append(this.name);
+    builder.append(this.depth);
+    builder.append(this.parent);
+    return builder.toHashCode();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof Node)) {
+      return false;
+    }
+
+    Node node = (Node) obj;
+
+    EqualsBuilder builder = new EqualsBuilder();
+
+    builder.append(this.type, node.type);
+    builder.append(this.name, node.name);
+    builder.append(this.depth, node.depth);
+    builder.append(this.parent, node.parent);
+
+    return builder.isEquals();
   }
 
 }

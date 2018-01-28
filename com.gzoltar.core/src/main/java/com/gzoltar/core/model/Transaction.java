@@ -1,73 +1,124 @@
 package com.gzoltar.core.model;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.List;
+import java.io.Serializable;
+import java.util.Set;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
-public class Transaction {
+public class Transaction implements Serializable {
+
+  private static final long serialVersionUID = 6409327525875082943L;
 
   private final String name;
 
-  private final BitSet activity;
+  private final Set<Node> activity;
 
   private final boolean isError;
 
   private int hashCode;
 
-  public Transaction(final String name, final boolean[] activityArray, final boolean isError) {
+  /**
+   * 
+   * @param name
+   * @param activity
+   * @param isError
+   */
+  public Transaction(final String name, final Set<Node> activity, final boolean isError) {
     this.name = name;
-    this.activity = new BitSet(activityArray.length);
+    this.activity = activity;
     this.isError = isError;
-
-    for (int i = 0; i < activityArray.length; i++) {
-      if (activityArray[i]) {
-        this.activity.set(i);
-      }
-    }
-
     this.hashCode = this.activity.hashCode();
   }
 
-  public Transaction(final String name, final boolean[] activityArray, final int hashCode,
+  /**
+   * 
+   * @param name
+   * @param activity
+   * @param hashCode
+   * @param isError
+   */
+  public Transaction(final String name, final Set<Node> activity, final int hashCode,
       final boolean isError) {
-    this(name, activityArray, isError);
+    this(name, activity, isError);
     this.hashCode = hashCode;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getName() {
     return this.name;
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean hasActivations() {
-    return this.activity.cardinality() != 0;
+    return !this.activity.isEmpty();
   }
 
-  public BitSet getActivity() {
+  /**
+   * 
+   * @return
+   */
+  public Set<Node> getActivity() {
     return this.activity;
   }
 
-  public List<Integer> getActiveComponents() {
-    List<Integer> list = new ArrayList<Integer>();
-
-    for (int i = 0; i < this.activity.length(); i++) {
-      if (this.activity.get(i)) {
-        list.add(i);
-      }
-    }
-
-    return list;
+  /**
+   * 
+   * @return
+   */
+  public int getNumberActivities() {
+    return this.activity.size();
   }
 
-  public int numberActivities() {
-    return this.activity.cardinality();
+  /**
+   * 
+   * @param node
+   * @return
+   */
+  public boolean isNodeActived(Node node) {
+    return this.activity.contains(node);
   }
 
+  /**
+   * 
+   * @return
+   */
   public boolean isError() {
     return this.isError;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public int hashCode() {
     return this.hashCode;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof Transaction)) {
+      return false;
+    }
+
+    Transaction transaction = (Transaction) obj;
+
+    EqualsBuilder builder = new EqualsBuilder();
+    builder.append(this.name, transaction.name);
+    builder.append(this.activity, transaction.activity);
+    builder.append(this.isError, transaction.isError);
+    builder.append(this.hashCode, transaction.hashCode);
+
+    return builder.isEquals();
+  }
 }

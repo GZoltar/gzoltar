@@ -1,18 +1,13 @@
 package com.gzoltar.core.events;
 
-import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 
 public interface IEventListener {
 
-  public void endTransaction(final String transactionName, final boolean[] activity,
-      final boolean isError);
+  public void addNode(final Node node);
 
-  public void endTransaction(final String transactionName, final boolean[] activity,
-      final int hashCode, final boolean isError);
-
-  public void addNode(final int id, final String name, final NodeType type, final int parentId);
-
-  public void addProbe(final int id, final int nodeId);
+  public void endTransaction(final Transaction transaction);
 
   public void endSession();
 

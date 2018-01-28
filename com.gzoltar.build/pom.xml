@@ -114,6 +114,7 @@
     <testng.version>6.11</testng.version>
     <javassist.version>3.22.0-CR2</javassist.version>
     <commons-io.version>2.5</commons-io.version>
+    <commons-lang.version>3.7</commons-lang.version>
   </properties>
 
   <dependencyManagement>

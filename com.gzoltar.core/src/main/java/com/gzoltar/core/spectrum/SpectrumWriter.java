@@ -3,6 +3,8 @@ package com.gzoltar.core.spectrum;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.Map.Entry;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Tree;
 import com.gzoltar.core.model.Transaction;
@@ -76,11 +78,25 @@ public class SpectrumWriter {
   private void writeNode(final Node node) {
     try {
       this.out.writeByte(BLOCK_NODE);
-      this.out.writeUTF(node.getType().name());
       this.out.writeUTF(node.getName());
-      this.out.writeInt(node.getId());
-      //this.out.writeInt(node.getDepth());
-      this.out.writeInt(node.getParentId());
+      if (node.isRoot()) {
+        return;
+      }
+
+      this.out.writeUTF(node.getNodeType().name());
+      this.out.writeUTF(node.getParent().getFullName());
+
+      Map<String, Double> suspiciousnessValues = node.getSuspiciousnessValues();
+      if (suspiciousnessValues != null) {
+        this.out.writeInt(suspiciousnessValues.size());
+
+        for (Entry<String, Double> suspiciousness : suspiciousnessValues.entrySet()) {
+          this.out.writeUTF(suspiciousness.getKey());
+          this.out.writeDouble(suspiciousness.getValue().doubleValue());
+        }
+      } else {
+        this.out.writeInt(0); // there is not any suspiciousness value
+      }
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }
@@ -91,9 +107,9 @@ public class SpectrumWriter {
       try {
         this.out.writeByte(BLOCK_TRANSACTION);
         this.out.writeUTF(transaction.getName());
-        this.out.writeInt(transaction.numberActivities());
-        for (Integer i : transaction.getActiveComponents()) {
-          this.out.writeInt(i);
+        this.out.writeInt(transaction.getNumberActivities());
+        for (Node node : transaction.getActivity()) {
+          this.out.writeUTF(node.getFullName());
         }
         this.out.writeBoolean(transaction.isError());
         this.out.writeInt(transaction.hashCode());

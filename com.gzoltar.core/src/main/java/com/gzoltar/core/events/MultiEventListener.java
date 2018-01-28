@@ -3,7 +3,8 @@ package com.gzoltar.core.events;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 
 public class MultiEventListener implements IEventListener {
 
@@ -18,32 +19,16 @@ public class MultiEventListener implements IEventListener {
   }
 
   @Override
-  public void endTransaction(final String transactionName, final boolean[] activity,
-      final boolean isError) {
+  public void addNode(final Node node) {
     for (IEventListener el : this.eventListeners) {
-      el.endTransaction(transactionName, activity, isError);
+      el.addNode(node);
     }
   }
 
   @Override
-  public void endTransaction(final String transactionName, final boolean[] activity,
-      final int hashCode, final boolean isError) {
+  public void endTransaction(final Transaction transaction) {
     for (IEventListener el : this.eventListeners) {
-      el.endTransaction(transactionName, activity, hashCode, isError);
-    }
-  }
-
-  @Override
-  public void addNode(final int id, final String name, final NodeType type, final int parentId) {
-    for (IEventListener el : this.eventListeners) {
-      el.addNode(id, name, type, parentId);
-    }
-  }
-
-  @Override
-  public void addProbe(final int id, final int nodeId) {
-    for (IEventListener el : this.eventListeners) {
-      el.addProbe(id, nodeId);
+      el.endTransaction(transaction);
     }
   }
 
@@ -53,5 +38,4 @@ public class MultiEventListener implements IEventListener {
       el.endSession();
     }
   }
-
 }

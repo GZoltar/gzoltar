@@ -1,5 +1,8 @@
 package com.gzoltar.report.metrics;
 
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
+
 public class RhoMetric extends AbstractMetric {
 
   @Override
@@ -8,13 +11,13 @@ public class RhoMetric extends AbstractMetric {
     if (!validMatrix())
       return 0;
 
-    int transactions = spectrum.getTransactionsSize();
-    int components = spectrum.getComponentsSize();
+    int transactions = this.spectrum.getNumberOfTransactions();
+    int components = this.spectrum.getNumberOfTargetNodes();
 
     int activity_counter = 0;
-    for (int t = 0; t < transactions; t++) {
-      for (int c = 0; c < components; c++) {
-        if (spectrum.isInvolved(t, c)) {
+    for (Transaction transaction : this.spectrum.getTransactions()) {
+      for (Node node : this.spectrum.getTargetNodes()) {
+        if (transaction.isNodeActived(node)) {
           activity_counter++;
         }
       }

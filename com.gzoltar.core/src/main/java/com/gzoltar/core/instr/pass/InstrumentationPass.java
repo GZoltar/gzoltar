@@ -19,7 +19,7 @@ import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.instr.matchers.MethodNameMatcher;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
-import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
+import com.gzoltar.core.runtime.Probe;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -104,7 +104,7 @@ public class InstrumentationPass implements IPass {
       // make class initializer
       CtConstructor initializer = ctClass.makeClassInitializer();
       initializer.insertBefore(HIT_VECTOR_NAME + " = " + Collector.class.getName()
-          + ".instance().getHitVector(\"" + ctClass.getName() + "\");");
+          + ".instance().getHitArray(\"" + ctClass.getName() + "\");");
     }
 
     return Outcome.NEXT;
@@ -170,19 +170,19 @@ public class InstrumentationPass implements IPass {
 
   private Bytecode getInstrumentationCode(CtClass ctClass, Node node, ConstPool constPool) {
     Bytecode b = new Bytecode(constPool);
-    HitProbe p = this.getHitProbe(ctClass, node);
+    Probe p = this.getProbe(ctClass, node);
 
     b.addGetstatic(ctClass, HIT_VECTOR_NAME, HIT_VECTOR_TYPE);
-    b.addIconst(p.getLocalId());
+    b.addIconst(p.getArrayIndex());
     b.addOpcode(Opcode.ICONST_1);
     b.addOpcode(Opcode.BASTORE);
 
     return b;
   }
 
-  public HitProbe getHitProbe(CtClass ctClass, Node node) {
+  public Probe getProbe(CtClass ctClass, Node node) {
     Collector c = Collector.instance();
-    return c.createHitProbe(ctClass.getName(), node.getId());
+    return c.regiterProbe(ctClass.getName(), node);
   }
 
 }

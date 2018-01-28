@@ -1,11 +1,13 @@
 package com.gzoltar.maven;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
+import com.gzoltar.report.FLReport;
 
 @Mojo(name = "report", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class ReportMojo extends AbstractReportMojo {
@@ -33,6 +35,13 @@ public class ReportMojo extends AbstractReportMojo {
   protected void executeReport(final Locale locale) throws MavenReportException {
     // TODO
     getLog().info("--- REPORT MOJO ---");
+    
+    try {
+      new FLReport(this.dataFile);
+    } catch (IOException e) {
+      getLog().info(e);
+      e.printStackTrace();
+    }
   }
 
   @Override

@@ -46,8 +46,8 @@ public class TestLineInstrumentation {
       instrumentationPass.transform(pool.get(classUnderTest));
     }
 
-    ISpectrum spectrum = Collector.instance().getBuilder().getSpectrum();
-    assertEquals(lineNumbers.size(), spectrum.getComponentsSize());
+    ISpectrum spectrum = Collector.instance().getSpectrumListener().getSpectrum();
+    assertEquals(lineNumbers.size(), spectrum.getNumberOfTargetNodes());
 
     if (lineNumbers.isEmpty()) {
       return;

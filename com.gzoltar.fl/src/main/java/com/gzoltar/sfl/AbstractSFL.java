@@ -1,25 +1,26 @@
 package com.gzoltar.sfl;
 
 import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFL;
 
 public abstract class AbstractSFL implements IFL {
 
   @Override
-  public void diagnose(ISpectrum spectrum) {
+  public void diagnose(final ISpectrum spectrum) {
     int n00 = 0;
     int n01 = 0;
     int n10 = 0;
     int n11 = 0;
 
-    for (int c = 0; c < spectrum.getComponentsSize(); c++) {
+    for (Node node : spectrum.getTargetNodes()) {
       n00 = n01 = n10 = n11 = 0;
 
-      for (int t = 0; t < spectrum.getTransactionsSize(); t++) {
-        boolean hasFailed = spectrum.isError(t);
+      for (Transaction transaction : spectrum.getTransactions()) {
+        boolean hasFailed = transaction.isError();
 
-        if (spectrum.isInvolved(t, c)) {
+        if (transaction.isNodeActived(node)) {
           if (hasFailed) {
             n11++;
           } else {
@@ -34,8 +35,7 @@ public abstract class AbstractSFL implements IFL {
         }
       }
 
-      Node node = spectrum.getNodeOfProbe(c);
-      node.addSuspiciousnessValues(this.getName(), this.compute(n00, n01, n10, n11));
+      node.addSuspiciousnessValue(this.getName(), this.compute(n00, n01, n10, n11));
     }
   }
 
@@ -49,10 +49,10 @@ public abstract class AbstractSFL implements IFL {
   /**
    * Returns a suspiciousness value
    * 
-   * @param n00 number of passing test cases that do not execute the faulty statement
-   * @param n01 number of failing test cases that do not execute the faulty statement
-   * @param n10 number of passing test cases that execute the faulty statement
-   * @param n11 number of failing test cases that execute the faulty statement
+   * @param n00 number of passing test cases that do not execute the faulty node
+   * @param n01 number of failing test cases that do not execute the faulty node
+   * @param n10 number of passing test cases that execute the faulty node
+   * @param n11 number of failing test cases that execute the faulty node
    * @return
    */
   public abstract double compute(final double n00, final double n01, final double n10,

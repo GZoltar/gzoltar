@@ -9,7 +9,7 @@ public class DuplicateCollectorReferenceMatcher implements IMatcher {
 
   @Override
   public boolean matches(final CtClass ctClass) {
-    return Collector.instance().existsHitVector(ctClass.getName());
+    return Collector.instance().hasHitArray(ctClass.getName());
   }
 
   @Override

@@ -1,75 +1,150 @@
 package com.gzoltar.core.runtime;
 
-public class ProbeGroup {
+import java.util.LinkedHashSet;
+import java.util.Set;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.gzoltar.core.model.Node;
 
-  public final class HitProbe {
+public final class ProbeGroup {
 
-    private final int id;
+  private final String name;
 
-    private final int localId;
+  private final Set<Probe> probes;
 
-    private final int nodeId;
+  private boolean[] hitArray = null;
 
-    private HitProbe(final int globalId, final int localId, final int nodeId) {
-      this.id = globalId;
-      this.localId = localId;
-      this.nodeId = nodeId;
-    }
-
-    public int getId() {
-      return this.id;
-    }
-
-    public int getNodeId() {
-      return this.nodeId;
-    }
-
-    public boolean getActivation() {
-      if (hitVector == null) {
-        return false;
-      }
-
-      return hitVector[this.localId];
-    }
-
-    public int getLocalId() {
-      return this.localId;
-    }
-
-    public void hit() {
-      assert hitVector != null;
-      hitVector[this.localId] = true;
-    }
+  /**
+   * 
+   * @param name
+   */
+  public ProbeGroup(String name) {
+    this.name = name;
+    this.probes = new LinkedHashSet<Probe>();
   }
 
-  private int size = 0;
-
-  private boolean[] hitVector = null;
-
-  public HitProbe register(final int globalId, final int nodeId) {
-    assert this.hitVector == null;
-    return new HitProbe(globalId, this.size++, nodeId);
+  /**
+   * 
+   * @return
+   */
+  public String getName() {
+    return this.name;
   }
 
-  public boolean[] get() {
-    if (this.hitVector == null) {
-      this.hitVector = new boolean[size];
+  /**
+   * 
+   * @param node
+   */
+  public Probe registerProbe(Node node) {
+    Probe probe = new Probe(this.probes.size(), node);
+    this.probes.add(probe);
+    return probe;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public Set<Probe> getProbes() {
+    return this.probes;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public int getNumberOfProbes() {
+    return this.probes.size();
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean hasHitArray() {
+    return this.hitArray != null;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean[] getHitArray() {
+    if (this.hitArray == null) {
+      this.hitArray = new boolean[this.probes.size()];
     }
-    return this.hitVector;
+    return this.hitArray;
   }
 
-  public void reset() {
-    if (this.hitVector == null) {
+  /**
+   * 
+   */
+  public void resetHitArray() {
+    if (this.hitArray == null) {
       return;
     }
 
-    for (int j = 0; j < this.hitVector.length; j++) {
-      this.hitVector[j] = false;
+    for (int i = 0; i < this.hitArray.length; i++) {
+      this.hitArray[i] = false;
     }
   }
 
-  public boolean existsHitVector() {
-    return this.hitVector != null;
+  /**
+   * 
+   * @return
+   */
+  public Set<Node> getHitNodes() {
+    Set<Node> hitNodes = new LinkedHashSet<Node>();
+
+    for (Probe probe : this.probes) {
+      if (this.hitArray[probe.getArrayIndex()]) {
+        hitNodes.add(probe.getNode());
+      }
+    }
+
+    return hitNodes;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return "Name: " + this.name + " has " + this.probes.size() + " probes. HitArray: "
+        + this.hitArray;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+    HashCodeBuilder builder = new HashCodeBuilder();
+    builder.append(this.name);
+    builder.append(this.probes);
+    builder.append(this.hitArray);
+    return builder.toHashCode();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof ProbeGroup)) {
+      return false;
+    }
+
+    ProbeGroup probeGroup = (ProbeGroup) obj;
+
+    EqualsBuilder builder = new EqualsBuilder();
+    builder.append(this.name, probeGroup.name);
+    builder.append(this.probes, probeGroup.probes);
+    builder.append(this.hitArray, probeGroup.hitArray);
+
+    return builder.isEquals();
+  }
 }

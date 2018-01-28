@@ -7,11 +7,11 @@ import java.util.Queue;
 import java.util.UUID;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.messaging.Message.AddNodeMessage;
-import com.gzoltar.core.messaging.Message.AddProbeMessage;
 import com.gzoltar.core.messaging.Message.ByeMessage;
 import com.gzoltar.core.messaging.Message.EndTransactionMessage;
 import com.gzoltar.core.messaging.Message.HandshakeMessage;
-import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 
 public class Client implements IEventListener {
 
@@ -109,25 +109,13 @@ public class Client implements IEventListener {
   }
 
   @Override
-  public void endTransaction(final String transactionName, final boolean[] activity,
-      final boolean isError) {
-    this.postMessage(new EndTransactionMessage(transactionName, activity, isError));
+  public void addNode(final Node node) {
+    this.postMessage(new AddNodeMessage(node));
   }
 
   @Override
-  public void endTransaction(final String transactionName, final boolean[] activity,
-      final int hashCode, final boolean isError) {
-    this.postMessage(new EndTransactionMessage(transactionName, activity, isError));
-  }
-
-  @Override
-  public void addNode(final int id, final String name, final NodeType type, final int parentId) {
-    this.postMessage(new AddNodeMessage(id, name, type, parentId));
-  }
-
-  @Override
-  public void addProbe(final int id, final int nodeId) {
-    this.postMessage(new AddProbeMessage(id, nodeId));
+  public void endTransaction(final Transaction transaction) {
+    this.postMessage(new EndTransactionMessage(transaction));
   }
 
   @Override

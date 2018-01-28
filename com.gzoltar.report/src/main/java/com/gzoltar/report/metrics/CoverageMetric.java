@@ -1,5 +1,7 @@
 package com.gzoltar.report.metrics;
 
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 
 public class CoverageMetric extends AbstractMetric {
 
@@ -19,18 +21,16 @@ public class CoverageMetric extends AbstractMetric {
     if (!validMatrix())
       return 0;
 
-    int components = spectrum.getComponentsSize();
+    int components = this.spectrum.getNumberOfTargetNodes();
     int activations = 0;
 
-    for (int c = 0; c < components; c++) {
-
-      for (int t = 0; t < spectrum.getTransactionsSize(); t++) {
-        if (spectrum.isInvolved(t, c)) {
+    for (Node node : this.spectrum.getTargetNodes()) {
+      for (Transaction transaction : this.spectrum.getTransactions()) {
+        if (transaction.isNodeActived(node)) {
           activations += 1;
           break;
         }
       }
-
     }
 
     double coverage = (double) activations / (double) components;
@@ -41,8 +41,8 @@ public class CoverageMetric extends AbstractMetric {
   @Override
   public String getName() {
     String name = "Coverage";
-    if (granularity != null) {
-      name += " [ " + granularity + " ]";
+    if (this.granularity != null) {
+      name += " [ " + this.granularity + " ]";
     }
     return name;
   }

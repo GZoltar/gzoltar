@@ -1,11 +1,14 @@
 package com.gzoltar.core.runtime;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.events.MultiEventListener;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeType;
-import com.gzoltar.core.model.Tree;
-import com.gzoltar.core.runtime.ProbeGroup.HitProbe;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.spectrum.SpectrumListener;
 
 public class Collector {
@@ -14,82 +17,159 @@ public class Collector {
 
   private final MultiEventListener listener;
 
-  private final Tree tree;
+  private final SpectrumListener spectrumListener;
 
-  private final HitVector hitVector;
+  private final Map<String, ProbeGroup> probeGroups;
 
-  private final SpectrumListener builder;
-
+  /**
+   * 
+   * @return
+   */
   public static Collector instance() {
     return collector;
   }
 
+  /**
+   * 
+   * @param listener
+   */
   public static void start(final IEventListener listener) {
     if (collector == null) {
       collector = new Collector(listener);
     }
   }
 
+  /**
+   * 
+   */
   public static void restart() {
     if (collector != null) {
       collector = new Collector(collector.listener);
     }
   }
 
+  /**
+   * 
+   * @param listener
+   */
   private Collector(final IEventListener listener) {
     this.listener = new MultiEventListener();
-    this.builder = new SpectrumListener();
-    addListener(this.builder);
-    addListener(listener);
+    this.addListener(listener);
+    this.spectrumListener = new SpectrumListener();
+    this.addListener(this.spectrumListener);
 
-    this.tree = new Tree();
-    this.hitVector = new HitVector();
+    this.probeGroups = new LinkedHashMap<String, ProbeGroup>();
   }
 
-  public void addListener(final IEventListener listener) {
+  /**
+   * 
+   * @param listener
+   */
+  private void addListener(final IEventListener listener) {
     if (listener != null) {
       this.listener.add(listener);
     }
   }
 
-  public SpectrumListener getBuilder() {
-    return this.builder;
+  /**
+   * 
+   * @return
+   */
+  public SpectrumListener getSpectrumListener() {
+    return this.spectrumListener;
   }
 
+  /**
+   * 
+   * @param parent
+   * @param name
+   * @param type
+   * @return
+   */
   public synchronized Node createNode(final Node parent, final String name, final NodeType type) {
-    Node node = this.tree.addNode(name, type, parent.getId());
-    this.listener.addNode(node.getId(), name, type, parent.getId());
+    Node node = new Node(name, type, parent);
+    this.listener.addNode(node);
     return node;
   }
 
-  public synchronized HitProbe createHitProbe(final String groupName, final int nodeId) {
-    HitProbe p = this.hitVector.registerProbe(groupName, nodeId);
-    this.listener.addProbe(p.getId(), p.getNodeId());
-    return p;
+  /**
+   * 
+   * @param groupName
+   * @param nodeId
+   * @return
+   */
+  public synchronized Probe regiterProbe(final String groupName, final Node node) {
+    ProbeGroup probeGroup = this.probeGroups.get(groupName);
+    if (probeGroup == null) {
+      probeGroup = new ProbeGroup(groupName);
+      this.probeGroups.put(groupName, probeGroup);
+    }
+
+    return probeGroup.registerProbe(node);
   }
 
-  public synchronized void endTransaction(final String transactionName, final boolean isError) {
-    this.listener.endTransaction(transactionName, this.hitVector.get(), isError);
-  }
-
+  /**
+   * 
+   */
   public synchronized void startTransaction() {
-    this.hitVector.reset();
+    for (ProbeGroup probeGroup : this.probeGroups.values()) {
+      probeGroup.resetHitArray();
+    }
   }
 
+  /**
+   * 
+   * @param transactionName
+   * @param isError
+   */
+  public synchronized void endTransaction(final String transactionName, final boolean isError) {
+    Set<Node> hitNodes = new LinkedHashSet<Node>();
+    for (ProbeGroup probeGroup : this.probeGroups.values()) {
+      hitNodes.addAll(probeGroup.getHitNodes());
+    }
+
+    Transaction transaction = new Transaction(transactionName, hitNodes, isError);
+    this.listener.endTransaction(transaction);
+  }
+
+  /**
+   * 
+   */
   public synchronized void endSession() {
     this.listener.endSession();
   }
 
-  public synchronized boolean[] getHitVector(final String className) {
-    return this.hitVector.get(className);
+  /**
+   * 
+   * @param className
+   * @return
+   */
+  public synchronized boolean[] getHitArray(final String className) {
+    if (!this.probeGroups.containsKey(className)) {
+      // registerProbe has not been called before for this groupName therefore we can return null
+      return null;
+    }
+    return this.probeGroups.get(className).getHitArray();
   }
 
-  public synchronized boolean existsHitVector(final String className) {
-    return this.hitVector.existsHitVector(className);
+  /**
+   * 
+   * @param className
+   * @return
+   */
+  public synchronized boolean hasHitArray(final String className) {
+    if (!this.probeGroups.containsKey(className)) {
+      return false;
+    }
+    return this.probeGroups.get(className).hasHitArray();
   }
 
+  /**
+   * 
+   * @return
+   */
   public Node getRootNode() {
-    return this.tree.getRoot();
+    return this.spectrumListener.getSpectrum().getTree().getRoot();
   }
 
 }

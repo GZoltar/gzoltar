@@ -4,7 +4,12 @@ import static java.lang.String.format;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.model.Tree;
 
 public class SpectrumReader {
 
@@ -72,27 +77,47 @@ public class SpectrumReader {
   }
 
   private void readNode() throws IOException {
-    String symbol = this.in.readUTF();
     String name = this.in.readUTF();
-    int id = this.in.readInt();
-    //int depth = this.in.readInt();
-    int parentId = this.in.readInt();
+    if (Tree.ROOT_NAME.equals(name)) {
+      return;
+    }
 
-    this.spectrum.getTree().addNode(name, NodeType.valueOf(symbol), id, parentId);
+    String symbol = this.in.readUTF();
+    String parentFullName = this.in.readUTF();
+
+    Node parent = this.spectrum.getTree().getNode(parentFullName);
+    assert parent != null;
+
+    Node node = new Node(name, NodeType.valueOf(symbol), parent);
+
+    int numberOfSuspiciousnessValues = this.in.readInt();
+    while (numberOfSuspiciousnessValues > 0) {
+      node.addSuspiciousnessValue(this.in.readUTF(), this.in.readDouble());
+
+      numberOfSuspiciousnessValues--;
+    }
+
+    this.spectrum.addNode(node);
   }
 
   private void readTransaction() throws IOException {
     String name = this.in.readUTF();
+
+    Set<Node> activity = new LinkedHashSet<Node>();
     int numberActivities = this.in.readInt();
-    boolean[] activityArray = new boolean[numberActivities + 1];
-    for (int i = 0; i < numberActivities; i++) {
-      int activity = this.in.readInt();
-      activityArray[activity] = true;
+    while (numberActivities > 0) {
+      Node node = this.spectrum.getTree().getNode(this.in.readUTF());
+      assert node != null;
+      activity.add(node);
+
+      numberActivities--;
     }
+
     boolean isError = this.in.readBoolean();
     int hashCode = this.in.readInt();
 
-    this.spectrum.addTransaction(name, activityArray, hashCode, isError);
+    Transaction transaction = new Transaction(name, activity, hashCode, isError);
+    this.spectrum.addTransaction(transaction);
   }
 
   /**

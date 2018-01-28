@@ -3,6 +3,8 @@ package com.gzoltar.report.metrics;
 import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Set;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 
 
 public class AmbiguityMetric extends AbstractMetric {
@@ -15,20 +17,21 @@ public class AmbiguityMetric extends AbstractMetric {
 
     Set<Integer> ambiguityGroups = new HashSet<Integer>();
 
-    for (int c = 0; c < spectrum.getComponentsSize(); c++) {
-
+    for (Node node : this.spectrum.getTargetNodes()) {
       BitSet bs = new BitSet();
 
-      for (int t = 0; t < spectrum.getTransactionsSize(); t++) {
-        if (spectrum.isInvolved(t, c)) {
+      int t = 0;
+      for (Transaction transaction : this.spectrum.getTransactions()) {
+        if (transaction.isNodeActived(node)) {
           bs.set(t);
         }
+        t++;
       }
 
       ambiguityGroups.add(bs.hashCode());
     }
 
-    int components = spectrum.getComponentsSize();
+    int components = this.spectrum.getNumberOfTargetNodes();
     int groups = ambiguityGroups.size();
 
     double ambiguity = (double) groups / (double) components;

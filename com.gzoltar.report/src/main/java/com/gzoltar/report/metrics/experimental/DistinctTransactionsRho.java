@@ -1,8 +1,10 @@
 package com.gzoltar.report.metrics.experimental;
 
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.report.metrics.AbstractMetric;
 
 public class DistinctTransactionsRho extends AbstractMetric {
@@ -13,18 +15,18 @@ public class DistinctTransactionsRho extends AbstractMetric {
     if (!validMatrix())
       return 0;
 
-    Map<Integer, BitSet> distinctTransactionSet = new HashMap<Integer, BitSet>();
+    Map<Integer, Set<Node>> distinctTransactionSet = new HashMap<Integer, Set<Node>>();
 
-    for (int t = 0; t < spectrum.getTransactionsSize(); t++) {
-      distinctTransactionSet.put(getHash(t), spectrum.getTransactionActivity(t));
+    for (Transaction transaction : this.spectrum.getTransactions()) {
+      distinctTransactionSet.put(this.getHash(transaction), transaction.getActivity());
     }
 
-    int components = spectrum.getComponentsSize();
+    int components = this.spectrum.getNumberOfTargetNodes();
     int transactions = distinctTransactionSet.size();
     int activity_counter = 0;
 
-    for (BitSet activity : distinctTransactionSet.values()) {
-      activity_counter += activity.cardinality();
+    for (Set<Node> activity : distinctTransactionSet.values()) {
+      activity_counter += activity.size();
     }
 
     double rho = (double) activity_counter / (((double) components) * ((double) transactions));
@@ -36,14 +38,14 @@ public class DistinctTransactionsRho extends AbstractMetric {
     return "Distinct Transactions Rho";
   }
 
-  protected int getHash(int t) {
-    return spectrum.getTransactionActivity(t).hashCode();
+  protected int getHash(Transaction transaction) {
+    return transaction.getActivity().hashCode();
   }
 
   public static class GlobalDistinctTransactionsRho extends DistinctTransactionsRho {
     @Override
-    protected int getHash(int t) {
-      return spectrum.getTransactionHashCode(t);
+    protected int getHash(Transaction transaction) {
+      return transaction.hashCode();
     }
   }
 }

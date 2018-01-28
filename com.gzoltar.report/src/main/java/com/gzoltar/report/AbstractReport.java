@@ -3,6 +3,8 @@ package com.gzoltar.report;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.report.metrics.AmbiguityMetric;
 import com.gzoltar.report.metrics.CoverageMetric;
@@ -29,7 +31,7 @@ public abstract class AbstractReport {
   }
 
   protected boolean hasActiveTransactions() {
-    return getSpectrum().getTransactionsSize() > 0;
+    return this.getSpectrum().getNumberOfTransactions() > 0;
   }
 
   protected List<Metric> getMetrics() {
@@ -66,22 +68,19 @@ public abstract class AbstractReport {
     List<String> output = new ArrayList<String>();
     ISpectrum spectrum = getSpectrum();
 
-    int transactions = spectrum.getTransactionsSize();
-    int components = spectrum.getComponentsSize();
-
     StringBuilder sb = new StringBuilder();
-    for (int c = 0; c < components; c++) {
+    for (Node node : spectrum.getTargetNodes()) {
       sb.append(";");
-      sb.append(spectrum.getNodeOfProbe(c).getFullName());
+      sb.append(node.getFullName());
     }
     output.add(sb.toString());
 
-    for (int t = 0; t < transactions; t++) {
+    for (Transaction transaction : spectrum.getTransactions()) {
       sb.setLength(0);
-      sb.append(spectrum.getTransactionName(t));
+      sb.append(transaction.getName());
 
-      for (int c = 0; c < components; c++) {
-        if (spectrum.isInvolved(t, c)) {
+      for (Node node : spectrum.getTargetNodes()) {
+        if (transaction.isNodeActived(node)) {
           sb.append(";1");
         } else {
           sb.append(";0");

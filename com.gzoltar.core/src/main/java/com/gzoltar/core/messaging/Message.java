@@ -1,7 +1,8 @@
 package com.gzoltar.core.messaging;
 
 import java.io.Serializable;
-import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 
 public interface Message {
 
@@ -30,21 +31,14 @@ public interface Message {
 
     private static final long serialVersionUID = 214052749607422773L;
 
-    public final String transactionName;
+    public final Transaction transaction;
 
-    public final boolean[] activity;
-
-    public final boolean isError;
-
-    public EndTransactionMessage(final String transactionName, final boolean[] activity,
-        final boolean isError) {
-      this.transactionName = transactionName;
-      this.activity = activity;
-      this.isError = isError;
+    public EndTransactionMessage(final Transaction transaction) {
+      this.transaction = transaction;
     }
 
     protected EndTransactionMessage() {
-      this(null, null, false);
+      this(null);
     }
   }
 
@@ -52,42 +46,14 @@ public interface Message {
 
     private static final long serialVersionUID = 3116251573538148450L;
 
-    public final int id;
+    public final Node node;
 
-    public final String name;
-
-    public NodeType type;
-
-    public final int parentId;
-
-    public AddNodeMessage(final int id, final String name, final NodeType type,
-        final int parentId) {
-      this.id = id;
-      this.name = name;
-      this.type = type;
-      this.parentId = parentId;
+    public AddNodeMessage(final Node node) {
+      this.node = node;
     }
 
     protected AddNodeMessage() {
-      this(-1, null, null, -1);
-    }
-  }
-
-  public static class AddProbeMessage implements Message, Serializable {
-
-    private static final long serialVersionUID = 5328295583566424138L;
-
-    public final int id;
-
-    public final int nodeId;
-
-    public AddProbeMessage(final int id, final int nodeId) {
-      this.id = id;
-      this.nodeId = nodeId;
-    }
-
-    protected AddProbeMessage() {
-      this(-1, -1);
+      this(null);
     }
   }
 

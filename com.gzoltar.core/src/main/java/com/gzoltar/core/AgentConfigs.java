@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
-import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.util.CommandLineSupport;
 
 /**
@@ -415,20 +416,13 @@ public final class AgentConfigs {
   public IEventListener getEventListener() {
     return new IEventListener() {
       @Override
-      public void endTransaction(String transactionName, boolean[] activity, int hashCode,
-          boolean isError) {}
+      public void addNode(final Node node) {}
 
       @Override
-      public void endTransaction(String transactionName, boolean[] activity, boolean isError) {}
+      public void endTransaction(final Transaction transaction) {}
 
       @Override
       public void endSession() {}
-
-      @Override
-      public void addProbe(int id, int nodeId) {}
-
-      @Override
-      public void addNode(int id, String name, NodeType type, int parentId) {}
     };
   }
 

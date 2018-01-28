@@ -71,6 +71,6 @@ public class Agent implements IAgent {
   }
 
   public ISpectrum getData() {
-    return Collector.instance().getBuilder().getSpectrum();
+    return Collector.instance().getSpectrumListener().getSpectrum();
   }
 }

@@ -1,12 +1,14 @@
 package com.gzoltar.report.metrics;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import com.gzoltar.core.model.Transaction;
 
 public class EntropyMetric extends AbstractMetric {
 
-  protected LinkedHashMap<Integer, Integer> globalCounter = new LinkedHashMap<Integer, Integer>();
-  protected LinkedHashMap<Integer, Integer> localCounter = new LinkedHashMap<Integer, Integer>();
+  protected Map<Integer, Integer> globalCounter = new LinkedHashMap<Integer, Integer>();
+  protected Map<Integer, Integer> localCounter = new LinkedHashMap<Integer, Integer>();
 
   @Override
   public double calculate() {
@@ -14,16 +16,16 @@ public class EntropyMetric extends AbstractMetric {
     if (!validMatrix())
       return 0;
 
-    globalCounter.clear();
-    localCounter.clear();
+    this.globalCounter.clear();
+    this.localCounter.clear();
 
-    for (int t = 0; t < spectrum.getTransactionsSize(); t++) {
-      fillCounter(spectrum.getTransactionHashCode(t), globalCounter);
-      fillCounter(spectrum.getTransactionActivity(t).hashCode(), localCounter);
+    for (Transaction transaction : this.spectrum.getTransactions()) {
+      fillCounter(transaction.hashCode(), this.globalCounter);
+      fillCounter(transaction.getActivity().hashCode(), this.localCounter);
     }
 
-    double transactions = spectrum.getTransactionsSize();
-    double components = getComponentsSize();
+    double transactions = this.spectrum.getNumberOfTransactions();
+    double components = this.getComponentsSize();
 
     double entropy = 0.0;
     for (Entry<Integer, Integer> entry : getCounter().entrySet()) {
@@ -36,7 +38,7 @@ public class EntropyMetric extends AbstractMetric {
     return entropy;
   }
 
-  private static void fillCounter(int hash, LinkedHashMap<Integer, Integer> counter) {
+  private static void fillCounter(int hash, Map<Integer, Integer> counter) {
     if (counter.containsKey(hash)) {
       counter.put(hash, counter.get(hash) + 1);
     } else {
@@ -49,11 +51,11 @@ public class EntropyMetric extends AbstractMetric {
   }
 
   protected int getComponentsSize() {
-    return spectrum.getComponentsSize();
+    return this.spectrum.getNumberOfTargetNodes();
   }
 
-  protected LinkedHashMap<Integer, Integer> getCounter() {
-    return localCounter;
+  protected Map<Integer, Integer> getCounter() {
+    return this.localCounter;
   }
 
   @Override
@@ -64,13 +66,13 @@ public class EntropyMetric extends AbstractMetric {
   public static class GlobalEntropyMetric extends EntropyMetric {
     @Override
     protected int getComponentsSize() {
-      int delta = globalCounter.size() - localCounter.size();
-      return spectrum.getComponentsSize() + delta;
+      int delta = this.globalCounter.size() - this.localCounter.size();
+      return this.spectrum.getNumberOfTargetNodes() + delta;
     }
 
     @Override
-    protected LinkedHashMap<Integer, Integer> getCounter() {
-      return globalCounter;
+    protected Map<Integer, Integer> getCounter() {
+      return this.globalCounter;
     }
   }
 }

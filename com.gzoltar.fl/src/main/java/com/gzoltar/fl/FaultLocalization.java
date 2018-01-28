@@ -1,6 +1,5 @@
 package com.gzoltar.fl;
 
-import java.util.List;
 import java.util.Locale;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.sfl.SFLFormulas;
@@ -17,7 +16,7 @@ public final class FaultLocalization {
     }
   }
 
-  public static void diagnose(final ISpectrum spectrum, final List<String> flsNames) {
+  public static void diagnose(final ISpectrum spectrum, final String... flsNames) {
     for (String flName : flsNames) {
       IFL fl = SFLFormulas.valueOf(flName.toUpperCase(Locale.ENGLISH)).getFormula();
       fl.diagnose(spectrum);

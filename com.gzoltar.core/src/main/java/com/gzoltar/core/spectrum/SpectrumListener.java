@@ -1,7 +1,8 @@
 package com.gzoltar.core.spectrum;
 
 import com.gzoltar.core.events.IEventListener;
-import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 
 public class SpectrumListener implements IEventListener {
 
@@ -20,30 +21,17 @@ public class SpectrumListener implements IEventListener {
   }
 
   @Override
-  public void endTransaction(final String transactionName, final boolean[] activity,
-      final boolean isError) {
-    this.spectrum.addTransaction(transactionName, activity, isError);
+  public void addNode(final Node node) {
+    this.spectrum.addNode(node);
   }
 
   @Override
-  public void endTransaction(final String transactionName, final boolean[] activity,
-      final int hashCode, final boolean isError) {
-    this.spectrum.addTransaction(transactionName, activity, hashCode, isError);
-  }
-
-  @Override
-  public void addNode(final int id, final String name, final NodeType type, final int parentId) {
-    this.spectrum.getTree().addNode(name, type, parentId);
-  }
-
-  @Override
-  public void addProbe(final int id, final int nodeId) {
-    this.spectrum.addProbe(id, nodeId);
+  public void endTransaction(final Transaction transaction) {
+    this.spectrum.addTransaction(transaction);
   }
 
   @Override
   public void endSession() {
     // empty
   }
-
 }
