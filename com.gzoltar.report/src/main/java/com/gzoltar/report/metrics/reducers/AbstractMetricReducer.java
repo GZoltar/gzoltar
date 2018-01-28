@@ -5,25 +5,18 @@ import com.gzoltar.report.metrics.Metric;
 
 public abstract class AbstractMetricReducer implements Metric {
 
-  private Metric metrics[];
+  private final Metric metrics[];
 
-  public AbstractMetricReducer(Metric... metrics) {
+  public AbstractMetricReducer(final Metric... metrics) {
     this.metrics = metrics;
   }
 
   @Override
-  public void setSpectrum(ISpectrum spectrum) {
-    for (Metric m : metrics) {
-      m.setSpectrum(spectrum);
-    }
-  }
-
-  @Override
-  public double calculate() {
+  public double calculate(final ISpectrum spectrum) {
     double tmp = startValue();
 
-    for (Metric m : metrics) {
-      tmp = reduce(tmp, m.calculate());
+    for (Metric metric : this.metrics) {
+      tmp = reduce(tmp, metric.calculate(spectrum));
     }
 
     return tmp;
@@ -36,6 +29,6 @@ public abstract class AbstractMetricReducer implements Metric {
 
   protected abstract double startValue();
 
-  protected abstract double reduce(double value1, double value2);
+  protected abstract double reduce(final double value1, final double value2);
 
 }

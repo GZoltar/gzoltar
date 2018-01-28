@@ -6,15 +6,9 @@ public interface Metric {
 
   /**
    * 
-   * @param spectrum
-   */
-  public void setSpectrum(ISpectrum spectrum);
-
-  /**
-   * 
    * @return
    */
-  public double calculate();
+  public double calculate(final ISpectrum spectrum);
 
   /**
    * 

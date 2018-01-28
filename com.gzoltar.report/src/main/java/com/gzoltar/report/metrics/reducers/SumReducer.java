@@ -4,7 +4,7 @@ import com.gzoltar.report.metrics.Metric;
 
 public class SumReducer extends AbstractMetricReducer {
 
-  public SumReducer(Metric... metrics) {
+  public SumReducer(final Metric... metrics) {
     super(metrics);
   }
 
@@ -14,7 +14,7 @@ public class SumReducer extends AbstractMetricReducer {
   }
 
   @Override
-  protected double reduce(double value1, double value2) {
+  protected double reduce(final double value1, final double value2) {
     return value1 + value2;
   }
 

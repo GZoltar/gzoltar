@@ -3,17 +3,18 @@ package com.gzoltar.report.metrics;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.spectrum.ISpectrum;
 
 public class SimpsonMetric extends AbstractMetric {
 
   @Override
-  public double calculate() {
-
-    if (!this.validMatrix())
+  public double calculate(final ISpectrum spectrum) {
+    if (!this.validMatrix(spectrum)) {
       return 0;
+    }
 
     Map<Integer, Integer> species = new LinkedHashMap<Integer, Integer>();
-    for (Transaction transaction : this.spectrum.getTransactions()) {
+    for (Transaction transaction : spectrum.getTransactions()) {
       int hash = this.getHash(transaction);
       if (species.containsKey(hash)) {
         species.put(hash, species.get(hash) + 1);
@@ -35,7 +36,7 @@ public class SimpsonMetric extends AbstractMetric {
     return diversity;
   }
 
-  protected int getHash(Transaction transaction) {
+  protected int getHash(final Transaction transaction) {
     return transaction.getActivity().hashCode();
   }
 
@@ -46,8 +47,8 @@ public class SimpsonMetric extends AbstractMetric {
 
   public static class InvertedSimpsonMetric extends SimpsonMetric {
     @Override
-    public double calculate() {
-      return 1d - super.calculate();
+    public double calculate(final ISpectrum spectrum) {
+      return 1d - super.calculate(spectrum);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class SimpsonMetric extends AbstractMetric {
 
   public static class GlobalInvertedSimpsonMetric extends InvertedSimpsonMetric {
     @Override
-    protected int getHash(Transaction transaction) {
+    protected int getHash(final Transaction transaction) {
       return transaction.hashCode();
     }
 
@@ -70,7 +71,7 @@ public class SimpsonMetric extends AbstractMetric {
 
   public static class GlobalSimpsonMetric extends SimpsonMetric {
     @Override
-    protected int getHash(Transaction transaction) {
+    protected int getHash(final Transaction transaction) {
       return transaction.hashCode();
     }
 

@@ -8,7 +8,7 @@ import com.gzoltar.report.metrics.reducers.MultiplicationReducer;
 
 public class DDUMetric implements Metric {
 
-  private Metric metric;
+  private final Metric metric;
 
   public DDUMetric() {
     this.metric = generateMetric();
@@ -20,13 +20,8 @@ public class DDUMetric implements Metric {
   }
 
   @Override
-  public void setSpectrum(ISpectrum spectrum) {
-    metric.setSpectrum(spectrum);
-  }
-
-  @Override
-  public double calculate() {
-    return metric.calculate();
+  public double calculate(final ISpectrum spectrum) {
+    return metric.calculate(spectrum);
   }
 
   @Override

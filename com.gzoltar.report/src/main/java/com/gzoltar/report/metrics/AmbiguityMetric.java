@@ -1,27 +1,26 @@
 package com.gzoltar.report.metrics;
 
 import java.util.BitSet;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
-
+import com.gzoltar.core.spectrum.ISpectrum;
 
 public class AmbiguityMetric extends AbstractMetric {
 
   @Override
-  public double calculate() {
-
-    if (!validMatrix())
+  public double calculate(final ISpectrum spectrum) {
+    if (!this.validMatrix(spectrum)) {
       return 0;
+    }
 
-    Set<Integer> ambiguityGroups = new HashSet<Integer>();
-
-    for (Node node : this.spectrum.getTargetNodes()) {
+    Set<Integer> ambiguityGroups = new LinkedHashSet<Integer>();
+    for (Node node : spectrum.getTargetNodes()) {
       BitSet bs = new BitSet();
 
       int t = 0;
-      for (Transaction transaction : this.spectrum.getTransactions()) {
+      for (Transaction transaction : spectrum.getTransactions()) {
         if (transaction.isNodeActived(node)) {
           bs.set(t);
         }
@@ -31,11 +30,10 @@ public class AmbiguityMetric extends AbstractMetric {
       ambiguityGroups.add(bs.hashCode());
     }
 
-    int components = this.spectrum.getNumberOfTargetNodes();
+    int components = spectrum.getNumberOfTargetNodes();
     int groups = ambiguityGroups.size();
 
     double ambiguity = (double) groups / (double) components;
-
     return ambiguity;
   }
 
@@ -43,5 +41,4 @@ public class AmbiguityMetric extends AbstractMetric {
   public String getName() {
     return "Uniqueness";
   }
-
 }
