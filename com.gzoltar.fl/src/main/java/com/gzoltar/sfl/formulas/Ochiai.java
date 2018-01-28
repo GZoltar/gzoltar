@@ -1,14 +1,12 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Ochiai coefficient from <i>Zoogeographic studies on the soleoid fishes found in
  * Japan and its neighbouring regions<i>.
  * 
  * @author José Campos
  */
-public final class Ochiai extends AbstractSFL {
+public final class Ochiai extends AbstractSFLFormula {
 
   @Override
   public String getName() {

@@ -1,7 +1,5 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Sorensen-Dice coefficient from <i>Measures of the Amount of Ecologic
  * Association Between Species</i> and <i>A Method of Establishing Groups of Equal Amplitude in
@@ -10,7 +8,7 @@ import com.gzoltar.sfl.AbstractSFL;
  * 
  * @author José Campos
  */
-public final class SorensenDice extends AbstractSFL {
+public final class SorensenDice extends AbstractSFLFormula {
 
   @Override
   public String getName() {

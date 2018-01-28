@@ -1,14 +1,12 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Kulczynski2 coefficient from <i>Classe des Sciences Mathématiques et
  * Naturelles</i>
  * 
  * @author José Campos
  */
-public final class Kulczynski2 extends AbstractSFL {
+public final class Kulczynski2 extends AbstractSFLFormula {
 
   @Override
   public String getName() {

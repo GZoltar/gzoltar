@@ -1,14 +1,12 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Simple-matching coefficient from <i>A Statistical Method for Evaluating
  * Systematic Relationships</i>
  * 
  * @author José Campos
  */
-public final class SimpleMatching extends AbstractSFL {
+public final class SimpleMatching extends AbstractSFLFormula {
 
   @Override
   public String getName() {

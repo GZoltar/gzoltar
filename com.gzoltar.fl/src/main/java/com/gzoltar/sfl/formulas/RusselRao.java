@@ -1,14 +1,12 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Russel and Rao coefficient from <i>On habitat and association of species of
  * anophelinae larvae in south-eastern Madras</i>
  * 
  * @author José Campos
  */
-public final class RusselRao extends AbstractSFL {
+public final class RusselRao extends AbstractSFLFormula {
 
   @Override
   public String getName() {

@@ -1,13 +1,11 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of SBI coefficient from <i>Scalable Statistical Bug Isolation</i>
  * 
  * @author José Campos
  */
-public final class SBI extends AbstractSFL {
+public final class SBI extends AbstractSFLFormula {
 
   @Override
   public String getName() {

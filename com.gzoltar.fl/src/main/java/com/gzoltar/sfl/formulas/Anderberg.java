@@ -1,13 +1,11 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Anderberg coefficient from <i>Clustering analysis for applications</i>
  * 
  * @author José Campos
  */
-public final class Anderberg extends AbstractSFL {
+public final class Anderberg extends AbstractSFLFormula {
 
   @Override
   public String getName() {

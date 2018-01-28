@@ -1,13 +1,11 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Naish1 coefficient from <i></i>
  *
  * @author Rui Abreu
  */
-public final class Naish1 extends AbstractSFL {
+public final class Naish1 extends AbstractSFLFormula {
 
   @Override
   public String getName() {

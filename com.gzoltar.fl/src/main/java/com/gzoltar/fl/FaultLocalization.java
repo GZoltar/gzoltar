@@ -1,25 +1,46 @@
 package com.gzoltar.fl;
 
-import java.util.Locale;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
 import com.gzoltar.core.spectrum.ISpectrum;
-import com.gzoltar.sfl.SFLFormulas;
+import com.gzoltar.core.spectrum.SpectrumReader;
+import com.gzoltar.sfl.SFL;
 
-/**
- * 
- * @author José Campos
- */
-public final class FaultLocalization {
+public class FaultLocalization {
 
-  public static void diagnose(final ISpectrum spectrum, final IFL... fls) {
-    for (IFL fl : fls) {
-      fl.diagnose(spectrum);
+  private final IFaultLocalization fl;
+
+  /**
+   * 
+   * @param flFamily
+   * @param formulas
+   */
+  public FaultLocalization(final FaultLocalizationFamily flFamily, final List<String> formulas) {
+    switch (flFamily) {
+      case SFL:
+      default:
+        this.fl = new SFL(formulas);
+        break;
     }
   }
 
-  public static void diagnose(final ISpectrum spectrum, final String... flsNames) {
-    for (String flName : flsNames) {
-      IFL fl = SFLFormulas.valueOf(flName.toUpperCase(Locale.ENGLISH)).getFormula();
-      fl.diagnose(spectrum);
-    }
+  /**
+   * 
+   * @param dataFile
+   * @return
+   * @throws IOException
+   */
+  public ISpectrum diagnose(final File dataFile) throws IOException {
+    FileInputStream inStream = new FileInputStream(dataFile);
+
+    SpectrumReader spectrumReader = new SpectrumReader(inStream);
+    spectrumReader.read();
+    ISpectrum spectrum = spectrumReader.getSpectrum();
+
+    this.fl.diagnose(spectrum);
+
+    return spectrum;
   }
 }

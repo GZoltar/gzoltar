@@ -1,13 +1,11 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Opt coefficient from <i></i>
  * 
  * @author Rui Abreu
  */
-public final class Opt extends AbstractSFL {
+public final class Opt extends AbstractSFLFormula {
 
   @Override
   public String getName() {

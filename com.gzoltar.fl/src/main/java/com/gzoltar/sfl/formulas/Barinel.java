@@ -1,13 +1,11 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Barinel coefficient from <i></i>
  * 
  * @author José Campos
  */
-public final class Barinel extends AbstractSFL {
+public final class Barinel extends AbstractSFLFormula {
 
   @Override
   public String getName() {

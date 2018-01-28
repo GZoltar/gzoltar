@@ -1,13 +1,11 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of DStar coefficient from <i></i>
  * 
  * @author Rui Abreu
  */
-public final class DStar extends AbstractSFL {
+public final class DStar extends AbstractSFLFormula {
 
   @Override
   public String getName() {

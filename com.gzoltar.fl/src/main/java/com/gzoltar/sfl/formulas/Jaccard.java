@@ -1,14 +1,12 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Jaccard coefficient from <i>Étude comparative de la distribution florale dans
  * une portion des Alpes et des Jura</i>
  * 
  * @author José Campos
  */
-public final class Jaccard extends AbstractSFL {
+public final class Jaccard extends AbstractSFLFormula {
 
   @Override
   public String getName() {

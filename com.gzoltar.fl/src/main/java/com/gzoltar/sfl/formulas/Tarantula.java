@@ -1,14 +1,12 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Tarantula coefficient from <i>Visualization of Test Information to Assist Fault
  * Localization</i>
  * 
  * @author Rui Abreu
  */
-public final class Tarantula extends AbstractSFL {
+public final class Tarantula extends AbstractSFLFormula {
 
   @Override
   public String getName() {

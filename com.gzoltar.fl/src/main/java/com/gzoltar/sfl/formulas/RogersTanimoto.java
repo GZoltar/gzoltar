@@ -1,14 +1,12 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Rogers and Tanimoto coefficient from <i>A Computer Program for Classifying
  * Plants</i>
  * 
  * @author José Campos
  */
-public final class RogersTanimoto extends AbstractSFL {
+public final class RogersTanimoto extends AbstractSFLFormula {
 
   @Override
   public String getName() {

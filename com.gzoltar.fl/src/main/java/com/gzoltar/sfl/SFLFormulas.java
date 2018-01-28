@@ -1,9 +1,9 @@
 package com.gzoltar.sfl;
 
-import com.gzoltar.fl.IFL;
 import com.gzoltar.sfl.formulas.Anderberg;
 import com.gzoltar.sfl.formulas.Barinel;
 import com.gzoltar.sfl.formulas.DStar;
+import com.gzoltar.sfl.formulas.ISFLFormula;
 import com.gzoltar.sfl.formulas.Ideal;
 import com.gzoltar.sfl.formulas.Jaccard;
 import com.gzoltar.sfl.formulas.Kulczynski2;
@@ -52,13 +52,13 @@ public enum SFLFormulas {
 
   NAISH1(new Naish1());
 
-  private final IFL formula;
+  private final ISFLFormula formula;
 
-  private SFLFormulas(final IFL formula) {
+  private SFLFormulas(final ISFLFormula formula) {
     this.formula = formula;
   }
 
-  public IFL getFormula() {
+  public ISFLFormula getFormula() {
     return this.formula;
   }
 }

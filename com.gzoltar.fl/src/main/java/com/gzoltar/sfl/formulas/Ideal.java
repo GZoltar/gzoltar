@@ -1,13 +1,11 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.sfl.AbstractSFL;
-
 /**
  * Implementation of Ideal coefficient from <i></i>
  *
  * @author Rui Abreu
  */
-public final class Ideal extends AbstractSFL {
+public final class Ideal extends AbstractSFLFormula {
 
   @Override
   public String getName() {

@@ -1,13 +1,14 @@
-package com.gzoltar.sfl;
+package com.gzoltar.sfl.formulas;
 
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.spectrum.ISpectrum;
-import com.gzoltar.fl.IFL;
 
-public abstract class AbstractSFL implements IFL {
+public abstract class AbstractSFLFormula implements ISFLFormula {
 
-  @Override
+  /**
+   * {@inheritDoc}
+   */
   public void diagnose(final ISpectrum spectrum) {
     int n00 = 0;
     int n01 = 0;
@@ -40,20 +41,12 @@ public abstract class AbstractSFL implements IFL {
   }
 
   /**
-   * Returns the name of the SBL formula
-   * 
-   * @return
+   * {@inheritDoc}
    */
   public abstract String getName();
 
   /**
-   * Returns a suspiciousness value
-   * 
-   * @param n00 number of passing test cases that do not execute the faulty node
-   * @param n01 number of failing test cases that do not execute the faulty node
-   * @param n10 number of passing test cases that execute the faulty node
-   * @param n11 number of failing test cases that execute the faulty node
-   * @return
+   * {@inheritDoc}
    */
   public abstract double compute(final double n00, final double n01, final double n10,
       final double n11);

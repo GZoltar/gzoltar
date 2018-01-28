@@ -2,7 +2,7 @@ package com.gzoltar.fl;
 
 import com.gzoltar.core.spectrum.ISpectrum;
 
-public interface IFL {
+public interface IFaultLocalization {
 
   /**
    * 
