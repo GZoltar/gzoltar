@@ -12,7 +12,7 @@ public class Transaction implements Serializable {
 
   private final Set<Node> activity;
 
-  private final boolean isError;
+  private final TransactionOutcome outcome;
 
   private int hashCode;
 
@@ -22,10 +22,10 @@ public class Transaction implements Serializable {
    * @param activity
    * @param isError
    */
-  public Transaction(final String name, final Set<Node> activity, final boolean isError) {
+  public Transaction(final String name, final Set<Node> activity, final TransactionOutcome outcome) {
     this.name = name;
     this.activity = activity;
-    this.isError = isError;
+    this.outcome = outcome;
     this.hashCode = this.activity.hashCode();
   }
 
@@ -37,8 +37,8 @@ public class Transaction implements Serializable {
    * @param isError
    */
   public Transaction(final String name, final Set<Node> activity, final int hashCode,
-      final boolean isError) {
-    this(name, activity, isError);
+      final TransactionOutcome outcome) {
+    this(name, activity, outcome);
     this.hashCode = hashCode;
   }
 
@@ -87,8 +87,16 @@ public class Transaction implements Serializable {
    * 
    * @return
    */
-  public boolean isError() {
-    return this.isError;
+  public TransactionOutcome getTransactionOutcome() {
+    return this.outcome;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean hasFailed() {
+    return this.outcome.equals(TransactionOutcome.FAIL);
   }
 
   /**
@@ -116,7 +124,7 @@ public class Transaction implements Serializable {
     EqualsBuilder builder = new EqualsBuilder();
     builder.append(this.name, transaction.name);
     builder.append(this.activity, transaction.activity);
-    builder.append(this.isError, transaction.isError);
+    builder.append(this.outcome, transaction.outcome);
     builder.append(this.hashCode, transaction.hashCode);
 
     return builder.isEquals();

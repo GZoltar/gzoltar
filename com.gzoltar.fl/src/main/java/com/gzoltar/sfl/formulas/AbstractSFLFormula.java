@@ -19,7 +19,7 @@ public abstract class AbstractSFLFormula implements ISFLFormula {
       n00 = n01 = n10 = n11 = 0;
 
       for (Transaction transaction : spectrum.getTransactions()) {
-        boolean hasFailed = transaction.isError();
+        boolean hasFailed = transaction.hasFailed();
 
         if (transaction.isNodeActived(node)) {
           if (hasFailed) {

@@ -1,6 +1,7 @@
 package com.gzoltar.core.listeners;
 
 import org.junit.runner.notification.RunListener;
+import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.runtime.Collector;
 
 /**
@@ -10,7 +11,7 @@ public class Listener extends RunListener {
 
   public static final String TEST_CLASS_NAME_SEPARATOR = "#";
 
-  private boolean isError = false;
+  private boolean hasFailed = false;
 
   /**
    * Called before any tests have been run.
@@ -30,7 +31,7 @@ public class Listener extends RunListener {
    * Called when an atomic test is about to be started.
    */
   public final void onTestStart() {
-    this.isError = false;
+    this.hasFailed = false;
     Collector.instance().startTransaction();
   }
 
@@ -40,14 +41,15 @@ public class Listener extends RunListener {
    * @param testName
    */
   public final void onTestFinish(final String testName) {
-    Collector.instance().endTransaction(testName, this.isError);
+    Collector.instance().endTransaction(testName,
+        this.hasFailed ? TransactionOutcome.FAIL : TransactionOutcome.PASS);
   }
 
   /**
    * Called when an atomic test fails.
    */
   public final void onTestFailure() {
-    this.isError = true;
+    this.hasFailed = true;
   }
 
   /**

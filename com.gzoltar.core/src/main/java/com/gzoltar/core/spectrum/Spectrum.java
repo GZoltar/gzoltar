@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.model.Tree;
 
 public class Spectrum implements ISpectrum {
@@ -96,10 +97,10 @@ public class Spectrum implements ISpectrum {
         }
       }
 
-      if (transaction.isError()) {
-        sb.append("x");
+      if (transaction.hasFailed()) {
+        sb.append(TransactionOutcome.FAIL.getSymbol());
       } else {
-        sb.append(".");
+        sb.append(TransactionOutcome.PASS.getSymbol());
       }
 
       sb.append(" hashcode: " + transaction.hashCode());

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.report.AbstractReport;
 
@@ -46,10 +47,10 @@ public class FaultLocalizationTxtReport extends AbstractReport {
         }
       }
 
-      if (transaction.isError()) {
-        transactionStr.append("x");
+      if (transaction.hasFailed()) {
+        transactionStr.append(TransactionOutcome.FAIL.getSymbol());
       } else {
-        transactionStr.append(".");
+        transactionStr.append(TransactionOutcome.PASS.getSymbol());
       }
 
       matrixWriter.println(transactionStr.toString());
@@ -82,7 +83,9 @@ public class FaultLocalizationTxtReport extends AbstractReport {
 
     // content
     for (Transaction transaction : spectrum.getTransactions()) {
-      testsWriter.println(transaction.getName() + "," + (transaction.isError() ? "FAIL" : "PASS"));
+      testsWriter.println(
+          transaction.getName() + "," + (transaction.hasFailed() ? TransactionOutcome.FAIL.name()
+              : TransactionOutcome.PASS.name()));
     }
 
     testsWriter.close();

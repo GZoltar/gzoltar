@@ -9,6 +9,7 @@ import java.util.Set;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.model.Tree;
 
 public class SpectrumReader {
@@ -114,10 +115,10 @@ public class SpectrumReader {
       numberActivities--;
     }
 
-    boolean isError = this.in.readBoolean();
+    TransactionOutcome transactionOutcome = TransactionOutcome.valueOf(this.in.readUTF());
     int hashCode = this.in.readInt();
 
-    Transaction transaction = new Transaction(name, activity, hashCode, isError);
+    Transaction transaction = new Transaction(name, activity, hashCode, transactionOutcome);
     this.spectrum.addTransaction(transaction);
   }
 

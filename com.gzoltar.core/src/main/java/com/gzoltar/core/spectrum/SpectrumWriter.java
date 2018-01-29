@@ -112,7 +112,7 @@ public class SpectrumWriter {
         for (Node node : transaction.getActivity()) {
           this.out.writeUTF(node.getName());
         }
-        this.out.writeBoolean(transaction.isError());
+        this.out.writeUTF(transaction.getTransactionOutcome().name());
         this.out.writeInt(transaction.hashCode());
       } catch (final IOException e) {
         throw new RuntimeException(e);

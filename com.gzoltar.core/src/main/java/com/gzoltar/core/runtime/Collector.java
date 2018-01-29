@@ -9,6 +9,7 @@ import com.gzoltar.core.events.MultiEventListener;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.spectrum.SpectrumListener;
 
 public class Collector {
@@ -122,13 +123,13 @@ public class Collector {
    * @param transactionName
    * @param isError
    */
-  public synchronized void endTransaction(final String transactionName, final boolean isError) {
+  public synchronized void endTransaction(final String transactionName, final TransactionOutcome outcome) {
     Set<Node> hitNodes = new LinkedHashSet<Node>();
     for (ProbeGroup probeGroup : this.probeGroups.values()) {
       hitNodes.addAll(probeGroup.getHitNodes());
     }
 
-    Transaction transaction = new Transaction(transactionName, hitNodes, isError);
+    Transaction transaction = new Transaction(transactionName, hitNodes, outcome);
     this.listener.endTransaction(transaction);
   }
 
