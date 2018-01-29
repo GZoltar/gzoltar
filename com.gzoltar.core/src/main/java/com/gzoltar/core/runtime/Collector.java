@@ -86,8 +86,8 @@ public class Collector {
    * @param type
    * @return
    */
-  public synchronized Node createNode(final Node parent, final String name, final NodeType type) {
-    Node node = new Node(name, type, parent);
+  public synchronized Node createNode(final Node parent, final String name, final int lineNumber, final NodeType type) {
+    Node node = new Node(name, lineNumber, type, parent);
     this.listener.addNode(node);
     return node;
   }

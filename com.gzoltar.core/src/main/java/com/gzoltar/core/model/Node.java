@@ -15,6 +15,8 @@ public class Node implements Serializable {
 
   private final String name;
 
+  private final int lineNumber;
+
   private final NodeType type;
 
   private final int depth;
@@ -31,9 +33,10 @@ public class Node implements Serializable {
    * @param type
    * @param parent
    */
-  public Node(final String name, final NodeType type, final Node parent) {
+  public Node(final String name, final int lineNumber, final NodeType type, final Node parent) {
     this.type = type;
     this.name = name;
+    this.lineNumber = lineNumber;
     this.parent = parent;
 
     if (this.isRoot()) {
@@ -69,20 +72,8 @@ public class Node implements Serializable {
    * 
    * @return
    */
-  public String getFullName() {
-    Node p = this.getParent();
-    if (p == null || p.isRoot()) {
-      return this.name;
-    }
-    return p.getFullName() + this.getSymbol(p.type, this.type) + this.name;
-  }
-
-  private String getSymbol(final NodeType type1, final NodeType type2) {
-    if (type1 == NodeType.PACKAGE) {
-      return type1.getSymbol();
-    } else {
-      return type2.getSymbol();
-    }
+  public int getLineNumber() {
+    return this.lineNumber;
   }
 
   /**
@@ -238,8 +229,9 @@ public class Node implements Serializable {
    */
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder(this.isLeaf() ? "[probe] "  : "");
-    sb.append(this.getFullName());
+    StringBuilder sb = new StringBuilder(this.isLeaf() ? "[probe] " : "");
+    sb.append(this.getName()
+        + (this.type != NodeType.LINE ? NodeType.LINE.getSymbol() + this.lineNumber : ""));
 
     if (this.hasSuspiciousnessValues()) {
       sb.append("  [ ");
@@ -260,6 +252,7 @@ public class Node implements Serializable {
     HashCodeBuilder builder = new HashCodeBuilder();
     builder.append(this.type);
     builder.append(this.name);
+    builder.append(this.lineNumber);
     builder.append(this.depth);
     builder.append(this.parent);
     return builder.toHashCode();
@@ -283,6 +276,7 @@ public class Node implements Serializable {
 
     builder.append(this.type, node.type);
     builder.append(this.name, node.name);
+    builder.append(this.lineNumber, node.lineNumber);
     builder.append(this.depth, node.depth);
     builder.append(this.parent, node.parent);
 

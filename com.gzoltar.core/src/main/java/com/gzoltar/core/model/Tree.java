@@ -27,7 +27,7 @@ public class Tree implements Iterable<Node> {
    */
   public Tree(final boolean createRoot) {
     if (createRoot) {
-      Node node = new Node(ROOT_NAME, NodeType.PACKAGE, null);
+      Node node = new Node(ROOT_NAME, -1, NodeType.PACKAGE, null);
       this.nodes.add(node);
     }
   }
@@ -50,12 +50,12 @@ public class Tree implements Iterable<Node> {
 
   /**
    * 
-   * @param fullName
+   * @param name
    * @return
    */
-  public Node getNode(final String fullName) {
+  public Node getNode(final String name) {
     for (Node node : this.nodes) {
-      if (node.getFullName().equals(fullName)) {
+      if (node.getName().equals(name)) {
         return node;
       }
     }

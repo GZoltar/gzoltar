@@ -83,8 +83,9 @@ public class SpectrumWriter {
         return;
       }
 
+      this.out.writeInt(node.getLineNumber());
       this.out.writeUTF(node.getNodeType().name());
-      this.out.writeUTF(node.getParent().getFullName());
+      this.out.writeUTF(node.getParent().getName());
 
       Map<String, Double> suspiciousnessValues = node.getSuspiciousnessValues();
       if (suspiciousnessValues != null) {
@@ -109,7 +110,7 @@ public class SpectrumWriter {
         this.out.writeUTF(transaction.getName());
         this.out.writeInt(transaction.getNumberActivities());
         for (Node node : transaction.getActivity()) {
-          this.out.writeUTF(node.getFullName());
+          this.out.writeUTF(node.getName());
         }
         this.out.writeBoolean(transaction.isError());
         this.out.writeInt(transaction.hashCode());

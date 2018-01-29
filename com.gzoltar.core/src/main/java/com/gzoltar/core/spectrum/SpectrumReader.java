@@ -82,13 +82,14 @@ public class SpectrumReader {
       return;
     }
 
+    Integer lineNumber = this.in.readInt();
     String symbol = this.in.readUTF();
-    String parentFullName = this.in.readUTF();
+    String parentName = this.in.readUTF();
 
-    Node parent = this.spectrum.getTree().getNode(parentFullName);
+    Node parent = this.spectrum.getTree().getNode(parentName);
     assert parent != null;
 
-    Node node = new Node(name, NodeType.valueOf(symbol), parent);
+    Node node = new Node(name, lineNumber, NodeType.valueOf(symbol), parent);
 
     int numberOfSuspiciousnessValues = this.in.readInt();
     while (numberOfSuspiciousnessValues > 0) {

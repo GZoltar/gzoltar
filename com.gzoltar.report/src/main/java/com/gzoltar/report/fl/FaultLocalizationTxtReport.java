@@ -65,7 +65,7 @@ public class FaultLocalizationTxtReport extends AbstractReport {
         new PrintWriter(this.outputDirectory + File.separator + SPECTRA_FILE_NAME, "UTF-8");
 
     for (Node node : spectrum.getTargetNodes()) {
-      spectraWriter.println(node.getFullName());
+      spectraWriter.println(node.getName());
     }
 
     spectraWriter.close();
