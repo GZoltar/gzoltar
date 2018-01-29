@@ -123,13 +123,14 @@ public class Collector {
    * @param transactionName
    * @param isError
    */
-  public synchronized void endTransaction(final String transactionName, final TransactionOutcome outcome) {
+  public synchronized void endTransaction(final String transactionName,
+      final TransactionOutcome outcome, final long runtime, final String stackTrace) {
     Set<Node> hitNodes = new LinkedHashSet<Node>();
     for (ProbeGroup probeGroup : this.probeGroups.values()) {
       hitNodes.addAll(probeGroup.getHitNodes());
     }
 
-    Transaction transaction = new Transaction(transactionName, hitNodes, outcome);
+    Transaction transaction = new Transaction(transactionName, hitNodes, outcome, runtime, stackTrace);
     this.listener.endTransaction(transaction);
   }
 

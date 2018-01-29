@@ -31,12 +31,12 @@ public final class JUnitListener extends Listener {
 
   @Override
   public void testFailure(final Failure failure) {
-    super.onTestFailure();
+    super.onTestFailure(failure.getTrace());
   }
 
   @Override
   public void testAssumptionFailure(final Failure failure) {
-    super.onTestFailure();
+    super.onTestFailure(failure.getTrace());
   }
 
   @Override

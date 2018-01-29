@@ -79,13 +79,14 @@ public class FaultLocalizationTxtReport extends AbstractReport {
         new PrintWriter(this.outputDirectory + File.separator + TESTS_FILES_NAME, "UTF-8");
 
     // header
-    testsWriter.println("name,outcome");
+    testsWriter.println("name,outcome,runtime,stacktrace");
 
     // content
     for (Transaction transaction : spectrum.getTransactions()) {
-      testsWriter.println(
-          transaction.getName() + "," + (transaction.hasFailed() ? TransactionOutcome.FAIL.name()
-              : TransactionOutcome.PASS.name()));
+      testsWriter.println(transaction.getName() + ","
+          + (transaction.hasFailed() ? TransactionOutcome.FAIL.name()
+              : TransactionOutcome.PASS.name())
+          + "," + transaction.getRuntime() + "," + transaction.getNormalizedStackTrace());
     }
 
     testsWriter.close();

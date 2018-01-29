@@ -13,6 +13,10 @@ public class Listener extends RunListener {
 
   private boolean hasFailed = false;
 
+  private long startTime;
+
+  protected String stackTrace;
+
   /**
    * Called before any tests have been run.
    */
@@ -32,6 +36,8 @@ public class Listener extends RunListener {
    */
   public final void onTestStart() {
     this.hasFailed = false;
+    this.startTime = System.nanoTime();
+    this.stackTrace = "";
     Collector.instance().startTransaction();
   }
 
@@ -42,14 +48,16 @@ public class Listener extends RunListener {
    */
   public final void onTestFinish(final String testName) {
     Collector.instance().endTransaction(testName,
-        this.hasFailed ? TransactionOutcome.FAIL : TransactionOutcome.PASS);
+        this.hasFailed ? TransactionOutcome.FAIL : TransactionOutcome.PASS,
+        System.nanoTime() - this.startTime, this.stackTrace);
   }
 
   /**
    * Called when an atomic test fails.
    */
-  public final void onTestFailure() {
+  public final void onTestFailure(String trace) {
     this.hasFailed = true;
+    this.stackTrace = trace;
   }
 
   /**

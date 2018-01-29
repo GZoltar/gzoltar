@@ -31,13 +31,13 @@ public final class TestNGListener extends Listener implements ITestListener {
 
   @Override
   public void onTestFailure(final ITestResult result) {
-    super.onTestFailure();
+    super.onTestFailure(result.getThrowable().getStackTrace().toString());
     super.onTestFinish(this.getName(result));
   }
 
   @Override
   public void onTestFailedButWithinSuccessPercentage(final ITestResult result) {
-    super.onTestFailure();
+    super.onTestFailure(result.getThrowable().getStackTrace().toString());
     super.onTestFinish(this.getName(result));
   }
 

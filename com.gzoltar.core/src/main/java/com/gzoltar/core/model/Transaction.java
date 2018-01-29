@@ -14,6 +14,10 @@ public class Transaction implements Serializable {
 
   private final TransactionOutcome outcome;
 
+  private final long runtime;
+
+  private final String stackTrace;
+
   private int hashCode;
 
   /**
@@ -22,10 +26,13 @@ public class Transaction implements Serializable {
    * @param activity
    * @param isError
    */
-  public Transaction(final String name, final Set<Node> activity, final TransactionOutcome outcome) {
+  public Transaction(final String name, final Set<Node> activity, final TransactionOutcome outcome,
+      final long runtime, final String stackTrace) {
     this.name = name;
     this.activity = activity;
     this.outcome = outcome;
+    this.runtime = runtime;
+    this.stackTrace = stackTrace;
     this.hashCode = this.activity.hashCode();
   }
 
@@ -37,8 +44,8 @@ public class Transaction implements Serializable {
    * @param isError
    */
   public Transaction(final String name, final Set<Node> activity, final int hashCode,
-      final TransactionOutcome outcome) {
-    this(name, activity, outcome);
+      final TransactionOutcome outcome, final long runtime, final String stackTrace) {
+    this(name, activity, outcome, runtime, stackTrace);
     this.hashCode = hashCode;
   }
 
@@ -100,6 +107,32 @@ public class Transaction implements Serializable {
   }
 
   /**
+   * 
+   * @return
+   */
+  public long getRuntime() {
+    return this.runtime;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public String getStackTrace() {
+    return this.stackTrace;
+  }
+
+  /**
+   * Returns a multi-line stack trace in one line and removes potentially-variable formatting.
+   * 
+   * @return
+   */
+  public String getNormalizedStackTrace() {
+    return this.stackTrace.replaceAll(" *\r?\n[ \t]*", " ") // kill newlines and surrounding space
+        .replaceAll("^[ \t\r\n]*|[ \t\r\n]*$", ""); // strip whitespace
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
@@ -125,6 +158,8 @@ public class Transaction implements Serializable {
     builder.append(this.name, transaction.name);
     builder.append(this.activity, transaction.activity);
     builder.append(this.outcome, transaction.outcome);
+    builder.append(this.runtime, transaction.runtime);
+    builder.append(this.stackTrace, transaction.stackTrace);
     builder.append(this.hashCode, transaction.hashCode);
 
     return builder.isEquals();
