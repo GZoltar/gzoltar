@@ -72,6 +72,15 @@ public class Node implements Serializable {
    * 
    * @return
    */
+  public String getNameWithLineNumber() {
+    return this.getName()
+        + (this.type != NodeType.LINE ? NodeType.LINE.getSymbol() + this.lineNumber : "");
+  }
+
+  /**
+   * 
+   * @return
+   */
   public int getLineNumber() {
     return this.lineNumber;
   }
@@ -230,8 +239,7 @@ public class Node implements Serializable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder(this.isLeaf() ? "[probe] " : "");
-    sb.append(this.getName()
-        + (this.type != NodeType.LINE ? NodeType.LINE.getSymbol() + this.lineNumber : ""));
+    sb.append(this.getNameWithLineNumber());
 
     if (this.hasSuspiciousnessValues()) {
       sb.append("  [ ");
