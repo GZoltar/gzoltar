@@ -48,6 +48,8 @@ public class MetricsReport extends AbstractReport {
     List<Double> values = new ArrayList<Double>();
     for (Metric metric : this.metrics) {
       Double value = metric.calculate(spectrum);
+      assert value != null;
+      assert !value.isNaN();
       values.add(value);
     }
     metricsWriter.println(StringUtils.join(values, ','));
