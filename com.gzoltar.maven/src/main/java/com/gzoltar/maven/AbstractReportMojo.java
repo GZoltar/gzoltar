@@ -6,11 +6,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import com.gzoltar.report.ReportFormat;
 
 /**
- * Base class for creating a fault localization report for tests of a single project in a defined
- * formats (e.g., TXT, and HTML).
+ * Base class for creating a report.
  */
 public abstract class AbstractReportMojo extends AbstractMavenReport {
 
@@ -19,21 +17,6 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
    */
   @Parameter(property = "project", readonly = true)
   private MavenProject project;
-
-  /**
-   * Fault localization report format. Valid options are:
-   * <ul>
-   * <li>txt: text based fault localization reports (default)</li>
-   * <li>html: graphical fault localization reports in HTML</li>
-   * </ul>
-   */
-  @Parameter(property = "gzoltar.format", defaultValue = "txt")
-  protected String format;
-
-  @Override
-  public String getDescription(final Locale locale) {
-    return this.getName(locale) + " Fault Localization Report.";
-  }
 
   @Override
   public String getName(Locale locale) {
@@ -67,27 +50,11 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
       return;
     }
 
-    if (!this.isReportFormatValid()) {
-      getLog().info("Invalid format type '" + this.format + "'. Valid values are:");
-      for (ReportFormat reportFormat : ReportFormat.values()) {
-        getLog().info("  " + reportFormat.name());
-      }
-      return;
-    }
-
     try {
       this.executeReport(Locale.getDefault());
     } catch (final MavenReportException e) {
       throw new MojoExecutionException(
           "An error has occurred in " + this.getName(Locale.ENGLISH) + " report generation.", e);
-    }
-  }
-
-  public boolean isReportFormatValid() {
-    try {
-      return ReportFormat.valueOf(this.format.toUpperCase(Locale.ENGLISH)) != null;
-    } catch (IllegalArgumentException e) {
-      return false;
     }
   }
 }
