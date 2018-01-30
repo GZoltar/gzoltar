@@ -3,10 +3,12 @@ package com.gzoltar.report.fl;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.spectrum.ISpectrum;
+import com.gzoltar.fl.IFormula;
 import com.gzoltar.report.AbstractReport;
 
 public class FaultLocalizationTxtReport extends AbstractReport {
@@ -17,8 +19,8 @@ public class FaultLocalizationTxtReport extends AbstractReport {
 
   private final static String TESTS_FILES_NAME = "tests";
 
-  public FaultLocalizationTxtReport(final File outputDirectory) {
-    super(outputDirectory);
+  public FaultLocalizationTxtReport(final File outputDirectory, final List<IFormula> formulas) {
+    super(outputDirectory, formulas);
   }
 
   /**

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import com.gzoltar.core.spectrum.ISpectrum;
+import com.gzoltar.fl.IFormula;
 import com.gzoltar.report.AbstractReport;
 
 public class MetricsReport extends AbstractReport {
@@ -16,13 +17,15 @@ public class MetricsReport extends AbstractReport {
 
   private final List<Metric> metrics;
 
-  public MetricsReport(final File outputDirectory) {
-    super(outputDirectory);
+  public MetricsReport(final File outputDirectory, final List<IFormula> formulas) {
+    super(outputDirectory, formulas);
 
     this.metrics = new ArrayList<Metric>();
     // TODO for now list of metrics is fixed to these metrics, ideally it should be a parameter
-    Collections.addAll(this.metrics, new RhoMetric(),
-        new AmbiguityMetric()/* , new EntropyMetric() */);
+    Collections.addAll(this.metrics, new RhoMetric(), new AmbiguityMetric());
+    for (IFormula formula : this.formulas) {
+      this.metrics.add(new EntropyMetric(formula));
+    }
   }
 
   @Override
