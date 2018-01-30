@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Vertical Partition View</title>
+
+    <style type="text/css">
+      svg {
+        margin: 10px 0px 0px 0px;
+      }
+      rect {
+        stroke: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+
+    <script type="text/javascript" src="gzoltar.js"></script>
+
+    <script type="text/javascript">
+      var w, h, x, y;
+
+      function initVars() {
+        w = window.innerWidth - 25;
+        h = window.innerHeight - 30;
+        x = d3.scale.linear().range([0, w]);
+        y = d3.scale.linear().range([0, h]);
+      };
+      initVars();
+
+      var svg = d3.select("body").append("svg:svg").attr("width", w).attr("height", h).call(d3.behavior.zoom().on("zoom", zoomRedraw)).on("dblclick.zoom", null).append("svg:g");
+      var partition = d3.layout.partition().value(function(d) {
+        return d.size;
+      });
+
+      // inject JSON in here, e.g.,
+      // var root = JSON.parse('...');
+%s
+
+      var clicked = root;
+      var maxProb = probabilities(root);
+      g = getG();
+      gt = getGt();
+      var colors = new Array();
+      var rect = svg.selectAll("rect").data(partition.nodes(root)).enter().append("svg:a").attr("xlink:href", function(d) {
+        return "#" + d.label
+      }).append("svg:rect").attr("fill", fill).on("mouseover", mouseover).on("mouseout", mouseout).on("dblclick", function(d) {
+        clicked = d;
+        return click(d);
+      });
+
+      function defineRect() {
+        svg.selectAll("rect").attr("x", function(d) {
+          return x(d.x);
+        }).attr("y", function(d) {
+          return y(d.y);
+        }).attr("width", function(d) {
+          return x(d.dx);
+        }).attr("height", function(d) {
+          return y(d.dy);
+        });
+      };
+      defineRect();
+      rect.append("svg:title").text(function(d) {
+        return d.label + " | " + "Suspiciousness: " + d.probability.toFixed(3)
+      });
+
+      function click(d) {
+        x.domain([d.x, d.x + d.dx]);
+        y.domain([d.y, 1]).range([d.y ? 20 : 0, h]);
+        rect.transition().duration(1000).attr("x", function(d) {
+          return x(d.x);
+        }).attr("y", function(d) {
+          return y(d.y);
+        }).attr("width", function(d) {
+          return x(d.x + d.dx) - x(d.x);
+        }).attr("height", function(d) {
+          return y(d.y + d.dy) - y(d.y);
+        });
+      };
+
+      function resize(event) {
+        initVars();
+        defineRect();
+        resizeBody();
+        resizeSvg();
+        click(clicked);
+      };
+      onResize();
+      onRightClick();
+    </script>
+  </body>
+
+</html>
