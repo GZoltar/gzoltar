@@ -10,18 +10,18 @@ import com.gzoltar.sfl.SFL;
 
 public class FaultLocalization {
 
-  private final IFaultLocalization fl;
+  private final IFaultLocalization<IFormula> fl;
 
   /**
    * 
    * @param flFamily
    * @param formulas
    */
-  public FaultLocalization(final FaultLocalizationFamily flFamily, final List<String> formulas) {
+  public FaultLocalization(final FaultLocalizationFamily flFamily, final List<IFormula> formulas) {
     switch (flFamily) {
       case SFL:
       default:
-        this.fl = new SFL(formulas);
+        this.fl = new SFL<IFormula>(formulas);
         break;
     }
   }
