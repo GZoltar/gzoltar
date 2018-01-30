@@ -218,9 +218,15 @@ public class Node implements Serializable {
    * @return
    */
   public Double getSuspiciousnessValue(String formulaName) {
-    if (!this.suspiciousnessValues.containsKey(formulaName)) {
-      return null;
+    if (this.suspiciousnessValues == null && !this.children.isEmpty()) {
+      Double maxSuspiciousnessValue = -1.0 * Double.MIN_VALUE;
+      for (Node child : this.children) {
+        maxSuspiciousnessValue = Math.max(maxSuspiciousnessValue, child.getSuspiciousnessValue(formulaName));
+      }
+      return maxSuspiciousnessValue;
     }
+    assert this.suspiciousnessValues != null;
+    assert this.suspiciousnessValues.containsKey(formulaName);
     return this.suspiciousnessValues.get(formulaName);
   }
 
