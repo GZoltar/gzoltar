@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+  <id>distribution</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>jars</outputDirectory>
+      <outputFileNameMapping>gzoltarant.jar</outputFileNameMapping>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>${project.groupId}:com.gzoltar.ant:jar:jar-with-dependencies</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>jars</outputDirectory>
+      <outputFileNameMapping>gzoltaragent.jar</outputFileNameMapping>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>${project.groupId}:com.gzoltar.agent:*:runtime</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>jars</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}-${qualified.bundle.version}.${artifact.extension}</outputFileNameMapping>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>${project.groupId}:com.gzoltar.core</include>
+        <include>${project.groupId}:com.gzoltar.agent</include>
+        <include>${project.groupId}:com.gzoltar.fl</include>
+        <include>${project.groupId}:com.gzoltar.report</include>
+        <include>${project.groupId}:com.gzoltar.ant</include>
+      </includes>
+      <excludes>
+        <exclude>${project.groupId}:com.gzoltar.agent:*:runtime</exclude>
+        <exclude>${project.groupId}:com.gzoltar.ant:*:jar-with-dependencies</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>

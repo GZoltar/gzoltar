@@ -73,6 +73,7 @@
     <module>../com.gzoltar.agent</module>
     <module>../com.gzoltar.maven</module>
     <module>../com.gzoltar.ant</module>
+    <module>../com.gzoltar</module>
   </modules>
 
   <scm>
@@ -191,14 +192,29 @@
           <version>3.0.2</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.0.0-M1</version>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>buildnumber-maven-plugin</artifactId>
+          <version>1.4</version>
+        </plugin>
+        <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
           <version>3.3.0</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.genthaler</groupId>
+          <artifactId>beanshell-maven-plugin</artifactId>
+          <version>1.4</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -207,6 +223,73 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>parse-version</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>parse-version</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <doCheck>false</doCheck>
+          <doUpdate>false</doUpdate>
+          <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+          <revisionOnScmFailure>0000000</revisionOnScmFailure>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.genthaler</groupId>
+        <artifactId>beanshell-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>parse-version</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <quiet>true</quiet>
+              <script><![CDATA[
+                major = project.getProperties().get("parsedVersion.majorVersion");
+                minor = project.getProperties().get("parsedVersion.minorVersion");
+                incremental = project.getProperties().get("parsedVersion.incrementalVersion");
+                unqualifiedVersion = major + "." + minor + "." + incremental;
+                project.getProperties().setProperty("unqualifiedVersion", unqualifiedVersion);
+
+                qualifier = "${maven.build.timestamp}";
+                project.getProperties().setProperty("buildQualifier", qualifier);
+
+                qualifiedVersion = unqualifiedVersion + "." + qualifier;
+                project.getProperties().setProperty("qualified.bundle.version", qualifiedVersion);
+
+                buildDate = qualifier.substring(0, 4) + "/" + qualifier.substring(4, 6) + "/" + qualifier.substring(6, 8);
+                project.getProperties().setProperty("build.date", buildDate);
+              ]]>
+              </script>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
