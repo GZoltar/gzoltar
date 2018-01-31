@@ -34,7 +34,6 @@ public class Filter implements IFilter {
     for (IAction action : actions) {
       switch (this.filter(object, action)) {
         case ACCEPT:
-          return Outcome.NEXT;
         case NEXT:
         default:
           continue;
@@ -42,7 +41,6 @@ public class Filter implements IFilter {
           return Outcome.REJECT;
       }
     }
-
     return Outcome.NEXT;
   }
 
