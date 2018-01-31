@@ -36,13 +36,13 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
    * required in case of special frameworks that conflict with GZoltar code instrumentation, in
    * particular class loaders that do not have access to the Java runtime classes.
    */
-  @Parameter(property = "gzoltar.exclClassLoaders")
+  @Parameter(property = "gzoltar.exclClassLoaders", defaultValue = "sun.reflect.DelegatingClassLoader")
   private String exclClassLoaders;
 
   /**
    * Specifies whether classes without source location should be instrumented.
    */
-  @Parameter(property = "gzoltar.inclNoLocationClasses")
+  @Parameter(property = "gzoltar.inclNoLocationClasses", defaultValue = "false")
   private Boolean inclNoLocationClasses;
 
   /**
@@ -53,18 +53,18 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
    * <li>none: Do not produce any output.</li>
    * </ul>
    */
-  @Parameter(property = "gzoltar.output")
+  @Parameter(property = "gzoltar.output", defaultValue = "CONSOLE")
   private String output;
 
   /**
    * Specifies the granularity level. Valid options are:
    * <ul>
-   * <li>line</li>
+   * <li>line (default)</li>
    * <li>method</li>
    * <li>basicblock</li>
    * </ul>
    */
-  @Parameter(property = "gzoltar.granularity")
+  @Parameter(property = "gzoltar.granularity", defaultValue = "LINE")
   private String granularity;
 
   /**
@@ -76,9 +76,9 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
 
   /**
    * Specifies whether public static constructors of each class under test should be instrumented.
-   * Default is <code>true</code>.
+   * Default is <code>false</code>.
    */
-  @Parameter(property = "gzoltar.inclStaticConstructors", defaultValue = "true")
+  @Parameter(property = "gzoltar.inclStaticConstructors", defaultValue = "false")
   private Boolean inclStaticConstructors;
 
   /**
