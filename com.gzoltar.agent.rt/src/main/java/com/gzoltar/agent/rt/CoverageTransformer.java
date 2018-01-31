@@ -13,7 +13,6 @@ import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.matchers.ClassNameMatcher;
 import com.gzoltar.core.instr.matchers.PrefixMatcher;
 import com.gzoltar.core.instr.matchers.SourceLocationMatcher;
-import com.gzoltar.core.util.VMUtils;
 import javassist.ClassPool;
 import javassist.CtClass;
 
@@ -38,15 +37,15 @@ public class CoverageTransformer implements ClassFileTransformer {
 
     // instrument some classes
     WhiteList includeClasses =
-        new WhiteList(new ClassNameMatcher(VMUtils.toVMName(agentConfigs.getIncludes())));
+        new WhiteList(new ClassNameMatcher(agentConfigs.getIncludes()));
 
     // do not instrument some classes
     BlackList excludeClasses =
-        new BlackList(new ClassNameMatcher(VMUtils.toVMName(agentConfigs.getExcludes())));
+        new BlackList(new ClassNameMatcher(agentConfigs.getExcludes()));
 
     // do not instrument some classloaders
     BlackList excludeClassLoaders =
-        new BlackList(new ClassNameMatcher(VMUtils.toVMName(agentConfigs.getExclClassloader())));
+        new BlackList(new ClassNameMatcher(agentConfigs.getExclClassloader()));
 
     this.filter =
         new Filter(excludeGZoltarClasses, includeClasses, excludeClasses, excludeClassLoaders);
