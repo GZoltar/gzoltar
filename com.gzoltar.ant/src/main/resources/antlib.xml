@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<antlib>
+   <taskdef name="agent" classname="com.gzoltar.ant.AgentTask"/>
+   <taskdef name="coverage" classname="com.gzoltar.ant.CoverageTask"/>
+</antlib>

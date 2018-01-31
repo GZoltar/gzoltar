@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.gzoltar</groupId>
+    <artifactId>com.gzoltar.build</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../com.gzoltar.build</relativePath>
+  </parent>
+
+  <artifactId>com.gzoltar.ant</artifactId>
+
+  <name>GZoltar :: Ant Plugin</name>
+  <description>GZoltar Ant Plugin</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.agent</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.fl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.report</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>${ant.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant-junit</artifactId>
+      <version>${ant.junit.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
+              <minimizeJar>true</minimizeJar>
+              <relocations>
+                <relocation>
+                  <pattern>com.gzoltar.core</pattern>
+                  <shadedPattern>com.gzoltar.internal.core</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javassist</pattern>
+                  <shadedPattern>com.gzoltar.internal.javassist</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.apache.commons.lang3</pattern>
+                  <shadedPattern>com.gzoltar.internal.org.apache.commons.lang3</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.apache.commons.io</pattern>
+                  <shadedPattern>com.gzoltar.internal.org.apache.commons.io</shadedPattern>
+                </relocation>
+              </relocations>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <manifestEntries>
+                    <Implementation-Title>${project.description}</Implementation-Title>
+                    <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
+                    <Implementation-Version>${project.version}</Implementation-Version>
+                  </manifestEntries>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <executions>
+          <execution>
+            <!--
+            None of resource tranformers from maven-shade-plugin
+            (including combination of DontIncludeResourceTransformer and ManifestResourceTransformer)
+            does not allow us to leave only desired entries and remove others from META-INF/MANIFEST.MF
+            So we use goal "bundle" instead of "manifest".
+            This introduces some redundant operations, but their cost is negligible.
+            -->
+            <phase>package</phase>
+            <goals>
+              <goal>bundle</goal>
+            </goals>
+            <configuration>
+              <excludeDependencies>true</excludeDependencies>
+              <instructions>
+                <Require-Bundle>org.apache.ant;bundle-version="[1.7.0,2.0.0)"</Require-Bundle>
+              </instructions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

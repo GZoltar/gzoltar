@@ -72,6 +72,7 @@
     <module>../com.gzoltar.agent.rt</module>
     <module>../com.gzoltar.agent</module>
     <module>../com.gzoltar.maven</module>
+    <module>../com.gzoltar.ant</module>
   </modules>
 
   <scm>
@@ -115,6 +116,8 @@
     <javassist.version>3.22.0-CR2</javassist.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-lang.version>3.7</commons-lang.version>
+    <ant.version>1.10.1</ant.version>
+    <ant.junit.version>1.10.1</ant.junit.version>
   </properties>
 
   <dependencyManagement>
@@ -154,6 +157,11 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>com.gzoltar.maven</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>com.gzoltar.ant</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
