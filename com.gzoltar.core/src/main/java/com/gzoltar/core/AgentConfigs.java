@@ -115,11 +115,11 @@ public final class AgentConfigs {
 
   /**
    * Specifies whether public static constructors of each class under test should be instrumented.
-   * Default is <code>true</code>.
+   * Default is <code>false</code>.
    */
   public static final String INCLSTATICCONSTRUCTORS_KEY = "inclstaticconstructors";
 
-  public static final boolean DEFAULT_INCLSTATICCONSTRUCTORS = true;
+  public static final boolean DEFAULT_INCLSTATICCONSTRUCTORS = false;
 
   /**
    * Specifies whether methods annotated with @deprecated of each class under test should be
