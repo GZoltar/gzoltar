@@ -67,6 +67,9 @@ public class FaultLocalizationFamilies extends Union {
      * @return
      */
     public FaultLocalizationFamily getFaultLocalizationFamily() {
+      if (this.faultLocalizationFamily == null) {
+        throw new RuntimeException("<flFamily> tag requires a 'name' value");
+      }
       return this.faultLocalizationFamily;
     }
 
