@@ -6,15 +6,15 @@ import com.gzoltar.report.metrics.SimpsonMetric.GlobalInvertedSimpsonMetric;
 import com.gzoltar.report.metrics.SimpsonMetric.InvertedSimpsonMetric;
 import com.gzoltar.report.metrics.reducers.MultiplicationReducer;
 
-public class DDUMetric implements Metric {
+public class DDUMetric extends AbstractMetric {
 
-  private final Metric metric;
+  private final IMetric metric;
 
   public DDUMetric() {
     this.metric = generateMetric();
   }
 
-  protected Metric generateMetric() {
+  protected IMetric generateMetric() {
     return new MultiplicationReducer(new NormalizedRho(), new InvertedSimpsonMetric(),
         new AmbiguityMetric());
   }
@@ -31,7 +31,7 @@ public class DDUMetric implements Metric {
 
   public static class GlobalDDUMetric extends DDUMetric {
     @Override
-    protected Metric generateMetric() {
+    protected IMetric generateMetric() {
       return new MultiplicationReducer(new NormalizedRho(), new GlobalInvertedSimpsonMetric(),
           new AmbiguityMetric());
     }

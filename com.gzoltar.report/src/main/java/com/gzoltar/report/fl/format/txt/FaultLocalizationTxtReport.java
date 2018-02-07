@@ -1,4 +1,4 @@
-package com.gzoltar.report.fl;
+package com.gzoltar.report.fl.format.txt;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +9,9 @@ import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFormula;
-import com.gzoltar.report.AbstractReport;
+import com.gzoltar.report.fl.format.IFaultLocalizationReportFormat;
 
-public class FaultLocalizationTxtReport extends AbstractReport {
+public class FaultLocalizationTxtReport implements IFaultLocalizationReportFormat {
 
   private final static String MATRIX_FILE_NAME = "matrix";
 
@@ -19,17 +19,14 @@ public class FaultLocalizationTxtReport extends AbstractReport {
 
   private final static String TESTS_FILES_NAME = "tests";
 
-  public FaultLocalizationTxtReport(final File outputDirectory, final List<IFormula> formulas) {
-    super(outputDirectory, formulas);
-  }
-
   /**
    * {@inheritDoc}
    */
   @Override
-  public void generateReport(final ISpectrum spectrum) throws IOException {
-    if (!this.outputDirectory.exists()) {
-      this.outputDirectory.mkdirs();
+  public void generateFaultLocalizationReport(final File outputDirectory, final ISpectrum spectrum,
+      final List<IFormula> formulas) throws IOException {
+    if (!outputDirectory.exists()) {
+      outputDirectory.mkdirs();
     }
 
     /**
@@ -37,7 +34,7 @@ public class FaultLocalizationTxtReport extends AbstractReport {
      */
 
     PrintWriter matrixWriter =
-        new PrintWriter(this.outputDirectory + File.separator + MATRIX_FILE_NAME, "UTF-8");
+        new PrintWriter(outputDirectory + File.separator + MATRIX_FILE_NAME, "UTF-8");
 
     for (Transaction transaction : spectrum.getTransactions()) {
       StringBuilder transactionStr = new StringBuilder();
@@ -65,7 +62,7 @@ public class FaultLocalizationTxtReport extends AbstractReport {
      */
 
     PrintWriter spectraWriter =
-        new PrintWriter(this.outputDirectory + File.separator + SPECTRA_FILE_NAME, "UTF-8");
+        new PrintWriter(outputDirectory + File.separator + SPECTRA_FILE_NAME, "UTF-8");
 
     for (Node node : spectrum.getTargetNodes()) {
       spectraWriter.println(node.getNameWithLineNumber());
@@ -78,7 +75,7 @@ public class FaultLocalizationTxtReport extends AbstractReport {
      */
 
     PrintWriter testsWriter =
-        new PrintWriter(this.outputDirectory + File.separator + TESTS_FILES_NAME, "UTF-8");
+        new PrintWriter(outputDirectory + File.separator + TESTS_FILES_NAME, "UTF-8");
 
     // header
     testsWriter.println("name,outcome,runtime,stacktrace");

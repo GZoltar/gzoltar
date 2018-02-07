@@ -2,15 +2,8 @@ package com.gzoltar.report.metrics;
 
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.spectrum.ISpectrum;
-import com.gzoltar.fl.IFormula;
 
 public class EntropyMetric extends AbstractMetric {
-
-  private final IFormula formula;
-
-  public EntropyMetric(final IFormula formula) {
-    this.formula = formula;
-  }
 
   @Override
   public double calculate(final ISpectrum spectrum) {
@@ -20,7 +13,7 @@ public class EntropyMetric extends AbstractMetric {
 
     double entropy = 0.0;
     for (Node node : spectrum.getTargetNodes()) {
-      double suspiciousness = node.getSuspiciousnessValue(this.formula.getName());
+      double suspiciousness = node.getSuspiciousnessValue(this.getFormula().getName());
       if (Double.compare(suspiciousness, 0.0) > 0) {
         entropy += suspiciousness * this.log2(suspiciousness);
       }
@@ -31,6 +24,12 @@ public class EntropyMetric extends AbstractMetric {
 
   @Override
   public String getName() {
-    return "Entropy_" + this.formula.getName();
+    assert this.getFormula() != null;
+    return "Entropy_" + this.getFormula().getName();
+  }
+
+  @Override
+  public boolean requireFormula() {
+    return true;
   }
 }

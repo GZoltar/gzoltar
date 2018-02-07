@@ -1,4 +1,4 @@
-package com.gzoltar.report.fl;
+package com.gzoltar.report.fl.format.html;
 
 public enum HTMLViews {
 

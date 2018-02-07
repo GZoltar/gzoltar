@@ -6,12 +6,6 @@ import com.gzoltar.core.spectrum.ISpectrum;
 
 public class CoverageMetric extends AbstractMetric {
 
-  private final String granularity;
-
-  public CoverageMetric(final String granularity) {
-    this.granularity = granularity;
-  }
-
   @Override
   public double calculate(final ISpectrum spectrum) {
     if (!this.validMatrix(spectrum)) {
@@ -36,10 +30,6 @@ public class CoverageMetric extends AbstractMetric {
 
   @Override
   public String getName() {
-    String name = "Coverage";
-    if (this.granularity != null) {
-      name += " [ " + this.granularity + " ]";
-    }
-    return name;
+    return "Coverage";
   }
 }

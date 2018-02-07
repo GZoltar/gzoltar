@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import com.gzoltar.core.spectrum.ISpectrum;
-import com.gzoltar.fl.IFormula;
+import com.gzoltar.report.metrics.IMetric;
 
 public interface IReport {
 
@@ -18,7 +18,7 @@ public interface IReport {
    * 
    * @return
    */
-  public List<IFormula> getFormulas();
+  public List<IMetric> getMetrics();
 
   /**
    * 

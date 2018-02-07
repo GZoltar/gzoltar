@@ -1,5 +1,6 @@
 package com.gzoltar.maven;
 
+import java.io.File;
 import java.util.Locale;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -18,6 +19,20 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
   @Parameter(property = "project", readonly = true)
   private MavenProject project;
 
+  /**
+   * Output directory for the reports.
+   */
+  @Parameter(property = "gzoltar.outputDirectory",
+      defaultValue = "${project.reporting.outputDirectory}/gzoltar")
+  protected File outputDirectory;
+
+  /**
+   * File with execution data.
+   */
+  @Parameter(property = "gzoltar.dataFile",
+      defaultValue = "${project.build.directory}/gzoltar.exec")
+  protected File dataFile;
+
   @Override
   public String getName(Locale locale) {
     return "GZoltar";
@@ -35,14 +50,12 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 
   @Override
   public boolean canGenerateReport() {
-    if (!this.canGenerateReportRegardingDataFiles()) {
+    if (!this.dataFile.exists()) {
       getLog().info("Skipping GZoltar execution due to missing execution data file.");
       return false;
     }
     return true;
   }
-
-  protected abstract boolean canGenerateReportRegardingDataFiles();
 
   @Override
   public void execute() throws MojoExecutionException {

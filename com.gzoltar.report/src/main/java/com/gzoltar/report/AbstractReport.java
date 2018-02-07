@@ -4,17 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import com.gzoltar.core.spectrum.ISpectrum;
-import com.gzoltar.fl.IFormula;
+import com.gzoltar.report.metrics.IMetric;
 
 public abstract class AbstractReport implements IReport {
 
-  protected final File outputDirectory;
+  private final File outputDirectory;
 
-  protected final List<IFormula> formulas;
+  private final List<IMetric> metrics;
 
-  protected AbstractReport(File outputDirectory, final List<IFormula> formulas) {
+  protected AbstractReport(final File outputDirectory, final List<IMetric> metrics) {
     this.outputDirectory = outputDirectory;
-    this.formulas = formulas;
+    this.metrics = metrics;
   }
 
   /**
@@ -24,11 +24,8 @@ public abstract class AbstractReport implements IReport {
     return this.outputDirectory;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  public List<IFormula> getFormulas() {
-    return this.formulas;
+  public List<IMetric> getMetrics() {
+    return this.metrics;
   }
 
   /**

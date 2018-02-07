@@ -1,10 +1,10 @@
 package com.gzoltar.report.metrics.reducers;
 
-import com.gzoltar.report.metrics.Metric;
+import com.gzoltar.report.metrics.IMetric;
 
 public class MultiplicationReducer extends AbstractMetricReducer {
 
-  public MultiplicationReducer(final Metric... metrics) {
+  public MultiplicationReducer(final IMetric... metrics) {
     super(metrics);
   }
 

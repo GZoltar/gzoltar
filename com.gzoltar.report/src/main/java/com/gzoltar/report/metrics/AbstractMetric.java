@@ -1,8 +1,13 @@
 package com.gzoltar.report.metrics;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.gzoltar.core.spectrum.ISpectrum;
+import com.gzoltar.fl.IFormula;
 
-public abstract class AbstractMetric implements Metric {
+public abstract class AbstractMetric implements IMetric {
+
+  private IFormula formula = null;
 
   /**
    * {@inheritDoc}
@@ -13,6 +18,27 @@ public abstract class AbstractMetric implements Metric {
    * {@inheritDoc}
    */
   public abstract String getName();
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean requireFormula() {
+    return false;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void setFormula(IFormula formula) {
+    this.formula = formula;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public IFormula getFormula() {
+    return this.formula;
+  }
 
   /**
    * 
@@ -62,5 +88,35 @@ public abstract class AbstractMetric implements Metric {
       return 1.0;
     }
     return value / (1.0 + value);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+    HashCodeBuilder builder = new HashCodeBuilder();
+    builder.append(this.getName());
+    return builder.toHashCode();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof IMetric)) {
+      return false;
+    }
+
+    AbstractMetric metric = (AbstractMetric) obj;
+
+    EqualsBuilder builder = new EqualsBuilder();
+    builder.append(this.getName(), metric.getName());
+
+    return builder.isEquals();
   }
 }

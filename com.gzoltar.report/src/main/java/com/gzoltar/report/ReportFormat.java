@@ -3,12 +3,12 @@ package com.gzoltar.report;
 public enum ReportFormat {
 
   /**
-   * Text based fault localization reports.
+   * Text-based reports.
    */
   TXT,
 
   /**
-   * Graphical fault localization reports in HTML.
+   * HTML-based reports.
    */
   HTML
 }

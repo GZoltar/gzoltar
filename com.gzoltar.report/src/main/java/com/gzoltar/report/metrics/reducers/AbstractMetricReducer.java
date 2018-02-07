@@ -1,13 +1,14 @@
 package com.gzoltar.report.metrics.reducers;
 
 import com.gzoltar.core.spectrum.ISpectrum;
-import com.gzoltar.report.metrics.Metric;
+import com.gzoltar.report.metrics.AbstractMetric;
+import com.gzoltar.report.metrics.IMetric;
 
-public abstract class AbstractMetricReducer implements Metric {
+public abstract class AbstractMetricReducer extends AbstractMetric {
 
-  private final Metric metrics[];
+  private final IMetric metrics[];
 
-  public AbstractMetricReducer(final Metric... metrics) {
+  public AbstractMetricReducer(final IMetric... metrics) {
     this.metrics = metrics;
   }
 
@@ -15,7 +16,7 @@ public abstract class AbstractMetricReducer implements Metric {
   public double calculate(final ISpectrum spectrum) {
     double tmp = startValue();
 
-    for (Metric metric : this.metrics) {
+    for (IMetric metric : this.metrics) {
       tmp = reduce(tmp, metric.calculate(spectrum));
     }
 
