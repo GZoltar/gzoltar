@@ -2,4 +2,5 @@
 <antlib>
    <taskdef name="agent" classname="com.gzoltar.ant.AgentTask"/>
    <taskdef name="coverage" classname="com.gzoltar.ant.CoverageTask"/>
+   <taskdef name="fl-report" classname="com.gzoltar.ant.fl.FaultLocalizationReportTask"/>
 </antlib>

@@ -1,6 +1,7 @@
 package com.gzoltar.report.fl.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import com.gzoltar.report.AbstractReportFormat;
@@ -31,6 +32,14 @@ public class ConfigHTMLReportFormat extends AbstractReportFormat {
     for (String htmlView : htmlViews) {
       this.htmlViews.add(HTMLViews.valueOf(htmlView.toUpperCase(Locale.ENGLISH)));
     }
+  }
+
+  /**
+   * 
+   * @param htmlViews
+   */
+  public void setViews(String htmlViews) {
+    this.setHtmlViews(Arrays.asList(htmlViews.split(":")));
   }
 
   /**

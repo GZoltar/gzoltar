@@ -33,6 +33,10 @@ public class ConfigFaultLocalizationFamily {
     return this.faultLocalizationFamily;
   }
 
+  public void setFaultLocalizationFamily(FaultLocalizationFamily faultLocalizationFamily) {
+    this.faultLocalizationFamily = faultLocalizationFamily;
+  }
+
   public void setFormulas(List<String> formulas) {
     this.formulas = new ArrayList<IFormula>();
     for (String formula : formulas) {
