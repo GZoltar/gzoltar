@@ -1,4 +1,4 @@
-package com.gzoltar.report.fl.format.html;
+package com.gzoltar.report.fl.formatter.html;
 
 import java.io.File;
 import java.io.IOException;

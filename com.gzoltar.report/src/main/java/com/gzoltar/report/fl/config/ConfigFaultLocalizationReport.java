@@ -3,7 +3,7 @@ package com.gzoltar.report.fl.config;
 import java.util.ArrayList;
 import java.util.List;
 import com.gzoltar.fl.FaultLocalizationFamily;
-import com.gzoltar.report.IReportFormat;
+import com.gzoltar.report.IReportFormatter;
 import com.gzoltar.report.metrics.Metric;
 import com.gzoltar.sfl.SFLFormulas;
 
@@ -27,19 +27,19 @@ public class ConfigFaultLocalizationReport {
               <metric>EntROPY</metric>
               <metric>...</metric>
             </metrics>
-            <formats>
-              <format>
+            <formatters>
+              <formatter>
                 <name>TXT</name>
-              </format>
-              <format>
+              </formatter>
+              <formatter>
                 <name>HTML</name>
                 <htmlViews>
                   <htmlView>SUNburst</htmlView>
                   <htmlView>VERTICAL_PARTITION</htmlView>
                   <htmlView>...</htmlView>
                 </htmlViews>
-              </format>
-            </formats>
+              </formatter>
+            </formatters>
           </flFamily>
           <flFamily>
             ...
@@ -57,7 +57,7 @@ public class ConfigFaultLocalizationReport {
     sfl.setName(FaultLocalizationFamily.SFL.name());
     sfl.setFormulas(getDefaultSFLFormulas());
     sfl.setMetrics(getDefaultMetrics());
-    sfl.setFormats(getDefaultFormats());
+    sfl.setFormatters(getDefaultFormatters());
 
     /**
      * Families
@@ -86,12 +86,12 @@ public class ConfigFaultLocalizationReport {
     return metrics;
   }
 
-  private static List<IReportFormat> getDefaultFormats() {
-    List<IReportFormat> formats = new ArrayList<IReportFormat>();
-    formats.add(new ConfigTxtReportFormat());
-    formats.add(new ConfigHTMLReportFormat());
+  private static List<IReportFormatter> getDefaultFormatters() {
+    List<IReportFormatter> formatters = new ArrayList<IReportFormatter>();
+    formatters.add(new ConfigTxtReportFormatter());
+    formatters.add(new ConfigHTMLReportFormatter());
 
-    return formats;
+    return formatters;
   }
 
   /**

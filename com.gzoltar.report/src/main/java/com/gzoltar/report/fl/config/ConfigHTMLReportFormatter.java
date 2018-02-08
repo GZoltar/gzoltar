@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import com.gzoltar.report.AbstractReportFormat;
-import com.gzoltar.report.ReportFormat;
-import com.gzoltar.report.fl.format.html.HTMLViews;
+import com.gzoltar.report.AbstractReportFormatter;
+import com.gzoltar.report.ReportFormatter;
+import com.gzoltar.report.fl.formatter.html.HTMLViews;
 
-public class ConfigHTMLReportFormat extends AbstractReportFormat {
+public class ConfigHTMLReportFormatter extends AbstractReportFormatter {
 
   private List<HTMLViews> htmlViews = new ArrayList<HTMLViews>();
 
   /**
    * 
    */
-  public ConfigHTMLReportFormat() {
-    super(ReportFormat.HTML);
+  public ConfigHTMLReportFormatter() {
+    super(ReportFormatter.HTML);
 
     // default view
     this.htmlViews.add(HTMLViews.SUNBURST);

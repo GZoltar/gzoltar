@@ -1,4 +1,4 @@
-package com.gzoltar.report.fl.format;
+package com.gzoltar.report.fl.formatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.util.List;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFormula;
 
-public interface IFaultLocalizationReportFormat {
+public interface IFaultLocalizationReportFormatter {
 
   /**
    * 

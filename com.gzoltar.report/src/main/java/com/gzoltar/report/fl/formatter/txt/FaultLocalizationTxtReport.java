@@ -1,4 +1,4 @@
-package com.gzoltar.report.fl.format.txt;
+package com.gzoltar.report.fl.formatter.txt;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +9,9 @@ import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFormula;
-import com.gzoltar.report.fl.format.IFaultLocalizationReportFormat;
+import com.gzoltar.report.fl.formatter.IFaultLocalizationReportFormatter;
 
-public class FaultLocalizationTxtReport implements IFaultLocalizationReportFormat {
+public class FaultLocalizationTxtReport implements IFaultLocalizationReportFormatter {
 
   private final static String MATRIX_FILE_NAME = "matrix";
 

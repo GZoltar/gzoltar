@@ -1,6 +1,6 @@
 package com.gzoltar.report;
 
-public enum ReportFormat {
+public enum ReportFormatter {
 
   /**
    * Text-based reports.

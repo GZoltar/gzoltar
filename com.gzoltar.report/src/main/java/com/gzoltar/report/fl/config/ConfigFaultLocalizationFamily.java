@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import com.gzoltar.fl.FaultLocalizationFamily;
 import com.gzoltar.fl.IFormula;
-import com.gzoltar.report.IReportFormat;
+import com.gzoltar.report.IReportFormatter;
 import com.gzoltar.report.metrics.IMetric;
 import com.gzoltar.report.metrics.Metric;
 import com.gzoltar.sfl.SFLFormulas;
@@ -18,7 +18,7 @@ public class ConfigFaultLocalizationFamily {
 
   private List<IMetric> metrics;
 
-  private List<IReportFormat> formats;
+  private List<IReportFormatter> formatters;
 
   public void setName(String faultLocalizationFamilyName) {
     this.faultLocalizationFamily =
@@ -71,15 +71,15 @@ public class ConfigFaultLocalizationFamily {
     return !this.metrics.isEmpty();
   }
 
-  public void setFormats(List<IReportFormat> formats) {
-    this.formats = formats;
+  public void setFormatters(List<IReportFormatter> formatters) {
+    this.formatters = formatters;
   }
 
-  public List<IReportFormat> getFormats() {
-    return this.formats;
+  public List<IReportFormatter> getFormatters() {
+    return this.formatters;
   }
 
-  public boolean hasReportFormats() {
-    return !this.formats.isEmpty();
+  public boolean hasReportFormatters() {
+    return !this.formatters.isEmpty();
   }
 }

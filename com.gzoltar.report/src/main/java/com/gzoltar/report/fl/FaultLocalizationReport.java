@@ -5,25 +5,25 @@ import java.io.IOException;
 import java.util.List;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFormula;
-import com.gzoltar.report.fl.format.IFaultLocalizationReportFormat;
+import com.gzoltar.report.fl.formatter.IFaultLocalizationReportFormatter;
 import com.gzoltar.report.metrics.IMetric;
 import com.gzoltar.report.metrics.MetricsReport;
 
 public class FaultLocalizationReport extends AbstractFaultLocalizationReport {
 
-  private final IFaultLocalizationReportFormat reportFormat;
+  private final IFaultLocalizationReportFormatter reportFormatter;
 
   /**
    * 
    * @param outputDirectory
    * @param metrics
    * @param formulas
-   * @param reportFormat
+   * @param reportFormatter
    */
   public FaultLocalizationReport(final File outputDirectory, final List<IMetric> metrics,
-      final List<IFormula> formulas, final IFaultLocalizationReportFormat reportFormat) {
+      final List<IFormula> formulas, final IFaultLocalizationReportFormatter reportFormatter) {
     super(outputDirectory, metrics, formulas);
-    this.reportFormat = reportFormat;
+    this.reportFormatter = reportFormatter;
   }
 
   /**
@@ -31,7 +31,7 @@ public class FaultLocalizationReport extends AbstractFaultLocalizationReport {
    */
   public void generateReport(final ISpectrum spectrum) throws IOException {
     // generate txt/html report
-    this.reportFormat.generateFaultLocalizationReport(this.getOutputDirectory(), spectrum,
+    this.reportFormatter.generateFaultLocalizationReport(this.getOutputDirectory(), spectrum,
         this.getFormulas());
 
     // apart from providing a fault localization report in here a text-based metrics report is also

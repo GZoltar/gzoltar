@@ -1,4 +1,4 @@
-package com.gzoltar.report.fl.format.html;
+package com.gzoltar.report.fl.formatter.html;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +9,9 @@ import org.apache.commons.io.IOUtils;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFormula;
-import com.gzoltar.report.fl.format.IFaultLocalizationReportFormat;
+import com.gzoltar.report.fl.formatter.IFaultLocalizationReportFormatter;
 
-public abstract class AbstractHTMLReport implements IFaultLocalizationReportFormat {
+public abstract class AbstractHTMLReport implements IFaultLocalizationReportFormatter {
 
   private static String HTML_DIR = "html_views";
 

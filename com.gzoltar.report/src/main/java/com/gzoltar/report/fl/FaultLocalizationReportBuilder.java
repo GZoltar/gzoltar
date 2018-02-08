@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Locale;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.FaultLocalization;
-import com.gzoltar.report.IReportFormat;
+import com.gzoltar.report.IReportFormatter;
 import com.gzoltar.report.fl.config.ConfigFaultLocalizationFamily;
 import com.gzoltar.report.fl.config.ConfigFaultLocalizationReport;
-import com.gzoltar.report.fl.config.ConfigHTMLReportFormat;
-import com.gzoltar.report.fl.format.IFaultLocalizationReportFormat;
-import com.gzoltar.report.fl.format.html.FaultLocalizationHTMLReport;
-import com.gzoltar.report.fl.format.txt.FaultLocalizationTxtReport;
+import com.gzoltar.report.fl.config.ConfigHTMLReportFormatter;
+import com.gzoltar.report.fl.formatter.IFaultLocalizationReportFormatter;
+import com.gzoltar.report.fl.formatter.html.FaultLocalizationHTMLReport;
+import com.gzoltar.report.fl.formatter.txt.FaultLocalizationTxtReport;
 
 public class FaultLocalizationReportBuilder {
 
@@ -39,25 +39,25 @@ public class FaultLocalizationReportBuilder {
           new FaultLocalization(flFamily.getFaultLocalizationFamily(), flFamily.getFormulas());
       ISpectrum spectrum = fl.diagnose(dataFile);
 
-      // which format of report?
-      for (IReportFormat format : flFamily.getFormats()) {
-        File formatOutputDirectory = new File(familyOutputDirectory + File.separator
-            + format.getReportFormat().name().toLowerCase(Locale.ENGLISH));
+      // which formatter of report?
+      for (IReportFormatter formatter : flFamily.getFormatters()) {
+        File formatterOutputDirectory = new File(familyOutputDirectory + File.separator
+            + formatter.getReportFormatter().name().toLowerCase(Locale.ENGLISH));
 
-        IFaultLocalizationReportFormat report = null;
-        switch (format.getReportFormat()) {
+        IFaultLocalizationReportFormatter report = null;
+        switch (formatter.getReportFormatter()) {
           case TXT:
           default:
             report = new FaultLocalizationTxtReport();
             break;
           case HTML:
             report =
-                new FaultLocalizationHTMLReport(((ConfigHTMLReportFormat) format).getHtmlViews());
+                new FaultLocalizationHTMLReport(((ConfigHTMLReportFormatter) formatter).getHtmlViews());
             break;
         }
 
         // then report it
-        FaultLocalizationReport flReport = new FaultLocalizationReport(formatOutputDirectory,
+        FaultLocalizationReport flReport = new FaultLocalizationReport(formatterOutputDirectory,
             flFamily.getMetrics(), flFamily.getFormulas(), report);
         flReport.generateReport(spectrum);
       }

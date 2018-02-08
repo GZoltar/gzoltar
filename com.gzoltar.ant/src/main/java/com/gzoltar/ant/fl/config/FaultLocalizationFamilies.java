@@ -42,7 +42,7 @@ public class FaultLocalizationFamilies extends Union {
 
     private final Metrics metrics = new Metrics();
 
-    private final Formats formats = new Formats();
+    private final Formatters formatters = new Formatters();
 
     /**
      * 
@@ -109,16 +109,16 @@ public class FaultLocalizationFamilies extends Union {
      * 
      * @return
      */
-    public Formats createFormats() {
-      return this.formats;
+    public Formatters createFormatters() {
+      return this.formatters;
     }
 
     /**
      * 
      * @return
      */
-    public Formats getFormatsGroup() {
-      return this.formats;
+    public Formatters getFormattersGroup() {
+      return this.formatters;
     }
   }
 }

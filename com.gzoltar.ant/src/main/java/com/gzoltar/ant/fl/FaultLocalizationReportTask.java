@@ -41,8 +41,8 @@ public class FaultLocalizationReportTask extends AbstractReportTask {
       configFlFamily.setFormulas(flFamily.getFormulasGroup().getNameOfFormulas());
       // set metrics
       configFlFamily.setMetrics(flFamily.getMetricsGroup().getNameOfMetrics());
-      // set formats
-      configFlFamily.setFormats(flFamily.getFormatsGroup().getFormats());
+      // set formatters
+      configFlFamily.setFormatters(flFamily.getFormattersGroup().getFormatters());
 
       configFlFamilies.add(configFlFamily);
     }
