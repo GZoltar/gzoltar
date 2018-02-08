@@ -16,6 +16,14 @@
     </dependencySet>
     <dependencySet>
       <outputDirectory>jars</outputDirectory>
+      <outputFileNameMapping>gzoltarcli.jar</outputFileNameMapping>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>${project.groupId}:com.gzoltar.cli:jar:jar-with-dependencies</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>jars</outputDirectory>
       <outputFileNameMapping>gzoltaragent.jar</outputFileNameMapping>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>

@@ -52,6 +52,12 @@
       <version>${project.version}</version>
       <classifier>jar-with-dependencies</classifier>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.cli</artifactId>
+      <version>${project.version}</version>
+      <classifier>jar-with-dependencies</classifier>
+    </dependency>
   </dependencies>
 
   <build>
