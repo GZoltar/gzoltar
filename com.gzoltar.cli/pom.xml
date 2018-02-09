@@ -21,9 +21,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>${commons-cli.version}</version>
+      <groupId>args4j</groupId>
+      <artifactId>args4j</artifactId>
+      <version>${args4j.version}</version>
     </dependency>
   </dependencies>
 
@@ -60,8 +60,8 @@
                   <shadedPattern>com.gzoltar.internal.org.apache.commons.io</shadedPattern>
                 </relocation>
                 <relocation>
-                  <pattern>org.apache.commons.cli</pattern>
-                  <shadedPattern>com.gzoltar.internal.org.apache.commons.cli</shadedPattern>
+                  <pattern>org.kohsuke.args4j</pattern>
+                  <shadedPattern>com.gzoltar.internal.org.kohsuke.args4j</shadedPattern>
                 </relocation>
               </relocations>
               <transformers>
@@ -69,7 +69,7 @@
                   <manifestEntries>
                     <Implementation-Title>${project.description}</Implementation-Title>
                     <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-                    <Implementation-Version>${project.version}</Implementation-Version>
+                    <Implementation-Version>${qualified.bundle.version}</Implementation-Version>
                     <Main-Class>com.gzoltar.cli.Main</Main-Class>
                   </manifestEntries>
                 </transformer>
