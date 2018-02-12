@@ -15,17 +15,17 @@ public class JUnitMatcher implements IMatcher {
   }
 
   @Override
-  public boolean matches(CtClass ctClass) {
+  public boolean matches(final CtClass ctClass) {
     return this.matcher.matches(ctClass);
   }
 
   @Override
-  public boolean matches(CtBehavior ctBehavior) {
+  public boolean matches(final CtBehavior ctBehavior) {
     return this.matcher.matches(ctBehavior);
   }
 
   @Override
-  public boolean matches(CtField ctField) {
+  public boolean matches(final CtField ctField) {
     return false;
   }
 }
