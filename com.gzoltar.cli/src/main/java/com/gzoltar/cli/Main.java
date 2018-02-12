@@ -51,12 +51,6 @@ public class Main extends Command {
   @Override
   public int execute(PrintStream out, final PrintStream err) throws Exception {
 
-    out.println("   ____ _____     _ _               \n" +
-                "  / ___|__  /___ | | |_ __ _ _ __   \n" +
-                " | |  _  / // _ \\| | __/ _` | '__| \n" +
-                " | |_| |/ /| (_) | | || (_| | |     \n" +
-                "  \\____/____\\___/|_|\\__\\__,_|_| \n");
-
     final CommandParser mainParser = new CommandParser(this);
     try {
       mainParser.parseArgument(this.args);
@@ -80,6 +74,12 @@ public class Main extends Command {
     if (this.command.quiet) {
       out = NUL;
     }
+
+    out.println("   ____ _____     _ _               \n" +
+                "  / ___|__  /___ | | |_ __ _ _ __   \n" +
+                " | |  _  / // _ \\| | __/ _` | '__| \n" +
+                " | |_| |/ /| (_) | | || (_| | |     \n" +
+                "  \\____/____\\___/|_|\\__\\__,_|_| \n");
 
     return this.command.execute(out, err);
   }
