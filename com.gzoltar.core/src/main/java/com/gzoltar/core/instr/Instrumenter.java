@@ -32,11 +32,9 @@ public class Instrumenter {
         case REJECT:
           cc.detach();
           return null;
-        case NEXT:
-          continue;
         case ACCEPT:
         default:
-          break;
+          continue;
       }
     }
 

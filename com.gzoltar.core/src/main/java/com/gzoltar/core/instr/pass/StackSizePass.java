@@ -11,10 +11,11 @@ public class StackSizePass implements IPass {
   @Override
   public Outcome transform(final CtClass ctClass) throws Exception {
     for (CtBehavior b : ctClass.getDeclaredBehaviors()) {
-      this.transform(ctClass, b);
+      if (this.transform(ctClass, b) == Outcome.REJECT) {
+        return Outcome.REJECT;
+      }
     }
-
-    return Outcome.NEXT;
+    return Outcome.ACCEPT;
   }
 
   @Override
@@ -28,7 +29,7 @@ public class StackSizePass implements IPass {
       // info.rebuildStackMapIf6(cp, c.getClassFile()); // TODO how to get classpool?!
     }
 
-    return Outcome.NEXT;
+    return Outcome.ACCEPT;
   }
 
 }

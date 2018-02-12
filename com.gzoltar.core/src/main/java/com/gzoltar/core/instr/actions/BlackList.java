@@ -14,7 +14,7 @@ public class BlackList extends AbstractAction {
     if (matches) {
       return Outcome.REJECT;
     }
-    return Outcome.NEXT;
+    return Outcome.ACCEPT;
   }
 
 }

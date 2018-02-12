@@ -10,11 +10,6 @@ public enum Outcome {
   /**
    * 
    */
-  NEXT,
-
-  /**
-   * 
-   */
   REJECT
 
 }

@@ -34,14 +34,13 @@ public class Filter implements IFilter {
     for (IAction action : actions) {
       switch (this.filter(object, action)) {
         case ACCEPT:
-        case NEXT:
         default:
           continue;
         case REJECT:
           return Outcome.REJECT;
       }
     }
-    return Outcome.NEXT;
+    return Outcome.ACCEPT;
   }
 
   protected Outcome filter(final Object object, final IAction action) {

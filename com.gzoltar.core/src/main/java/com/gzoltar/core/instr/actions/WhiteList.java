@@ -14,7 +14,7 @@ public class WhiteList extends AbstractAction {
     if (matches) {
       return Outcome.ACCEPT;
     }
-    return Outcome.NEXT;
+    return Outcome.REJECT;
   }
 
 }

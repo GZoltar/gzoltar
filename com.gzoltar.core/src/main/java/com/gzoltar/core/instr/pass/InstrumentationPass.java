@@ -107,7 +107,7 @@ public class InstrumentationPass implements IPass {
           + ".instance().getHitArray(\"" + ctClass.getName() + "\");");
     }
 
-    return Outcome.NEXT;
+    return Outcome.ACCEPT;
   }
 
   @Override
@@ -119,11 +119,9 @@ public class InstrumentationPass implements IPass {
       switch (filter.filter(ctBehavior)) {
         case REJECT:
           return instrumented;
-        case NEXT:
-          continue;
         case ACCEPT:
         default:
-          break;
+          continue;
       }
     }
 
@@ -157,7 +155,7 @@ public class InstrumentationPass implements IPass {
         ci.insert(index, bc.get());
         instrSize += bc.length();
 
-        instrumented = Outcome.NEXT;
+        instrumented = Outcome.ACCEPT;
       }
 
       if (g.stopInstrumenting()) {
