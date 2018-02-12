@@ -1,6 +1,6 @@
 package com.gzoltar.cli;
 
-import java.io.PrintWriter;
+import java.io.PrintStream;
 import java.io.StringWriter;
 import org.kohsuke.args4j.Option;
 
@@ -53,18 +53,18 @@ public abstract class Command {
    * @return exit code, should be 0 for normal operation
    * @throws Exception any exception that my occur during execution
    */
-  public abstract int execute(PrintWriter out, PrintWriter err) throws Exception;
+  public abstract int execute(PrintStream out, PrintStream err) throws Exception;
 
   /**
    * Prints textual help for this command.
    * 
    * @param writer output destination
    */
-  protected void printHelp(final PrintWriter writer) {
+  protected void printHelp(final PrintStream writer) {
     final CommandParser parser = new CommandParser(this);
     writer.println(description());
     writer.println();
     writer.println("Usage: " + parser.getCommand().usage(parser));
-    parser.printUsage(writer, null);
+    parser.printUsage(writer);
   }
 }

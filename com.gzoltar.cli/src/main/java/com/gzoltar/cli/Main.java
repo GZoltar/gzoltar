@@ -1,8 +1,8 @@
 package com.gzoltar.cli;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 
@@ -14,8 +14,8 @@ public class Main extends Command {
    * @param args
    */
   public static void main(final String[] args) throws Exception {
-    final PrintWriter out = new PrintWriter(System.out, true);
-    final PrintWriter err = new PrintWriter(System.err, true);
+    final PrintStream out = new PrintStream(System.out, true);
+    final PrintStream err = new PrintStream(System.err, true);
     final int returncode = new Main(args).execute(out, err);
     System.exit(returncode);
   }
@@ -49,7 +49,7 @@ public class Main extends Command {
    * {@inheritDoc}
    */
   @Override
-  public int execute(PrintWriter out, final PrintWriter err) throws Exception {
+  public int execute(PrintStream out, final PrintStream err) throws Exception {
 
     out.println("   ____ _____     _ _               \n" +
                 "  / ___|__  /___ | | |_ __ _ _ __   \n" +
@@ -84,26 +84,27 @@ public class Main extends Command {
     return this.command.execute(out, err);
   }
 
-  private static final PrintWriter NUL = new PrintWriter(new Writer() {
-    /**
-     * {@inheritDoc}
-     */
+  private static final PrintStream NUL = new PrintStream(new OutputStream() {
     @Override
-    public void write(final char[] arg0, final int arg1, final int arg2) throws IOException {
+    public void write(int b) throws IOException {
       // no-op
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public void write(byte[] b) throws IOException {
+      // no-op
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+      // no-op
+    }
+
     @Override
     public void flush() throws IOException {
       // no-op
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void close() throws IOException {
       // no-op

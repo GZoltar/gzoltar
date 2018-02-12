@@ -1,7 +1,7 @@
 package com.gzoltar.cli.commands;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -18,7 +18,7 @@ public class Version extends Command {
   }
 
   @Override
-  public int execute(final PrintWriter out, final PrintWriter err) throws IOException {
+  public int execute(final PrintStream out, final PrintStream err) throws IOException {
     // Find the path of the compiled class
     String classPath =
         Version.class.getResource(Version.class.getSimpleName() + ".class").toString();
