@@ -12,7 +12,7 @@ public class MethodNameMatcher extends AbstractWildcardMatcher {
 
   @Override
   public boolean matches(final CtClass ctClass) {
-    for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
+    for (CtBehavior ctBehavior : ctClass.getMethods()) {
       if (this.matches(ctBehavior)) {
         return true;
       }
