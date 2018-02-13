@@ -2,6 +2,7 @@ package com.gzoltar.core.instr.filter;
 
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.matchers.JUnitMatcher;
+import com.gzoltar.core.instr.matchers.TestNGMatcher;
 
 public final class TestFilter extends Filter {
 
@@ -9,6 +10,7 @@ public final class TestFilter extends Filter {
     BlackList junit = new BlackList(new JUnitMatcher());
     this.add(junit);
 
-    // TODO add support for TestNG
+    BlackList testNG = new BlackList(new TestNGMatcher());
+    this.add(testNG);
   }
 }
