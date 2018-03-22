@@ -24,6 +24,13 @@ public abstract class Command {
   public boolean quiet = false;
 
   /**
+   * 
+   */
+  @Option(name = "--timeout", usage = "time (in seconds) allowed to run a command",
+      metaVar = "<timeout in seconds>", required = false)
+  protected int timeout = 60;
+
+  /**
    * @return Short description of the command.
    */
   public abstract String description();
