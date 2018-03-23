@@ -84,7 +84,7 @@
                   <manifestEntries>
                     <Implementation-Title>${project.description}</Implementation-Title>
                     <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-                    <Implementation-Version>${qualified.bundle.version}</Implementation-Version>
+                    <Implementation-Version>${dist.version}</Implementation-Version>
                     <Main-Class>com.gzoltar.cli.Main</Main-Class>
                   </manifestEntries>
                 </transformer>

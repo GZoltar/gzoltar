@@ -32,7 +32,7 @@
     </dependencySet>
     <dependencySet>
       <outputDirectory>jars</outputDirectory>
-      <outputFileNameMapping>${artifact.artifactId}-${qualified.bundle.version}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}-${dist.version}.${artifact.extension}</outputFileNameMapping>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
         <include>${project.groupId}:com.gzoltar.core</include>

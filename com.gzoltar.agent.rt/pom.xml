@@ -63,7 +63,7 @@
                     <Automatic-Module-Name>${project.artifactId}</Automatic-Module-Name>
                     <Implementation-Title>${project.description}</Implementation-Title>
                     <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-                    <Implementation-Version>${project.version}</Implementation-Version>
+                    <Implementation-Version>${dist.version}</Implementation-Version>
                   </manifestEntries>
                 </transformer>
               </transformers>
