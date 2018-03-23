@@ -116,8 +116,8 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
     }
 
     if (this.getExcludes() != null && !this.getExcludes().isEmpty()) {
-      final String agentIncludes = StringUtils.join(this.getExcludes().iterator(), ":");
-      agentConfigs.setIncludes(agentIncludes);
+      final String agentExcludes = StringUtils.join(this.getExcludes().iterator(), ":");
+      agentConfigs.setIncludes(agentExcludes);
     }
 
     if (this.exclClassLoaders != null) {
