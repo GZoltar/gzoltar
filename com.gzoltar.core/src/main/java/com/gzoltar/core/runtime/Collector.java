@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import com.gzoltar.core.events.EmptyEventListener;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.events.MultiEventListener;
 import com.gzoltar.core.model.Node;
@@ -27,6 +28,9 @@ public class Collector {
    * @return
    */
   public static Collector instance() {
+    if (collector == null) {
+      collector = new Collector(new EmptyEventListener());
+    }
     return collector;
   }
 

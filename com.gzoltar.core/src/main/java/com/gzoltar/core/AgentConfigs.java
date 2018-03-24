@@ -9,10 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import com.gzoltar.core.events.EmptyEventListener;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
-import com.gzoltar.core.model.Node;
-import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.util.CommandLineSupport;
 
 /**
@@ -413,17 +412,14 @@ public final class AgentConfigs {
     this.setConfig(INCLDEPRECATEDMETHODS_KEY, inclDeprecatedMethods);
   }
 
+  /**
+   * Returns an instance of an {@link com.gzoltar.core.events.EmptyEventListener}. TODO we might
+   * want to allow user to configure other listeners.
+   * 
+   * @return
+   */
   public IEventListener getEventListener() {
-    return new IEventListener() {
-      @Override
-      public void addNode(final Node node) {}
-
-      @Override
-      public void endTransaction(final Transaction transaction) {}
-
-      @Override
-      public void endSession() {}
-    };
+    return new EmptyEventListener();
   }
 
   /**
