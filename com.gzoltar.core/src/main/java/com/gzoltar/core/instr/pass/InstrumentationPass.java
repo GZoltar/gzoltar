@@ -1,12 +1,12 @@
 package com.gzoltar.core.instr.pass;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
-import com.gzoltar.core.instr.actions.IAction;
-import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.filter.IFilter;
@@ -39,7 +39,7 @@ public class InstrumentationPass implements IPass {
 
   public static final String HIT_VECTOR_NAME = "$__GZ_HIT_VECTOR__";
 
-  private final IFilter[] filters;
+  private final List<IFilter> filters = new ArrayList<IFilter>();
 
   private final GranularityLevel granularity;
 
@@ -48,36 +48,25 @@ public class InstrumentationPass implements IPass {
   public InstrumentationPass(final AgentConfigs agentConfigs) {
     this.granularity = agentConfigs.getGranularity();
 
-    IAction includePublicMethods;
-    if (agentConfigs.getInclPublicMethods()) {
-      includePublicMethods = new WhiteList(new MethodModifierMatcher(Modifier.PUBLIC));
-    } else {
-      includePublicMethods = new BlackList(new MethodModifierMatcher(Modifier.PUBLIC));
+    // filter classes/methods according to users preferences
+
+    if (!agentConfigs.getInclPublicMethods()) {
+      this.filters.add(new Filter(new BlackList(new MethodModifierMatcher(Modifier.PUBLIC))));
     }
 
-    IAction includeStaticConstructors;
-    if (agentConfigs.getInclStaticConstructors()) {
-      includeStaticConstructors = new WhiteList(new MethodNameMatcher("<clinit>*"));
-    } else {
-      includeStaticConstructors = new BlackList(new MethodNameMatcher("<clinit>*"));
+    if (!agentConfigs.getInclStaticConstructors()) {
+      this.filters.add(new Filter(new BlackList(new MethodNameMatcher("<clinit>*"))));
     }
 
-    IAction includeDeprecatedMethods;
-    if (agentConfigs.getInclDeprecatedMethods()) {
-      includeDeprecatedMethods = new WhiteList(new MethodAnnotationMatcher(Deprecated.class.getCanonicalName()));
-    } else {
-      includeDeprecatedMethods = new BlackList(new MethodAnnotationMatcher(Deprecated.class.getCanonicalName()));
+    if (!agentConfigs.getInclDeprecatedMethods()) {
+      this.filters.add(new Filter(new BlackList(new MethodAnnotationMatcher(Deprecated.class.getCanonicalName()))));
     }
 
-    this.filters = new IFilter[] {
-        // filter classes/methods according to users preferences
-        new Filter(includePublicMethods),
-        new Filter(includeStaticConstructors),
-        new Filter(includeDeprecatedMethods),
-        // exclude synthetic methods
-        new SyntheticFilter(),
-        // exclude methods 'values' and 'valuesOf' of enum classes
-        new EnumFilter()};
+    // exclude synthetic methods
+    this.filters.add(new SyntheticFilter());
+
+    // exclude methods 'values' and 'valuesOf' of enum classes
+    this.filters.add(new EnumFilter());
   }
 
   @Override
