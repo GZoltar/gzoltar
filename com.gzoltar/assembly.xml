@@ -44,6 +44,7 @@
       <excludes>
         <exclude>${project.groupId}:com.gzoltar.agent:*:runtime</exclude>
         <exclude>${project.groupId}:com.gzoltar.ant:*:jar-with-dependencies</exclude>
+        <exclude>${project.groupId}:com.gzoltar.cli:*:jar-with-dependencies</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>
