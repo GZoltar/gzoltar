@@ -95,6 +95,16 @@ public final class ProbeGroup {
    */
   public Set<Node> getHitNodes() {
     Set<Node> hitNodes = new LinkedHashSet<Node>();
+    if (this.hitArray == null) {
+      // When a class is serialised / deserialised an instance of a class could be created only
+      // using metadata of that class, i.e., there is a chance that none of "normal" constructors or
+      // even static constructors is called to construct that class, and none of the lines of code
+      // is actually executed. For those particular cases, GZoltar would instrument a class as
+      // normal and some probes would be created, however as no constructor (either "normal" or
+      // static) is called, the hitArray is never initialised.
+      return hitNodes;
+    }
+    assert this.hitArray.length == this.probes.size();
 
     for (Probe probe : this.probes) {
       if (this.hitArray[probe.getArrayIndex()]) {
