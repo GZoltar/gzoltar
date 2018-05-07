@@ -27,7 +27,7 @@ public abstract class Command {
    * 
    */
   @Option(name = "--timeout", usage = "time (in seconds) allowed to run a command",
-      metaVar = "<timeout in seconds>", required = false)
+      metaVar = "<seconds>", required = false)
   protected int timeout = 60;
 
   /**
