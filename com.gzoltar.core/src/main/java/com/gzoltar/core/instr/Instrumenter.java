@@ -13,7 +13,6 @@ import java.util.zip.ZipOutputStream;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.pass.IPass;
 import com.gzoltar.core.instr.pass.InstrumentationPass;
-import com.gzoltar.core.instr.pass.StackSizePass;
 import com.gzoltar.core.util.BinaryTypeDetector;
 import com.gzoltar.core.util.Pack200Streams;
 import com.gzoltar.core.util.SignatureRemover;
@@ -36,8 +35,7 @@ public class Instrumenter {
   public Instrumenter(final AgentConfigs agentConfigs) {
     this.passes = new IPass[] {
         //new TestFilterPass(), // do not instrument test classes/cases
-        new InstrumentationPass(agentConfigs),
-        new StackSizePass()
+        new InstrumentationPass(agentConfigs)
     };
     this.signatureRemover = new SignatureRemover();
   }

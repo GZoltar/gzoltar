@@ -39,6 +39,8 @@ public class InstrumentationPass implements IPass {
 
   public static final String HIT_VECTOR_NAME = "$__GZ_HIT_VECTOR__";
 
+  private final StackSizePass stackSizePass = new StackSizePass();
+
   private final List<IFilter> filters = new ArrayList<IFilter>();
 
   private final GranularityLevel granularity;
@@ -82,6 +84,11 @@ public class InstrumentationPass implements IPass {
       boolean behaviorInstrumented =
           this.transform(ctClass, ctBehavior).equals(Outcome.REJECT) ? false : true;
       instrumented = instrumented || behaviorInstrumented;
+
+      if (behaviorInstrumented) {
+        // update stack size
+        this.stackSizePass.transform(ctClass, ctBehavior);
+      }
     }
 
     if (instrumented) {
