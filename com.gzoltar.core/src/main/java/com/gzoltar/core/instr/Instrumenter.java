@@ -91,8 +91,6 @@ public class Instrumenter {
     }
 
     byte[] bytecode = cc.toBytecode();
-    cc.detach();
-
     return bytecode;
   }
 
