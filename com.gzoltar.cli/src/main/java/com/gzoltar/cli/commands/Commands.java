@@ -17,7 +17,7 @@ public final class Commands {
    * @return list of new instances of all available commands
    */
   public static List<Command> get() {
-    return Arrays.asList(new Version(), new ListUnitTests());
+    return Arrays.asList(new Version(), new ListUnitTests(), new Instrument());
   }
 
   /**
