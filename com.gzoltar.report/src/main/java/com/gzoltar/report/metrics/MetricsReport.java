@@ -1,11 +1,11 @@
 package com.gzoltar.report.metrics;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFormula;
 import com.gzoltar.report.AbstractReport;
@@ -33,42 +33,35 @@ public class MetricsReport extends AbstractReport {
       this.getOutputDirectory().mkdirs();
     }
 
-    PrintWriter metricsWriter =
-        new PrintWriter(this.getOutputDirectory() + File.separator + STATS_FILE_NAME, "UTF-8");
-
-    // header
-    List<String> header = new ArrayList<String>();
-    for (IMetric metric : metrics) {
-      if (metric.requireFormula()) {
-        for (IFormula formula : this.formulas) {
-          metric.setFormula(formula);
-          header.add(metric.getName());
-        }
-      } else {
-        header.add(metric.getName());
-      }
+    File out = new File(this.getOutputDirectory() + File.separator + STATS_FILE_NAME);
+    boolean toAppendData = false;
+    if (out.exists()) {
+      toAppendData = true;
     }
-    metricsWriter.println(StringUtils.join(header, ','));
+
+    PrintWriter metricsWriter =
+        new PrintWriter(new OutputStreamWriter(new FileOutputStream(out, toAppendData), "UTF-8"));
+
+    if (!toAppendData) {
+      // header // TODO it would be nice to also have fl_family before formula
+      metricsWriter.println("formula,metric_name,metric_value");
+    }
 
     // content
-    List<Double> values = new ArrayList<Double>();
-    for (IMetric metric : metrics) {
-      if (metric.requireFormula()) {
-        for (IFormula formula : this.formulas) {
+    for (IFormula formula : this.formulas) {
+      for (IMetric metric : metrics) {
+        Double value = null;
+        if (metric.requireFormula()) {
           metric.setFormula(formula);
-          Double value = metric.calculate(spectrum);
-          assert value != null;
-          assert !value.isNaN();
-          values.add(value);
         }
-      } else {
-        Double value = metric.calculate(spectrum);
+        value = metric.calculate(spectrum);
         assert value != null;
         assert !value.isNaN();
-        values.add(value);
+
+        metricsWriter.println(
+            formula.getName().toLowerCase() + "," + metric.getName().toLowerCase() + "," + value);
       }
     }
-    metricsWriter.println(StringUtils.join(values, ','));
 
     metricsWriter.close();
   }
