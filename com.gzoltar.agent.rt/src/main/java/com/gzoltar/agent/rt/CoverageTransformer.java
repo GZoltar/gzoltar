@@ -29,7 +29,7 @@ public class CoverageTransformer implements ClassFileTransformer {
   public CoverageTransformer(final AgentConfigs agentConfigs) throws Exception {
     this.instrumenter = new Instrumenter(agentConfigs);
 
-    this.buildLocation = new File(agentConfigs.getBuildLocation()).toURI().toURL().getPath();
+    this.buildLocation = new File(agentConfigs.getBuildLocation()).getCanonicalPath();
     this.inclNoLocationClasses = agentConfigs.getInclNoLocationClasses();
 
     // exclude *all* GZoltar's runtime classes from instrumentation
