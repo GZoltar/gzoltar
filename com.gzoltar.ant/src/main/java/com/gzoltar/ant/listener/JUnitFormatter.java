@@ -59,7 +59,7 @@ public class JUnitFormatter extends Listener implements JUnitResultFormatter {
    */
   @Override
   public void addFailure(Test test, AssertionFailedError assertionFailedError) {
-    super.onTestFailure(assertionFailedError.getStackTrace().toString());
+    super.onTestFailure(this.traceToString(assertionFailedError));
   }
 
   /**
@@ -67,7 +67,7 @@ public class JUnitFormatter extends Listener implements JUnitResultFormatter {
    */
   @Override
   public void addError(Test test, Throwable throwable) {
-    super.onTestFailure(throwable.getStackTrace().toString());
+    super.onTestFailure(this.traceToString(throwable));
   }
 
   /**

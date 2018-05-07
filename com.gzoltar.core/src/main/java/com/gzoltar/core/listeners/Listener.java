@@ -1,5 +1,7 @@
 package com.gzoltar.core.listeners;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.junit.runner.notification.RunListener;
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.runtime.Collector;
@@ -68,4 +70,16 @@ public class Listener extends RunListener {
     // empty
   }
 
+  /**
+   * Converts the stack trace of a throwable exception to string.
+   * 
+   * @param exception The exception thrown.
+   * @return A string of the stack trace of a throwable exception.
+   */
+  protected final String traceToString(Throwable exception) {
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    exception.printStackTrace(writer);
+    return stringWriter.toString();
+  }
 }
