@@ -107,7 +107,7 @@ public class JUnitFormatter extends Listener implements JUnitResultFormatter {
       }
     }
     {
-      // for some weird reson this format is used for Timeout in Junit4
+      // for some weird reason this format is used for Timeout in Junit4
       Pattern regexp = Pattern.compile("(.*):(.*)");
       Matcher match = regexp.matcher(test.toString());
       if (match.matches()) {
