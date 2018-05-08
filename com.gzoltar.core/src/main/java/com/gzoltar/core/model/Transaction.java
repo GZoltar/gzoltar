@@ -3,6 +3,7 @@ package com.gzoltar.core.model;
 import java.io.Serializable;
 import java.util.Set;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Transaction implements Serializable {
 
@@ -18,8 +19,6 @@ public class Transaction implements Serializable {
 
   private final String stackTrace;
 
-  private int hashCode;
-
   /**
    * 
    * @param name
@@ -33,20 +32,6 @@ public class Transaction implements Serializable {
     this.outcome = outcome;
     this.runtime = runtime;
     this.stackTrace = stackTrace;
-    this.hashCode = this.activity.hashCode();
-  }
-
-  /**
-   * 
-   * @param name
-   * @param activity
-   * @param hashCode
-   * @param isError
-   */
-  public Transaction(final String name, final Set<Node> activity, final int hashCode,
-      final TransactionOutcome outcome, final long runtime, final String stackTrace) {
-    this(name, activity, outcome, runtime, stackTrace);
-    this.hashCode = hashCode;
   }
 
   /**
@@ -137,7 +122,12 @@ public class Transaction implements Serializable {
    */
   @Override
   public int hashCode() {
-    return this.hashCode;
+    HashCodeBuilder builder = new HashCodeBuilder();
+    builder.append(this.name);
+    builder.append(this.activity);
+    builder.append(this.outcome);
+    builder.append(this.stackTrace);
+    return builder.toHashCode();
   }
 
   /**
@@ -158,9 +148,7 @@ public class Transaction implements Serializable {
     builder.append(this.name, transaction.name);
     builder.append(this.activity, transaction.activity);
     builder.append(this.outcome, transaction.outcome);
-    builder.append(this.runtime, transaction.runtime);
     builder.append(this.stackTrace, transaction.stackTrace);
-    builder.append(this.hashCode, transaction.hashCode);
 
     return builder.isEquals();
   }

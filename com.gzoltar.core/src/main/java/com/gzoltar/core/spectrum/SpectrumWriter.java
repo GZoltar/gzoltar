@@ -115,7 +115,6 @@ public class SpectrumWriter {
         this.out.writeUTF(transaction.getTransactionOutcome().name());
         this.out.writeLong(transaction.getRuntime());
         this.out.writeUTF(transaction.getStackTrace());
-        this.out.writeInt(transaction.hashCode());
       } catch (final IOException e) {
         throw new RuntimeException(e);
       }

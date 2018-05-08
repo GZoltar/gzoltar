@@ -118,10 +118,9 @@ public class SpectrumReader {
     TransactionOutcome transactionOutcome = TransactionOutcome.valueOf(this.in.readUTF());
     long runtime = this.in.readLong();
     String stackTrace = this.in.readUTF();
-    int hashCode = this.in.readInt();
 
     Transaction transaction =
-        new Transaction(name, activity, hashCode, transactionOutcome, runtime, stackTrace);
+        new Transaction(name, activity, transactionOutcome, runtime, stackTrace);
     this.spectrum.addTransaction(transaction);
   }
 
