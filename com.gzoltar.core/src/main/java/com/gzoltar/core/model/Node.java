@@ -1,5 +1,8 @@
 package com.gzoltar.core.model;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.gzoltar.core.util.SerialisationIdentifiers;
 
 public class Node implements Serializable {
 
@@ -237,6 +241,68 @@ public class Node implements Serializable {
   public int getNumberOfSuspiciousnessValues() {
     assert this.suspiciousnessValues != null;
     return this.suspiciousnessValues.size();
+  }
+
+  /**
+   * Serialises an instance of {@link com.gzoltar.core.model.Node}.
+   * 
+   * @param out binary stream to write bytes to
+   */
+  public void serialize(final DataOutputStream out) {
+    if (this.isRoot()) {
+      return;
+    }
+
+    try {
+      out.writeByte(SerialisationIdentifiers.BLOCK_NODE);
+      out.writeUTF(this.getName());
+
+      out.writeInt(this.getLineNumber());
+      out.writeUTF(this.getNodeType().name());
+      out.writeUTF(this.getParent().getName());
+
+      Map<String, Double> suspiciousnessValues = this.getSuspiciousnessValues();
+      if (suspiciousnessValues != null) {
+        out.writeInt(suspiciousnessValues.size());
+
+        for (Entry<String, Double> suspiciousness : suspiciousnessValues.entrySet()) {
+          out.writeUTF(suspiciousness.getKey());
+          out.writeDouble(suspiciousness.getValue().doubleValue());
+        }
+      } else {
+        out.writeInt(0); // there is not any suspiciousness value
+      }
+    } catch (final IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
+   * Deserialises and create an instance of {@link com.gzoltar.core.model.Node}.
+   * 
+   * @param in binary stream to read bytes from
+   * @param tree a {@link com.gzoltar.core.model.Tree} object
+   * @return a {@link com.gzoltar.core.model.Node} object
+   * @throws IOException
+   */
+  public static Node deserialize(final DataInputStream in, final Tree tree) throws IOException {
+    String name = in.readUTF();
+    Integer lineNumber = in.readInt();
+    String symbol = in.readUTF();
+    String parentName = in.readUTF();
+
+    Node parent = tree.getNode(parentName);
+    assert parent != null;
+
+    Node node = new Node(name, lineNumber, NodeType.valueOf(symbol), parent);
+
+    int numberOfSuspiciousnessValues = in.readInt();
+    while (numberOfSuspiciousnessValues > 0) {
+      node.addSuspiciousnessValue(in.readUTF(), in.readDouble());
+      numberOfSuspiciousnessValues--;
+    }
+
+    return node;
   }
 
   /**

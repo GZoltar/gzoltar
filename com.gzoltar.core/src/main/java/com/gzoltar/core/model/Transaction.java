@@ -1,9 +1,14 @@
 package com.gzoltar.core.model;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.gzoltar.core.util.SerialisationIdentifiers;
 
 public class Transaction implements Serializable {
 
@@ -115,6 +120,57 @@ public class Transaction implements Serializable {
   public String getNormalizedStackTrace() {
     return this.stackTrace.replaceAll(" *\r?\n[ \t]*", " ") // kill newlines and surrounding space
         .replaceAll("^[ \t\r\n]*|[ \t\r\n]*$", ""); // strip whitespace
+  }
+
+  /**
+   * Serialises an instance of {@link com.gzoltar.core.model.Transaction}.
+   * 
+   * @param out binary stream to write bytes to
+   */
+  public void serialize(final DataOutputStream out) {
+    if (this.hasActivations()) {
+      try {
+        out.writeByte(SerialisationIdentifiers.BLOCK_TRANSACTION);
+        out.writeUTF(this.getName());
+        out.writeInt(this.getNumberActivities());
+        for (Node node : this.getActivity()) {
+          out.writeUTF(node.getName());
+        }
+        out.writeUTF(this.getTransactionOutcome().name());
+        out.writeLong(this.getRuntime());
+        out.writeUTF(this.getStackTrace());
+      } catch (final IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+  }
+
+  /**
+   * Deserialises and create an instance of {@link com.gzoltar.core.model.Transaction}.
+   * 
+   * @param in binary stream to read bytes from
+   * @param tree a {@link com.gzoltar.core.model.Tree} object
+   * @return a {@link com.gzoltar.core.model.Transaction} object
+   * @throws IOException
+   */
+  public static Transaction deserialize(final DataInputStream in, final Tree tree) throws IOException {
+    String name = in.readUTF();
+
+    Set<Node> activity = new LinkedHashSet<Node>();
+    int numberActivities = in.readInt();
+    while (numberActivities > 0) {
+      Node node = tree.getNode(in.readUTF());
+      assert node != null;
+      activity.add(node);
+
+      numberActivities--;
+    }
+
+    TransactionOutcome transactionOutcome = TransactionOutcome.valueOf(in.readUTF());
+    long runtime = in.readLong();
+    String stackTrace = in.readUTF();
+
+    return new Transaction(name, activity, transactionOutcome, runtime, stackTrace);
   }
 
   /**

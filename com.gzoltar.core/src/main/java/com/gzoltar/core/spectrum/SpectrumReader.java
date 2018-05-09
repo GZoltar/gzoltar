@@ -4,13 +4,9 @@ import static java.lang.String.format;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import com.gzoltar.core.model.Node;
-import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.model.Transaction;
-import com.gzoltar.core.model.TransactionOutcome;
-import com.gzoltar.core.model.Tree;
+import com.gzoltar.core.util.SerialisationIdentifiers;
 
 public class SpectrumReader {
 
@@ -43,7 +39,7 @@ public class SpectrumReader {
         return false; // EOF
       }
       type = (byte) i;
-      if (this.firstBlock && type != SpectrumWriter.BLOCK_HEADER) {
+      if (this.firstBlock && type != SerialisationIdentifiers.BLOCK_HEADER) {
         throw new IOException("Invalid spectrum data file.");
       }
       this.firstBlock = false;
@@ -53,14 +49,14 @@ public class SpectrumReader {
 
   private boolean readBlock(final byte blocktype) throws IOException {
     switch (blocktype) {
-      case SpectrumWriter.BLOCK_HEADER:
+      case SerialisationIdentifiers.BLOCK_HEADER:
         this.readHeader();
         return true;
-      case SpectrumWriter.BLOCK_NODE:
-        this.readNode();
+      case SerialisationIdentifiers.BLOCK_NODE:
+        this.spectrum.addNode(Node.deserialize(this.in, this.spectrum.getTree()));
         return true;
-      case SpectrumWriter.BLOCK_TRANSACTION:
-        this.readTransaction();
+      case SerialisationIdentifiers.BLOCK_TRANSACTION:
+        this.spectrum.addTransaction(Transaction.deserialize(this.in, this.spectrum.getTree()));
         return true;
       default:
         throw new IOException(format("Unknown block type %x.", Byte.valueOf(blocktype)));
@@ -68,60 +64,13 @@ public class SpectrumReader {
   }
 
   private void readHeader() throws IOException {
-    if (this.in.readChar() != SpectrumWriter.MAGIC_NUMBER) {
+    if (this.in.readChar() != SerialisationIdentifiers.MAGIC_NUMBER) {
       throw new IOException("Invalid execution data file.");
     }
     final char version = this.in.readChar();
-    if (version != SpectrumWriter.FORMAT_VERSION) {
+    if (version != SerialisationIdentifiers.FORMAT_VERSION) {
       throw new IncompatibleSpectrumVersionException(version);
     }
-  }
-
-  private void readNode() throws IOException {
-    String name = this.in.readUTF();
-    if (Tree.ROOT_NAME.equals(name)) {
-      return;
-    }
-
-    Integer lineNumber = this.in.readInt();
-    String symbol = this.in.readUTF();
-    String parentName = this.in.readUTF();
-
-    Node parent = this.spectrum.getTree().getNode(parentName);
-    assert parent != null;
-
-    Node node = new Node(name, lineNumber, NodeType.valueOf(symbol), parent);
-
-    int numberOfSuspiciousnessValues = this.in.readInt();
-    while (numberOfSuspiciousnessValues > 0) {
-      node.addSuspiciousnessValue(this.in.readUTF(), this.in.readDouble());
-
-      numberOfSuspiciousnessValues--;
-    }
-
-    this.spectrum.addNode(node);
-  }
-
-  private void readTransaction() throws IOException {
-    String name = this.in.readUTF();
-
-    Set<Node> activity = new LinkedHashSet<Node>();
-    int numberActivities = this.in.readInt();
-    while (numberActivities > 0) {
-      Node node = this.spectrum.getTree().getNode(this.in.readUTF());
-      assert node != null;
-      activity.add(node);
-
-      numberActivities--;
-    }
-
-    TransactionOutcome transactionOutcome = TransactionOutcome.valueOf(this.in.readUTF());
-    long runtime = this.in.readLong();
-    String stackTrace = this.in.readUTF();
-
-    Transaction transaction =
-        new Transaction(name, activity, transactionOutcome, runtime, stackTrace);
-    this.spectrum.addTransaction(transaction);
   }
 
   /**
@@ -141,7 +90,7 @@ public class SpectrumReader {
     public IncompatibleSpectrumVersionException(final int actualVersion) {
       super(String.format(
           "Cannot read spectrum data version 0x%x. This version of GZoltar uses spectrum data version 0x%x.",
-          Integer.valueOf(actualVersion), Integer.valueOf(SpectrumWriter.FORMAT_VERSION)));
+          Integer.valueOf(actualVersion), Integer.valueOf(SerialisationIdentifiers.FORMAT_VERSION)));
       this.actualVersion = actualVersion;
     }
 
@@ -151,7 +100,7 @@ public class SpectrumReader {
      * @return expected version in spectrum data
      */
     public int getExpectedVersion() {
-      return SpectrumWriter.FORMAT_VERSION;
+      return SerialisationIdentifiers.FORMAT_VERSION;
     }
 
     /**

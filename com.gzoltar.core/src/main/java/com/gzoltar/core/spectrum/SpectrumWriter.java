@@ -3,36 +3,15 @@ package com.gzoltar.core.spectrum;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
-import java.util.Map.Entry;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Tree;
+import com.gzoltar.core.util.SerialisationIdentifiers;
 import com.gzoltar.core.model.Transaction;
 
 /**
  * Serialization of a spectrum instance into binary streams.
  */
 public class SpectrumWriter {
-
-  /** File format version, will be incremented for each incompatible change. */
-  public static final char FORMAT_VERSION;
-
-  static {
-    // Runtime initialize to ensure the compiler does not inline the value.
-    FORMAT_VERSION = 0x0001;
-  }
-
-  /** Magic number in header for file format identification. */
-  public static final char MAGIC_NUMBER = 0xC0C0;
-
-  /** Block identifier for file headers. */
-  public static final byte BLOCK_HEADER = 0x01;
-
-  /** Block identifier for nodes information. */
-  public static final byte BLOCK_NODE = 0x10;
-
-  /** Block identifier for transaction information. */
-  public static final byte BLOCK_TRANSACTION = 0x11;
 
   private final DataOutputStream out;
 
@@ -54,9 +33,9 @@ public class SpectrumWriter {
    * @throws IOException if the header can't be written
    */
   private void writeHeader() throws IOException {
-    this.out.writeByte(BLOCK_HEADER);
-    this.out.writeChar(MAGIC_NUMBER);
-    this.out.writeChar(FORMAT_VERSION);
+    this.out.writeByte(SerialisationIdentifiers.BLOCK_HEADER);
+    this.out.writeChar(SerialisationIdentifiers.MAGIC_NUMBER);
+    this.out.writeChar(SerialisationIdentifiers.FORMAT_VERSION);
   }
 
   /**
@@ -68,56 +47,10 @@ public class SpectrumWriter {
   public void writeSpectrum(final ISpectrum spectrum) throws IOException {
     final Tree tree = spectrum.getTree();
     for (final Node node : tree.getNodes()) {
-      this.writeNode(node);
+      node.serialize(this.out);
     }
     for (final Transaction transaction : spectrum.getTransactions()) {
-      this.writeTransaction(transaction);
-    }
-  }
-
-  private void writeNode(final Node node) {
-    try {
-      this.out.writeByte(BLOCK_NODE);
-      this.out.writeUTF(node.getName());
-      if (node.isRoot()) {
-        return;
-      }
-
-      this.out.writeInt(node.getLineNumber());
-      this.out.writeUTF(node.getNodeType().name());
-      this.out.writeUTF(node.getParent().getName());
-
-      Map<String, Double> suspiciousnessValues = node.getSuspiciousnessValues();
-      if (suspiciousnessValues != null) {
-        this.out.writeInt(suspiciousnessValues.size());
-
-        for (Entry<String, Double> suspiciousness : suspiciousnessValues.entrySet()) {
-          this.out.writeUTF(suspiciousness.getKey());
-          this.out.writeDouble(suspiciousness.getValue().doubleValue());
-        }
-      } else {
-        this.out.writeInt(0); // there is not any suspiciousness value
-      }
-    } catch (final IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private void writeTransaction(final Transaction transaction) {
-    if (transaction.hasActivations()) {
-      try {
-        this.out.writeByte(BLOCK_TRANSACTION);
-        this.out.writeUTF(transaction.getName());
-        this.out.writeInt(transaction.getNumberActivities());
-        for (Node node : transaction.getActivity()) {
-          this.out.writeUTF(node.getName());
-        }
-        this.out.writeUTF(transaction.getTransactionOutcome().name());
-        this.out.writeLong(transaction.getRuntime());
-        this.out.writeUTF(transaction.getStackTrace());
-      } catch (final IOException e) {
-        throw new RuntimeException(e);
-      }
+      transaction.serialize(this.out);
     }
   }
 }
