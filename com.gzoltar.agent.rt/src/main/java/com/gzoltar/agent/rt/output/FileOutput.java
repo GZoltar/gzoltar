@@ -37,7 +37,7 @@ public class FileOutput implements IAgentOutput {
   }
 
   private OutputStream openFile() throws IOException {
-    final FileOutputStream file = new FileOutputStream(this.destFile, false);
+    final FileOutputStream file = new FileOutputStream(this.destFile, true);
     // Avoid concurrent writes from different agents running in parallel:
     file.getChannel().lock();
     return file;
