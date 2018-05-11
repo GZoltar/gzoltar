@@ -27,7 +27,7 @@ public class Node implements Serializable {
 
   private final Node parent;
 
-  private final List<Node> children = new ArrayList<Node>();
+  private final Map<String, Node> children = new LinkedHashMap<String, Node>();
 
   private Map<String, Double> suspiciousnessValues = null;
 
@@ -47,7 +47,9 @@ public class Node implements Serializable {
       this.depth = 0;
     } else {
       this.depth = parent.getDepth() + 1;
-      parent.children.add(this);
+      if (!parent.children.containsKey(this.name)) {
+        parent.children.put(this.name, this);
+      }
     }
   }
 
@@ -126,7 +128,7 @@ public class Node implements Serializable {
    * @return
    */
   public List<Node> getChildren() {
-    return this.children;
+    return new ArrayList<Node>(this.children.values());
   }
 
   /**
@@ -135,12 +137,7 @@ public class Node implements Serializable {
    * @return
    */
   public Node getChild(final String name) {
-    for (Node n : this.children) {
-      if (n.getName().equals(name)) {
-        return n;
-      }
-    }
-    return null;
+    return this.children.get(name);
   }
 
   /**
@@ -149,7 +146,7 @@ public class Node implements Serializable {
    * @return
    */
   public boolean hasChildrenOfType(final NodeType type) {
-    for (Node child : this.children) {
+    for (Node child : this.children.values()) {
       if (child.type == type) {
         return true;
       }
@@ -179,7 +176,7 @@ public class Node implements Serializable {
     if (this.isLeaf()) {
       nodes.add(this);
     } else {
-      for (Node child : this.children) {
+      for (Node child : this.children.values()) {
         child.getLeafNodes(nodes);
       }
     }
@@ -224,7 +221,7 @@ public class Node implements Serializable {
   public Double getSuspiciousnessValue(String formulaName) {
     if (this.suspiciousnessValues == null && !this.children.isEmpty()) {
       Double maxSuspiciousnessValue = -1.0 * Double.MIN_VALUE;
-      for (Node child : this.children) {
+      for (Node child : this.children.values()) {
         maxSuspiciousnessValue = Math.max(maxSuspiciousnessValue, child.getSuspiciousnessValue(formulaName));
       }
       return maxSuspiciousnessValue;

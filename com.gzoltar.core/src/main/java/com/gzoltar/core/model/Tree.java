@@ -3,7 +3,9 @@ package com.gzoltar.core.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.gzoltar.core.runtime.ProbeGroup;
@@ -12,7 +14,9 @@ public class Tree implements Iterable<Node> {
 
   public static final String ROOT_NAME = "root";
 
-  private final List<Node> nodes = new ArrayList<Node>();
+  private Node root = null;
+
+  private final Map<String, Node> nodes = new LinkedHashMap<String, Node>();
 
   /**
    * 
@@ -27,8 +31,8 @@ public class Tree implements Iterable<Node> {
    */
   public Tree(final boolean createRoot) {
     if (createRoot) {
-      Node node = new Node(ROOT_NAME, -1, NodeType.PACKAGE, null);
-      this.nodes.add(node);
+      this.root = new Node(ROOT_NAME, -1, NodeType.PACKAGE, null);
+      this.nodes.put(ROOT_NAME, this.root);
     }
   }
 
@@ -37,7 +41,9 @@ public class Tree implements Iterable<Node> {
    * @param node
    */
   public void addNode(final Node node) {
-    this.nodes.add(node);
+    if (!this.nodes.containsKey(node.getName())) {
+      this.nodes.put(node.getName(), node);
+    }
   }
 
   /**
@@ -45,7 +51,7 @@ public class Tree implements Iterable<Node> {
    * @return
    */
   public Node getRoot() {
-    return this.nodes.get(0);
+    return this.root;
   }
 
   /**
@@ -54,12 +60,7 @@ public class Tree implements Iterable<Node> {
    * @return
    */
   public Node getNode(final String name) {
-    for (Node node : this.nodes) {
-      if (node.getName().equals(name)) {
-        return node;
-      }
-    }
-    return null;
+    return this.nodes.get(name);
   }
 
   /**
@@ -75,7 +76,7 @@ public class Tree implements Iterable<Node> {
    * @return
    */
   public List<Node> getNodes() {
-    return Collections.unmodifiableList(this.nodes);
+    return Collections.unmodifiableList(new ArrayList<Node>(this.nodes.values()));
   }
 
   /**
@@ -86,7 +87,7 @@ public class Tree implements Iterable<Node> {
   public List<Node> getNodesOfType(final NodeType type) {
     List<Node> nodesOfType = new ArrayList<Node>();
 
-    for (Node node : this.nodes) {
+    for (Node node : this.nodes.values()) {
       if (node.getNodeType().equals(type)) {
         nodesOfType.add(node);
       }
@@ -116,7 +117,7 @@ public class Tree implements Iterable<Node> {
    */
   @Override
   public Iterator<Node> iterator() {
-    return this.nodes.iterator();
+    return this.nodes.values().iterator();
   }
 
   /**
