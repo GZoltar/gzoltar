@@ -62,7 +62,7 @@ public class Agent implements IAgent {
     Collector.start(this.agentConfigs.getEventListener());
   }
 
-  public void shutdown() {
+  public synchronized void shutdown() {
     try {
       this.output.writeSpectrum(this.getData());
     } catch (final Exception e) {
