@@ -44,6 +44,7 @@ public class SpectrumReader {
       }
       this.firstBlock = false;
     } while (this.readBlock(type));
+    this.in.close();
     return true;
   }
 

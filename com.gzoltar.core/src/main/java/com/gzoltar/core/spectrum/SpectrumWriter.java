@@ -52,5 +52,6 @@ public class SpectrumWriter {
     for (final Transaction transaction : spectrum.getTransactions()) {
       transaction.serialize(this.out);
     }
+    this.out.close();
   }
 }
