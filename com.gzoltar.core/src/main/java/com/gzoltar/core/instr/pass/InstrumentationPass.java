@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.filter.EnumFilter;
@@ -23,9 +24,7 @@ import com.gzoltar.core.runtime.Probe;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
-import javassist.CtField;
 import javassist.Modifier;
-import javassist.bytecode.AccessFlag;
 import javassist.bytecode.Bytecode;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.CodeIterator;
@@ -35,9 +34,9 @@ import javassist.bytecode.Opcode;
 
 public class InstrumentationPass implements IPass {
 
-  private static final String HIT_VECTOR_TYPE = "[Z";
+  private final FieldInstrumentationPass fieldPass = new FieldInstrumentationPass();
 
-  public static final String HIT_VECTOR_NAME = "$__GZ_HIT_VECTOR__";
+  private final InitMethodInstrumentationPass initMethodPass = new InitMethodInstrumentationPass();
 
   private final StackSizePass stackSizePass = new StackSizePass();
 
@@ -80,6 +79,10 @@ public class InstrumentationPass implements IPass {
     // set of unique line numbers, we must restart it
     this.uniqueLineNumbers.clear();
 
+    byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozen the class
+    // in order to be able to modify it, it has to be defrosted
+    ctClass.defrost();
+
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
           this.transform(ctClass, ctBehavior).equals(Outcome.REJECT) ? false : true;
@@ -92,15 +95,37 @@ public class InstrumentationPass implements IPass {
     }
 
     if (instrumented) {
-      // make field
-      CtField f = CtField.make("private static boolean[] " + HIT_VECTOR_NAME + ";", ctClass);
-      f.setModifiers(f.getModifiers() | AccessFlag.SYNTHETIC);
-      ctClass.addField(f);
+      // make GZoltar's field
+      this.fieldPass.transform(ctClass);
 
-      // make class initializer
-      CtConstructor initializer = ctClass.makeClassInitializer();
-      initializer.insertBefore(HIT_VECTOR_NAME + " = " + Collector.class.getName()
-          + ".instance().getHitArray(\"" + ctClass.getName() + "\");");
+      // make method to init GZoltar's field
+      this.initMethodPass.setHash(originalBytes);
+      this.initMethodPass.transform(ctClass);
+
+      // make sure GZoltar's field is initialised. note: the following code requires the init method
+      // to be in the instrumented class, otherwise a compilation error is thrown
+
+      boolean hasAnyStaticInitializerBeenInstrumented = false;
+      for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
+        if (ctBehavior.getName().equals(InstrumentationConstants.INIT_METHOD_NAME)) {
+          // for obvious reasons, init method cannot call itself
+          continue;
+        }
+
+        // before executing the code of every single method, check whether FIELD_NAME has been
+        // initialised. if not, init method should initialise the field
+        this.initMethodPass.transform(ctClass, ctBehavior);
+
+        if (hasAnyStaticInitializerBeenInstrumented == false
+            && ctBehavior.getMethodInfo2().isStaticInitializer()) {
+          hasAnyStaticInitializerBeenInstrumented = true;
+        }
+      }
+
+      if (!hasAnyStaticInitializerBeenInstrumented) {
+        CtConstructor clinit = ctClass.makeClassInitializer();
+        this.initMethodPass.transform(ctClass, clinit);
+      }
     }
 
     return Outcome.ACCEPT;
@@ -166,7 +191,8 @@ public class InstrumentationPass implements IPass {
     Bytecode b = new Bytecode(constPool);
     Probe p = this.getProbe(ctClass, node);
 
-    b.addGetstatic(ctClass, HIT_VECTOR_NAME, HIT_VECTOR_TYPE);
+    b.addGetstatic(ctClass, InstrumentationConstants.FIELD_NAME,
+        InstrumentationConstants.FIELD_DESC_BYTECODE);
     b.addIconst(p.getArrayIndex());
     b.addOpcode(Opcode.ICONST_1);
     b.addOpcode(Opcode.BASTORE);

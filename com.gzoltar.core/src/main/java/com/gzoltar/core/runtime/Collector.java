@@ -147,15 +147,18 @@ public class Collector {
 
   /**
    * 
-   * @param className
-   * @return
+   * @param args
    */
-  public synchronized boolean[] getHitArray(final String className) {
+  private synchronized void getHitArray(final Object[] args) {
+    //final String hash = (String) args[0]; // TODO adapt GZoltar to use the hash rather than the className (or maybe both)
+    final String className = (String) args[1];
+
     if (!this.probeGroups.containsKey(className)) {
       // registerProbe has not been called before for this groupName therefore we can return null
-      return null;
+      args[0] = null;
+    } else {
+      args[0] = this.probeGroups.get(className).getHitArray();
     }
-    return this.probeGroups.get(className).getHitArray();
   }
 
   /**
@@ -178,4 +181,18 @@ public class Collector {
     return this.spectrumListener.getSpectrum().getTree().getRoot();
   }
 
+  /**
+   * In violation of the regular semantic of {@link Object#equals(Object)} this implementation is
+   * used as the interface to the runtime data.
+   * 
+   * @param args the arguments as an {@link Object} array
+   * @return has no meaning
+   */
+  @Override
+  public boolean equals(final Object args) {
+    if (args instanceof Object[]) {
+      this.getHitArray((Object[]) args);
+    }
+    return super.equals(args);
+  }
 }
