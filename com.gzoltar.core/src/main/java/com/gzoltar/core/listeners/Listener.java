@@ -40,7 +40,6 @@ public class Listener extends RunListener {
     this.hasFailed = false;
     this.startTime = System.nanoTime();
     this.stackTrace = "";
-    Collector.instance().startTransaction();
   }
 
   /**

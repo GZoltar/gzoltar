@@ -115,27 +115,25 @@ public class Collector {
 
   /**
    * 
-   */
-  public synchronized void startTransaction() {
-    for (ProbeGroup probeGroup : this.probeGroups.values()) {
-      probeGroup.resetHitArray();
-    }
-  }
-
-  /**
-   * 
    * @param transactionName
    * @param isError
    */
   public synchronized void endTransaction(final String transactionName,
       final TransactionOutcome outcome, final long runtime, final String stackTrace) {
+    // collect coverage
     Set<Node> hitNodes = new LinkedHashSet<Node>();
     for (ProbeGroup probeGroup : this.probeGroups.values()) {
       hitNodes.addAll(probeGroup.getHitNodes());
     }
 
+    // create a new transaction and inform all listeners
     Transaction transaction = new Transaction(transactionName, hitNodes, outcome, runtime, stackTrace);
     this.listener.endTransaction(transaction);
+
+    // reset probes
+    for (ProbeGroup probeGroup : this.probeGroups.values()) {
+      probeGroup.resetHitArray();
+    }
   }
 
   /**
