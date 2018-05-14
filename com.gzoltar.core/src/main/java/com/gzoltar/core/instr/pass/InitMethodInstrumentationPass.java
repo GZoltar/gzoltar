@@ -19,8 +19,8 @@ public class InitMethodInstrumentationPass implements IPass {
         InstrumentationConstants.INIT_METHOD_DESC_HUMAN + InstrumentationConstants.INIT_METHOD_NAME_WITH_ARGS + " { "
               + "if (" + InstrumentationConstants.FIELD_NAME + " == " + InstrumentationConstants.FIELD_INIT_VALUE + ") { "
                 + "Object[] $tmpGZoltarData = new Object[] { \"%s\",\"%s\" }; "
-                + "java.lang.UnknownError.$gzoltarAccess.equals($tmpGZoltarData); "
-                + InstrumentationConstants.FIELD_NAME + " = (boolean[]) $tmpGZoltarData[0]; "
+                + InstrumentationConstants.SYSTEM_CLASS_NAME_JVM + "." + InstrumentationConstants.SYSTEM_CLASS_FIELD_NAME + ".equals($tmpGZoltarData); "
+                + InstrumentationConstants.FIELD_NAME + " = (" + InstrumentationConstants.FIELD_DESC_HUMAN + ") $tmpGZoltarData[0]; "
               + "}"
             + "}";
   }
