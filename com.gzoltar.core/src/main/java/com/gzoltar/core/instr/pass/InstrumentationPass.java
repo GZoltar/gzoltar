@@ -8,6 +8,7 @@ import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
+import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.filter.IFilter;
@@ -68,6 +69,9 @@ public class InstrumentationPass implements IPass {
 
     // exclude methods 'values' and 'valuesOf' of enum classes
     this.filters.add(new EnumFilter());
+
+    // exclude methods without any source code
+    this.filters.add(new EmptyMethodFilter());
   }
 
   @Override

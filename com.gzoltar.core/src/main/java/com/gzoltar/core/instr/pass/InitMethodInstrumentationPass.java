@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
+import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -13,6 +14,12 @@ public class InitMethodInstrumentationPass implements IPass {
   private String hash = null;
 
   private static final String methodStr;
+
+  private final EmptyMethodFilter emptyMethodFilter;
+
+  public InitMethodInstrumentationPass() {
+    this.emptyMethodFilter = new EmptyMethodFilter();
+  }
 
   static {
     methodStr =
@@ -36,6 +43,10 @@ public class InitMethodInstrumentationPass implements IPass {
 
   @Override
   public Outcome transform(CtClass ctClass, CtBehavior ctBehavior) throws Exception {
+    if (this.emptyMethodFilter.filter(ctBehavior) == Outcome.REJECT) {
+      return Outcome.REJECT;
+    }
+
     ctBehavior.insertBefore(
         InstrumentationConstants.INIT_METHOD_NAME_WITH_ARGS + InstrumentationConstants.EOL);
     return Outcome.ACCEPT;
