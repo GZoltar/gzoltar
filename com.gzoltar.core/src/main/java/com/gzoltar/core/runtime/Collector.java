@@ -160,26 +160,6 @@ public class Collector {
   }
 
   /**
-   * 
-   * @param className
-   * @return
-   */
-  public synchronized boolean hasHitArray(final String className) {
-    if (!this.probeGroups.containsKey(className)) {
-      return false;
-    }
-    return this.probeGroups.get(className).hasHitArray();
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public Node getRootNode() {
-    return this.spectrumListener.getSpectrum().getTree().getRoot();
-  }
-
-  /**
    * In violation of the regular semantic of {@link Object#equals(Object)} this implementation is
    * used as the interface to the runtime data.
    * 

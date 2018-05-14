@@ -11,6 +11,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.pass.DuplicateCollectorReferencePass;
 import com.gzoltar.core.instr.pass.IPass;
 import com.gzoltar.core.instr.pass.InstrumentationPass;
 import com.gzoltar.core.util.BinaryTypeDetector;
@@ -34,6 +35,7 @@ public class Instrumenter {
    */
   public Instrumenter(final AgentConfigs agentConfigs) {
     this.passes = new IPass[] {
+        new DuplicateCollectorReferencePass(), // avoid re-instrumenting classes
         //new TestFilterPass(), // do not instrument test classes/cases
         new InstrumentationPass(agentConfigs)
     };
