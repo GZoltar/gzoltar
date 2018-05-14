@@ -2,11 +2,10 @@ package com.gzoltar.core.instr.granularity;
 
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeType;
+import com.gzoltar.core.model.Tree;
 import com.gzoltar.core.runtime.Collector;
-import com.gzoltar.core.util.ClassUtils;
 import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.NotFoundException;
 import javassist.bytecode.Descriptor;
 import javassist.bytecode.MethodInfo;
 
@@ -15,8 +14,6 @@ public abstract class AbstractGranularity implements IGranularity {
   protected CtClass ctClass;
 
   protected MethodInfo methodInfo;
-
-  private static final Collector COLLECTOR = Collector.instance();
 
   /**
    * 
@@ -28,80 +25,51 @@ public abstract class AbstractGranularity implements IGranularity {
     this.methodInfo = methodInfo;
   }
 
-  private Node getNode(final Node parent, final String fullName) {
-    return parent.getChild(fullName);
-  }
-
-  private Node createNode(final Node parent, final String name, final int lineNumber,
-      final NodeType nodeType) {
-    return COLLECTOR.createNode(parent, name, lineNumber, nodeType);
-  }
-
-  /**
-   * 
-   * @param ctClass
-   * @param lineNumber
-   * @return
-   */
-  protected Node getNode(final CtClass ctClass, final int lineNumber) {
-    // a class could be a child of a package or a child of another class
-    Node parent = null;
-    if (ClassUtils.isAnonymousClass(ctClass)) {
-      try {
-        parent = this.getNode(ctClass.getSuperclass(), lineNumber);
-      } catch (NotFoundException e) {
-        throw new RuntimeException(e);
-      }
-    } else {
-      String packageName = ctClass.getPackageName() == null ? "" : ctClass.getPackageName();
-      parent = this.getNode(COLLECTOR.getRootNode(), packageName);
-      if (parent == null) {
-        // package is not available yet, therefore create one
-        parent =
-            this.createNode(COLLECTOR.getRootNode(), packageName, 1, NodeType.PACKAGE);
-      }
-    }
-
-    String className = parent.getName() + NodeType.CLASS.getSymbol() + ctClass.getSimpleName();
-    Node node = this.getNode(parent, className);
-    if (node == null) {
-      node = this.createNode(parent, className, lineNumber, NodeType.CLASS);
-    }
-
-    return node;
-  }
-
-  /**
-   * 
-   * @param ctBehavior
-   * @param lineNumber
-   * @return
-   */
-  protected Node getNode(final CtBehavior ctBehavior, final int lineNumber) {
-    Node parent = this.getNode(ctBehavior.getDeclaringClass(), lineNumber);
-
-    String methodName = parent.getName() + NodeType.METHOD.getSymbol() + ctBehavior.getName()
-        + Descriptor.toString(ctBehavior.getSignature());
-    Node node = this.getNode(parent, methodName);
-    if (node == null) {
-      node = this.createNode(parent, methodName, lineNumber, NodeType.METHOD);
-    }
-
-    return node;
-  }
-
   /**
    * {@inheritDoc}
    */
-  public Node getNode(final CtClass ctClass, final CtBehavior ctBehavior, final int lineNumber) {
-    Node parent = this.getNode(ctBehavior, lineNumber);
+  @Override
+  public Node createNode(final CtClass ctClass, final CtBehavior ctBehavior, final int lineNumber) {
+    Tree tree = Collector.instance().getSpectrumListener().getSpectrum().getTree();
 
-    String lineName = parent.getName() + NodeType.LINE.getSymbol() + String.valueOf(lineNumber);
-    Node node = this.getNode(parent, lineName);
-    if (node == null) {
-      node = this.createNode(parent, lineName, lineNumber, NodeType.LINE);
+    String packageName = ctClass.getPackageName() == null ? "" : ctClass.getPackageName();
+    Node packageNode = tree.getNode(packageName);
+    if (packageNode == null) {
+      packageNode = Collector.instance().createNode(tree.getRoot(), packageName, lineNumber,
+          NodeType.PACKAGE);
     }
 
-    return node;
+    StringBuilder className = new StringBuilder(packageName);
+    className.append(NodeType.CLASS.getSymbol());
+    className.append(ctClass.getSimpleName());
+    String classNameStr = className.toString();
+    Node classNode = tree.getNode(classNameStr);
+    if (classNode == null) {
+      classNode =
+          Collector.instance().createNode(packageNode, classNameStr, lineNumber, NodeType.CLASS);
+    }
+
+    StringBuilder methodName = className;
+    methodName.append(NodeType.METHOD.getSymbol());
+    methodName.append(ctBehavior.getName());
+    methodName.append(Descriptor.toString(ctBehavior.getSignature()));
+    String methodNameStr = methodName.toString();
+    Node methodNode = tree.getNode(methodNameStr);
+    if (methodNode == null) {
+      methodNode =
+          Collector.instance().createNode(classNode, methodNameStr, lineNumber, NodeType.METHOD);
+    }
+
+    StringBuilder lineName = methodName;
+    lineName.append(NodeType.LINE.getSymbol());
+    lineName.append(String.valueOf(lineNumber));
+    String lineNameStr = lineName.toString();
+    Node lineNode = tree.getNode(lineNameStr);
+    if (lineNode == null) {
+      lineNode =
+          Collector.instance().createNode(methodNode, lineNameStr, lineNumber, NodeType.LINE);
+    }
+
+    return lineNode;
   }
 }

@@ -1,7 +1,5 @@
 package com.gzoltar.core.instr.granularity;
 
-import com.gzoltar.core.model.Node;
-import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.bytecode.MethodInfo;
 
@@ -19,11 +17,6 @@ public class MethodGranularity extends AbstractGranularity {
   @Override
   public boolean stopInstrumenting() {
     return true;
-  }
-
-  @Override
-  public Node getNode(final CtClass ctClass, final CtBehavior ctBehavior, final int lineNumber) {
-    return super.getNode(ctBehavior, lineNumber);
   }
 
 }

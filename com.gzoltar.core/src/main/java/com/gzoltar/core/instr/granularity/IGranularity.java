@@ -24,9 +24,8 @@ public interface IGranularity {
    * 
    * @param ctClass
    * @param ctBehavior
-   * @param line
+   * @param lineNumber
    * @return
    */
-  public Node getNode(final CtClass ctClass, final CtBehavior ctBehavior, final int line);
-
+  public Node createNode(final CtClass ctClass, final CtBehavior ctBehavior, final int lineNumber);
 }

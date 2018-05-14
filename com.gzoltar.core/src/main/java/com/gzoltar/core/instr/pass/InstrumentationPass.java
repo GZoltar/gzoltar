@@ -155,7 +155,7 @@ public class InstrumentationPass implements IPass {
     }
 
     CodeIterator ci = ca.iterator();
-    IGranularity g = GranularityFactory.getGranularity(ctClass, info, this.granularity);
+    IGranularity granularity = GranularityFactory.getGranularity(ctClass, info, this.granularity);
 
     for (int instrSize = 0, index, curLine; ci.hasNext(); this.uniqueLineNumbers.add(curLine)) {
       index = ci.next();
@@ -170,16 +170,16 @@ public class InstrumentationPass implements IPass {
         }
       }
 
-      if (g.instrumentAtIndex(index, instrSize)) {
-        Node n = g.getNode(ctClass, ctBehavior, curLine);
-        Bytecode bc = this.getInstrumentationCode(ctClass, n, info.getConstPool());
+      if (granularity.instrumentAtIndex(index, instrSize)) {
+        Node node = granularity.createNode(ctClass, ctBehavior, curLine);
+        Bytecode bc = this.getInstrumentationCode(ctClass, node, info.getConstPool());
         ci.insert(index, bc.get());
         instrSize += bc.length();
 
         instrumented = Outcome.ACCEPT;
       }
 
-      if (g.stopInstrumenting()) {
+      if (granularity.stopInstrumenting()) {
         break;
       }
     }
