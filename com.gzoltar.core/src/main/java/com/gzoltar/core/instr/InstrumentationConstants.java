@@ -20,7 +20,7 @@ public final class InstrumentationConstants {
   public static final String SYSTEM_CLASS_FIELD_DESC = "Object ";
 
   public static final int SYSTEM_CLASS_FIELD_ACC =
-      AccessFlag.PUBLIC | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC*/ | AccessFlag.TRANSIENT;
+      AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.SYNTHETIC | AccessFlag.TRANSIENT;
 
   // === Data Field ===
 
@@ -33,10 +33,10 @@ public final class InstrumentationConstants {
   public static final String FIELD_DESC_HUMAN = "boolean[] ";
 
   public static final int FIELD_ACC =
-      AccessFlag.PRIVATE | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC*/ | AccessFlag.TRANSIENT;
+      AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC | AccessFlag.TRANSIENT;
 
   public static final int FIELD_INTF_ACC =
-      AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.FINAL /*| AccessFlag.SYNTHETIC*/;
+      AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.FINAL | AccessFlag.SYNTHETIC;
 
   // === Init method ===
 
@@ -47,7 +47,7 @@ public final class InstrumentationConstants {
   public static final String INIT_METHOD_DESC_HUMAN = "void ";
 
   public static final int INIT_METHOD_ACC =
-      AccessFlag.PRIVATE | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC*/;
+      AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC;
 
   // TODO we may need extra constants for the init method of Java-8 interfaces
 
