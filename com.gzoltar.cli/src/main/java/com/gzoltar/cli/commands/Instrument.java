@@ -49,6 +49,7 @@ public class Instrument extends AbstractAgent implements Serializable {
 
     // configure instrumentation
     AgentConfigs agentConfigs = this.prepareAgentOptions();
+    agentConfigs.setOfflineInstrumentation(true);
     Instrumenter instrumenter = new Instrumenter(agentConfigs);
 
     final File absoluteOut = this.outputDirectory.getAbsoluteFile();

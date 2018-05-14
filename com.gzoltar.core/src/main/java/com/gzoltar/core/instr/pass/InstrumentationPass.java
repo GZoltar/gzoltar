@@ -8,6 +8,7 @@ import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
+import com.gzoltar.core.instr.filter.DuplicateCollectorReferenceFilter;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.Filter;
@@ -20,6 +21,7 @@ import com.gzoltar.core.instr.matchers.MethodAnnotationMatcher;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.instr.matchers.MethodNameMatcher;
 import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.NodeFactory;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.runtime.Probe;
 import javassist.CtBehavior;
@@ -37,9 +39,12 @@ public class InstrumentationPass implements IPass {
 
   private final FieldInstrumentationPass fieldPass = new FieldInstrumentationPass();
 
-  private final InitMethodInstrumentationPass initMethodPass = new InitMethodInstrumentationPass();
+  private final AbstractInitMethodInstrumentationPass initMethodPass;
 
   private final StackSizePass stackSizePass = new StackSizePass();
+
+  private final DuplicateCollectorReferenceFilter duplicateCollectorFilter =
+      new DuplicateCollectorReferenceFilter();
 
   private final List<IFilter> filters = new ArrayList<IFilter>();
 
@@ -49,6 +54,12 @@ public class InstrumentationPass implements IPass {
 
   public InstrumentationPass(final AgentConfigs agentConfigs) {
     this.granularity = agentConfigs.getGranularity();
+
+    if (agentConfigs.getOfflineInstrumentation()) {
+      this.initMethodPass = new OfflineInitMethodInstrumentationPass();
+    } else {
+      this.initMethodPass = new InitMethodInstrumentationPass();
+    }
 
     // filter classes/methods according to users preferences
 
@@ -173,12 +184,20 @@ public class InstrumentationPass implements IPass {
       }
 
       if (granularity.instrumentAtIndex(index, instrSize)) {
-        Node node = granularity.createNode(ctClass, ctBehavior, curLine);
-        Bytecode bc = this.getInstrumentationCode(ctClass, node, methodInfo.getConstPool());
-        ci.insert(index, bc.get());
-        instrSize += bc.length();
+        Node node = NodeFactory.createNode(ctClass, ctBehavior, curLine);
+        assert node != null;
+        Probe probe = this.getProbe(ctClass, node);
+        assert probe != null;
 
-        instrumented = Outcome.ACCEPT;
+        if (this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT) {
+          Bytecode bc = this.getInstrumentationCode(ctClass, probe, methodInfo.getConstPool());
+          ci.insert(index, bc.get());
+          instrSize += bc.length();
+
+          instrumented = Outcome.ACCEPT;
+        } else {
+          instrumented = Outcome.REJECT;
+        }
       }
 
       if (granularity.stopInstrumenting()) {
@@ -189,13 +208,11 @@ public class InstrumentationPass implements IPass {
     return instrumented;
   }
 
-  private Bytecode getInstrumentationCode(CtClass ctClass, Node node, ConstPool constPool) {
+  private Bytecode getInstrumentationCode(CtClass ctClass, Probe probe, ConstPool constPool) {
     Bytecode b = new Bytecode(constPool);
-    Probe p = this.getProbe(ctClass, node);
-
     b.addGetstatic(ctClass, InstrumentationConstants.FIELD_NAME,
         InstrumentationConstants.FIELD_DESC_BYTECODE);
-    b.addIconst(p.getArrayIndex());
+    b.addIconst(probe.getArrayIndex());
     b.addOpcode(Opcode.ICONST_1);
     b.addOpcode(Opcode.BASTORE);
 

@@ -128,6 +128,14 @@ public final class AgentConfigs {
 
   public static final boolean DEFAULT_INCLDEPRECATEDMETHODS = true;
 
+  /**
+   * Specifies whether an offline instrumentation should be performed. Default is
+   * <code>false</code>.
+   */
+  public static final String OFFLINE_INSTRUMENTATION_KEY = "offline_instrumentation";
+
+  public static final boolean DEFAULT_OFFLINE_INSTRUMENTATION = false;
+
   private final Map<String, String> configs;
 
   private static final Collection<String> VALID_CONFIGS =
@@ -410,6 +418,25 @@ public final class AgentConfigs {
    */
   public void setInclDeprecatedMethods(final boolean inclDeprecatedMethods) {
     this.setConfig(INCLDEPRECATEDMETHODS_KEY, inclDeprecatedMethods);
+  }
+
+  /**
+   * Returns whether an offline instrumentation is required.
+   * 
+   * @return <code>true</code> if an offline instrumentation is required.
+   */
+  public Boolean getOfflineInstrumentation() {
+    return this.getConfig(OFFLINE_INSTRUMENTATION_KEY, DEFAULT_OFFLINE_INSTRUMENTATION);
+  }
+
+  /**
+   * Sets whether an an offline instrumentation should be performed.
+   * 
+   * @param offlineInstrumentation <code>true</code> if an offline instrumentation should be
+   *        performed.
+   */
+  public void setOfflineInstrumentation(final boolean offlineInstrumentation) {
+    this.setConfig(OFFLINE_INSTRUMENTATION_KEY, offlineInstrumentation);
   }
 
   /**

@@ -115,6 +115,15 @@ public class Collector {
 
   /**
    * 
+   * @param groupName
+   * @return
+   */
+  public synchronized ProbeGroup getProbeGroup(final String groupName) {
+    return this.probeGroups.get(groupName);
+  }
+
+  /**
+   * 
    * @param transactionName
    * @param isError
    */
@@ -147,13 +156,15 @@ public class Collector {
    * 
    * @param args
    */
-  private synchronized void getHitArray(final Object[] args) {
+  public synchronized void getHitArray(final Object[] args) {
+    assert args.length == 3;
+
     //final String hash = (String) args[0]; // TODO adapt GZoltar to use the hash rather than the className (or maybe both)
     final String className = (String) args[1];
+    final Integer numberOfProbes = Integer.valueOf((String) args[2]);
 
     if (!this.probeGroups.containsKey(className)) {
-      // registerProbe has not been called before for this groupName therefore we can return null
-      args[0] = null;
+      args[0] = new boolean[numberOfProbes];
     } else {
       args[0] = this.probeGroups.get(className).getHitArray();
     }

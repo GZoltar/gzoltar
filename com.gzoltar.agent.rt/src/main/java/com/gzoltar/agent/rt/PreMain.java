@@ -14,9 +14,11 @@ public final class PreMain {
     try {
       // Instruments a pre-defined system class loader, i.e., adds a static field to a system class
       // loader so that other classes could access GZoltar's runtime collector
-      SystemClassInstrumenter.instrumentSystemClass(inst,
-          InstrumentationConstants.SYSTEM_CLASS_NAME,
-          InstrumentationConstants.SYSTEM_CLASS_FIELD_NAME);
+      if (!agentConfigs.getOfflineInstrumentation()) {
+        SystemClassInstrumenter.instrumentSystemClass(inst,
+            InstrumentationConstants.SYSTEM_CLASS_NAME,
+            InstrumentationConstants.SYSTEM_CLASS_FIELD_NAME);
+      }
 
       inst.addTransformer(new CoverageTransformer(agentConfigs));
     } catch (Exception e) {
