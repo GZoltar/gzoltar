@@ -146,8 +146,8 @@ public class InstrumentationPass implements IPass {
       }
     }
 
-    MethodInfo info = ctBehavior.getMethodInfo();
-    CodeAttribute ca = info.getCodeAttribute();
+    MethodInfo methodInfo = ctBehavior.getMethodInfo();
+    CodeAttribute ca = methodInfo.getCodeAttribute();
 
     if (ca == null) {
       // do not instrument methods with no code
@@ -155,24 +155,22 @@ public class InstrumentationPass implements IPass {
     }
 
     CodeIterator ci = ca.iterator();
-    IGranularity granularity = GranularityFactory.getGranularity(ctClass, info, this.granularity);
+    IGranularity granularity = GranularityFactory.getGranularity(ctClass, methodInfo, this.granularity);
 
     for (int instrSize = 0, index, curLine; ci.hasNext(); this.uniqueLineNumbers.add(curLine)) {
       index = ci.next();
 
-      curLine = info.getLineNumber(index);
+      curLine = methodInfo.getLineNumber(index);
 
       if (curLine == -1 || this.uniqueLineNumbers.contains(curLine)) {
         continue;
-      } else if (ctBehavior instanceof CtConstructor) {
-        if (((CtConstructor) ctBehavior).isConstructor() && curLine == 1) {
-          continue;
-        }
+      } else if (methodInfo.isConstructor() && curLine == 1) {
+        continue;
       }
 
       if (granularity.instrumentAtIndex(index, instrSize)) {
         Node node = granularity.createNode(ctClass, ctBehavior, curLine);
-        Bytecode bc = this.getInstrumentationCode(ctClass, node, info.getConstPool());
+        Bytecode bc = this.getInstrumentationCode(ctClass, node, methodInfo.getConstPool());
         ci.insert(index, bc.get());
         instrSize += bc.length();
 
