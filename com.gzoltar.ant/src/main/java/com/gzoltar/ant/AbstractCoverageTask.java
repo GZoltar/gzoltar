@@ -13,7 +13,7 @@ import com.gzoltar.core.AgentOutput;
  */
 public class AbstractCoverageTask extends Task {
 
-  private final AgentConfigs agentConfigs;
+  protected final AgentConfigs agentConfigs;
 
   private boolean enabled;
 

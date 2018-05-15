@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <antlib>
    <taskdef name="agent" classname="com.gzoltar.ant.AgentTask"/>
+   <taskdef name="instrument" classname="com.gzoltar.ant.InstrumentTask"/>
    <taskdef name="coverage" classname="com.gzoltar.ant.CoverageTask"/>
    <taskdef name="fl-report" classname="com.gzoltar.ant.fl.FaultLocalizationReportTask"/>
 </antlib>
