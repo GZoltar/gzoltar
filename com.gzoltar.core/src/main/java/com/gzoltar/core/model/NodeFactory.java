@@ -63,43 +63,68 @@ public final class NodeFactory {
    * Parse the name of a {@link com.gzoltar.core.model.Node} and create its ancestors and the node
    * itself, if not found.
    * 
+   * @param tree
    * @param nodeName Name of a node
+   * @param nodeType
    * @return An object of {@link com.gzoltar.core.model.Node}
    */
-  public static Node createNode(String nodeName) {
-    Tree tree = Collector.instance().getSpectrumListener().getSpectrum().getTree();
+  public static Node createNode(final Tree tree, final String nodeName, final NodeType nodeType) {
 
     final int lineNumber = Integer.valueOf(
         nodeName.substring(nodeName.indexOf(NodeType.LINE.getSymbol()) + 1, nodeName.length()));
 
-    final String packageName = nodeName.substring(0, nodeName.indexOf(NodeType.CLASS.getSymbol()));
-    final String className = nodeName.substring(0, nodeName.indexOf(NodeType.METHOD.getSymbol()));
-    final String methodName = nodeName.substring(0, nodeName.indexOf(NodeType.LINE.getSymbol()));
-    final String lineName = nodeName;
+    // === Package ===
 
+    final String packageName = nodeName.substring(0,
+        nodeType.equals(NodeType.PACKAGE) ? nodeName.indexOf(NodeType.LINE.getSymbol())
+            : nodeName.indexOf(NodeType.CLASS.getSymbol()));
     Node packageNode = tree.getNode(packageName);
     if (packageNode == null) {
-      packageNode = Collector.instance().createNode(tree.getRoot(), packageName, lineNumber,
-          NodeType.PACKAGE);
+      packageNode = new Node(packageName, lineNumber, NodeType.PACKAGE, tree.getRoot());
     }
 
+    if (nodeType.equals(NodeType.PACKAGE)) {
+      return packageNode;
+    }
+    tree.addNode(packageNode);
+
+    // === Class ===
+
+    final String className = nodeName.substring(0,
+        nodeType.equals(NodeType.CLASS) ? nodeName.indexOf(NodeType.LINE.getSymbol())
+            : nodeName.indexOf(NodeType.METHOD.getSymbol()));
     Node classNode = tree.getNode(className);
     if (classNode == null) {
-      classNode =
-          Collector.instance().createNode(packageNode, className, lineNumber, NodeType.CLASS);
+      classNode = new Node(className, lineNumber, NodeType.CLASS, packageNode);
     }
 
+    if (nodeType.equals(NodeType.CLASS)) {
+      return classNode;
+    }
+    tree.addNode(classNode);
+
+    // === Method ===
+
+    final String methodName = nodeName.substring(0, nodeName.indexOf(NodeType.LINE.getSymbol()));
     Node methodNode = tree.getNode(methodName);
     if (methodNode == null) {
-      methodNode =
-          Collector.instance().createNode(classNode, methodName, lineNumber, NodeType.METHOD);
+      methodNode = new Node(methodName, lineNumber, NodeType.METHOD, classNode);
     }
 
+    if (nodeType.equals(NodeType.METHOD)) {
+      return methodNode;
+    }
+    tree.addNode(methodNode);
+
+    // === Line ===
+
+    final String lineName = nodeName;
     Node lineNode = tree.getNode(lineName);
     if (lineNode == null) {
-      lineNode = Collector.instance().createNode(methodNode, lineName, lineNumber, NodeType.LINE);
+      lineNode = new Node(lineName, lineNumber, NodeType.LINE, methodNode);
     }
 
     return lineNode;
   }
+
 }

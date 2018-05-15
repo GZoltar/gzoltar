@@ -252,11 +252,8 @@ public class Node implements Serializable {
 
     try {
       out.writeByte(SerialisationIdentifiers.BLOCK_NODE);
-      out.writeUTF(this.getName());
-
-      out.writeInt(this.getLineNumber());
+      out.writeUTF(this.getNameWithLineNumber());
       out.writeUTF(this.getNodeType().name());
-      out.writeUTF(this.getParent().getName());
 
       Map<String, Double> suspiciousnessValues = this.getSuspiciousnessValues();
       if (suspiciousnessValues != null) {
@@ -284,14 +281,10 @@ public class Node implements Serializable {
    */
   public static Node deserialize(final DataInputStream in, final Tree tree) throws IOException {
     String name = in.readUTF();
-    Integer lineNumber = in.readInt();
     String symbol = in.readUTF();
-    String parentName = in.readUTF();
 
-    Node parent = tree.getNode(parentName);
-    assert parent != null;
-
-    Node node = new Node(name, lineNumber, NodeType.valueOf(symbol), parent);
+    Node node = NodeFactory.createNode(tree, name, NodeType.valueOf(symbol));
+    assert node != null;
 
     int numberOfSuspiciousnessValues = in.readInt();
     while (numberOfSuspiciousnessValues > 0) {

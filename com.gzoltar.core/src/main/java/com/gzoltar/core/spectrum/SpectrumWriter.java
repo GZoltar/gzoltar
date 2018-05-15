@@ -46,7 +46,7 @@ public class SpectrumWriter {
    */
   public void writeSpectrum(final ISpectrum spectrum) throws IOException {
     final Tree tree = spectrum.getTree();
-    for (final Node node : tree.getNodes()) {
+    for (final Node node : tree.getTargetNodes()) {
       node.serialize(this.out);
     }
     for (final Transaction transaction : spectrum.getTransactions()) {

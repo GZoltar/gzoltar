@@ -159,10 +159,7 @@ public class Transaction implements Serializable {
     Set<Node> activity = new LinkedHashSet<Node>();
     int numberActivities = in.readInt();
     while (numberActivities > 0) {
-      Node node = tree.getNode(in.readUTF());
-      assert node != null;
-      activity.add(node);
-
+      activity.add(tree.getNode(in.readUTF()));
       numberActivities--;
     }
 
