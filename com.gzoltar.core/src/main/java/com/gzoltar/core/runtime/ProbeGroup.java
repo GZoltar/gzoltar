@@ -108,7 +108,9 @@ public final class ProbeGroup {
 
     for (Probe probe : this.probes) {
       if (this.hitArray[probe.getArrayIndex()]) {
-        hitNodes.add(probe.getNode());
+        Node node = probe.getNode();
+        node.setHasBeenExecuted();
+        hitNodes.add(node);
       }
     }
 

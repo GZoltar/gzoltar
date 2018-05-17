@@ -4,9 +4,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.Tree;
 import com.gzoltar.core.util.SerialisationIdentifiers;
-import com.gzoltar.core.model.Transaction;
 
 /**
  * Serialization of a spectrum instance into binary streams.
@@ -47,7 +47,9 @@ public class SpectrumWriter {
   public void writeSpectrum(final ISpectrum spectrum) throws IOException {
     final Tree tree = spectrum.getTree();
     for (final Node node : tree.getTargetNodes()) {
-      node.serialize(this.out);
+      if (node.hasBeenExecuted()) {
+        node.serialize(this.out);
+      }
     }
     for (final Transaction transaction : spectrum.getTransactions()) {
       transaction.serialize(this.out);

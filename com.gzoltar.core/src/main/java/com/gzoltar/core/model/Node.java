@@ -3,7 +3,6 @@ package com.gzoltar.core.model;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,9 +12,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.gzoltar.core.util.SerialisationIdentifiers;
 
-public class Node implements Serializable {
-
-  private static final long serialVersionUID = 572345681630726180L;
+public class Node {
 
   private final String name;
 
@@ -30,6 +27,8 @@ public class Node implements Serializable {
   private final Map<String, Node> children = new LinkedHashMap<String, Node>();
 
   private Map<String, Double> suspiciousnessValues = null;
+
+  private boolean hasBeenExecuted = false;
 
   /**
    * 
@@ -238,6 +237,21 @@ public class Node implements Serializable {
   public int getNumberOfSuspiciousnessValues() {
     assert this.suspiciousnessValues != null;
     return this.suspiciousnessValues.size();
+  }
+
+  /**
+   * 
+   */
+  public void setHasBeenExecuted() {
+    this.hasBeenExecuted = true;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean hasBeenExecuted() {
+    return this.hasBeenExecuted;
   }
 
   /**
