@@ -65,10 +65,6 @@ public abstract class AbstractReportTask extends Task {
       return;
     }
 
-    try {
-      this.generateReport(Locale.getDefault());
-    } catch (final BuildException e) {
-      throw new BuildException("An error has occurred in GZoltar report generation.", e);
-    }
+    this.generateReport(Locale.getDefault());
   }
 }

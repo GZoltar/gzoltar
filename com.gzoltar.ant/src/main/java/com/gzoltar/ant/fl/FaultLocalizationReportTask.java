@@ -51,7 +51,7 @@ public class FaultLocalizationReportTask extends AbstractReportTask {
       // build a fault localization report
       FaultLocalizationReportBuilder.build(this.outputDirectory, this.dataFile, configFlFamilies);
     } catch (Exception e) {
-      throw new BuildException(e.toString());
+      throw new BuildException(e);
     }
   }
 }
