@@ -271,14 +271,14 @@ public class Node {
 
       Map<String, Double> suspiciousnessValues = this.getSuspiciousnessValues();
       if (suspiciousnessValues != null) {
-        out.writeInt(suspiciousnessValues.size());
+        out.writeShort(suspiciousnessValues.size());
 
         for (Entry<String, Double> suspiciousness : suspiciousnessValues.entrySet()) {
           out.writeUTF(suspiciousness.getKey());
           out.writeDouble(suspiciousness.getValue().doubleValue());
         }
       } else {
-        out.writeInt(0); // there is not any suspiciousness value
+        out.writeShort(0); // there is not any suspiciousness value
       }
     } catch (final IOException e) {
       throw new RuntimeException(e);
@@ -297,10 +297,13 @@ public class Node {
     String name = in.readUTF();
     String symbol = in.readUTF();
 
-    Node node = NodeFactory.createNode(tree, name, NodeType.valueOf(symbol));
+    Node node = tree.getNode(name);
+    if (node == null) {
+      node = NodeFactory.createNode(tree, name, NodeType.valueOf(symbol));
+    }
     assert node != null;
 
-    int numberOfSuspiciousnessValues = in.readInt();
+    int numberOfSuspiciousnessValues = in.readUnsignedShort();
     while (numberOfSuspiciousnessValues > 0) {
       node.addSuspiciousnessValue(in.readUTF(), in.readDouble());
       numberOfSuspiciousnessValues--;
