@@ -26,7 +26,7 @@ public class StackSizePass implements IPass {
     if (ca != null) {
       int ss = ca.computeMaxStack();
       ca.setMaxStack(ss);
-      info.rebuildStackMapIf6(ctClass.getClassPool(), ctClass.getClassFile());
+      //info.rebuildStackMapIf6(ctClass.getClassPool(), ctClass.getClassFile());
     }
 
     return Outcome.ACCEPT;

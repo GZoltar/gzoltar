@@ -94,7 +94,7 @@ public class InstrumentationPass implements IPass {
     // set of unique line numbers, we must restart it
     this.uniqueLineNumbers.clear();
 
-    byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozen the class
+    byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozens the class
     // in order to be able to modify it, it has to be defrosted
     ctClass.defrost();
 

@@ -55,7 +55,7 @@ public final class SystemClassInstrumenter {
     // enable instrumentation
     inst.addTransformer(transformer);
     // load system class
-    final Class<?> clazz = Class.forName(InstrumentationConstants.SYSTEM_CLASS_NAME_JVM);
+    final Class<?> clazz = Class.forName(InstrumentationConstants.SYSTEM_CLASS_NAME);
     // disable instrumentation
     inst.removeTransformer(transformer);
 

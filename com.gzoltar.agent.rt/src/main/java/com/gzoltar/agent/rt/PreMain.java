@@ -16,7 +16,7 @@ public final class PreMain {
       // loader so that other classes could access GZoltar's runtime collector
       if (!agentConfigs.getOfflineInstrumentation()) {
         SystemClassInstrumenter.instrumentSystemClass(inst,
-            InstrumentationConstants.SYSTEM_CLASS_NAME,
+            InstrumentationConstants.SYSTEM_CLASS_NAME_JVM,
             InstrumentationConstants.SYSTEM_CLASS_FIELD_NAME);
       }
 

@@ -4,19 +4,22 @@ import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
 import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtField;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.FieldInfo;
 
 public class FieldInstrumentationPass implements IPass {
 
-  private static final String fieldStr =
-      InstrumentationConstants.FIELD_DESC_HUMAN + InstrumentationConstants.FIELD_NAME + " = "
-          + InstrumentationConstants.FIELD_INIT_VALUE + InstrumentationConstants.EOL;
-
   @Override
   public Outcome transform(CtClass ctClass) throws Exception {
-    CtField f = CtField.make(fieldStr, ctClass);
-    f.setModifiers(f.getModifiers() | InstrumentationConstants.FIELD_ACC);
-    ctClass.addField(f);
+    ClassFile classFile = ctClass.getClassFile();
+
+    // create a new field and set its access flags
+    FieldInfo field = new FieldInfo(classFile.getConstPool(), InstrumentationConstants.FIELD_NAME,
+        InstrumentationConstants.FIELD_DESC_BYTECODE);
+    field.setAccessFlags(field.getAccessFlags() | InstrumentationConstants.FIELD_ACC);
+
+    // add new field to the class
+    classFile.addField(field);
 
     return Outcome.ACCEPT;
   }
