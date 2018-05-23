@@ -47,7 +47,7 @@ public abstract class AbstractMetric implements IMetric {
    */
   protected boolean validMatrix(final ISpectrum spectrum) {
     if (spectrum != null) {
-      return spectrum.getNumberOfTargetNodes() > 0 && spectrum.getNumberOfTransactions() > 0;
+      return spectrum.getNumberOfNodes() > 0 && spectrum.getNumberOfTransactions() > 0;
     }
     return false;
   }

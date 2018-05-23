@@ -10,10 +10,14 @@ import com.gzoltar.core.spectrum.SpectrumWriter;
 
 public class FileOutput implements IAgentOutput {
 
-  private File destFile;
+  private final File destFile;
+
+  private final AgentConfigs agentConfigs;
 
   public FileOutput(final AgentConfigs agentConfigs) {
-    this.destFile = new File(agentConfigs.getDestfile()).getAbsoluteFile();
+    this.agentConfigs = agentConfigs;
+
+    this.destFile = new File(this.agentConfigs.getDestfile()).getAbsoluteFile();
     final File folder = this.destFile.getParentFile();
     if (folder != null) {
       folder.mkdirs();
@@ -29,7 +33,7 @@ public class FileOutput implements IAgentOutput {
   public void writeSpectrum(final ISpectrum spectrum) throws Exception {
     final OutputStream output = this.openFile();
     try {
-      final SpectrumWriter writer = new SpectrumWriter(output);
+      final SpectrumWriter writer = new SpectrumWriter(output, this.agentConfigs);
       writer.writeSpectrum(spectrum);
     } finally {
       output.close();

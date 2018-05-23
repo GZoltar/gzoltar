@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import com.gzoltar.core.events.EmptyEventListener;
 import com.gzoltar.core.events.IEventListener;
+import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.util.CommandLineSupport;
 
@@ -129,12 +130,11 @@ public final class AgentConfigs {
   public static final boolean DEFAULT_INCLDEPRECATEDMETHODS = true;
 
   /**
-   * Specifies whether an offline instrumentation should be performed. Default is
-   * <code>false</code>.
+   * Specifies which level of instrumentation should be performed. Default is <code>full</code>.
    */
-  public static final String OFFLINE_INSTRUMENTATION_KEY = "offline_instrumentation";
+  public static final String INSTRUMENTATION_LEVEL_KEY = "instrumentation_level";
 
-  public static final boolean DEFAULT_OFFLINE_INSTRUMENTATION = false;
+  public static final InstrumentationLevel DEFAULT_INSTRUMENTATION_LEVEL = InstrumentationLevel.FULL;
 
   private final Map<String, String> configs;
 
@@ -421,22 +421,31 @@ public final class AgentConfigs {
   }
 
   /**
-   * Returns whether an offline instrumentation is required.
+   * Returns which instrumentation level should be performed.
    * 
-   * @return <code>true</code> if an offline instrumentation is required.
+   * @return instrumentationLevel
    */
-  public Boolean getOfflineInstrumentation() {
-    return this.getConfig(OFFLINE_INSTRUMENTATION_KEY, DEFAULT_OFFLINE_INSTRUMENTATION);
+  public InstrumentationLevel getInstrumentationLevel() {
+    final String value = this.configs.get(INSTRUMENTATION_LEVEL_KEY);
+    return value == null ? DEFAULT_INSTRUMENTATION_LEVEL : InstrumentationLevel.valueOf(value);
   }
 
   /**
-   * Sets whether an an offline instrumentation should be performed.
+   * Sets which instrumentation level should be performed.
    * 
-   * @param offlineInstrumentation <code>true</code> if an offline instrumentation should be
-   *        performed.
+   * @param instrumentationLevel
    */
-  public void setOfflineInstrumentation(final boolean offlineInstrumentation) {
-    this.setConfig(OFFLINE_INSTRUMENTATION_KEY, offlineInstrumentation);
+  public void setInstrumentationLevel(final String instrumentationLevel) {
+    setInstrumentationLevel(InstrumentationLevel.valueOf(instrumentationLevel.toUpperCase()));
+  }
+
+  /**
+   * Sets which instrumentation level should be performed.
+   * 
+   * @param instrumentationLevel
+   */
+  public void setInstrumentationLevel(final InstrumentationLevel instrumentationLevel) {
+    this.setConfig(INSTRUMENTATION_LEVEL_KEY, instrumentationLevel.name());
   }
 
   /**

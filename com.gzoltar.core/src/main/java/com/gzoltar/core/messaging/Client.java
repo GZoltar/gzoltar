@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
 import com.gzoltar.core.events.IEventListener;
-import com.gzoltar.core.messaging.Message.AddNodeMessage;
+import com.gzoltar.core.messaging.Message.AddProbeGroupMessage;
 import com.gzoltar.core.messaging.Message.ByeMessage;
 import com.gzoltar.core.messaging.Message.EndTransactionMessage;
 import com.gzoltar.core.messaging.Message.HandshakeMessage;
-import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.runtime.ProbeGroup;
 
 public class Client implements IEventListener {
 
@@ -109,8 +109,8 @@ public class Client implements IEventListener {
   }
 
   @Override
-  public void addNode(final Node node) {
-    this.postMessage(new AddNodeMessage(node));
+  public void regiterProbeGroup(final ProbeGroup probeGroup) {
+    this.postMessage(new AddProbeGroupMessage(probeGroup));
   }
 
   @Override

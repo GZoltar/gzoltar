@@ -4,7 +4,7 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import com.gzoltar.core.events.IEventListener;
-import com.gzoltar.core.messaging.Message.AddNodeMessage;
+import com.gzoltar.core.messaging.Message.AddProbeGroupMessage;
 import com.gzoltar.core.messaging.Message.ByeMessage;
 import com.gzoltar.core.messaging.Message.EndTransactionMessage;
 import com.gzoltar.core.messaging.Message.HandshakeMessage;
@@ -82,9 +82,9 @@ public class Server extends ThreadedServer {
       } else if (o instanceof EndTransactionMessage) {
         EndTransactionMessage etm = (EndTransactionMessage) o;
         eventListener.endTransaction(etm.transaction);
-      } else if (o instanceof AddNodeMessage) {
-        AddNodeMessage anm = (AddNodeMessage) o;
-        eventListener.addNode(anm.node);
+      } else if (o instanceof AddProbeGroupMessage) {
+        AddProbeGroupMessage anm = (AddProbeGroupMessage) o;
+        eventListener.regiterProbeGroup(anm.probeGroup);
       }
 
       return false;

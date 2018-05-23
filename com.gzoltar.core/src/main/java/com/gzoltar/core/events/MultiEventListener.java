@@ -3,8 +3,8 @@ package com.gzoltar.core.events;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.runtime.ProbeGroup;
 
 public class MultiEventListener implements IEventListener {
 
@@ -19,9 +19,9 @@ public class MultiEventListener implements IEventListener {
   }
 
   @Override
-  public void addNode(final Node node) {
+  public void regiterProbeGroup(final ProbeGroup probeGroup) {
     for (IEventListener el : this.eventListeners) {
-      el.addNode(node);
+      el.regiterProbeGroup(probeGroup);
     }
   }
 

@@ -1,8 +1,8 @@
 package com.gzoltar.report.metrics.experimental;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.spectrum.ISpectrum;
@@ -16,17 +16,17 @@ public class DistinctTransactionsRho extends AbstractMetric {
       return 0;
     }
 
-    Map<Integer, Set<Node>> distinctTransactionSet = new HashMap<Integer, Set<Node>>();
+    Map<Integer, List<Node>> distinctTransactionSet = new HashMap<Integer, List<Node>>();
 
     for (Transaction transaction : spectrum.getTransactions()) {
-      distinctTransactionSet.put(this.getHash(transaction), transaction.getActivity());
+      distinctTransactionSet.put(this.getHash(transaction), transaction.getHitNodes());
     }
 
-    int components = spectrum.getNumberOfTargetNodes();
+    int components = spectrum.getNumberOfNodes();
     int transactions = distinctTransactionSet.size();
     int activity_counter = 0;
 
-    for (Set<Node> activity : distinctTransactionSet.values()) {
+    for (List<Node> activity : distinctTransactionSet.values()) {
       activity_counter += activity.size();
     }
 

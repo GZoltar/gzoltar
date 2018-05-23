@@ -12,7 +12,7 @@ public class EntropyMetric extends AbstractMetric {
     }
 
     double entropy = 0.0;
-    for (Node node : spectrum.getTargetNodes()) {
+    for (Node node : spectrum.getNodes()) {
       double suspiciousness = node.getSuspiciousnessValue(this.getFormula().getName());
       if (Double.compare(suspiciousness, 0.0) > 0) {
         entropy += suspiciousness * this.log2(suspiciousness);

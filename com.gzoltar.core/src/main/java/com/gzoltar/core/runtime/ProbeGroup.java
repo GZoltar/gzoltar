@@ -1,39 +1,60 @@
 package com.gzoltar.core.runtime;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.gzoltar.core.model.Node;
 
-public final class ProbeGroup {
+public final class ProbeGroup implements Cloneable {
+
+  private final String hash;
 
   private final String name;
 
-  private final Set<Probe> probes;
+  private final List<Probe> probes;
 
   private boolean[] hitArray = null;
 
   /**
+   * Constructs a new ProbeGroup.
    * 
    * @param name
    */
-  public ProbeGroup(String name) {
-    this.name = name;
-    this.probes = new LinkedHashSet<Probe>();
+  public ProbeGroup(String hash, String name) {
+    this(hash, name, new ArrayList<Probe>());
   }
 
   /**
+   * Constructs a new ProbeGroup.
    * 
-   * @return
+   * @param name
+   * @param probes
+   */
+  public ProbeGroup(String hash, String name, List<Probe> probes) {
+    this.hash = hash;
+    this.name = name;
+    this.probes = probes;
+  }
+
+  /**
+   * Returns the MD5 hash of the bytecode of the class under test.
+   */
+  public String getHash() {
+    return this.hash;
+  }
+
+  /**
+   * Returns the name of a probeGroup.
    */
   public String getName() {
     return this.name;
   }
 
+  // === Probes ===
+
   /**
-   * 
-   * @param node
+   * Registers a new  {@link com.gzoltar.core.runtime.Probe} object.
    */
   public Probe registerProbe(Node node) {
     Probe probe = new Probe(this.probes.size(), node);
@@ -42,59 +63,57 @@ public final class ProbeGroup {
   }
 
   /**
-   * 
-   * @return
+   * Returns all {@link com.gzoltar.core.runtime.Probe} objects that have been registered.
    */
-  public Set<Probe> getProbes() {
+  public List<Probe> getProbes() {
     return this.probes;
   }
 
   /**
-   * 
-   * @return
+   * Returns the number of {@link com.gzoltar.core.runtime.Probe} objects of a probeGroup.
    */
   public int getNumberOfProbes() {
     return this.probes.size();
   }
 
   /**
-   * 
-   * @return
+   * Returns true if a probeGroup does not contain any {@link com.gzoltar.core.runtime.Probe}
+   * object.
    */
-  public boolean hasHitArray() {
-    return this.hitArray != null;
+  public boolean isEmpty() {
+    return this.probes.isEmpty();
+  }
+
+  // === Nodes ===
+
+  /**
+   * Returns all {@link com.gzoltar.core.model.Node} object that belong to a probeGroup.
+   */
+  public List<Node> getNodes() {
+    List<Node> nodes = new ArrayList<Node>();
+    for (Probe probe : this.probes) {
+      nodes.add(probe.getNode());
+    }
+    return nodes;
   }
 
   /**
    * 
-   * @return
    */
-  public boolean[] getHitArray() {
-    if (this.hitArray == null) {
-      this.hitArray = new boolean[this.probes.size()];
+  public Node getNode(String nodeName) {
+    for (Probe probe : this.probes) {
+      if (probe.getNode().getName().equals(nodeName)) {
+        return probe.getNode();
+      }
     }
-    return this.hitArray;
+    return null;
   }
 
   /**
-   * 
+   * Returns all executed {@link com.gzoltar.core.model.Node} objects.
    */
-  public void resetHitArray() {
-    if (this.hitArray == null) {
-      return;
-    }
-
-    for (int i = 0; i < this.hitArray.length; i++) {
-      this.hitArray[i] = false;
-    }
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public Set<Node> getHitNodes() {
-    Set<Node> hitNodes = new LinkedHashSet<Node>();
+  public List<Node> getHitNodes() {
+    List<Node> hitNodes = new ArrayList<Node>();
     if (this.hitArray == null) {
       // When a class is serialised / deserialised an instance of a class could be created only
       // using metadata of that class, i.e., there is a chance that none of "normal" constructors or
@@ -118,12 +137,77 @@ public final class ProbeGroup {
   }
 
   /**
+   * Returns true if a {@link com.gzoltar.core.model.Node} at index has been executed, false
+   * otherwise.
+   * 
+   * @param index
+   * @return
+   */
+  public boolean hitNode(int index) {
+    if (this.hitArray == null) {
+      return false;
+    }
+    return this.hitArray[index];
+  }
+
+  // === HitArray ===
+
+  /**
+   * Returns true if there is an hitArray, false otherwise.
+   */
+  public boolean hasHitArray() {
+    return this.hitArray != null;
+  }
+
+  /**
+   * Returns the hitArray of a probeGroup.
+   */
+  public boolean[] getHitArray() {
+    if (this.hitArray == null) {
+      this.hitArray = new boolean[this.probes.size()];
+    }
+    return this.hitArray;
+  }
+
+  /**
+   * Resets the hitArray of a probeGroup.
+   */
+  public void resetHitArray() {
+    if (this.hitArray == null) {
+      return;
+    }
+
+    for (int i = 0; i < this.hitArray.length; i++) {
+      this.hitArray[i] = false;
+    }
+  }
+
+  /**
+   * Replace any existing hitArray with a new one.
+   */
+  public void setHitArray(boolean[] hitArray) {
+    this.hitArray = hitArray;
+  }
+
+  // === Overrides ===
+
+  /**
    * {@inheritDoc}
    */
   @Override
   public String toString() {
-    return "Name: " + this.name + " has " + this.probes.size() + " probes. HitArray: "
-        + this.hitArray;
+    StringBuilder sb = new StringBuilder();
+    sb.append("[ProbeGroup] ");
+    sb.append(this.hash);
+    sb.append(" | ");
+    sb.append(this.name);
+
+    for (Probe probe : this.probes) {
+      sb.append("\n");
+      sb.append(probe.toString());
+    }
+
+    return sb.toString();
   }
 
   /**
@@ -132,6 +216,7 @@ public final class ProbeGroup {
   @Override
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
+    builder.append(this.hash);
     builder.append(this.name);
     builder.append(this.probes);
     builder.append(this.hitArray);
@@ -153,10 +238,24 @@ public final class ProbeGroup {
     ProbeGroup probeGroup = (ProbeGroup) obj;
 
     EqualsBuilder builder = new EqualsBuilder();
+    builder.append(this.hash, probeGroup.hash);
     builder.append(this.name, probeGroup.name);
     builder.append(this.probes, probeGroup.probes);
     builder.append(this.hitArray, probeGroup.hitArray);
 
     return builder.isEquals();
+  }
+
+  @Override
+  public Object clone() throws CloneNotSupportedException {
+    ProbeGroup clone = new ProbeGroup(this.hash, this.name, this.probes);
+
+    if (this.hitArray != null) {
+      boolean[] hitArrayClone = new boolean[this.hitArray.length];
+      System.arraycopy(this.hitArray, 0, hitArrayClone, 0, this.hitArray.length);
+      clone.hitArray = hitArrayClone;
+    }
+
+    return clone;
   }
 }

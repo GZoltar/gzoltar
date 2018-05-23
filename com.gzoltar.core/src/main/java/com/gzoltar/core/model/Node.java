@@ -1,8 +1,5 @@
 package com.gzoltar.core.model;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import com.gzoltar.core.util.SerialisationIdentifiers;
 
 public class Node {
 
@@ -20,15 +16,25 @@ public class Node {
 
   private final NodeType type;
 
-  private final int depth;
+  private int depth;
 
-  private final Node parent;
+  private Node parent;
 
   private final Map<String, Node> children = new LinkedHashMap<String, Node>();
 
   private Map<String, Double> suspiciousnessValues = null;
 
   private boolean hasBeenExecuted = false;
+
+  /**
+   * 
+   * @param name
+   * @param lineNumber
+   * @param type
+   */
+  public Node(final String name, final int lineNumber, final NodeType type) {
+    this(name, lineNumber, type, null);
+  }
 
   /**
    * 
@@ -40,16 +46,7 @@ public class Node {
     this.type = type;
     this.name = name;
     this.lineNumber = lineNumber;
-    this.parent = parent;
-
-    if (this.isRoot()) {
-      this.depth = 0;
-    } else {
-      this.depth = parent.getDepth() + 1;
-      if (!parent.children.containsKey(this.name)) {
-        parent.children.put(this.name, this);
-      }
-    }
+    this.setParent(parent);
   }
 
   /**
@@ -104,6 +101,23 @@ public class Node {
    */
   public int getDepth() {
     return this.depth;
+  }
+
+  /**
+   * 
+   * @param parent
+   */
+  public void setParent(Node parent) {
+    this.parent = parent;
+
+    if (this.parent == null) {
+      this.depth = 0;
+    } else {
+      this.depth = this.parent.getDepth() + 1;
+      if (!this.parent.children.containsKey(this.name)) {
+        this.parent.children.put(this.name, this);
+      }
+    }
   }
 
   /**
@@ -252,64 +266,6 @@ public class Node {
    */
   public boolean hasBeenExecuted() {
     return this.hasBeenExecuted;
-  }
-
-  /**
-   * Serialises an instance of {@link com.gzoltar.core.model.Node}.
-   * 
-   * @param out binary stream to write bytes to
-   */
-  public void serialize(final DataOutputStream out) {
-    if (this.isRoot()) {
-      return;
-    }
-
-    try {
-      out.writeByte(SerialisationIdentifiers.BLOCK_NODE);
-      out.writeUTF(this.getNameWithLineNumber());
-      out.writeUTF(this.getNodeType().name());
-
-      Map<String, Double> suspiciousnessValues = this.getSuspiciousnessValues();
-      if (suspiciousnessValues != null) {
-        out.writeShort(suspiciousnessValues.size());
-
-        for (Entry<String, Double> suspiciousness : suspiciousnessValues.entrySet()) {
-          out.writeUTF(suspiciousness.getKey());
-          out.writeDouble(suspiciousness.getValue().doubleValue());
-        }
-      } else {
-        out.writeShort(0); // there is not any suspiciousness value
-      }
-    } catch (final IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Deserialises and create an instance of {@link com.gzoltar.core.model.Node}.
-   * 
-   * @param in binary stream to read bytes from
-   * @param tree a {@link com.gzoltar.core.model.Tree} object
-   * @return a {@link com.gzoltar.core.model.Node} object
-   * @throws IOException
-   */
-  public static Node deserialize(final DataInputStream in, final Tree tree) throws IOException {
-    String name = in.readUTF();
-    String symbol = in.readUTF();
-
-    Node node = tree.getNode(name);
-    if (node == null) {
-      node = NodeFactory.createNode(tree, name, NodeType.valueOf(symbol));
-    }
-    assert node != null;
-
-    int numberOfSuspiciousnessValues = in.readUnsignedShort();
-    while (numberOfSuspiciousnessValues > 0) {
-      node.addSuspiciousnessValue(in.readUTF(), in.readDouble());
-      numberOfSuspiciousnessValues--;
-    }
-
-    return node;
   }
 
   /**

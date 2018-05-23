@@ -9,7 +9,6 @@ import org.junit.runner.JUnitCore;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Instrumenter;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
-import com.gzoltar.core.instr.pass.InstrumentationPass;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.spectrum.ISpectrum;
 import javassist.ClassPool;
@@ -34,7 +33,7 @@ public class TestJUnitListener {
     AgentConfigs configs = new AgentConfigs(null);
     configs.setGranularity(GranularityLevel.LINE);
 
-    Collector.start(configs.getEventListener());
+    Collector.instance().addListener(configs.getEventListener());
 
     Instrumenter instrumenter = new Instrumenter(configs);
     for (String classUnderTest : classesUnderTest) {
@@ -44,7 +43,7 @@ public class TestJUnitListener {
     core.addListener(new JUnitListener());
     core.run(TestEnumClass.class);
 
-    ISpectrum spectrum = Collector.instance().getSpectrumListener().getSpectrum();
+    ISpectrum spectrum = Collector.instance().getSpectrum();
     spectrum.toString();
   }
 

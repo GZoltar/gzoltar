@@ -1,7 +1,8 @@
 package com.gzoltar.report.metrics;
 
-import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.runtime.Probe;
+import com.gzoltar.core.runtime.ProbeGroup;
 import com.gzoltar.core.spectrum.ISpectrum;
 
 public class RhoMetric extends AbstractMetric {
@@ -13,13 +14,15 @@ public class RhoMetric extends AbstractMetric {
     }
 
     int transactions = spectrum.getNumberOfTransactions();
-    int components = spectrum.getNumberOfTargetNodes();
+    int components = spectrum.getNumberOfNodes();
 
     int activity_counter = 0;
     for (Transaction transaction : spectrum.getTransactions()) {
-      for (Node node : spectrum.getTargetNodes()) {
-        if (transaction.isNodeActived(node)) {
-          activity_counter++;
+      for (ProbeGroup probeGroup : spectrum.getProbeGroups()) {
+        for (Probe probe : probeGroup.getProbes()) {
+          if (transaction.isNodeActived(probeGroup.getHash(), probe.getArrayIndex())) {
+            activity_counter++;
+          }
         }
       }
     }

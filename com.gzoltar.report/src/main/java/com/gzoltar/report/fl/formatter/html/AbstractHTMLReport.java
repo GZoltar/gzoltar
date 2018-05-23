@@ -7,6 +7,8 @@ import java.nio.charset.Charset;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
 import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.NodeFactory;
+import com.gzoltar.core.model.Tree;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFormula;
 import com.gzoltar.report.fl.formatter.IFaultLocalizationReportFormatter;
@@ -39,12 +41,21 @@ public abstract class AbstractHTMLReport implements IFaultLocalizationReportForm
    * @return
    */
   protected String toJSON(final ISpectrum spectrum, final IFormula formula) {
-    Node root = spectrum.getTree().getRoot();
+    Tree tree = this.createTree(spectrum);
+    Node root = tree.getRoot();
     assert root != null;
-    return this.toJSON(root, formula).toString();
+    return this.toJSON(root, formula, tree.getNumberOfNodes()).toString();
   }
 
-  private StringBuilder toJSON(final Node node, IFormula formula) {
+  private Tree createTree(final ISpectrum spectrum) {
+    Tree tree = new Tree();
+    for (Node node : spectrum.getNodes()) {
+      NodeFactory.createNode(tree, node);
+    }
+    return tree;
+  }
+
+  private StringBuilder toJSON(final Node node, IFormula formula, int totalNumberOfNodes) {
     StringBuilder str = new StringBuilder("{");
 
     List<Node> children = node.getChildren();
@@ -53,7 +64,7 @@ public abstract class AbstractHTMLReport implements IFaultLocalizationReportForm
     } else {
       str.append("\"children\":[");
       for (int i = 0; i < children.size(); i++) {
-        str.append(this.toJSON(children.get(i), formula));
+        str.append(this.toJSON(children.get(i), formula, totalNumberOfNodes));
 
         // is not it the last child?
         if (i < children.size() - 1) {
@@ -64,7 +75,7 @@ public abstract class AbstractHTMLReport implements IFaultLocalizationReportForm
     }
     str.append("\"label\":\"" + node.getName() + "\",");
     str.append("\"probability\":" + node.getSuspiciousnessValue(formula.getName()) + ",");
-    str.append("\"size\":26"); // FIXME
+    str.append("\"size\":" + totalNumberOfNodes);
 
     str.append("}");
     return str;

@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Instrumenter;
 import javassist.ClassPool;
 
@@ -49,7 +50,7 @@ public class Instrument extends AbstractAgent implements Serializable {
 
     // configure instrumentation
     AgentConfigs agentConfigs = this.prepareAgentOptions();
-    agentConfigs.setOfflineInstrumentation(true);
+    agentConfigs.setInstrumentationLevel(InstrumentationLevel.OFFLINE);
     Instrumenter instrumenter = new Instrumenter(agentConfigs);
 
     final File absoluteOut = this.outputDirectory.getAbsoluteFile();

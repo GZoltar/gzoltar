@@ -1,7 +1,6 @@
 package com.gzoltar.core.instr.pass;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.gzoltar.examples.AbstractClass;
@@ -20,7 +19,6 @@ import org.junit.Test;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.model.Node;
-import com.gzoltar.core.model.Tree;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.spectrum.ISpectrum;
 import javassist.ClassPool;
@@ -39,25 +37,21 @@ public class TestLineInstrumentation {
     AgentConfigs configs = new AgentConfigs(null);
     configs.setGranularity(GranularityLevel.LINE);
 
-    Collector.start(configs.getEventListener());
+    Collector.instance().addListener(configs.getEventListener());
 
     InstrumentationPass instrumentationPass = new InstrumentationPass(configs);
     for (String classUnderTest : classesUnderTest) {
       instrumentationPass.transform(pool.get(classUnderTest));
     }
 
-    ISpectrum spectrum = Collector.instance().getSpectrumListener().getSpectrum();
-    assertEquals(lineNumbers.size(), spectrum.getNumberOfTargetNodes());
+    ISpectrum spectrum = Collector.instance().getSpectrum();
+    assertEquals(lineNumbers.size(), spectrum.getNumberOfNodes());
 
     if (lineNumbers.isEmpty()) {
       return;
     }
 
-    Tree tree = spectrum.getTree();
-    Node root = tree.getRoot();
-    assertNotNull(root);
-
-    List<Node> leafs = root.getLeafNodes();
+    List<Node> leafs = spectrum.getNodes();
     assertEquals(lineNumbers.size(), leafs.size());
 
     for (int i = 0; i < lineNumbers.size(); i++) {

@@ -1,7 +1,8 @@
 package com.gzoltar.sfl.formulas;
 
-import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.runtime.Probe;
+import com.gzoltar.core.runtime.ProbeGroup;
 import com.gzoltar.core.spectrum.ISpectrum;
 
 public abstract class AbstractSFLFormula implements ISFLFormula {
@@ -15,28 +16,30 @@ public abstract class AbstractSFLFormula implements ISFLFormula {
     int n10 = 0;
     int n11 = 0;
 
-    for (Node node : spectrum.getTargetNodes()) {
-      n00 = n01 = n10 = n11 = 0;
+    for (ProbeGroup probeGroup : spectrum.getProbeGroups()) {
+      for (Probe probe : probeGroup.getProbes()) {
+        n00 = n01 = n10 = n11 = 0;
 
-      for (Transaction transaction : spectrum.getTransactions()) {
-        boolean hasFailed = transaction.hasFailed();
+        for (Transaction transaction : spectrum.getTransactions()) {
+          boolean hasFailed = transaction.hasFailed();
 
-        if (transaction.isNodeActived(node)) {
-          if (hasFailed) {
-            n11++;
+          if (transaction.isNodeActived(probeGroup.getHash(), probe.getArrayIndex())) {
+            if (hasFailed) {
+              n11++;
+            } else {
+              n10++;
+            }
           } else {
-            n10++;
-          }
-        } else {
-          if (hasFailed) {
-            n01++;
-          } else {
-            n00++;
+            if (hasFailed) {
+              n01++;
+            } else {
+              n00++;
+            }
           }
         }
-      }
 
-      node.addSuspiciousnessValue(this.getName(), this.compute(n00, n01, n10, n11));
+        probe.getNode().addSuspiciousnessValue(this.getName(), this.compute(n00, n01, n10, n11));
+      }
     }
   }
 

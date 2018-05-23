@@ -1,8 +1,8 @@
 package com.gzoltar.core.spectrum;
 
 import com.gzoltar.core.events.IEventListener;
-import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.runtime.ProbeGroup;
 
 public class SpectrumListener implements IEventListener {
 
@@ -21,8 +21,8 @@ public class SpectrumListener implements IEventListener {
   }
 
   @Override
-  public void addNode(final Node node) {
-    this.spectrum.addNode(node);
+  public void regiterProbeGroup(final ProbeGroup probeGroup) {
+    this.spectrum.addProbeGroup(probeGroup);
   }
 
   @Override

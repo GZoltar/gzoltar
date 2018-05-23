@@ -11,6 +11,7 @@ public final class Probe {
   private final Node node;
 
   /**
+   * Creates a new {@link com.gzoltar.core.runtime.Probe} object.
    * 
    * @param arrayIndex
    * @param node
@@ -21,16 +22,14 @@ public final class Probe {
   }
 
   /**
-   * 
-   * @return
+   * Returns the array index.
    */
   public int getArrayIndex() {
     return this.arrayIndex;
   }
 
   /**
-   * 
-   * @return
+   * Returns the correspondent {@link com.gzoltar.core.model.Node} object.
    */
   public Node getNode() {
     return this.node;
@@ -41,7 +40,13 @@ public final class Probe {
    */
   @Override
   public String toString() {
-    return "[" + arrayIndex + "] " + this.node.toString();
+    StringBuilder sb = new StringBuilder();
+    sb.append("[Probe] ");
+    sb.append("[");
+    sb.append(this.arrayIndex);
+    sb.append("] ");
+    sb.append(this.node.toString());
+    return sb.toString();
   }
 
   /**

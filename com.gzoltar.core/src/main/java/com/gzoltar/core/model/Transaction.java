@@ -1,25 +1,26 @@
 package com.gzoltar.core.model;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import com.gzoltar.core.util.SerialisationIdentifiers;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import com.gzoltar.core.runtime.ProbeGroup;
 
 public class Transaction {
 
   private final String name;
 
-  private final Set<Node> activity;
+  private final Map<String, ProbeGroup> probeGroups;
 
   private final TransactionOutcome outcome;
 
@@ -33,83 +34,107 @@ public class Transaction {
    * @param activity
    * @param isError
    */
-  public Transaction(final String name, final Set<Node> activity, final TransactionOutcome outcome,
-      final long runtime, final String stackTrace) {
+  public Transaction(final String name, final Map<String, ProbeGroup> probeGroups,
+      final TransactionOutcome outcome, final long runtime, final String stackTrace) {
     this.name = name;
-    this.activity = activity;
+    this.probeGroups = probeGroups;
     this.outcome = outcome;
     this.runtime = runtime;
     this.stackTrace = this.getNormalizedStackTrace(stackTrace);
   }
 
   /**
-   * 
-   * @return
+   * Returns the name of a transaction.
    */
   public String getName() {
     return this.name;
   }
 
+  // === ProbeGroups ===
+
   /**
-   * 
-   * @return
+   * Returns true if a transaction has any activity, false otherwise.
    */
   public boolean hasActivations() {
-    return !this.activity.isEmpty();
+    return !this.probeGroups.isEmpty();
   }
 
   /**
-   * 
+   * Returns the activities of a transaction.
+   */
+  public Map<String, Pair<String, boolean[]>> getActivity() {
+    // <hash, <name, hitArray>>
+    Map<String, Pair<String, boolean[]>> activity =
+        new LinkedHashMap<String, Pair<String, boolean[]>>();
+
+    for (ProbeGroup probeGroup : this.probeGroups.values()) {
+      assert probeGroup.hasHitArray() == true;
+      activity.put(probeGroup.getHash(),
+          new ImmutablePair<String, boolean[]>(probeGroup.getName(), probeGroup.getHitArray()));
+    }
+
+    return activity;
+  }
+
+  /**
+   * Returns all executed {@link com.gzoltar.core.model.Node} objects.
    * @return
    */
-  public Set<Node> getActivity() {
-    return this.activity;
+  public List<Node> getHitNodes() {
+    List<Node> hitNodes = new ArrayList<Node>();
+    for (ProbeGroup probeGroup : this.probeGroups.values()) {
+      assert probeGroup.hasHitArray() == true;
+      hitNodes.addAll(probeGroup.getHitNodes());
+    }
+    return hitNodes;
   }
 
   /**
-   * 
-   * @return
+   * Returns the number of activities.
    */
-  public int getNumberActivities() {
-    return this.activity.size();
+  public int getNumberHitNodes() {
+    return this.getHitNodes().size();
   }
 
   /**
-   * 
-   * @param node
-   * @return
+   * Returns true if a specific node of a probeGroup has been executed, false otherwise.
    */
-  public boolean isNodeActived(Node node) {
-    return this.activity.contains(node);
+  public boolean isNodeActived(String probeGroupHash, int nodeIndex) {
+    if (!this.probeGroups.containsKey(probeGroupHash)) {
+      return false;
+    }
+    return this.probeGroups.get(probeGroupHash).hitNode(nodeIndex);
   }
 
+  // === Outcome ===
+
   /**
-   * 
-   * @return
+   * Returns the outcome of a transaction.
    */
   public TransactionOutcome getTransactionOutcome() {
     return this.outcome;
   }
 
   /**
-   * 
-   * @return
+   * Returns true if a transaction has failed, false otherwise.
    */
   public boolean hasFailed() {
     return this.outcome.equals(TransactionOutcome.FAIL);
   }
 
+  // === Runtime ===
+
   /**
-   * 
-   * @return
+   * Returns the runtime of a transaction.
    */
   public long getRuntime() {
     return this.runtime;
   }
 
+  // === StackTrace ===
+
   /**
-   * 
-   * @return
+   * Returns the stack trace of a failing transaction.
    */
   public String getStackTrace() {
     return this.stackTrace;
@@ -117,9 +142,7 @@ public class Transaction {
 
   /**
    * Converts a multi-line formatted stack trace in one line. It also truncates the stack trace to a
-   * certain amount of bytes (i.e., {@link java.lang.Short.MAX_VALUE} * 2), which is the number of
-   * bytes supported by methods {@link java.io.InputStream.readUTF} and
-   * {@link java.io.OuputStream.writeUTF}.
+   * certain amount of bytes (i.e., unsigned short).
    * 
    * @param stackStrace A multi-line formatted stack trace
    * @return
@@ -158,52 +181,40 @@ public class Transaction {
     return new String(charBuffer.array(), 0, charBuffer.position());
   }
 
+  // === Overrides ===
+
   /**
-   * Serialises an instance of {@link com.gzoltar.core.model.Transaction}.
-   * 
-   * @param out binary stream to write bytes to
+   * {@inheritDoc}
    */
-  public void serialize(final DataOutputStream out) {
-    if (this.hasActivations()) {
-      try {
-        out.writeByte(SerialisationIdentifiers.BLOCK_TRANSACTION);
-        out.writeUTF(this.getName());
-        out.writeInt(this.getNumberActivities());
-        for (Node node : this.getActivity()) {
-          out.writeUTF(node.getName());
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append(this.name);
+    sb.append("\t");
+    for (ProbeGroup probeGroup : this.probeGroups.values()) {
+      assert probeGroup.hasHitArray() == true;
+
+      boolean[] arr = probeGroup.getHitArray();
+      for (int i = 0; i < arr.length; i++) {
+        if (arr[i]) {
+          sb.append("1 ");
+        } else {
+          sb.append("0 ");
         }
-        out.writeUTF(this.getTransactionOutcome().name());
-        out.writeLong(this.getRuntime());
-        out.writeUTF(this.getStackTrace());
-      } catch (final IOException e) {
-        throw new RuntimeException(e);
       }
     }
-  }
 
-  /**
-   * Deserialises and create an instance of {@link com.gzoltar.core.model.Transaction}.
-   * 
-   * @param in binary stream to read bytes from
-   * @param tree a {@link com.gzoltar.core.model.Tree} object
-   * @return a {@link com.gzoltar.core.model.Transaction} object
-   * @throws IOException
-   */
-  public static Transaction deserialize(final DataInputStream in, final Tree tree) throws IOException {
-    String name = in.readUTF();
-
-    Set<Node> activity = new LinkedHashSet<Node>();
-    int numberActivities = in.readInt();
-    while (numberActivities > 0) {
-      activity.add(tree.getNode(in.readUTF()));
-      numberActivities--;
+    if (this.hasFailed()) {
+      sb.append(TransactionOutcome.FAIL.getSymbol());
+    } else {
+      sb.append(TransactionOutcome.PASS.getSymbol());
     }
 
-    TransactionOutcome transactionOutcome = TransactionOutcome.valueOf(in.readUTF());
-    long runtime = in.readLong();
-    String stackTrace = in.readUTF();
+    sb.append(" hashcode: ");
+    sb.append(this.hashCode());
 
-    return new Transaction(name, activity, transactionOutcome, runtime, stackTrace);
+    return sb.toString();
   }
 
   /**
@@ -213,7 +224,7 @@ public class Transaction {
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
     builder.append(this.name);
-    builder.append(this.activity);
+    builder.append(this.probeGroups);
     builder.append(this.outcome);
     builder.append(this.stackTrace);
     return builder.toHashCode();
@@ -235,10 +246,11 @@ public class Transaction {
 
     EqualsBuilder builder = new EqualsBuilder();
     builder.append(this.name, transaction.name);
-    builder.append(this.activity, transaction.activity);
+    builder.append(this.probeGroups, transaction.probeGroups);
     builder.append(this.outcome, transaction.outcome);
     builder.append(this.stackTrace, transaction.stackTrace);
 
     return builder.isEquals();
   }
+
 }

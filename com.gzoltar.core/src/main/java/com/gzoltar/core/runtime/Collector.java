@@ -1,27 +1,21 @@
 package com.gzoltar.core.runtime;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
-import com.gzoltar.core.events.EmptyEventListener;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.events.MultiEventListener;
-import com.gzoltar.core.model.Node;
-import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.TransactionOutcome;
-import com.gzoltar.core.spectrum.SpectrumListener;
+import com.gzoltar.core.spectrum.Spectrum;
+import com.gzoltar.core.util.ArrayUtils;
 
 public class Collector {
 
   private static Collector collector;
 
-  private final MultiEventListener listener;
+  private MultiEventListener listener;
 
-  private final SpectrumListener spectrumListener;
-
-  private final Map<String, ProbeGroup> probeGroups;
+  private final Spectrum spectrum;
 
   /**
    * 
@@ -29,19 +23,9 @@ public class Collector {
    */
   public static Collector instance() {
     if (collector == null) {
-      collector = new Collector(new EmptyEventListener());
+      collector = new Collector();
     }
     return collector;
-  }
-
-  /**
-   * 
-   * @param listener
-   */
-  public static void start(final IEventListener listener) {
-    if (collector == null) {
-      collector = new Collector(listener);
-    }
   }
 
   /**
@@ -49,7 +33,9 @@ public class Collector {
    */
   public static void restart() {
     if (collector != null) {
-      collector = new Collector(collector.listener);
+      Collector newCollector = new Collector();
+      newCollector.listener = collector.listener;
+      collector = newCollector;
     }
   }
 
@@ -57,20 +43,16 @@ public class Collector {
    * 
    * @param listener
    */
-  private Collector(final IEventListener listener) {
+  private Collector() {
     this.listener = new MultiEventListener();
-    this.addListener(listener);
-    this.spectrumListener = new SpectrumListener();
-    this.addListener(this.spectrumListener);
-
-    this.probeGroups = new LinkedHashMap<String, ProbeGroup>();
+    this.spectrum = new Spectrum();
   }
 
   /**
    * 
    * @param listener
    */
-  private void addListener(final IEventListener listener) {
+  public void addListener(final IEventListener listener) {
     if (listener != null) {
       this.listener.add(listener);
     }
@@ -80,69 +62,64 @@ public class Collector {
    * 
    * @return
    */
-  public SpectrumListener getSpectrumListener() {
-    return this.spectrumListener;
+  public Spectrum getSpectrum() {
+    return this.spectrum;
   }
 
   /**
    * 
-   * @param parent
-   * @param name
-   * @param type
-   * @return
+   * @param probeGroup
    */
-  public synchronized Node createNode(final Node parent, final String name, final int lineNumber, final NodeType type) {
-    Node node = new Node(name, lineNumber, type, parent);
-    this.listener.addNode(node);
-    return node;
-  }
-
-  /**
-   * 
-   * @param groupName
-   * @param nodeId
-   * @return
-   */
-  public synchronized Probe regiterProbe(final String groupName, final Node node) {
-    ProbeGroup probeGroup = this.probeGroups.get(groupName);
-    if (probeGroup == null) {
-      probeGroup = new ProbeGroup(groupName);
-      this.probeGroups.put(groupName, probeGroup);
+  public synchronized void regiterProbeGroup(final ProbeGroup probeGroup) {
+    if (probeGroup.isEmpty()) {
+      return;
     }
 
-    return probeGroup.registerProbe(node);
+    this.spectrum.addProbeGroup(probeGroup);
+    this.listener.regiterProbeGroup(probeGroup);
   }
 
   /**
    * 
-   * @param groupName
+   * @param probeGroupHash
    * @return
    */
-  public synchronized ProbeGroup getProbeGroup(final String groupName) {
-    return this.probeGroups.get(groupName);
+  public synchronized ProbeGroup getProbeGroup(final String probeGroupHash) {
+    return this.spectrum.getProbeGroup(probeGroupHash);
   }
 
   /**
    * 
    * @param transactionName
-   * @param isError
+   * @param outcome
+   * @param runtime
+   * @param stackTrace
    */
   public synchronized void endTransaction(final String transactionName,
       final TransactionOutcome outcome, final long runtime, final String stackTrace) {
+
     // collect coverage
-    Set<Node> hitNodes = new LinkedHashSet<Node>();
-    for (ProbeGroup probeGroup : this.probeGroups.values()) {
-      hitNodes.addAll(probeGroup.getHitNodes());
+    Map<String, ProbeGroup> probeGroups = new LinkedHashMap<String, ProbeGroup>();
+    for (ProbeGroup probeGroup : this.spectrum.getProbeGroups()) {
+      if (!ArrayUtils.containsValue(probeGroup.getHitArray(), true)) {
+        continue;
+      }
+
+      try {
+        probeGroups.put(probeGroup.getHash(), (ProbeGroup) probeGroup.clone());
+      } catch (CloneNotSupportedException e) {
+        throw new RuntimeException(e);
+      }
+
+      // reset probes
+      this.spectrum.resetHitArray(probeGroup.getHash());
     }
 
-    // create a new transaction and inform all listeners
-    Transaction transaction = new Transaction(transactionName, hitNodes, outcome, runtime, stackTrace);
+    // create a new transaction
+    Transaction transaction = new Transaction(transactionName, probeGroups, outcome, runtime, stackTrace);
+    this.spectrum.addTransaction(transaction);
+    // and inform all listeners
     this.listener.endTransaction(transaction);
-
-    // reset probes
-    for (ProbeGroup probeGroup : this.probeGroups.values()) {
-      probeGroup.resetHitArray();
-    }
   }
 
   /**
@@ -159,14 +136,14 @@ public class Collector {
   public synchronized void getHitArray(final Object[] args) {
     assert args.length == 3;
 
-    //final String hash = (String) args[0]; // TODO adapt GZoltar to use the hash rather than the className (or maybe both)
-    final String className = (String) args[1];
+    final String hash = (String) args[0];
+    //final String probeGroupName = (String) args[1];
     final Integer numberOfProbes = Integer.valueOf((String) args[2]);
 
-    if (!this.probeGroups.containsKey(className)) {
+    if (!this.spectrum.containsProbeGroup(hash)) {
       args[0] = new boolean[numberOfProbes];
     } else {
-      args[0] = this.probeGroups.get(className).getHitArray();
+      args[0] = this.spectrum.getHitArray(hash);
     }
   }
 

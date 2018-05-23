@@ -32,7 +32,7 @@ public class FaultLocalization {
    * @return
    * @throws IOException
    */
-  public ISpectrum diagnose(final File dataFile) throws IOException {
+  public ISpectrum diagnose(final File dataFile) throws Exception {
     FileInputStream inStream = new FileInputStream(dataFile);
 
     SpectrumReader spectrumReader = new SpectrumReader(inStream);

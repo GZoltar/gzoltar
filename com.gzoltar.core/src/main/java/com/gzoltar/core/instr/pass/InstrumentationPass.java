@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationConstants;
+import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.filter.DuplicateCollectorReferenceFilter;
@@ -24,6 +25,8 @@ import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeFactory;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.runtime.Probe;
+import com.gzoltar.core.runtime.ProbeGroup;
+import com.gzoltar.core.util.MD5;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -37,9 +40,11 @@ import javassist.bytecode.Opcode;
 
 public class InstrumentationPass implements IPass {
 
+  private final InstrumentationLevel instrumentationLevel;
+
   private final FieldInstrumentationPass fieldPass = new FieldInstrumentationPass();
 
-  private final AbstractInitMethodInstrumentationPass initMethodPass;
+  private AbstractInitMethodInstrumentationPass initMethodPass = null;
 
   private final StackSizePass stackSizePass = new StackSizePass();
 
@@ -52,13 +57,22 @@ public class InstrumentationPass implements IPass {
 
   private final Set<Integer> uniqueLineNumbers = new LinkedHashSet<Integer>();
 
+  private ProbeGroup probeGroup;
+
   public InstrumentationPass(final AgentConfigs agentConfigs) {
     this.granularity = agentConfigs.getGranularity();
 
-    if (agentConfigs.getOfflineInstrumentation()) {
-      this.initMethodPass = new OfflineInitMethodInstrumentationPass();
-    } else {
-      this.initMethodPass = new InitMethodInstrumentationPass();
+    this.instrumentationLevel = agentConfigs.getInstrumentationLevel();
+    switch (this.instrumentationLevel) {
+      case FULL:
+      default:
+        this.initMethodPass = new InitMethodInstrumentationPass();
+        break;
+      case OFFLINE:
+        this.initMethodPass = new OfflineInitMethodInstrumentationPass();
+        break;
+      case NONE:
+        break;
     }
 
     // filter classes/methods according to users preferences
@@ -86,7 +100,7 @@ public class InstrumentationPass implements IPass {
   }
 
   @Override
-  public Outcome transform(final CtClass ctClass) throws Exception {
+  public synchronized Outcome transform(final CtClass ctClass) throws Exception {
     boolean instrumented = false;
 
     // as the constructor of this class is only called once, the set of unique line numbers is only
@@ -94,9 +108,12 @@ public class InstrumentationPass implements IPass {
     // set of unique line numbers, we must restart it
     this.uniqueLineNumbers.clear();
 
-    byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozen the class
+    byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozens the class
     // in order to be able to modify it, it has to be defrosted
     ctClass.defrost();
+
+    String hash = MD5.calculateHash(originalBytes);
+    this.probeGroup = new ProbeGroup(hash, ctClass.getName());
 
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
@@ -109,12 +126,16 @@ public class InstrumentationPass implements IPass {
       }
     }
 
-    if (instrumented) {
+    // register class' probes
+    Collector.instance().regiterProbeGroup(this.probeGroup);
+
+    if (instrumented && this.initMethodPass != null
+        && this.instrumentationLevel != InstrumentationLevel.NONE) {
       // make GZoltar's field
       this.fieldPass.transform(ctClass);
 
       // make method to init GZoltar's field
-      this.initMethodPass.setHash(originalBytes);
+      this.initMethodPass.setHash(hash);
       this.initMethodPass.transform(ctClass);
 
       // make sure GZoltar's field is initialised. note: the following code requires the init method
@@ -184,12 +205,13 @@ public class InstrumentationPass implements IPass {
       }
 
       if (granularity.instrumentAtIndex(index, instrSize)) {
-        Node node = NodeFactory.createNode(ctClass, ctBehavior, curLine);
+        Node node = NodeFactory.createNode(this.granularity, ctClass, ctBehavior, curLine);
         assert node != null;
-        Probe probe = this.getProbe(ctClass, node);
+        Probe probe = this.probeGroup.registerProbe(node);
         assert probe != null;
 
-        if (this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT) {
+        if (this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT
+            && this.instrumentationLevel != InstrumentationLevel.NONE) {
           Bytecode bc = this.getInstrumentationCode(ctClass, probe, methodInfo.getConstPool());
           ci.insert(index, bc.get());
           instrSize += bc.length();
@@ -217,11 +239,6 @@ public class InstrumentationPass implements IPass {
     b.addOpcode(Opcode.BASTORE);
 
     return b;
-  }
-
-  public Probe getProbe(CtClass ctClass, Node node) {
-    Collector c = Collector.instance();
-    return c.regiterProbe(ctClass.getName(), node);
   }
 
 }

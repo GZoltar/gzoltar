@@ -59,7 +59,7 @@ public class Agent implements IAgent {
   }
 
   public void startup() {
-    Collector.start(this.agentConfigs.getEventListener());
+    Collector.instance().addListener(this.agentConfigs.getEventListener());
   }
 
   public synchronized void shutdown() {
@@ -71,6 +71,6 @@ public class Agent implements IAgent {
   }
 
   public ISpectrum getData() {
-    return Collector.instance().getSpectrumListener().getSpectrum();
+    return Collector.instance().getSpectrum();
   }
 }

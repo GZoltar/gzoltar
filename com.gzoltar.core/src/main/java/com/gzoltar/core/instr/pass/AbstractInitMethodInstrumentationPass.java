@@ -1,7 +1,5 @@
 package com.gzoltar.core.instr.pass;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
@@ -40,7 +38,7 @@ public abstract class AbstractInitMethodInstrumentationPass implements IPass {
   public Outcome transform(CtClass ctClass) throws Exception {
     CtMethod gzoltarInit =
         CtMethod.make(String.format(METHOD_STR, this.classHash, ctClass.getName(),
-            Collector.instance().getProbeGroup(ctClass.getName()).getNumberOfProbes(),
+            Collector.instance().getProbeGroup(this.classHash).getNumberOfProbes(),
             this.collectorCall), ctClass);
     gzoltarInit.setModifiers(gzoltarInit.getModifiers() | InstrumentationConstants.INIT_METHOD_ACC);
     ctClass.addMethod(gzoltarInit);
@@ -63,22 +61,10 @@ public abstract class AbstractInitMethodInstrumentationPass implements IPass {
 
   /**
    * 
-   * @param bytes
-   * @throws NoSuchAlgorithmException
+   * @param hash
    */
-  public void setHash(byte[] bytes) throws NoSuchAlgorithmException {
-    MessageDigest md = MessageDigest.getInstance("MD5");
-    md.update(bytes);
-
-    // get the hash's bytes
-    byte[] hashBytes = md.digest();
-    // convert bytes to hexadecimal format
-    StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < hashBytes.length; i++) {
-      sb.append(Integer.toString((hashBytes[i] & 0xff) + 0x100, 16).substring(1));
-    }
-
-    this.classHash = sb.toString();
+  public void setHash(String hash) {
+    this.classHash = hash;
   }
 
 }

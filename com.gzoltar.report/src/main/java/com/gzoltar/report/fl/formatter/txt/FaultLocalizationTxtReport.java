@@ -10,6 +10,8 @@ import java.util.List;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.TransactionOutcome;
+import com.gzoltar.core.runtime.Probe;
+import com.gzoltar.core.runtime.ProbeGroup;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFormula;
 import com.gzoltar.report.fl.formatter.IFaultLocalizationReportFormatter;
@@ -34,6 +36,10 @@ public class FaultLocalizationTxtReport implements IFaultLocalizationReportForma
       outputDirectory.mkdirs();
     }
 
+    List<ProbeGroup> probeGroups = spectrum.getProbeGroups();
+
+    List<Transaction> transactions = spectrum.getTransactions();
+
     /**
      * Print 'matrix'
      */
@@ -41,13 +47,16 @@ public class FaultLocalizationTxtReport implements IFaultLocalizationReportForma
     PrintWriter matrixWriter =
         new PrintWriter(outputDirectory + File.separator + MATRIX_FILE_NAME, "UTF-8");
 
-    for (Transaction transaction : spectrum.getTransactions()) {
+    for (Transaction transaction : transactions) {
       StringBuilder transactionStr = new StringBuilder();
-      for (Node node : spectrum.getTargetNodes()) {
-        if (transaction.isNodeActived(node)) {
-          transactionStr.append("1 ");
-        } else {
-          transactionStr.append("0 ");
+
+      for (ProbeGroup probeGroup : probeGroups) {
+        for (Probe probe : probeGroup.getProbes()) {
+          if (transaction.isNodeActived(probeGroup.getHash(), probe.getArrayIndex())) {
+            transactionStr.append("1 ");
+          } else {
+            transactionStr.append("0 ");
+          }
         }
       }
 
@@ -73,8 +82,10 @@ public class FaultLocalizationTxtReport implements IFaultLocalizationReportForma
     spectraWriter.println("name");
 
     // content
-    for (Node node : spectrum.getTargetNodes()) {
-      spectraWriter.println(node.getNameWithLineNumber());
+    for (ProbeGroup probeGroup : probeGroups) {
+      for (Probe probe : probeGroup.getProbes()) {
+        spectraWriter.println(probe.getNode().getNameWithLineNumber());
+      }
     }
 
     spectraWriter.close();
@@ -83,7 +94,7 @@ public class FaultLocalizationTxtReport implements IFaultLocalizationReportForma
      * Print a ranking file per formula
      */
 
-    List<Node> nodes = new ArrayList<Node>(spectrum.getTargetNodes());
+    List<Node> nodes = new ArrayList<Node>(spectrum.getNodes());
     for (final IFormula formula : formulas) {
 
       PrintWriter formulaWriter = new PrintWriter(outputDirectory + File.separator
@@ -120,7 +131,7 @@ public class FaultLocalizationTxtReport implements IFaultLocalizationReportForma
     testsWriter.println("name,outcome,runtime,stacktrace");
 
     // content
-    for (Transaction transaction : spectrum.getTransactions()) {
+    for (Transaction transaction : transactions) {
       testsWriter.println(transaction.getName() + ","
           + (transaction.hasFailed() ? TransactionOutcome.FAIL.name()
               : TransactionOutcome.PASS.name())

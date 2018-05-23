@@ -1,8 +1,8 @@
 package com.gzoltar.core.messaging;
 
 import java.io.Serializable;
-import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.runtime.ProbeGroup;
 
 public interface Message {
 
@@ -42,17 +42,17 @@ public interface Message {
     }
   }
 
-  public static class AddNodeMessage implements Message, Serializable {
+  public static class AddProbeGroupMessage implements Message, Serializable {
 
     private static final long serialVersionUID = 3116251573538148450L;
 
-    public final Node node;
+    public final ProbeGroup probeGroup;
 
-    public AddNodeMessage(final Node node) {
-      this.node = node;
+    public AddProbeGroupMessage(final ProbeGroup probeGroup) {
+      this.probeGroup = probeGroup;
     }
 
-    protected AddNodeMessage() {
+    protected AddProbeGroupMessage() {
       this(null);
     }
   }
