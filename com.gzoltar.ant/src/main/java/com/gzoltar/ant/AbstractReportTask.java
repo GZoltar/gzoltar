@@ -10,12 +10,22 @@ import org.apache.tools.ant.Task;
  */
 public abstract class AbstractReportTask extends Task {
 
+  protected File buildLocation;
+
   protected File outputDirectory;
 
   protected File dataFile;
 
   protected AbstractReportTask() {
     super();
+  }
+
+  /**
+   * 
+   * @param buildLocation
+   */
+  public void setBuildLocation(File buildLocation) {
+    this.buildLocation = buildLocation;
   }
 
   /**
@@ -39,6 +49,10 @@ public abstract class AbstractReportTask extends Task {
    * @return
    */
   public boolean canGenerateReport() {
+    if (this.buildLocation == null || !this.buildLocation.exists()) {
+      log("Skipping GZoltar execution due to missing build location.");
+      return false;
+    }
     if (this.dataFile == null || !this.dataFile.exists()) {
       log("Skipping GZoltar execution due to missing execution data file.");
       return false;

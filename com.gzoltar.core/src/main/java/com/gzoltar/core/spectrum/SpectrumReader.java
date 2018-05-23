@@ -16,6 +16,7 @@ import com.gzoltar.core.runtime.ProbeGroup;
 import com.gzoltar.core.util.SerialisationIdentifiers;
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.NotFoundException;
 
 public class SpectrumReader {
 
@@ -35,9 +36,15 @@ public class SpectrumReader {
    * 
    * @param input input stream to read execution data from
    */
-  public SpectrumReader(final InputStream input) {
+  public SpectrumReader(final String buildLocation, final InputStream input) {
     this.spectrum = Collector.instance().getSpectrum();
     this.in = new DataInputStream(input);
+
+    try {
+      ClassPool.getDefault().appendClassPath(buildLocation);
+    } catch (NotFoundException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public Spectrum getSpectrum() {
@@ -68,8 +75,6 @@ public class SpectrumReader {
         return true;
       case SerialisationIdentifiers.BLOCK_AGENT_CONFIGS:
         final AgentConfigs agentConfigs = new AgentConfigs();
-        String buildLocation = this.in.readUTF();
-        agentConfigs.setBuildLocation(buildLocation);
         agentConfigs.setGranularity(this.in.readUTF());
         agentConfigs.setInclPublicMethods(this.in.readBoolean());
         agentConfigs.setInclStaticConstructors(this.in.readBoolean());
@@ -77,8 +82,6 @@ public class SpectrumReader {
         // disable any bytecode injection
         agentConfigs.setInstrumentationLevel(InstrumentationLevel.NONE);
         this.instrumenter = new Instrumenter(agentConfigs);
-
-        ClassPool.getDefault().appendClassPath(buildLocation);
         return true;
       case SerialisationIdentifiers.BLOCK_TRANSACTION:
         this.spectrum.addTransaction(this.transactionDeserialize.deserialize());

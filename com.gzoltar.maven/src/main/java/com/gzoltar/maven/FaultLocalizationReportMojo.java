@@ -25,7 +25,8 @@ public final class FaultLocalizationReportMojo extends AbstractReportMojo {
     try {
 
       // build a fault localization report
-      FaultLocalizationReportBuilder.build(this.outputDirectory, this.dataFile, this.flFamilies);
+      FaultLocalizationReportBuilder.build(this.getProject().getBuild().getOutputDirectory(),
+          this.outputDirectory, this.dataFile, this.flFamilies);
 
     } catch (Exception e) {
       throw new MavenReportException(e.toString(), e);

@@ -15,8 +15,8 @@ import com.gzoltar.report.fl.formatter.txt.FaultLocalizationTxtReport;
 
 public class FaultLocalizationReportBuilder {
 
-  public static void build(final File outputDirectory, final File dataFile,
-      List<ConfigFaultLocalizationFamily> flFamilies) throws Exception {
+  public static void build(final String buildLocation, final File outputDirectory,
+      final File dataFile, List<ConfigFaultLocalizationFamily> flFamilies) throws Exception {
 
     // in case there is not any configuration defined, use a default one
     if (flFamilies == null || flFamilies.isEmpty()) {
@@ -37,7 +37,7 @@ public class FaultLocalizationReportBuilder {
       // first diagnose it
       FaultLocalization fl =
           new FaultLocalization(flFamily.getFaultLocalizationFamily(), flFamily.getFormulas());
-      ISpectrum spectrum = fl.diagnose(dataFile);
+      ISpectrum spectrum = fl.diagnose(buildLocation, dataFile);
 
       // which formatter of report?
       for (IReportFormatter formatter : flFamily.getFormatters()) {

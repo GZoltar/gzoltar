@@ -45,7 +45,6 @@ public class SpectrumWriter {
 
     // AgentConfigs
     this.out.writeByte(SerialisationIdentifiers.BLOCK_AGENT_CONFIGS);
-    this.out.writeUTF(this.agentConfigs.getBuildLocation());
     this.out.writeUTF(this.agentConfigs.getGranularity().name());
     this.out.writeBoolean(this.agentConfigs.getInclPublicMethods());
     this.out.writeBoolean(this.agentConfigs.getInclStaticConstructors());

@@ -2,7 +2,6 @@ package com.gzoltar.fl;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.core.spectrum.SpectrumReader;
@@ -28,14 +27,15 @@ public class FaultLocalization {
 
   /**
    * 
+   * @param buildLocation
    * @param dataFile
    * @return
-   * @throws IOException
+   * @throws Exception
    */
-  public ISpectrum diagnose(final File dataFile) throws Exception {
+  public ISpectrum diagnose(final String buildLocation, final File dataFile) throws Exception {
     FileInputStream inStream = new FileInputStream(dataFile);
 
-    SpectrumReader spectrumReader = new SpectrumReader(inStream);
+    SpectrumReader spectrumReader = new SpectrumReader(buildLocation, inStream);
     spectrumReader.read();
     ISpectrum spectrum = spectrumReader.getSpectrum();
 
