@@ -19,7 +19,7 @@ public class CoverageMetric extends AbstractMetric {
     for (ProbeGroup probeGroup : spectrum.getProbeGroups()) {
       probeBreak: for (Probe probe : probeGroup.getProbes()) {
         for (Transaction transaction : spectrum.getTransactions()) {
-          if (transaction.isNodeActived(probeGroup.getHash(), probe.getArrayIndex())) {
+          if (transaction.isProbeActived(probeGroup, probe.getArrayIndex())) {
             activations += 1;
             break probeBreak;
           }

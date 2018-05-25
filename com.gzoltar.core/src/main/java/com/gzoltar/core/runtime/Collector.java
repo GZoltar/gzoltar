@@ -2,6 +2,7 @@ package com.gzoltar.core.runtime;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.events.MultiEventListener;
 import com.gzoltar.core.model.Transaction;
@@ -16,6 +17,9 @@ public class Collector {
   private MultiEventListener listener;
 
   private final Spectrum spectrum;
+
+  /** <ProbeGroup hash, hitArray> */
+  private final Map<String, boolean[]> hitArrays;
 
   /**
    * 
@@ -46,6 +50,7 @@ public class Collector {
   private Collector() {
     this.listener = new MultiEventListener();
     this.spectrum = new Spectrum();
+    this.hitArrays = new LinkedHashMap<String, boolean[]>();
   }
 
   /**
@@ -81,11 +86,20 @@ public class Collector {
 
   /**
    * 
+   * @param probeGroup
+   * @return
+   */
+  public synchronized ProbeGroup getProbeGroup(final ProbeGroup probeGroup) {
+    return this.spectrum.getProbeGroup(probeGroup);
+  }
+
+  /**
+   * 
    * @param probeGroupHash
    * @return
    */
-  public synchronized ProbeGroup getProbeGroup(final String probeGroupHash) {
-    return this.spectrum.getProbeGroup(probeGroupHash);
+  public synchronized ProbeGroup getProbeGroupByHash(final String probeGroupHash) {
+    return this.spectrum.getProbeGroupByHash(probeGroupHash);
   }
 
   /**
@@ -99,24 +113,28 @@ public class Collector {
       final TransactionOutcome outcome, final long runtime, final String stackTrace) {
 
     // collect coverage
-    Map<String, ProbeGroup> probeGroups = new LinkedHashMap<String, ProbeGroup>();
-    for (ProbeGroup probeGroup : this.spectrum.getProbeGroups()) {
-      if (!ArrayUtils.containsValue(probeGroup.getHitArray(), true)) {
+    Map<String, boolean[]> activity = new LinkedHashMap<String, boolean[]>();
+    for (Entry<String, boolean[]> entry : this.hitArrays.entrySet()) {
+
+      boolean[] hitArray = entry.getValue();
+      if (!ArrayUtils.containsValue(hitArray, true)) {
+        // no coverage
         continue;
       }
 
-      try {
-        probeGroups.put(probeGroup.getHash(), (ProbeGroup) probeGroup.clone());
-      } catch (CloneNotSupportedException e) {
-        throw new RuntimeException(e);
-      }
+      String hash = entry.getKey();
+      boolean[] cloneHitArray = new boolean[hitArray.length];
+      System.arraycopy(hitArray, 0, cloneHitArray, 0, hitArray.length);
+      activity.put(hash, cloneHitArray);
 
       // reset probes
-      this.spectrum.resetHitArray(probeGroup.getHash());
+      for (int i = 0; i < hitArray.length; i++) {
+        hitArray[i] = false;
+      }
     }
 
     // create a new transaction
-    Transaction transaction = new Transaction(transactionName, probeGroups, outcome, runtime, stackTrace);
+    Transaction transaction = new Transaction(transactionName, activity, outcome, runtime, stackTrace);
     this.spectrum.addTransaction(transaction);
     // and inform all listeners
     this.listener.endTransaction(transaction);
@@ -140,11 +158,11 @@ public class Collector {
     //final String probeGroupName = (String) args[1];
     final Integer numberOfProbes = Integer.valueOf((String) args[2]);
 
-    if (!this.spectrum.containsProbeGroup(hash)) {
-      args[0] = new boolean[numberOfProbes];
-    } else {
-      args[0] = this.spectrum.getHitArray(hash);
+    if (!this.hitArrays.containsKey(hash)) {
+      this.hitArrays.put(hash, new boolean[numberOfProbes]);
     }
+
+    args[0] = this.hitArrays.get(hash);
   }
 
   /**

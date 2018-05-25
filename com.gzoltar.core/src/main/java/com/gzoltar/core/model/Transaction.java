@@ -6,21 +6,19 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import com.gzoltar.core.runtime.ProbeGroup;
 
 public class Transaction {
 
   private final String name;
 
-  private final Map<String, ProbeGroup> probeGroups;
+  /** <ProbeGroup hash, hitArray> */
+  private final Map<String, boolean[]> activity;
 
   private final TransactionOutcome outcome;
 
@@ -31,13 +29,27 @@ public class Transaction {
   /**
    * 
    * @param name
-   * @param activity
-   * @param isError
+   * @param outcome
+   * @param runtime
+   * @param stackTrace
    */
-  public Transaction(final String name, final Map<String, ProbeGroup> probeGroups,
+  public Transaction(final String name, final TransactionOutcome outcome, final long runtime,
+      final String stackTrace) {
+    this(name, new LinkedHashMap<String, boolean[]>(), outcome, runtime, stackTrace);
+  }
+
+  /**
+   * 
+   * @param name
+   * @param activity
+   * @param outcome
+   * @param runtime
+   * @param stackTrace
+   */
+  public Transaction(final String name, final Map<String, boolean[]> activity,
       final TransactionOutcome outcome, final long runtime, final String stackTrace) {
     this.name = name;
-    this.probeGroups = probeGroups;
+    this.activity = activity;
     this.outcome = outcome;
     this.runtime = runtime;
     this.stackTrace = this.getNormalizedStackTrace(stackTrace);
@@ -53,57 +65,55 @@ public class Transaction {
   // === ProbeGroups ===
 
   /**
+   * Returns all probeGroups hash.
+   */
+  public Set<String> getProbeGroupsHash() {
+    return this.activity.keySet();
+  }
+
+  /**
    * Returns true if a transaction has any activity, false otherwise.
    */
   public boolean hasActivations() {
-    return !this.probeGroups.isEmpty();
+    return !this.activity.isEmpty();
   }
 
   /**
    * Returns the activities of a transaction.
    */
-  public Map<String, Pair<String, boolean[]>> getActivity() {
-    // <hash, <name, hitArray>>
-    Map<String, Pair<String, boolean[]>> activity =
-        new LinkedHashMap<String, Pair<String, boolean[]>>();
-
-    for (ProbeGroup probeGroup : this.probeGroups.values()) {
-      assert probeGroup.hasHitArray() == true;
-      activity.put(probeGroup.getHash(),
-          new ImmutablePair<String, boolean[]>(probeGroup.getName(), probeGroup.getHitArray()));
-    }
-
-    return activity;
+  public Map<String, boolean[]> getActivity() {
+    return this.activity;
   }
 
   /**
-   * Returns all executed {@link com.gzoltar.core.model.Node} objects.
-   * @return
+   * Adds an activity to a transaction.
    */
-  public List<Node> getHitNodes() {
-    List<Node> hitNodes = new ArrayList<Node>();
-    for (ProbeGroup probeGroup : this.probeGroups.values()) {
-      assert probeGroup.hasHitArray() == true;
-      hitNodes.addAll(probeGroup.getHitNodes());
-    }
-    return hitNodes;
+  public void addActivity(String hash, boolean[] hitArray) {
+    this.activity.put(hash, hitArray);
   }
 
   /**
-   * Returns the number of activities.
+   * Returns a boolean hit array of a probeGroup.
    */
-  public int getNumberHitNodes() {
-    return this.getHitNodes().size();
+  public boolean[] getHitArray(final ProbeGroup probeGroup) {
+    return this.activity.get(probeGroup.getHash());
   }
 
   /**
-   * Returns true if a specific node of a probeGroup has been executed, false otherwise.
+   * Returns a boolean hit array of a probeGroup.
    */
-  public boolean isNodeActived(String probeGroupHash, int nodeIndex) {
-    if (!this.probeGroups.containsKey(probeGroupHash)) {
+  public boolean[] getHitArrayByProbeGroupHash(final String hash) {
+    return this.activity.get(hash);
+  }
+
+  /**
+   * Returns true if a specific probe of a probeGroup has been executed, false otherwise.
+   */
+  public boolean isProbeActived(final ProbeGroup probeGroup, final int probeIndex) {
+    if (!this.activity.containsKey(probeGroup.getHash())) {
       return false;
     }
-    return this.probeGroups.get(probeGroupHash).hitNode(nodeIndex);
+    return this.activity.get(probeGroup.getHash())[probeIndex];
   }
 
   // === Outcome ===
@@ -190,28 +200,22 @@ public class Transaction {
   public String toString() {
     StringBuilder sb = new StringBuilder();
 
+    sb.append("[ProbeGroup] ");
     sb.append(this.name);
-    sb.append("\t");
-    for (ProbeGroup probeGroup : this.probeGroups.values()) {
-      assert probeGroup.hasHitArray() == true;
-
-      boolean[] arr = probeGroup.getHitArray();
-      for (int i = 0; i < arr.length; i++) {
-        if (arr[i]) {
-          sb.append("1 ");
-        } else {
-          sb.append("0 ");
-        }
-      }
-    }
-
+    sb.append("\n");
+    sb.append("  Executed ");
+    sb.append(this.activity.size());
+    sb.append(" probeGroups");
+    sb.append("\n");
+    sb.append("  Pass/Fail ");
     if (this.hasFailed()) {
       sb.append(TransactionOutcome.FAIL.getSymbol());
     } else {
       sb.append(TransactionOutcome.PASS.getSymbol());
     }
+    sb.append("\n");
 
-    sb.append(" hashcode: ");
+    sb.append("  Hashcode: ");
     sb.append(this.hashCode());
 
     return sb.toString();
@@ -224,8 +228,9 @@ public class Transaction {
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
     builder.append(this.name);
-    builder.append(this.probeGroups);
+    builder.append(this.activity);
     builder.append(this.outcome);
+    builder.append(this.runtime);
     builder.append(this.stackTrace);
     return builder.toHashCode();
   }
@@ -246,7 +251,8 @@ public class Transaction {
 
     EqualsBuilder builder = new EqualsBuilder();
     builder.append(this.name, transaction.name);
-    builder.append(this.probeGroups, transaction.probeGroups);
+    builder.append(this.activity, transaction.activity);
+    builder.append(this.runtime, transaction.runtime);
     builder.append(this.outcome, transaction.outcome);
     builder.append(this.stackTrace, transaction.stackTrace);
 

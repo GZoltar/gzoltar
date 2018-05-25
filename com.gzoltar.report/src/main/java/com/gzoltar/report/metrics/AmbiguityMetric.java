@@ -23,7 +23,7 @@ public class AmbiguityMetric extends AbstractMetric {
 
         int t = 0;
         for (Transaction transaction : spectrum.getTransactions()) {
-          if (transaction.isNodeActived(probeGroup.getHash(), probe.getArrayIndex())) {
+          if (transaction.isProbeActived(probeGroup, probe.getArrayIndex())) {
             bs.set(t);
           }
           t++;

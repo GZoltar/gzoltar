@@ -19,7 +19,7 @@ public class DistinctTransactionsRho extends AbstractMetric {
     Map<Integer, List<Node>> distinctTransactionSet = new HashMap<Integer, List<Node>>();
 
     for (Transaction transaction : spectrum.getTransactions()) {
-      distinctTransactionSet.put(this.getHash(transaction), transaction.getHitNodes());
+      distinctTransactionSet.put(this.getHash(transaction), spectrum.getHitNodes(transaction));
     }
 
     int components = spectrum.getNumberOfNodes();

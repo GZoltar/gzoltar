@@ -12,7 +12,6 @@ import com.gzoltar.core.instr.Instrumenter;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.runtime.Collector;
-import com.gzoltar.core.runtime.ProbeGroup;
 import com.gzoltar.core.util.SerialisationIdentifiers;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -115,7 +114,7 @@ public class SpectrumReader {
     public Transaction deserialize() throws IOException, CloneNotSupportedException {
       String transactionName = in.readUTF();
 
-      Map<String, ProbeGroup> probeGroups = new LinkedHashMap<String, ProbeGroup>();
+      Map<String, boolean[]> activity = new LinkedHashMap<String, boolean[]>();
       int numberActivities = in.readInt();
       while (numberActivities > 0) {
         String probeGroupHash = in.readUTF();
@@ -123,7 +122,7 @@ public class SpectrumReader {
         boolean[] hitArray = this.readBooleanArray();
 
         // instrument probeGroup (in case it has been not been instrumented)
-        if (spectrum.getProbeGroup(probeGroupHash) == null) {
+        if (spectrum.getProbeGroupByHash(probeGroupHash) == null) {
           // probeGroup has not been instrumented
           try {
             CtClass ctClass = ClassPool.getDefault().get(probeGroupName);
@@ -133,16 +132,13 @@ public class SpectrumReader {
           }
 
           // sanity check
-          if (spectrum.getProbeGroup(probeGroupHash) == null) {
+          if (spectrum.getProbeGroupByHash(probeGroupHash) == null) {
             throw new RuntimeException("ProbeGroup '" + probeGroupHash + "' | '" + probeGroupName
                 + "' has not been added to the spectrum instance!");
           }
         }
 
-        ProbeGroup probeGroup = (ProbeGroup) spectrum.getProbeGroup(probeGroupHash).clone();
-        probeGroup.setHitArray(hitArray);
-
-        probeGroups.put(probeGroupHash, probeGroup);
+        activity.put(probeGroupHash, hitArray);
         numberActivities--;
       }
 
@@ -150,7 +146,7 @@ public class SpectrumReader {
       long runtime = in.readLong();
       String stackTrace = in.readUTF();
 
-      return new Transaction(transactionName, probeGroups, transactionOutcome, runtime, stackTrace);
+      return new Transaction(transactionName, activity, transactionOutcome, runtime, stackTrace);
     }
 
     /**

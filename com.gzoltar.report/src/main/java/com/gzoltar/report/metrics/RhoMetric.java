@@ -20,7 +20,7 @@ public class RhoMetric extends AbstractMetric {
     for (Transaction transaction : spectrum.getTransactions()) {
       for (ProbeGroup probeGroup : spectrum.getProbeGroups()) {
         for (Probe probe : probeGroup.getProbes()) {
-          if (transaction.isNodeActived(probeGroup.getHash(), probe.getArrayIndex())) {
+          if (transaction.isProbeActived(probeGroup, probe.getArrayIndex())) {
             activity_counter++;
           }
         }

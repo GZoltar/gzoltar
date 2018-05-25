@@ -1,5 +1,6 @@
 package com.gzoltar.core.spectrum;
 
+import java.util.Collection;
 import java.util.List;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
@@ -17,34 +18,29 @@ public interface ISpectrum {
   /**
    * Checks whether a probe group has been registered.
    */
-  public boolean containsProbeGroup(final String probeGroupName);
+  public boolean containsProbeGroup(final ProbeGroup probeGroup);
+
+  /**
+   * Checks whether a probe group has been registered.
+   */
+  public boolean containsProbeGroupByHash(final String hash);
 
   /**
    * Returns the {@link com.gzoltar.core.runtime.ProbeGroup} with a given name, or null if there is
    * not any.
    */
-  public ProbeGroup getProbeGroup(final String probeGroupName);
+  public ProbeGroup getProbeGroup(final ProbeGroup probeGroup);
+
+  /**
+   * Returns the {@link com.gzoltar.core.runtime.ProbeGroup} with a given name, or null if there is
+   * not any.
+   */
+  public ProbeGroup getProbeGroupByHash(final String hash);
 
   /**
    * Returns all {@link com.gzoltar.core.runtime.ProbeGroup} that have been registered.
    */
-  public List<ProbeGroup> getProbeGroups();
-
-  // === Runtime hitArray ===
-
-  /**
-   * Sets a new boolean array for a specific probeGroup.
-   * 
-   * Note: the probeGroup must exist.
-   */
-  public boolean[] getHitArray(final String probeGroupName);
-
-  /**
-   * Resets the boolean array of a specific probeGroup.
-   * 
-   * Note: the probeGroup must exist.
-   */
-  public void resetHitArray(final String probeGroupName);
+  public Collection<ProbeGroup> getProbeGroups();
 
   // === Nodes ===
 
@@ -59,6 +55,12 @@ public interface ISpectrum {
    * {@link com.gzoltar.core.runtime.ProbeGroup}.
    */
   public int getNumberOfNodes();
+
+  /**
+   * Returns all executed {@link com.gzoltar.core.model.Node} objects of a particular
+   * {@link com.gzoltar.core.model.Transaction} object.
+   */
+  public List<Node> getHitNodes(Transaction transaction);
 
   // === Transaction ===
 

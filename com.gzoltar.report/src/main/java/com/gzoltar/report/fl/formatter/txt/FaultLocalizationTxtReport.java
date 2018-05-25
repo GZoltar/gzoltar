@@ -36,7 +36,7 @@ public class FaultLocalizationTxtReport implements IFaultLocalizationReportForma
       outputDirectory.mkdirs();
     }
 
-    List<ProbeGroup> probeGroups = spectrum.getProbeGroups();
+    List<ProbeGroup> probeGroups = new ArrayList<ProbeGroup>(spectrum.getProbeGroups());
 
     List<Transaction> transactions = spectrum.getTransactions();
 
@@ -52,7 +52,7 @@ public class FaultLocalizationTxtReport implements IFaultLocalizationReportForma
 
       for (ProbeGroup probeGroup : probeGroups) {
         for (Probe probe : probeGroup.getProbes()) {
-          if (transaction.isNodeActived(probeGroup.getHash(), probe.getArrayIndex())) {
+          if (transaction.isProbeActived(probeGroup, probe.getArrayIndex())) {
             transactionStr.append("1 ");
           } else {
             transactionStr.append("0 ");

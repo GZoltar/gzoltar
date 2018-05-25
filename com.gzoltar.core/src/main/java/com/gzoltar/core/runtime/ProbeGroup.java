@@ -6,15 +6,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.gzoltar.core.model.Node;
 
-public final class ProbeGroup implements Cloneable {
+public final class ProbeGroup {
 
   private final String hash;
 
   private final String name;
 
   private final List<Probe> probes;
-
-  private boolean[] hitArray = null;
 
   /**
    * Constructs a new ProbeGroup.
@@ -54,7 +52,7 @@ public final class ProbeGroup implements Cloneable {
   // === Probes ===
 
   /**
-   * Registers a new  {@link com.gzoltar.core.runtime.Probe} object.
+   * Registers a new {@link com.gzoltar.core.runtime.Probe} object.
    */
   public Probe registerProbe(Node node) {
     Probe probe = new Probe(this.probes.size(), node);
@@ -84,6 +82,19 @@ public final class ProbeGroup implements Cloneable {
     return this.probes.isEmpty();
   }
 
+  /**
+   * Return the {@link com.gzoltar.core.runtime.Probe} object that contains a specific
+   * {@link com.gzoltar.core.model.Node} object, null otherwise.
+   */
+  public Probe findProbeByNode(Node node) {
+    for (Probe probe : this.probes) {
+      if (probe.getNode().equals(node)) {
+        return probe;
+      }
+    }
+    return null;
+  }
+
   // === Nodes ===
 
   /**
@@ -98,7 +109,8 @@ public final class ProbeGroup implements Cloneable {
   }
 
   /**
-   * 
+   * Returns a {@link com.gzoltar.core.model.Node} object with a specific name, or null there is not
+   * any.
    */
   public Node getNode(String nodeName) {
     for (Probe probe : this.probes) {
@@ -107,86 +119,6 @@ public final class ProbeGroup implements Cloneable {
       }
     }
     return null;
-  }
-
-  /**
-   * Returns all executed {@link com.gzoltar.core.model.Node} objects.
-   */
-  public List<Node> getHitNodes() {
-    List<Node> hitNodes = new ArrayList<Node>();
-    if (this.hitArray == null) {
-      // When a class is serialised / deserialised an instance of a class could be created only
-      // using metadata of that class, i.e., there is a chance that none of "normal" constructors or
-      // even static constructors is called to construct that class, and none of the lines of code
-      // is actually executed. For those particular cases, GZoltar would instrument a class as
-      // normal and some probes would be created, however as no constructor (either "normal" or
-      // static) is called, the hitArray is never initialised.
-      return hitNodes;
-    }
-    assert this.hitArray.length == this.probes.size();
-
-    for (Probe probe : this.probes) {
-      if (this.hitArray[probe.getArrayIndex()]) {
-        Node node = probe.getNode();
-        node.setHasBeenExecuted();
-        hitNodes.add(node);
-      }
-    }
-
-    return hitNodes;
-  }
-
-  /**
-   * Returns true if a {@link com.gzoltar.core.model.Node} at index has been executed, false
-   * otherwise.
-   * 
-   * @param index
-   * @return
-   */
-  public boolean hitNode(int index) {
-    if (this.hitArray == null) {
-      return false;
-    }
-    return this.hitArray[index];
-  }
-
-  // === HitArray ===
-
-  /**
-   * Returns true if there is an hitArray, false otherwise.
-   */
-  public boolean hasHitArray() {
-    return this.hitArray != null;
-  }
-
-  /**
-   * Returns the hitArray of a probeGroup.
-   */
-  public boolean[] getHitArray() {
-    if (this.hitArray == null) {
-      this.hitArray = new boolean[this.probes.size()];
-    }
-    return this.hitArray;
-  }
-
-  /**
-   * Resets the hitArray of a probeGroup.
-   */
-  public void resetHitArray() {
-    if (this.hitArray == null) {
-      return;
-    }
-
-    for (int i = 0; i < this.hitArray.length; i++) {
-      this.hitArray[i] = false;
-    }
-  }
-
-  /**
-   * Replace any existing hitArray with a new one.
-   */
-  public void setHitArray(boolean[] hitArray) {
-    this.hitArray = hitArray;
   }
 
   // === Overrides ===
@@ -219,7 +151,6 @@ public final class ProbeGroup implements Cloneable {
     builder.append(this.hash);
     builder.append(this.name);
     builder.append(this.probes);
-    builder.append(this.hitArray);
     return builder.toHashCode();
   }
 
@@ -241,21 +172,8 @@ public final class ProbeGroup implements Cloneable {
     builder.append(this.hash, probeGroup.hash);
     builder.append(this.name, probeGroup.name);
     builder.append(this.probes, probeGroup.probes);
-    builder.append(this.hitArray, probeGroup.hitArray);
 
     return builder.isEquals();
   }
 
-  @Override
-  public Object clone() throws CloneNotSupportedException {
-    ProbeGroup clone = new ProbeGroup(this.hash, this.name, this.probes);
-
-    if (this.hitArray != null) {
-      boolean[] hitArrayClone = new boolean[this.hitArray.length];
-      System.arraycopy(this.hitArray, 0, hitArrayClone, 0, this.hitArray.length);
-      clone.hitArray = hitArrayClone;
-    }
-
-    return clone;
-  }
 }

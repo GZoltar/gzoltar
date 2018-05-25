@@ -1,15 +1,19 @@
 package com.gzoltar.core.spectrum;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
+import com.gzoltar.core.runtime.Probe;
 import com.gzoltar.core.runtime.ProbeGroup;
 
 public class Spectrum implements ISpectrum {
 
+  /** <ProbeGroup hash, ProbeGroup> */
   private final Map<String, ProbeGroup> probeGroups;
 
   private final List<Transaction> transactions;
@@ -38,51 +42,38 @@ public class Spectrum implements ISpectrum {
   /**
    * Checks whether a probe group has been registered.
    */
-  public boolean containsProbeGroup(final String probeGroupHash) {
-    return this.probeGroups.containsKey(probeGroupHash);
+  public boolean containsProbeGroup(final ProbeGroup probeGroup) {
+    return this.probeGroups.containsKey(probeGroup.getHash());
+  }
+
+  /**
+   * Checks whether a probe group has been registered.
+   */
+  public boolean containsProbeGroupByHash(final String hash) {
+    return this.probeGroups.containsKey(hash);
   }
 
   /**
    * Returns the {@link com.gzoltar.core.runtime.ProbeGroup} with a given name, or null if there is
    * not any.
    */
-  public ProbeGroup getProbeGroup(final String probeGroupHash) {
-    return this.containsProbeGroup(probeGroupHash) ? this.probeGroups.get(probeGroupHash) : null;
+  public ProbeGroup getProbeGroup(final ProbeGroup probeGroup) {
+    return this.containsProbeGroup(probeGroup) ? this.probeGroups.get(probeGroup.getHash()) : null;
   }
+
+  /**
+   * Returns the {@link com.gzoltar.core.runtime.ProbeGroup} with a given name, or null if there is
+   * not any.
+   */
+  public ProbeGroup getProbeGroupByHash(final String hash) {
+    return this.containsProbeGroupByHash(hash) ? this.probeGroups.get(hash) : null;
+  } 
 
   /**
    * Returns all {@link com.gzoltar.core.runtime.ProbeGroup} that have been registered.
    */
-  public List<ProbeGroup> getProbeGroups() {
-    return new ArrayList<ProbeGroup>(this.probeGroups.values());
-  }
-
-  // === Runtime hitArray ===
-
-  /**
-   * Sets a new boolean array for a specific probeGroup.
-   * 
-   * Note: the probeGroup must exist.
-   */
-  public boolean[] getHitArray(final String probeGroupHash) {
-    if (!this.containsProbeGroup(probeGroupHash)) {
-      throw new RuntimeException("ProbeGroup '" + probeGroupHash + "' does not exist!");
-    }
-
-    return this.probeGroups.get(probeGroupHash).getHitArray();
-  }
-
-  /**
-   * Resets the boolean array of a specific probeGroup.
-   * 
-   * Note: the probeGroup must exist.
-   */
-  public void resetHitArray(final String probeGroupHash) {
-    if (!this.containsProbeGroup(probeGroupHash)) {
-      throw new RuntimeException("ProbeGroup '" + probeGroupHash + "' does not exist!");
-    }
-
-    this.probeGroups.get(probeGroupHash).resetHitArray();
+  public Collection<ProbeGroup> getProbeGroups() {
+    return this.probeGroups.values();
   }
 
   // === Nodes ===
@@ -105,6 +96,29 @@ public class Spectrum implements ISpectrum {
    */
   public int getNumberOfNodes() {
     return this.getNodes().size();
+  }
+
+  /**
+   * Returns all executed {@link com.gzoltar.core.model.Node} objects of a particular
+   * {@link com.gzoltar.core.model.Transaction} object.
+   */
+  public List<Node> getHitNodes(Transaction transaction) {
+    List<Node> nodes = new ArrayList<Node>();
+
+    for (Entry<String, boolean[]> activity : transaction.getActivity().entrySet()) {
+      String probeGroupHash = activity.getKey();
+      ProbeGroup probeGroup = this.probeGroups.get(probeGroupHash);
+      boolean[] hitArray = activity.getValue();
+      assert hitArray.length == probeGroup.getNumberOfProbes();
+
+      for (Probe probe : probeGroup.getProbes()) {
+        if (hitArray[probe.getArrayIndex()]) {
+          nodes.add(probe.getNode());
+        }
+      }
+    }
+
+    return nodes;
   }
 
   // === Transactions ===

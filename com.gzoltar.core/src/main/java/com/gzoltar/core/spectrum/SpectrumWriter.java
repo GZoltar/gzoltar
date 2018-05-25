@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.commons.lang3.tuple.Pair;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.util.SerialisationIdentifiers;
@@ -59,7 +58,7 @@ public class SpectrumWriter {
    */
   public void writeSpectrum(final ISpectrum spectrum) throws IOException {
     for (final Transaction transaction : spectrum.getTransactions()) {
-      TransactionSerialize.serialize(this.out, transaction);
+      TransactionSerialize.serialize(this.out, spectrum, transaction);
     }
     this.out.close();
   }
@@ -73,20 +72,24 @@ public class SpectrumWriter {
      * Serialises an instance of {@link com.gzoltar.core.model.Transaction}.
      * 
      * @param out binary stream to write bytes to
+     * @param spectrum
+     * @param transaction
+     * @throws IOException
      */
-    public static void serialize(final DataOutputStream out, final Transaction transaction)
+    public static void serialize(final DataOutputStream out, final ISpectrum spectrum,
+        final Transaction transaction)
         throws IOException {
       if (transaction.hasActivations()) {
         out.writeByte(SerialisationIdentifiers.BLOCK_TRANSACTION);
         out.writeUTF(transaction.getName());
 
-        Map<String, Pair<String, boolean[]>> activity = transaction.getActivity();
+        Map<String, boolean[]> activity = transaction.getActivity();
         out.writeInt(activity.size());
 
-        for (Entry<String, Pair<String, boolean[]>> entry : activity.entrySet()) {
-          out.writeUTF(entry.getKey());
-          out.writeUTF(entry.getValue().getLeft());
-          writeBooleanArray(out, entry.getValue().getRight());
+        for (Entry<String, boolean[]> entry : activity.entrySet()) {
+          out.writeUTF(entry.getKey()); // hash
+          out.writeUTF(spectrum.getProbeGroupByHash(entry.getKey()).getName()); // name
+          writeBooleanArray(out, entry.getValue()); // hitArray
         }
 
         out.writeUTF(transaction.getTransactionOutcome().name());

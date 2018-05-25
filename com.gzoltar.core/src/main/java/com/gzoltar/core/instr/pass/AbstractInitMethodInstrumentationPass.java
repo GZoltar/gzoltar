@@ -38,7 +38,7 @@ public abstract class AbstractInitMethodInstrumentationPass implements IPass {
   public Outcome transform(CtClass ctClass) throws Exception {
     CtMethod gzoltarInit =
         CtMethod.make(String.format(METHOD_STR, this.classHash, ctClass.getName(),
-            Collector.instance().getProbeGroup(this.classHash).getNumberOfProbes(),
+            Collector.instance().getProbeGroupByHash(this.classHash).getNumberOfProbes(),
             this.collectorCall), ctClass);
     gzoltarInit.setModifiers(gzoltarInit.getModifiers() | InstrumentationConstants.INIT_METHOD_ACC);
     ctClass.addMethod(gzoltarInit);
