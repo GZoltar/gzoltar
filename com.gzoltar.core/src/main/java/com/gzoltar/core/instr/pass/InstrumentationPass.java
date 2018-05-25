@@ -6,21 +6,12 @@ import java.util.List;
 import java.util.Set;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationConstants;
-import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
-import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.filter.DuplicateCollectorReferenceFilter;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
-import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.filter.IFilter;
 import com.gzoltar.core.instr.filter.SyntheticFilter;
-import com.gzoltar.core.instr.granularity.GranularityFactory;
-import com.gzoltar.core.instr.granularity.GranularityLevel;
-import com.gzoltar.core.instr.granularity.IGranularity;
-import com.gzoltar.core.instr.matchers.MethodAnnotationMatcher;
-import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
-import com.gzoltar.core.instr.matchers.MethodNameMatcher;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeFactory;
 import com.gzoltar.core.runtime.Collector;
@@ -30,7 +21,6 @@ import com.gzoltar.core.util.MD5;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
-import javassist.Modifier;
 import javassist.bytecode.Bytecode;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.CodeIterator;
@@ -39,8 +29,6 @@ import javassist.bytecode.MethodInfo;
 import javassist.bytecode.Opcode;
 
 public class InstrumentationPass implements IPass {
-
-  private final InstrumentationLevel instrumentationLevel;
 
   private final FieldInstrumentationPass fieldPass = new FieldInstrumentationPass();
 
@@ -53,17 +41,13 @@ public class InstrumentationPass implements IPass {
 
   private final List<IFilter> filters = new ArrayList<IFilter>();
 
-  private final GranularityLevel granularity;
-
   private final Set<Integer> uniqueLineNumbers = new LinkedHashSet<Integer>();
 
   private ProbeGroup probeGroup;
 
   public InstrumentationPass(final AgentConfigs agentConfigs) {
-    this.granularity = agentConfigs.getGranularity();
 
-    this.instrumentationLevel = agentConfigs.getInstrumentationLevel();
-    switch (this.instrumentationLevel) {
+    switch (agentConfigs.getInstrumentationLevel()) {
       case FULL:
       default:
         this.initMethodPass = new InitMethodInstrumentationPass();
@@ -73,20 +57,6 @@ public class InstrumentationPass implements IPass {
         break;
       case NONE:
         break;
-    }
-
-    // filter classes/methods according to users preferences
-
-    if (!agentConfigs.getInclPublicMethods()) {
-      this.filters.add(new Filter(new BlackList(new MethodModifierMatcher(Modifier.PUBLIC))));
-    }
-
-    if (!agentConfigs.getInclStaticConstructors()) {
-      this.filters.add(new Filter(new BlackList(new MethodNameMatcher("<clinit>*"))));
-    }
-
-    if (!agentConfigs.getInclDeprecatedMethods()) {
-      this.filters.add(new Filter(new BlackList(new MethodAnnotationMatcher(Deprecated.class.getCanonicalName()))));
     }
 
     // exclude synthetic methods
@@ -113,7 +83,7 @@ public class InstrumentationPass implements IPass {
     ctClass.defrost();
 
     String hash = MD5.calculateHash(originalBytes);
-    this.probeGroup = new ProbeGroup(hash, ctClass.getName());
+    this.probeGroup = new ProbeGroup(hash, ctClass);
 
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
@@ -129,8 +99,7 @@ public class InstrumentationPass implements IPass {
     // register class' probes
     Collector.instance().regiterProbeGroup(this.probeGroup);
 
-    if (instrumented && this.initMethodPass != null
-        && this.instrumentationLevel != InstrumentationLevel.NONE) {
+    if (instrumented && this.initMethodPass != null) {
       // make GZoltar's field
       this.fieldPass.transform(ctClass);
 
@@ -191,9 +160,8 @@ public class InstrumentationPass implements IPass {
     }
 
     CodeIterator ci = ca.iterator();
-    IGranularity granularity = GranularityFactory.getGranularity(ctClass, methodInfo, this.granularity);
 
-    for (int instrSize = 0, index, curLine; ci.hasNext(); this.uniqueLineNumbers.add(curLine)) {
+    for (int index, curLine; ci.hasNext(); this.uniqueLineNumbers.add(curLine)) {
       index = ci.next();
 
       curLine = methodInfo.getLineNumber(index);
@@ -204,26 +172,17 @@ public class InstrumentationPass implements IPass {
         continue;
       }
 
-      if (granularity.instrumentAtIndex(index, instrSize)) {
-        Node node = NodeFactory.createNode(this.granularity, ctClass, ctBehavior, curLine);
-        assert node != null;
-        Probe probe = this.probeGroup.registerProbe(node);
-        assert probe != null;
+      Node node = NodeFactory.createNode(ctClass, ctBehavior, curLine);
+      assert node != null;
+      Probe probe = this.probeGroup.registerProbe(node, ctBehavior);
+      assert probe != null;
 
-        if (this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT
-            && this.instrumentationLevel != InstrumentationLevel.NONE) {
-          Bytecode bc = this.getInstrumentationCode(ctClass, probe, methodInfo.getConstPool());
-          ci.insert(index, bc.get());
-          instrSize += bc.length();
-
-          instrumented = Outcome.ACCEPT;
-        } else {
-          instrumented = Outcome.REJECT;
-        }
-      }
-
-      if (granularity.stopInstrumenting()) {
-        break;
+      if (this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT) {
+        Bytecode bc = this.getInstrumentationCode(ctClass, probe, methodInfo.getConstPool());
+        ci.insert(index, bc.get());
+        instrumented = Outcome.ACCEPT;
+      } else {
+        instrumented = Outcome.REJECT;
       }
     }
 

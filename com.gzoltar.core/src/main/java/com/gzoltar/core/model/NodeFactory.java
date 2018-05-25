@@ -1,6 +1,5 @@
 package com.gzoltar.core.model;
 
-import com.gzoltar.core.instr.granularity.GranularityLevel;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.bytecode.Descriptor;
@@ -8,15 +7,15 @@ import javassist.bytecode.Descriptor;
 public final class NodeFactory {
 
   /**
-   * Create a {@link com.gzoltar.core.model.Node} object and its ancestors, if not found.
+   * Create a {@link com.gzoltar.core.model.Node} object.
    * 
    * @param ctClass
    * @param ctBehavior
    * @param lineNumber
-   * @return An object of {@link com.gzoltar.core.model.Node}
+   * @return An {@link com.gzoltar.core.model.Node} object
    */
-  public static Node createNode(final GranularityLevel granularity, final CtClass ctClass,
-      final CtBehavior ctBehavior, final int lineNumber) {
+  public static Node createNode(final CtClass ctClass, final CtBehavior ctBehavior,
+      final int lineNumber) {
 
     String packageName = ctClass.getPackageName() == null ? "" : ctClass.getPackageName();
 
@@ -28,13 +27,6 @@ public final class NodeFactory {
     methodName.append(NodeType.METHOD.getSymbol());
     methodName.append(ctBehavior.getName());
     methodName.append(Descriptor.toString(ctBehavior.getSignature()));
-
-    if (granularity.equals(GranularityLevel.METHOD)) {
-      return new Node(methodName.toString(), lineNumber, NodeType.METHOD);
-    }
-
-    assert granularity.equals(GranularityLevel.BASICBLOCK)
-        || granularity.equals(GranularityLevel.LINE);
 
     StringBuilder lineName = methodName;
     lineName.append(NodeType.LINE.getSymbol());

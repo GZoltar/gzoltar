@@ -50,7 +50,7 @@ public class FaultLocalizationReportTask extends AbstractReportTask {
     try {
       // build a fault localization report
       FaultLocalizationReportBuilder.build(this.buildLocation.getAbsolutePath(),
-          this.outputDirectory, this.dataFile, configFlFamilies);
+          this.agentConfigs, this.outputDirectory, this.dataFile, configFlFamilies);
     } catch (Exception e) {
       throw new BuildException(e);
     }

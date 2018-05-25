@@ -113,43 +113,6 @@ public class AbstractCoverageTask extends Task {
   }
 
   /**
-   * Sets the granularity level of instrumentation. Default is <code>line</code>.
-   * 
-   * @param granularity Granularity level
-   */
-  public void setGranularity(final String granularity) {
-    this.agentConfigs.setGranularity(granularity);
-  }
-
-  /**
-   * Sets whether public methods should be instrumented. Default is <code>true</code>.
-   * 
-   * @param inclPublicMethods <code>true</code> if public methods should be instrumented
-   */
-  public void setInclPublicMethods(final boolean inclPublicMethods) {
-    this.agentConfigs.setInclPublicMethods(inclPublicMethods);
-  }
-
-  /**
-   * Sets whether public static constructors should be instrumented. Default is <code>false</code>.
-   * 
-   * @param inclStaticConstructors <code>true</code> if public static constructors should be
-   *        instrumented
-   */
-  public void setInclStaticConstructors(final boolean inclStaticConstructors) {
-    this.agentConfigs.setInclStaticConstructors(inclStaticConstructors);
-  }
-
-  /**
-   * Sets whether deprecated methods should be instrumented. Default is <code>true</code>.
-   * 
-   * @param inclDeprecatedMethods <code>true</code> if deprecated methods should be instrumented
-   */
-  public void setInclDeprecatedMethods(final boolean inclDeprecatedMethods) {
-    this.agentConfigs.setInclDeprecatedMethods(inclDeprecatedMethods);
-  }
-
-  /**
    * Creates JVM argument to launch with the specified GZoltar agent jar and the current options
    * 
    * @return JVM Argument to pass to new VM

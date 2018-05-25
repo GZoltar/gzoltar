@@ -3,12 +3,12 @@ package com.gzoltar.ant;
 import java.io.File;
 import java.util.Locale;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import com.gzoltar.core.instr.InstrumentationLevel;
 
 /**
  * Base class for creating a report.
  */
-public abstract class AbstractReportTask extends Task {
+public abstract class AbstractReportTask extends AbstractCoverageTask {
 
   protected File buildLocation;
 
@@ -16,8 +16,19 @@ public abstract class AbstractReportTask extends Task {
 
   protected File dataFile;
 
+  protected String granularity;
+
+  protected Boolean inclPublicMethods;
+
+  protected Boolean inclStaticConstructors;
+
+  protected Boolean inclDeprecatedMethods;
+
   protected AbstractReportTask() {
     super();
+
+    // reports do not require any bytecode injection
+    this.agentConfigs.setInstrumentationLevel(InstrumentationLevel.NONE);
   }
 
   /**
@@ -42,6 +53,38 @@ public abstract class AbstractReportTask extends Task {
    */
   public void setDataFile(File dataFile) {
     this.dataFile = dataFile;
+  }
+
+  /**
+   * 
+   * @param granularity
+   */
+  public void setGranularity(String granularity) {
+    this.agentConfigs.setGranularity(this.granularity);
+  }
+
+  /**
+   * 
+   * @param inclPublicMethods
+   */
+  public void setInclPublicMethods(Boolean inclPublicMethods) {
+    this.agentConfigs.setInclPublicMethods(this.inclPublicMethods);
+  }
+
+  /**
+   * 
+   * @param inclStaticConstructors
+   */
+  public void setInclStaticConstructors(Boolean inclStaticConstructors) {
+    this.agentConfigs.setInclStaticConstructors(this.inclStaticConstructors);
+  }
+
+  /**
+   * 
+   * @param inclDeprecatedMethods
+   */
+  public void setInclDeprecatedMethods(Boolean inclDeprecatedMethods) {
+    this.agentConfigs.setInclDeprecatedMethods(this.inclDeprecatedMethods);
   }
 
   /**
@@ -81,4 +124,5 @@ public abstract class AbstractReportTask extends Task {
 
     this.generateReport(Locale.getDefault());
   }
+
 }

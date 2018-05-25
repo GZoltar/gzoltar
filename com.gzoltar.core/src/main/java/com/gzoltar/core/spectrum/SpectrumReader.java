@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import com.gzoltar.core.AgentConfigs;
-import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Instrumenter;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.TransactionOutcome;
@@ -33,11 +32,15 @@ public class SpectrumReader {
    * Creates a new reader based on the given input stream input. Depending on the nature of the
    * underlying stream input should be buffered as most data is read in single bytes.
    * 
+   * @param buildLocation
+   * @param agentConfigs
    * @param input input stream to read execution data from
    */
-  public SpectrumReader(final String buildLocation, final InputStream input) {
+  public SpectrumReader(final String buildLocation, final AgentConfigs agentConfigs,
+      final InputStream input) {
     this.spectrum = Collector.instance().getSpectrum();
     this.in = new DataInputStream(input);
+    this.instrumenter = new Instrumenter(agentConfigs);
 
     try {
       ClassPool.getDefault().appendClassPath(buildLocation);
@@ -71,16 +74,6 @@ public class SpectrumReader {
     switch (blocktype) {
       case SerialisationIdentifiers.BLOCK_HEADER:
         this.readHeader();
-        return true;
-      case SerialisationIdentifiers.BLOCK_AGENT_CONFIGS:
-        final AgentConfigs agentConfigs = new AgentConfigs();
-        agentConfigs.setGranularity(this.in.readUTF());
-        agentConfigs.setInclPublicMethods(this.in.readBoolean());
-        agentConfigs.setInclStaticConstructors(this.in.readBoolean());
-        agentConfigs.setInclDeprecatedMethods(this.in.readBoolean());
-        // disable any bytecode injection
-        agentConfigs.setInstrumentationLevel(InstrumentationLevel.NONE);
-        this.instrumenter = new Instrumenter(agentConfigs);
         return true;
       case SerialisationIdentifiers.BLOCK_TRANSACTION:
         this.spectrum.addTransaction(this.transactionDeserialize.deserialize());

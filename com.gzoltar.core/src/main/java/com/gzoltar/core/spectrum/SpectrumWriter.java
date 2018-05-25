@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
-import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.util.SerialisationIdentifiers;
 
@@ -16,8 +15,6 @@ public class SpectrumWriter {
 
   private final DataOutputStream out;
 
-  private final AgentConfigs agentConfigs;
-
   /**
    * Creates a new writer based on the given output stream. Depending on the nature of the
    * underlying stream output should be buffered as most data is written in single bytes.
@@ -25,10 +22,9 @@ public class SpectrumWriter {
    * @param output binary stream to write execution data to
    * @throws IOException if the header can't be written
    */
-  public SpectrumWriter(final OutputStream output, final AgentConfigs agentConfigs)
+  public SpectrumWriter(final OutputStream output)
       throws IOException {
     this.out = new DataOutputStream(output);
-    this.agentConfigs = agentConfigs;
     this.writeHeader();
   }
 
@@ -41,13 +37,6 @@ public class SpectrumWriter {
     this.out.writeByte(SerialisationIdentifiers.BLOCK_HEADER);
     this.out.writeChar(SerialisationIdentifiers.MAGIC_NUMBER);
     this.out.writeChar(SerialisationIdentifiers.FORMAT_VERSION);
-
-    // AgentConfigs
-    this.out.writeByte(SerialisationIdentifiers.BLOCK_AGENT_CONFIGS);
-    this.out.writeUTF(this.agentConfigs.getGranularity().name());
-    this.out.writeBoolean(this.agentConfigs.getInclPublicMethods());
-    this.out.writeBoolean(this.agentConfigs.getInclStaticConstructors());
-    this.out.writeBoolean(this.agentConfigs.getInclDeprecatedMethods());
   }
 
   /**

@@ -12,12 +12,8 @@ public class FileOutput implements IAgentOutput {
 
   private final File destFile;
 
-  private final AgentConfigs agentConfigs;
-
   public FileOutput(final AgentConfigs agentConfigs) {
-    this.agentConfigs = agentConfigs;
-
-    this.destFile = new File(this.agentConfigs.getDestfile()).getAbsoluteFile();
+    this.destFile = new File(agentConfigs.getDestfile()).getAbsoluteFile();
     final File folder = this.destFile.getParentFile();
     if (folder != null) {
       folder.mkdirs();
@@ -33,7 +29,7 @@ public class FileOutput implements IAgentOutput {
   public void writeSpectrum(final ISpectrum spectrum) throws Exception {
     final OutputStream output = this.openFile();
     try {
-      final SpectrumWriter writer = new SpectrumWriter(output, this.agentConfigs);
+      final SpectrumWriter writer = new SpectrumWriter(output);
       writer.writeSpectrum(spectrum);
     } finally {
       output.close();

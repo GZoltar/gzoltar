@@ -3,6 +3,7 @@ package com.gzoltar.core.runtime;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.gzoltar.core.model.Node;
+import javassist.CtBehavior;
 
 public final class Probe {
 
@@ -10,15 +11,18 @@ public final class Probe {
 
   private final Node node;
 
+  private final CtBehavior ctBehavior;
+
   /**
    * Creates a new {@link com.gzoltar.core.runtime.Probe} object.
    * 
    * @param arrayIndex
    * @param node
    */
-  public Probe(int arrayIndex, Node node) {
+  public Probe(final int arrayIndex, final Node node, final CtBehavior ctBehavior) {
     this.arrayIndex = arrayIndex;
     this.node = node;
+    this.ctBehavior = ctBehavior;
   }
 
   /**
@@ -33,6 +37,13 @@ public final class Probe {
    */
   public Node getNode() {
     return this.node;
+  }
+
+  /**
+   * Returns the correspondent {@link javassist.CtBehavior} object of a probe.
+   */
+  public CtBehavior getCtBehavior() {
+    return this.ctBehavior;
   }
 
   /**

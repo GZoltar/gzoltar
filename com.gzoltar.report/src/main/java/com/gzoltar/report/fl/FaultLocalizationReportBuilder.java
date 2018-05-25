@@ -3,6 +3,7 @@ package com.gzoltar.report.fl;
 import java.io.File;
 import java.util.List;
 import java.util.Locale;
+import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.FaultLocalization;
 import com.gzoltar.report.IReportFormatter;
@@ -15,8 +16,9 @@ import com.gzoltar.report.fl.formatter.txt.FaultLocalizationTxtReport;
 
 public class FaultLocalizationReportBuilder {
 
-  public static void build(final String buildLocation, final File outputDirectory,
-      final File dataFile, List<ConfigFaultLocalizationFamily> flFamilies) throws Exception {
+  public static void build(final String buildLocation, final AgentConfigs agentConfigs,
+      final File outputDirectory, final File dataFile,
+      List<ConfigFaultLocalizationFamily> flFamilies) throws Exception {
 
     // in case there is not any configuration defined, use a default one
     if (flFamilies == null || flFamilies.isEmpty()) {
@@ -37,7 +39,7 @@ public class FaultLocalizationReportBuilder {
       // first diagnose it
       FaultLocalization fl =
           new FaultLocalization(flFamily.getFaultLocalizationFamily(), flFamily.getFormulas());
-      ISpectrum spectrum = fl.diagnose(buildLocation, dataFile);
+      ISpectrum spectrum = fl.diagnose(buildLocation, agentConfigs, dataFile);
 
       // which formatter of report?
       for (IReportFormatter formatter : flFamily.getFormatters()) {

@@ -16,10 +16,7 @@ public final class SerialisationIdentifiers {
   /** Block identifier for file headers. */
   public static final byte BLOCK_HEADER = 0x01;
 
-  /** Block identifier for agentConfigs information. */
-  public static final byte BLOCK_AGENT_CONFIGS = 0x10;
-
   /** Block identifier for transaction information. */
-  public static final byte BLOCK_TRANSACTION = 0x11;
+  public static final byte BLOCK_TRANSACTION = 0x10;
 
 }

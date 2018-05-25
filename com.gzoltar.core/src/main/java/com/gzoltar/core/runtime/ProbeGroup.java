@@ -5,12 +5,14 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import com.gzoltar.core.model.Node;
+import javassist.CtBehavior;
+import javassist.CtClass;
 
 public final class ProbeGroup {
 
   private final String hash;
 
-  private final String name;
+  private final CtClass ctClass;
 
   private final List<Probe> probes;
 
@@ -19,8 +21,8 @@ public final class ProbeGroup {
    * 
    * @param name
    */
-  public ProbeGroup(String hash, String name) {
-    this(hash, name, new ArrayList<Probe>());
+  public ProbeGroup(String hash, CtClass ctClass) {
+    this(hash, ctClass, new ArrayList<Probe>());
   }
 
   /**
@@ -29,9 +31,9 @@ public final class ProbeGroup {
    * @param name
    * @param probes
    */
-  public ProbeGroup(String hash, String name, List<Probe> probes) {
+  public ProbeGroup(String hash, CtClass ctClass, List<Probe> probes) {
     this.hash = hash;
-    this.name = name;
+    this.ctClass = ctClass;
     this.probes = probes;
   }
 
@@ -43,10 +45,17 @@ public final class ProbeGroup {
   }
 
   /**
+   * Returns the correspondent {@link javassist.CtClass} object of a probeGroup.
+   */
+  public CtClass getCtClass() {
+    return this.ctClass;
+  }
+
+  /**
    * Returns the name of a probeGroup.
    */
   public String getName() {
-    return this.name;
+    return this.ctClass.getName();
   }
 
   // === Probes ===
@@ -54,8 +63,8 @@ public final class ProbeGroup {
   /**
    * Registers a new {@link com.gzoltar.core.runtime.Probe} object.
    */
-  public Probe registerProbe(Node node) {
-    Probe probe = new Probe(this.probes.size(), node);
+  public Probe registerProbe(final Node node, final CtBehavior ctBehavior) {
+    Probe probe = new Probe(this.probes.size(), node, ctBehavior);
     this.probes.add(probe);
     return probe;
   }
@@ -132,7 +141,7 @@ public final class ProbeGroup {
     sb.append("[ProbeGroup] ");
     sb.append(this.hash);
     sb.append(" | ");
-    sb.append(this.name);
+    sb.append(this.getName());
 
     for (Probe probe : this.probes) {
       sb.append("\n");
@@ -149,7 +158,7 @@ public final class ProbeGroup {
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
     builder.append(this.hash);
-    builder.append(this.name);
+    builder.append(this.getName());
     builder.append(this.probes);
     return builder.toHashCode();
   }
@@ -170,7 +179,7 @@ public final class ProbeGroup {
 
     EqualsBuilder builder = new EqualsBuilder();
     builder.append(this.hash, probeGroup.hash);
-    builder.append(this.name, probeGroup.name);
+    builder.append(this.getName(), probeGroup.getName());
     builder.append(this.probes, probeGroup.probes);
 
     return builder.isEquals();
