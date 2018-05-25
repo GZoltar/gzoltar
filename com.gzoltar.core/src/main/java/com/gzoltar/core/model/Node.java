@@ -24,8 +24,6 @@ public class Node {
 
   private Map<String, Double> suspiciousnessValues = null;
 
-  private boolean hasBeenExecuted = false;
-
   /**
    * 
    * @param name
@@ -251,21 +249,6 @@ public class Node {
   public int getNumberOfSuspiciousnessValues() {
     assert this.suspiciousnessValues != null;
     return this.suspiciousnessValues.size();
-  }
-
-  /**
-   * 
-   */
-  public void setHasBeenExecuted() {
-    this.hasBeenExecuted = true;
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public boolean hasBeenExecuted() {
-    return this.hasBeenExecuted;
   }
 
   /**
