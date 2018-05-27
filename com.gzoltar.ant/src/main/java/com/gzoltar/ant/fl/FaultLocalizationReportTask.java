@@ -15,7 +15,12 @@ import com.gzoltar.report.fl.config.ConfigFaultLocalizationFamily;
  */
 public class FaultLocalizationReportTask extends AbstractReportTask {
 
-  private final FaultLocalizationFamilies flFamilies = new FaultLocalizationFamilies();
+  private final FaultLocalizationFamilies flFamilies;
+
+  public FaultLocalizationReportTask() {
+    super();
+    this.flFamilies = new FaultLocalizationFamilies();
+  }
 
   /**
    * 

@@ -16,14 +16,6 @@ public abstract class AbstractReportTask extends AbstractCoverageTask {
 
   protected File dataFile;
 
-  protected String granularity;
-
-  protected Boolean inclPublicMethods;
-
-  protected Boolean inclStaticConstructors;
-
-  protected Boolean inclDeprecatedMethods;
-
   protected AbstractReportTask() {
     super();
 
@@ -60,7 +52,7 @@ public abstract class AbstractReportTask extends AbstractCoverageTask {
    * @param granularity
    */
   public void setGranularity(String granularity) {
-    this.agentConfigs.setGranularity(this.granularity);
+    this.agentConfigs.setGranularity(granularity);
   }
 
   /**
@@ -68,7 +60,7 @@ public abstract class AbstractReportTask extends AbstractCoverageTask {
    * @param inclPublicMethods
    */
   public void setInclPublicMethods(Boolean inclPublicMethods) {
-    this.agentConfigs.setInclPublicMethods(this.inclPublicMethods);
+    this.agentConfigs.setInclPublicMethods(inclPublicMethods);
   }
 
   /**
@@ -76,7 +68,7 @@ public abstract class AbstractReportTask extends AbstractCoverageTask {
    * @param inclStaticConstructors
    */
   public void setInclStaticConstructors(Boolean inclStaticConstructors) {
-    this.agentConfigs.setInclStaticConstructors(this.inclStaticConstructors);
+    this.agentConfigs.setInclStaticConstructors(inclStaticConstructors);
   }
 
   /**
@@ -84,7 +76,7 @@ public abstract class AbstractReportTask extends AbstractCoverageTask {
    * @param inclDeprecatedMethods
    */
   public void setInclDeprecatedMethods(Boolean inclDeprecatedMethods) {
-    this.agentConfigs.setInclDeprecatedMethods(this.inclDeprecatedMethods);
+    this.agentConfigs.setInclDeprecatedMethods(inclDeprecatedMethods);
   }
 
   /**
