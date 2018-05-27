@@ -10,11 +10,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Node {
 
-  private final String name;
+  private String name;
 
   private final int lineNumber;
 
-  private final NodeType type;
+  private NodeType type;
 
   private int depth;
 
@@ -57,6 +57,14 @@ public class Node {
 
   /**
    * 
+   * @param name
+   */
+  public void setName(final String name) {
+    this.name = name;
+  }
+
+  /**
+   * 
    * @return
    */
   public String getShortName() {
@@ -91,6 +99,14 @@ public class Node {
    */
   public NodeType getNodeType() {
     return this.type;
+  }
+
+  /**
+   * 
+   * @param type
+   */
+  public void setNodeType(final NodeType type) {
+    this.type = type;
   }
 
   /**

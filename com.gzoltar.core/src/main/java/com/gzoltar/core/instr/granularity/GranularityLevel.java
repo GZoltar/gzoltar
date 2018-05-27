@@ -15,6 +15,11 @@ public enum GranularityLevel {
   /**
    * 
    */
+  CLASS,
+
+  /**
+   * 
+   */
   BASICBLOCK
 
 }

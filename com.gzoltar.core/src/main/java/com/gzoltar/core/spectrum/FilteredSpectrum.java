@@ -5,18 +5,22 @@ import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.filter.Filter;
+import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.instr.matchers.ClassNameMatcher;
 import com.gzoltar.core.instr.matchers.MethodAnnotationMatcher;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.instr.matchers.MethodNameMatcher;
+import com.gzoltar.core.model.Node;
+import com.gzoltar.core.model.NodeType;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.runtime.Probe;
 import com.gzoltar.core.runtime.ProbeGroup;
+import com.gzoltar.core.util.ArrayUtils;
 import javassist.Modifier;
 
 public class FilteredSpectrum {
 
-  // private final GranularityLevel granularity;
+  private final GranularityLevel granularity;
 
   private final Filter classFilter;
 
@@ -28,9 +32,7 @@ public class FilteredSpectrum {
    */
   public FilteredSpectrum(AgentConfigs configs) {
 
-    // TODO not clear yet how to implement this
-    // IGranularity granularity = GranularityFactory.getGranularity(ctClass, methodInfo,
-    // configs.getGranularity());
+    this.granularity = configs.getGranularity();
 
     // === Class level filters ===
 
@@ -82,13 +84,31 @@ public class FilteredSpectrum {
 
       ProbeGroup newProbeGroup = new ProbeGroup(probeGroup.getHash(), probeGroup.getCtClass());
 
+      Filter granularityMethodFilter = new Filter();
       for (Probe probe : probeGroup.getProbes()) {
         // does 'probe' match any filter?
         if (this.methodFilter.filter(probe.getCtBehavior()) == Outcome.REJECT) {
           continue;
         }
 
+        // === Skip nodes according to a granularity level ===
+
+        if (granularityMethodFilter.filter(probe.getCtBehavior()) == Outcome.REJECT) {
+          continue;
+        }
+
         newProbeGroup.registerProbe(probe.getNode(), probe.getCtBehavior());
+
+        if (this.granularity == GranularityLevel.CLASS) {
+          break;
+        } else if (this.granularity == GranularityLevel.METHOD) {
+          Node node = probe.getNode();
+          String methodName =
+              node.getName().substring(node.getName().indexOf(NodeType.METHOD.getSymbol()) + 1,
+                  node.getName().indexOf(NodeType.LINE.getSymbol()));
+
+          granularityMethodFilter.add(new BlackList(new MethodNameMatcher(methodName)));
+        }
       }
 
       if (!newProbeGroup.isEmpty()) {
@@ -127,11 +147,48 @@ public class FilteredSpectrum {
           newHitArray[newProbe.getArrayIndex()] = hitArray[probe.getArrayIndex()];
         }
 
-        newTransaction.addActivity(hash, newHitArray);
+        if (ArrayUtils.containsValue(newHitArray, true)) {
+          newTransaction.addActivity(hash, newHitArray);
+        }
       }
 
       // check whether it has any activation is performed in the method itself
       filteredSpectrum.addTransaction(newTransaction);
+    }
+
+    // === Reset name and type according to a granularity level ===
+
+    if (this.granularity != GranularityLevel.LINE) {
+      for (ProbeGroup probeGroup : filteredSpectrum.getProbeGroups()) {
+        for (Probe probe : probeGroup.getProbes()) {
+          Node node = probe.getNode();
+
+          String newNodeName = null;
+          NodeType newNodeType = null;
+
+          switch (this.granularity) {
+            case CLASS:
+              newNodeName =
+                  node.getName().substring(0, node.getName().indexOf(NodeType.METHOD.getSymbol()));
+              newNodeType = NodeType.CLASS;
+              break;
+            case METHOD:
+              newNodeName =
+                  node.getName().substring(0, node.getName().indexOf(NodeType.LINE.getSymbol()));
+              newNodeType = NodeType.METHOD;
+              break;
+            case BASICBLOCK:
+            case LINE:
+            default:
+              break;
+          }
+
+          if (newNodeName != null && newNodeType != null) {
+            node.setName(newNodeName);
+            node.setNodeType(newNodeType);
+          }
+        }
+      }
     }
 
     return filteredSpectrum;
