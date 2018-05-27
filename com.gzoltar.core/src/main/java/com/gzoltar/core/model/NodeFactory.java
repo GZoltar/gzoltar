@@ -44,17 +44,9 @@ public final class NodeFactory {
 
     final String nodeName = node.getName();
     final NodeType nodeType = node.getNodeType();
-
-    final int lineNumber = Integer.valueOf(
-        nodeName.substring(nodeName.indexOf(NodeType.LINE.getSymbol()) + 1, nodeName.length()));
+    final int lineNumber = node.getLineNumber();
 
     // === Package ===
-
-    if (nodeType.equals(NodeType.PACKAGE)) {
-      node.setParent(tree.getRoot());
-      tree.addNode(node);
-      return;
-    }
 
     final String packageName = nodeName.substring(0,
         nodeType.equals(NodeType.PACKAGE) ? nodeName.indexOf(NodeType.LINE.getSymbol())
