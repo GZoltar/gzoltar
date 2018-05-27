@@ -39,7 +39,7 @@ public class AbstractCoverageTask extends Task {
   /**
    * Sets whether or not the current task is enabled
    * 
-   * @param enabled Enablement state of the task
+   * @param enabled Enable state of the task
    */
   public void setEnabled(final boolean enabled) {
     this.enabled = enabled;
