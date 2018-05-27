@@ -3,6 +3,7 @@ package com.gzoltar.core.instr.matchers;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
+import javassist.bytecode.Descriptor;
 
 public class MethodNameMatcher extends AbstractWildcardMatcher {
 
@@ -22,7 +23,7 @@ public class MethodNameMatcher extends AbstractWildcardMatcher {
 
   @Override
   public boolean matches(final CtBehavior ctBehavior) {
-    return super.matches(ctBehavior.getName() + ctBehavior.getSignature());
+    return super.matches(ctBehavior.getName() + Descriptor.toString(ctBehavior.getSignature()));
   }
 
   @Override
