@@ -1,6 +1,8 @@
 package com.gzoltar.maven;
 
 import java.io.File;
+import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -32,10 +34,16 @@ public class InstrumentMojo extends AbstractAgentMojo {
       return;
     }
 
-    final File instrumentedClassesDir =
-        new File(getProject().getBuild().getDirectory(),
-            "instrumented-classes" + File.separator + "gzoltar");
-    instrumentedClassesDir.mkdirs();
+    final File backupDir =
+        new File(getProject().getBuild().getDirectory(), "gzoltar-backup-classes");
+    backupDir.mkdirs();
+
+    // backup all files
+    try {
+      FileUtils.copyDirectory(projectClassesDir, backupDir);
+    } catch (IOException e) {
+      throw new MojoExecutionException(e.getMessage(), e);
+    }
 
     // configure instrumentation
     AgentConfigs agentConfigs = this.createAgentConfigurations();
@@ -44,7 +52,7 @@ public class InstrumentMojo extends AbstractAgentMojo {
 
     // instrument recursively
     try {
-      instrumenter.instrumentRecursively(projectClassesDir, instrumentedClassesDir);
+      instrumenter.instrumentRecursively(backupDir, projectClassesDir);
     } catch (Exception e) {
       throw new MojoExecutionException(e.getMessage(), e);
     }
