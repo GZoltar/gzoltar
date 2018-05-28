@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.StringUtils;
 import com.gzoltar.core.AgentConfigs;
@@ -57,7 +59,7 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
   private String output;
 
   @Override
-  public void executeMojo() {
+  public void executeMojo() throws MojoExecutionException, MojoFailureException {
     final Properties projectProperties = this.getProject().getProperties();
     final String oldValue = projectProperties.getProperty(SUREFIRE_ARG_LINE);
     final String newValue =
@@ -71,12 +73,14 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
     return gzoltarAgentArtifact.getFile();
   }
 
-  private AgentConfigs createAgentConfigurations() {
+  protected AgentConfigs createAgentConfigurations() {
     final AgentConfigs agentConfigs = new AgentConfigs();
 
     String targetClassesDirectory = this.getProject().getBuild().getOutputDirectory();
     agentConfigs.setBuildLocation(targetClassesDirectory);
-    agentConfigs.setDestfile(this.getDestFile().getAbsolutePath());
+    if (this.getDestFile() != null) {
+      agentConfigs.setDestfile(this.getDestFile().getAbsolutePath());
+    }
 
     if (this.getIncludes() != null && !this.getIncludes().isEmpty()) {
       final String agentIncludes = StringUtils.join(this.getIncludes().iterator(), ":");

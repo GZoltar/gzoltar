@@ -2,6 +2,9 @@ package com.gzoltar.core.instr;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -121,6 +124,39 @@ public class Instrumenter {
         this.copy(binaryType.getInputStream(), output);
         return 0;
     }
+  }
+
+  public int instrument(File source, File dest) throws Exception {
+    dest.getParentFile().mkdirs();
+    final InputStream input = new FileInputStream(source);
+    try {
+      final OutputStream output = new FileOutputStream(dest);
+      try {
+        return this.instrumentToFile(input, output);
+      } finally {
+        output.close();
+      }
+    } catch (Exception e) {
+      throw e;
+    } finally {
+      input.close();
+    }
+  }
+
+  public int instrumentRecursively(File source, File dest)
+      throws Exception {
+    int numInstrumentedClasses = 0;
+
+    if (source.isDirectory()) {
+      ClassPool.getDefault().appendClassPath(source.getAbsolutePath());
+      for (final File child : source.listFiles()) {
+        numInstrumentedClasses += this.instrumentRecursively(child, new File(dest, child.getName()));
+      }
+    } else {
+      numInstrumentedClasses += this.instrument(source, dest);
+    }
+
+    return numInstrumentedClasses;
   }
 
   private int instrumentGzip(final InputStream input, final OutputStream output) throws Exception {

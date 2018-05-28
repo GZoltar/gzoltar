@@ -1,10 +1,6 @@
 package com.gzoltar.cli.commands;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,7 +11,6 @@ import org.kohsuke.args4j.Option;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Instrumenter;
-import javassist.ClassPool;
 
 /**
  * The <code>instrument</code> command.
@@ -61,9 +56,9 @@ public class Instrument extends AbstractAgent implements Serializable {
     for (File source : this.sources) {
       out.println("  - " + source.getAbsolutePath());
       if (source.isFile()) {
-        numInstrumentedClasses += this.instrument(instrumenter, source, absoluteOut);
+        numInstrumentedClasses += instrumenter.instrument(source, absoluteOut);
       } else {
-        numInstrumentedClasses += this.instrumentRecursively(instrumenter, source, absoluteOut);
+        numInstrumentedClasses += instrumenter.instrumentRecursively(source, absoluteOut);
       }
     }
 
@@ -73,36 +68,4 @@ public class Instrument extends AbstractAgent implements Serializable {
     return 0;
   }
 
-  private int instrument(Instrumenter instrumenter, File source, File dest) throws Exception {
-    dest.getParentFile().mkdirs();
-    final InputStream input = new FileInputStream(source);
-    try {
-      final OutputStream output = new FileOutputStream(dest);
-      try {
-        return instrumenter.instrumentToFile(input, output);
-      } finally {
-        output.close();
-      }
-    } catch (Exception e) {
-      throw e;
-    } finally {
-      input.close();
-    }
-  }
-
-  private int instrumentRecursively(Instrumenter instrumenter, File source, File dest)
-      throws Exception {
-    int numInstrumentedClasses = 0;
-
-    if (source.isDirectory()) {
-      ClassPool.getDefault().appendClassPath(source.getAbsolutePath());
-      for (final File child : source.listFiles()) {
-        numInstrumentedClasses += this.instrumentRecursively(instrumenter, child, new File(dest, child.getName()));
-      }
-    } else {
-      numInstrumentedClasses += this.instrument(instrumenter, source, dest);
-    }
-
-    return numInstrumentedClasses;
-  }
 }
