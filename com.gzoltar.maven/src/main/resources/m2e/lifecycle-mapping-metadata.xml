@@ -4,6 +4,8 @@
       <pluginExecutionFilter>
         <goals>
           <goal>prepare-agent</goal>
+          <goal>instrument</goal>
+          <goal>fl-report</goal>
         </goals>
       </pluginExecutionFilter>
       <action>
