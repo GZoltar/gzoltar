@@ -88,7 +88,7 @@ public final class AgentConfigs {
   public static final boolean DEFAULT_INCLNOLOCATIONCLASSES = false;
 
   /**
-   * Specifies the output mode. Default is {@link OutputMode#console}.
+   * Specifies the output mode. Default is {@link OutputMode#file}.
    * 
    * @see OutputMode#file
    * @see OutputMode#console
@@ -96,7 +96,7 @@ public final class AgentConfigs {
    */
   public static final String OUTPUT_KEY = "output";
 
-  public static final AgentOutput DEFAULT_OUTPUT = AgentOutput.CONSOLE;
+  public static final AgentOutput DEFAULT_OUTPUT = AgentOutput.FILE;
 
   /**
    * Specifies the granularity level of instrumentation. Default is {@link GranularityLevel#line}.

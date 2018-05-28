@@ -71,9 +71,9 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 
   /**
    * Specifies whether public static constructors of each class under test should be included in the
-   * report. Default is <code>true</code>.
+   * report. Default is <code>false</code>.
    */
-  @Parameter(property = "gzoltar.inclStaticConstructors", defaultValue = "true")
+  @Parameter(property = "gzoltar.inclStaticConstructors", defaultValue = "false")
   private Boolean inclStaticConstructors;
 
   /**

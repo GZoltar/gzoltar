@@ -50,12 +50,12 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
   /**
    * Output method to use for writing coverage data. Valid options are:
    * <ul>
-   * <li>file: At VM termination execution data is written to a file.</li>
-   * <li>console: At VM termination execution data is written to the stdout (default).</li>
+   * <li>file: At VM termination execution data is written to a file (default).</li>
+   * <li>console: At VM termination execution data is written to the stdout.</li>
    * <li>none: Do not produce any output.</li>
    * </ul>
    */
-  @Parameter(property = "gzoltar.output", defaultValue = "CONSOLE")
+  @Parameter(property = "gzoltar.output", defaultValue = "FILE")
   private String output;
 
   @Override
