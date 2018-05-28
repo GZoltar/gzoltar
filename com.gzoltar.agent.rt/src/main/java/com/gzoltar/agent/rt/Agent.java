@@ -41,7 +41,6 @@ public class Agent implements IAgent {
   private Agent(final AgentConfigs agentConfigs) {
     this.agentConfigs = agentConfigs;
     this.output = this.createAgentOutput();
-    this.startup();
   }
 
   private IAgentOutput createAgentOutput() {

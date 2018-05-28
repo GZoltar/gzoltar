@@ -10,7 +10,8 @@ public final class PreMain {
 
   public static void premain(final String agentArgs, final Instrumentation inst) {
     final AgentConfigs agentConfigs = new AgentConfigs(agentArgs);
-    Agent.getInstance(agentConfigs);
+    IAgent agent = Agent.getInstance(agentConfigs);
+    agent.startup();
 
     try {
       // Instruments a pre-defined system class loader, i.e., adds a static field to a system class
