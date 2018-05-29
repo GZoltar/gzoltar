@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.lang3.tuple.Pair;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.runtime.Probe;
@@ -105,10 +106,10 @@ public class Spectrum implements ISpectrum {
   public List<Node> getHitNodes(Transaction transaction) {
     List<Node> nodes = new ArrayList<Node>();
 
-    for (Entry<String, boolean[]> activity : transaction.getActivity().entrySet()) {
+    for (Entry<String, Pair<String, boolean[]>> activity : transaction.getActivity().entrySet()) {
       String probeGroupHash = activity.getKey();
       ProbeGroup probeGroup = this.probeGroups.get(probeGroupHash);
-      boolean[] hitArray = activity.getValue();
+      boolean[] hitArray = activity.getValue().getRight();
       assert hitArray.length == probeGroup.getNumberOfProbes();
 
       for (Probe probe : probeGroup.getProbes()) {

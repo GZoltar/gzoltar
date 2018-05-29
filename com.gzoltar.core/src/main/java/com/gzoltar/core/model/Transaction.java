@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.tuple.Pair;
 import com.gzoltar.core.runtime.ProbeGroup;
 
 public class Transaction {
@@ -18,7 +19,7 @@ public class Transaction {
   private final String name;
 
   /** <ProbeGroup hash, hitArray> */
-  private final Map<String, boolean[]> activity;
+  private final Map<String, Pair<String, boolean[]>> activity;
 
   private final TransactionOutcome outcome;
 
@@ -35,7 +36,7 @@ public class Transaction {
    */
   public Transaction(final String name, final TransactionOutcome outcome, final long runtime,
       final String stackTrace) {
-    this(name, new LinkedHashMap<String, boolean[]>(), outcome, runtime, stackTrace);
+    this(name, new LinkedHashMap<String, Pair<String, boolean[]>>(), outcome, runtime, stackTrace);
   }
 
   /**
@@ -46,7 +47,7 @@ public class Transaction {
    * @param runtime
    * @param stackTrace
    */
-  public Transaction(final String name, final Map<String, boolean[]> activity,
+  public Transaction(final String name, final Map<String, Pair<String, boolean[]>> activity,
       final TransactionOutcome outcome, final long runtime, final String stackTrace) {
     this.name = name;
     this.activity = activity;
@@ -81,14 +82,14 @@ public class Transaction {
   /**
    * Returns the activities of a transaction.
    */
-  public Map<String, boolean[]> getActivity() {
+  public Map<String, Pair<String, boolean[]>> getActivity() {
     return this.activity;
   }
 
   /**
    * Adds an activity to a transaction.
    */
-  public void addActivity(String hash, boolean[] hitArray) {
+  public void addActivity(final String hash, final Pair<String, boolean[]> hitArray) {
     this.activity.put(hash, hitArray);
   }
 
@@ -96,14 +97,14 @@ public class Transaction {
    * Returns a boolean hit array of a probeGroup.
    */
   public boolean[] getHitArray(final ProbeGroup probeGroup) {
-    return this.activity.get(probeGroup.getHash());
+    return this.activity.get(probeGroup.getHash()).getRight();
   }
 
   /**
    * Returns a boolean hit array of a probeGroup.
    */
   public boolean[] getHitArrayByProbeGroupHash(final String hash) {
-    return this.activity.get(hash);
+    return this.activity.get(hash).getRight();
   }
 
   /**
@@ -113,7 +114,7 @@ public class Transaction {
     if (!this.activity.containsKey(probeGroup.getHash())) {
       return false;
     }
-    return this.activity.get(probeGroup.getHash())[probeIndex];
+    return this.activity.get(probeGroup.getHash()).getRight()[probeIndex];
   }
 
   // === Outcome ===

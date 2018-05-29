@@ -1,5 +1,6 @@
 package com.gzoltar.core.spectrum;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
@@ -148,7 +149,8 @@ public class FilteredSpectrum {
         }
 
         if (ArrayUtils.containsValue(newHitArray, true)) {
-          newTransaction.addActivity(hash, newHitArray);
+          newTransaction.addActivity(hash,
+              new ImmutablePair<String, boolean[]>(newProbeGroup.getName(), newHitArray));
         }
       }
 

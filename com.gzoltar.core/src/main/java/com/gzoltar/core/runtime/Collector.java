@@ -3,6 +3,8 @@ package com.gzoltar.core.runtime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.events.MultiEventListener;
 import com.gzoltar.core.model.Transaction;
@@ -19,7 +21,7 @@ public class Collector {
   private final Spectrum spectrum;
 
   /** <ProbeGroup hash, hitArray> */
-  private final Map<String, boolean[]> hitArrays;
+  private final Map<String, Pair<String, boolean[]>> hitArrays;
 
   /**
    * 
@@ -50,7 +52,7 @@ public class Collector {
   private Collector() {
     this.listener = new MultiEventListener();
     this.spectrum = new Spectrum();
-    this.hitArrays = new LinkedHashMap<String, boolean[]>();
+    this.hitArrays = new LinkedHashMap<String, Pair<String, boolean[]>>();
   }
 
   /**
@@ -113,10 +115,11 @@ public class Collector {
       final TransactionOutcome outcome, final long runtime, final String stackTrace) {
 
     // collect coverage
-    Map<String, boolean[]> activity = new LinkedHashMap<String, boolean[]>();
-    for (Entry<String, boolean[]> entry : this.hitArrays.entrySet()) {
+    Map<String, Pair<String, boolean[]>> activity =
+        new LinkedHashMap<String, Pair<String, boolean[]>>();
+    for (Entry<String, Pair<String, boolean[]>> entry : this.hitArrays.entrySet()) {
 
-      boolean[] hitArray = entry.getValue();
+      boolean[] hitArray = entry.getValue().getRight();
       if (!ArrayUtils.containsValue(hitArray, true)) {
         // no coverage
         continue;
@@ -125,7 +128,8 @@ public class Collector {
       String hash = entry.getKey();
       boolean[] cloneHitArray = new boolean[hitArray.length];
       System.arraycopy(hitArray, 0, cloneHitArray, 0, hitArray.length);
-      activity.put(hash, cloneHitArray);
+      activity.put(hash,
+          new ImmutablePair<String, boolean[]>(entry.getValue().getLeft(), cloneHitArray));
 
       // reset probes
       for (int i = 0; i < hitArray.length; i++) {
@@ -155,14 +159,15 @@ public class Collector {
     assert args.length == 3;
 
     final String hash = (String) args[0];
-    //final String probeGroupName = (String) args[1];
+    final String probeGroupName = (String) args[1];
     final Integer numberOfProbes = Integer.valueOf((String) args[2]);
 
     if (!this.hitArrays.containsKey(hash)) {
-      this.hitArrays.put(hash, new boolean[numberOfProbes]);
+      this.hitArrays.put(hash,
+          new ImmutablePair<String, boolean[]>(probeGroupName, new boolean[numberOfProbes]));
     }
 
-    args[0] = this.hitArrays.get(hash);
+    args[0] = this.hitArrays.get(hash).getRight();
   }
 
   /**

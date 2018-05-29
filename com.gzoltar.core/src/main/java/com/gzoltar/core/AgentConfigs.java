@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 import com.gzoltar.core.events.EmptyEventListener;
 import com.gzoltar.core.events.IEventListener;
@@ -172,6 +173,21 @@ public final class AgentConfigs {
         }
 
         final String value = entry.substring(pos + 1);
+        this.setConfig(key, value);
+      }
+    }
+  }
+
+  /**
+   * New instance read from the given {@link java.util.Properties} object.
+   * 
+   * @param properties {@link java.util.Properties} object to read configuration options from
+   */
+  public AgentConfigs(final Properties properties) {
+    this();
+    for (final String key : VALID_CONFIGS) {
+      final String value = properties.getProperty(key);
+      if (value != null) {
         this.setConfig(key, value);
       }
     }

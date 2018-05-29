@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Instrumenter;
 import com.gzoltar.core.model.Transaction;
@@ -107,7 +109,7 @@ public class SpectrumReader {
     public Transaction deserialize() throws IOException, CloneNotSupportedException {
       String transactionName = in.readUTF();
 
-      Map<String, boolean[]> activity = new LinkedHashMap<String, boolean[]>();
+      Map<String, Pair<String, boolean[]>> activity = new LinkedHashMap<String, Pair<String, boolean[]>>();
       int numberActivities = in.readInt();
       while (numberActivities > 0) {
         String probeGroupHash = in.readUTF();
@@ -131,7 +133,7 @@ public class SpectrumReader {
           }
         }
 
-        activity.put(probeGroupHash, hitArray);
+        activity.put(probeGroupHash, new ImmutablePair<String, boolean[]>(probeGroupName, hitArray));
         numberActivities--;
       }
 
