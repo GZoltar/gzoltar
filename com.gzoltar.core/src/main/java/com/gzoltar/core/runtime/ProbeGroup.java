@@ -19,7 +19,8 @@ public final class ProbeGroup {
   /**
    * Constructs a new ProbeGroup.
    * 
-   * @param name
+   * @param hash
+   * @param ctClass
    */
   public ProbeGroup(String hash, CtClass ctClass) {
     this(hash, ctClass, new ArrayList<Probe>());
@@ -28,7 +29,8 @@ public final class ProbeGroup {
   /**
    * Constructs a new ProbeGroup.
    * 
-   * @param name
+   * @param hash
+   * @param ctClass
    * @param probes
    */
   public ProbeGroup(String hash, CtClass ctClass, List<Probe> probes) {
