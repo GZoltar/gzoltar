@@ -30,7 +30,7 @@ public class TestJUnitListener {
 
     // --------------
 
-    AgentConfigs configs = new AgentConfigs(null);
+    AgentConfigs configs = new AgentConfigs();
     configs.setGranularity(GranularityLevel.LINE);
 
     Collector.instance().addListener(configs.getEventListener());

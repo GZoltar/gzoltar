@@ -34,7 +34,7 @@ public class TestLineInstrumentation {
   }
 
   private void test(List<String> classesUnderTest, List<String> lineNumbers) throws Exception {
-    AgentConfigs configs = new AgentConfigs(null);
+    AgentConfigs configs = new AgentConfigs();
     configs.setGranularity(GranularityLevel.LINE);
 
     Collector.instance().addListener(configs.getEventListener());
