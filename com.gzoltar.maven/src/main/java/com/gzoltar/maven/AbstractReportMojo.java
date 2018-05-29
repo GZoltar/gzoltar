@@ -34,7 +34,7 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
    * File with execution data.
    */
   @Parameter(property = "gzoltar.dataFile",
-      defaultValue = "${project.build.directory}/gzoltar.exec")
+      defaultValue = "${project.build.directory}/gzoltar.ser")
   protected File dataFile;
 
   /**

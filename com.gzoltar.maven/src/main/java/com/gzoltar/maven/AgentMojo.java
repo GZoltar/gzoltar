@@ -14,7 +14,7 @@ public class AgentMojo extends AbstractAgentMojo {
    * Path to the output file for execution data.
    */
   @Parameter(property = "gzoltar.destFile",
-      defaultValue = "${project.build.directory}/gzoltar.exec")
+      defaultValue = "${project.build.directory}/gzoltar.ser")
   private File destFile;
 
   /**

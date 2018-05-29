@@ -46,7 +46,7 @@ public class AbstractCoverageTask extends Task {
   }
 
   /**
-   * Sets the location to write coverage execution data to. Default is <code>gzoltar.exec</code>.
+   * Sets the location to write coverage execution data to. Default is <code>gzoltar.ser</code>.
    * 
    * @param file Location to write coverage execution data to
    */

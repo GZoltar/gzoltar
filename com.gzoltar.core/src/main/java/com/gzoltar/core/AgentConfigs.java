@@ -36,7 +36,7 @@ public final class AgentConfigs {
   public static final String DEFAULT_BUILDLOCATION = "";
 
   /**
-   * Specifies the output file for execution data. Default is <code>gzoltar.exec</code> in the
+   * Specifies the output file for execution data. Default is <code>gzoltar.ser</code> in the
    * working directory.
    */
   public static final String DESTFILE_KEY = "destfile";
@@ -44,7 +44,7 @@ public final class AgentConfigs {
   /**
    * Default value for the "destfile" agent configuration.
    */
-  public static final String DEFAULT_DESTFILE = "gzoltar.exec";
+  public static final String DEFAULT_DESTFILE = "gzoltar.ser";
 
   /**
    * Wildcard expression for class names that should be included for code coverage. Default is
@@ -119,7 +119,7 @@ public final class AgentConfigs {
    */
   public static final String INCLSTATICCONSTRUCTORS_KEY = "inclstaticconstructors";
 
-  public static final boolean DEFAULT_INCLSTATICCONSTRUCTORS = false;
+  public static final boolean DEFAULT_INCLSTATICCONSTRUCTORS = true;
 
   /**
    * Specifies whether methods annotated with @deprecated of each class under test should be
