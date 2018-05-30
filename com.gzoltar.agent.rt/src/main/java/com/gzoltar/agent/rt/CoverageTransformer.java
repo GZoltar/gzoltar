@@ -67,7 +67,7 @@ public class CoverageTransformer implements ClassFileTransformer {
 
     try {
       ClassPool cp = ClassPool.getDefault();
-      CtClass cc = cp.makeClass(new ByteArrayInputStream(classfileBuffer));
+      CtClass cc = cp.makeClassIfNew(new ByteArrayInputStream(classfileBuffer));
 
       // only instrument classes under a build location, e.g., target/classes/ or build/classes/
       SourceLocationMatcher excludeClassesNotInBuildLocation = new SourceLocationMatcher(
