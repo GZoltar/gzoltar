@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationConstants;
+import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.filter.DuplicateCollectorReferenceFilter;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
@@ -30,6 +31,8 @@ import javassist.bytecode.Opcode;
 
 public class InstrumentationPass implements IPass {
 
+  private final InstrumentationLevel instrumentationLevel;
+
   private final FieldInstrumentationPass fieldPass = new FieldInstrumentationPass();
 
   private AbstractInitMethodInstrumentationPass initMethodPass = null;
@@ -47,7 +50,8 @@ public class InstrumentationPass implements IPass {
 
   public InstrumentationPass(final AgentConfigs agentConfigs) {
 
-    switch (agentConfigs.getInstrumentationLevel()) {
+    this.instrumentationLevel = agentConfigs.getInstrumentationLevel();
+    switch (this.instrumentationLevel) {
       case FULL:
       default:
         this.initMethodPass = new InitMethodInstrumentationPass();
@@ -177,7 +181,9 @@ public class InstrumentationPass implements IPass {
       Probe probe = this.probeGroup.registerProbe(node, ctBehavior);
       assert probe != null;
 
-      if (this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT) {
+      if (this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT
+          && (this.instrumentationLevel == InstrumentationLevel.FULL
+              || this.instrumentationLevel == InstrumentationLevel.OFFLINE)) {
         Bytecode bc = this.getInstrumentationCode(ctClass, probe, methodInfo.getConstPool());
         ci.insert(index, bc.get());
         instrumented = Outcome.ACCEPT;
