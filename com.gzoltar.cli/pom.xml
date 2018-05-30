@@ -17,6 +17,12 @@
   <dependencies>
     <dependency>
       <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.agent</artifactId>
+      <version>${project.version}</version>
+      <classifier>runtime</classifier>
+    </dependency>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
       <artifactId>com.gzoltar.core</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -56,8 +62,12 @@
             <configuration>
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
-              <minimizeJar>true</minimizeJar>
+              <minimizeJar>false</minimizeJar>
               <relocations>
+                <relocation>
+                  <pattern>com.gzoltar.agent.rt</pattern>
+                  <shadedPattern>com.gzoltar.internal.agent.rt</shadedPattern>
+                </relocation>
                 <relocation>
                   <pattern>com.gzoltar.core</pattern>
                   <shadedPattern>com.gzoltar.internal.core</shadedPattern>
@@ -77,6 +87,10 @@
                 <relocation>
                   <pattern>org.kohsuke.args4j</pattern>
                   <shadedPattern>com.gzoltar.internal.org.kohsuke.args4j</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.beust</pattern>
+                  <shadedPattern>com.gzoltar.internal.com.beust</shadedPattern>
                 </relocation>
               </relocations>
               <transformers>
