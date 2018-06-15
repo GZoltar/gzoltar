@@ -1,0 +1,40 @@
+# Command line interface
+
+GZoltar comes with a very basic command line interface to perform basic
+operations from the command line. The command line tools with all dependencies
+are packaged in `gzoltarcli.jar` and are available with the GZoltar's
+distribution package.
+
+GZoltar's command line interface can be called as follows:
+
+```
+java -jar gzoltarcli.jar <command> [parameters]
+```
+
+To see the available parameters of each command, use:
+
+```
+java -jar gzoltarcli.jar <command> -help
+```
+
+
+## listTests
+
+Writes to a file named "tests" all JUnit / TestNG unit test cases in a provided
+set of directories and/or .jar files. Usage:
+
+```
+java -jar gzoltarcli.jar listTests \
+  --projectCP <directories with .class files and/or jar files
+  separated by ':'> \
+  --outputDirectory <directory to which the outcome will be written>
+```
+
+
+## version
+
+Prints out GZoltar version information. Usage:
+
+```
+java -jar gzoltarcli.jar version
+```
