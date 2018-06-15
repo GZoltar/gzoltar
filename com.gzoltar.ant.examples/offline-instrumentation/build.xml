@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Example Ant Build with GZoltar" default="rebuild" xmlns:gzoltar="antlib:com.gzoltar.ant">
+
+  <description>
+    Example Ant build file that demonstrates how GZoltar offline
+    instrumentation can be integrated into an existing build in four
+    simple steps.
+  </description>
+
+  <property name="src.dir" location="src" />
+  <property name="tests.dir" location="test" />
+  <property name="build.dir" location="build" />
+  <property name="build.classes.dir" location="${build.dir}/classes" />
+  <property name="instrumented.classes.dir" location="${build.dir}/instrumented-classes" />
+  <property name="build.test.classes.dir" location="${build.dir}/tests" />
+
+  <property name="gzoltar.version" value="0.0.1-SNAPSHOT" />
+  <property name="gzoltar.report.dir" location="${build.dir}/gzoltar" />
+  <property name="gzoltar.exec.file" location="${build.dir}/gzoltar.exec" />
+
+  <property name="lib.dir" value="lib" />
+  <property name="junit.jar" value="${lib.dir}/junit.jar" />
+  <property name="hamcrest.jar" value="${lib.dir}/hamcrest-core.jar" />
+  <property name="gzoltar-ant.jar" value="../../com.gzoltar.ant/target/com.gzoltar.ant-${gzoltar.version}-jar-with-dependencies.jar" />
+  <property name="gzoltar-agent-rt.jar" value="../../com.gzoltar.agent.rt/target/com.gzoltar.agent.rt-${gzoltar.version}-all.jar" />
+
+  <!-- Step 1: Import GZoltar Ant tasks -->
+  <taskdef uri="antlib:com.gzoltar.ant" resource="antlib.xml">
+    <classpath path="${gzoltar-ant.jar}" />
+  </taskdef>
+
+  <target name="install-deps">
+    <mkdir dir="${lib.dir}" />
+    <get dest="${junit.jar}" src="http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar" skipexisting="true" />
+    <get dest="${hamcrest.jar}" src="https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" skipexisting="true" />
+  </target>
+
+  <target name="clean">
+    <delete dir="${build.dir}" />
+  </target>
+
+  <target name="compile" depends="install-deps">
+    <mkdir dir="${build.classes.dir}" />
+    <javac source="1.6" target="1.6"
+           srcdir="${src.dir}"
+           destdir="${build.classes.dir}"
+           debug="true"
+           includeantruntime="false"
+           deprecation="false"
+           optimize="false">
+    </javac>
+
+    <mkdir dir="${build.test.classes.dir}" />
+    <javac source="1.6" target="1.6"
+           srcdir="${tests.dir}"
+           destdir="${build.test.classes.dir}">
+      <classpath>
+        <pathelement location="${build.classes.dir}" />
+        <pathelement path="${junit.jar}" />
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="instrument" depends="compile">
+    <delete dir="${instrumented.classes.dir}"/>
+
+    <!-- Step 2: Wrap instrument execution with the GZoltar instrument task -->
+    <gzoltar:instrument destdir="${instrumented.classes.dir}">
+      <classpath>
+        <pathelement location="${build.classes.dir}" />
+        <pathelement path="${gzoltar-agent-rt.jar}" />
+      </classpath>
+
+      <fileset dir="${build.classes.dir}" includes="**/*.class" />
+    </gzoltar:instrument>
+  </target>
+
+  <target name="test" depends="instrument">
+    <junit printsummary="yes" haltonfailure="no" haltonerror="no" fork="true" forkmode="once" showOutput="true">
+      <classpath>
+        <pathelement location="${instrumented.classes.dir}" />
+        <pathelement location="${build.test.classes.dir}" />
+        <pathelement path="${junit.jar}" />
+        <pathelement path="${hamcrest.jar}" />
+        <!-- Add GZoltar to the classpath -->
+        <pathelement path="${gzoltar-ant.jar}" />
+        <pathelement path="${gzoltar-agent-rt.jar}" />
+      </classpath>
+
+      <!-- Step 3: Setup GZoltar's runtime property and test listener -->
+      <sysproperty key="gzoltar-agent.destfile" file="${gzoltar.exec.file}"/>
+      <formatter classname="com.gzoltar.ant.listener.JUnitFormatter" usefile="false" />
+
+      <test name="org.gzoltar.examples.CharacterCounterTest"/>
+    </junit>
+  </target>
+
+  <target name="report" depends="test">
+    <!-- Step 4: Create fault localization report -->
+    <gzoltar:fl-report buildLocation="${build.classes.dir}"
+                       granularity="line"
+                       dataFile="${gzoltar.exec.file}"
+                       outputDirectory="${gzoltar.report.dir}">
+      <flFamilies>
+        <flFamily name="sfl">
+          <formulas>
+            <formula name="barinel" />
+            <formula name="dstar" />
+            <formula name="ochiai" />
+            <formula name="tarantula" />
+            <!--<formula name="..." />-->
+          </formulas>
+          <metrics>
+            <metric name="rho" />
+            <metric name="ambiguity" />
+            <metric name="entropy" />
+            <!--<metric name="..." />-->
+          </metrics>
+          <formatters>
+            <txt />
+            <html views="sunburst:vertical_partition" />
+          </formatters>
+        </flFamily>
+      </flFamilies>
+    </gzoltar:fl-report>
+  </target>
+
+  <target name="rebuild" depends="clean,compile,instrument,test,report" />
+
+</project>
