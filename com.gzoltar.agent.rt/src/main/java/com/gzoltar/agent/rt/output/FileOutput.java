@@ -26,6 +26,10 @@ public class FileOutput implements IAgentOutput {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public void writeSpectrum(final ISpectrum spectrum) throws Exception {
     final OutputStream output = this.openFile();
     try {
