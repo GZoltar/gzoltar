@@ -104,7 +104,7 @@ public class AbstractCoverageTask extends Task {
   }
 
   /**
-   * Sets the output method. Default is <code>console</code>
+   * Sets the output method. Default is <code>file</code>
    * 
    * @param output Output method
    */
