@@ -50,8 +50,6 @@ public final class AgentConfigs {
   /**
    * Wildcard expression for class names that should be included for code coverage. Default is
    * <code>*</code> (all classes included).
-   * 
-   * @see WildcardMatcher
    */
   public static final String INCLUDES_KEY = "includes";
 
@@ -60,8 +58,6 @@ public final class AgentConfigs {
   /**
    * Wildcard expression for class names that should be excluded from code coverage. Default is the
    * empty string (no exclusions).
-   * 
-   * @see WildcardMatcher
    */
   public static final String EXCLUDES_KEY = "excludes";
 
@@ -72,8 +68,6 @@ public final class AgentConfigs {
    * coverage. This means all classes loaded by a class loader which full qualified name matches
    * this expression will be ignored for code coverage regardless of all other filtering settings.
    * Default is <code>sun.reflect.DelegatingClassLoader</code>.
-   * 
-   * @see WildcardMatcher
    */
   public static final String EXCLCLASSLOADER_KEY = "exclclassloader";
 
@@ -251,7 +245,6 @@ public final class AgentConfigs {
    * Returns the wildcard expression for classes to include.
    * 
    * @return wildcard expression for classes to include
-   * @see WildcardMatcher
    */
   public String getIncludes() {
     return this.getConfig(INCLUDES_KEY, DEFAULT_INCLUDES);
@@ -261,7 +254,6 @@ public final class AgentConfigs {
    * Sets the wildcard expression for classes to include.
    * 
    * @param includes wildcard expression for classes to include
-   * @see WildcardMatcher
    */
   public void setIncludes(final String includes) {
     this.setConfig(INCLUDES_KEY, includes);
@@ -271,7 +263,6 @@ public final class AgentConfigs {
    * Returns the wildcard expression for classes to exclude.
    * 
    * @return wildcard expression for classes to exclude
-   * @see WildcardMatcher
    */
   public String getExcludes() {
     return this.getConfig(EXCLUDES_KEY, DEFAULT_EXCLUDES);
@@ -281,7 +272,6 @@ public final class AgentConfigs {
    * Sets the wildcard expression for classes to exclude.
    * 
    * @param excludes wildcard expression for classes to exclude
-   * @see WildcardMatcher
    */
   public void setExcludes(final String excludes) {
     this.setConfig(EXCLUDES_KEY, excludes);
@@ -291,7 +281,6 @@ public final class AgentConfigs {
    * Returns the wildcard expression for excluded class loaders.
    * 
    * @return expression for excluded class loaders
-   * @see WildcardMatcher
    */
   public String getExclClassloader() {
     return this.getConfig(EXCLCLASSLOADER_KEY, DEFAULT_EXCLCLASSLOADER);
@@ -301,7 +290,6 @@ public final class AgentConfigs {
    * Sets the wildcard expression for excluded class loaders.
    * 
    * @param expression expression for excluded class loaders
-   * @see WildcardMatcher
    */
   public void setExclClassloader(final String expression) {
     this.setConfig(EXCLCLASSLOADER_KEY, expression);
