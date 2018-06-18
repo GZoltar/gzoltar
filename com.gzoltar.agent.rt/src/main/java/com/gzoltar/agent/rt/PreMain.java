@@ -14,8 +14,8 @@ public final class PreMain {
     agent.startup();
 
     try {
-      // Instruments a pre-defined system class loader, i.e., adds a static field to a system class
-      // loader so that other classes could access GZoltar's runtime collector
+      // Instruments a pre-defined system class, i.e., adds a static field to a system class so that
+      // other classes could access GZoltar's runtime collector
       if (agentConfigs.getInstrumentationLevel().equals(InstrumentationLevel.FULL)) {
         SystemClassInstrumenter.instrumentSystemClass(inst,
             InstrumentationConstants.SYSTEM_CLASS_NAME,
