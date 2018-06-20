@@ -6,6 +6,11 @@ import java.io.PrintStream;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 
+/**
+ * Entry point for all command line operations.
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's cli module for convenience.
+ */
 public class Main extends Command {
 
   /**

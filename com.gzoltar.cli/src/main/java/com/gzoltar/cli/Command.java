@@ -4,6 +4,11 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import org.kohsuke.args4j.Option;
 
+/**
+ * Common interface for all commands.
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's cli module for convenience.
+ */
 public abstract class Command {
 
   /**

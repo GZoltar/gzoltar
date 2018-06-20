@@ -23,6 +23,12 @@ import com.gzoltar.core.util.CommandLineSupport;
  * <pre>
  *   key1=value1,key2=value2,key3=value3
  * </pre>
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's core module (originally called
+ * <code>org.jacoco.core.runtime.AgentOptions</code>) and augmented. In here, it would be desirable
+ * to extend JaCoCo's class (using the <code>extends</code> keyword) rather than including a very
+ * similar one, however JaCoCo's class is final (as all it's fields) and therefore cannot be
+ * extended/augmented.
  */
 public final class AgentConfigs {
 

@@ -62,7 +62,7 @@
             <configuration>
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>jar-with-dependencies</shadedClassifierName>
-              <minimizeJar>false</minimizeJar>
+              <minimizeJar>true</minimizeJar>
               <relocations>
                 <relocation>
                   <pattern>com.gzoltar.agent.rt</pattern>
@@ -75,6 +75,10 @@
                 <relocation>
                   <pattern>javassist</pattern>
                   <shadedPattern>com.gzoltar.internal.javassist</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.jacoco</pattern>
+                  <shadedPattern>com.gzoltar.internal.org.jacoco</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>org.apache.commons.lang3</pattern>

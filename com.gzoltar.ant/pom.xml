@@ -74,6 +74,10 @@
                   <shadedPattern>com.gzoltar.internal.javassist</shadedPattern>
                 </relocation>
                 <relocation>
+                  <pattern>org.jacoco</pattern>
+                  <shadedPattern>com.gzoltar.internal.org.jacoco</shadedPattern>
+                </relocation>
+                <relocation>
                   <pattern>org.apache.commons.lang3</pattern>
                   <shadedPattern>com.gzoltar.internal.org.apache.commons.lang3</shadedPattern>
                 </relocation>

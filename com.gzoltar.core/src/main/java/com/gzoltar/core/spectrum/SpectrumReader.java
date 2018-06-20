@@ -1,13 +1,13 @@
 package com.gzoltar.core.spectrum;
 
 import static java.lang.String.format;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jacoco.core.internal.data.CompactDataInput;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Instrumenter;
 import com.gzoltar.core.model.Transaction;
@@ -22,7 +22,7 @@ public class SpectrumReader {
 
   private final Spectrum spectrum;
 
-  private final DataInputStream in;
+  private final CompactDataInput in;
 
   private boolean firstBlock = true;
 
@@ -41,7 +41,7 @@ public class SpectrumReader {
   public SpectrumReader(final String buildLocation, final AgentConfigs agentConfigs,
       final InputStream input) {
     this.spectrum = Collector.instance().getSpectrum();
-    this.in = new DataInputStream(input);
+    this.in = new CompactDataInput(input);
     this.instrumenter = new Instrumenter(agentConfigs);
 
     try {
@@ -110,11 +110,11 @@ public class SpectrumReader {
       String transactionName = in.readUTF();
 
       Map<String, Pair<String, boolean[]>> activity = new LinkedHashMap<String, Pair<String, boolean[]>>();
-      int numberActivities = in.readInt();
+      int numberActivities = in.readVarInt();
       while (numberActivities > 0) {
         String probeGroupHash = in.readUTF();
         String probeGroupName = in.readUTF();
-        boolean[] hitArray = this.readBooleanArray();
+        boolean[] hitArray = in.readBooleanArray();
 
         // instrument probeGroup (in case it has been not been instrumented)
         if (spectrum.getProbeGroupByHash(probeGroupHash) == null) {
@@ -142,25 +142,6 @@ public class SpectrumReader {
       String stackTrace = in.readUTF();
 
       return new Transaction(transactionName, activity, transactionOutcome, runtime, stackTrace);
-    }
-
-    /**
-     * Reads a boolean array.
-     * 
-     * @return boolean array
-     * @throws IOException if thrown by the underlying stream
-     */
-    private boolean[] readBooleanArray() throws IOException {
-      final boolean[] value = new boolean[in.readInt()];
-      int buffer = 0;
-      for (int i = 0; i < value.length; i++) {
-        if ((i % 8) == 0) {
-          buffer = in.readByte();
-        }
-        value[i] = (buffer & 0x01) != 0;
-        buffer >>>= 1;
-      }
-      return value;
     }
   }
 

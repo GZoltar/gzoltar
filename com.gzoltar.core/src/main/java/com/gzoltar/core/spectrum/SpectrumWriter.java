@@ -1,11 +1,11 @@
 package com.gzoltar.core.spectrum;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jacoco.core.internal.data.CompactDataOutput;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.util.SerialisationIdentifiers;
 
@@ -14,7 +14,7 @@ import com.gzoltar.core.util.SerialisationIdentifiers;
  */
 public class SpectrumWriter {
 
-  private final DataOutputStream out;
+  private final CompactDataOutput out;
 
   /**
    * Creates a new writer based on the given output stream. Depending on the nature of the
@@ -25,7 +25,7 @@ public class SpectrumWriter {
    */
   public SpectrumWriter(final OutputStream output)
       throws IOException {
-    this.out = new DataOutputStream(output);
+    this.out = new CompactDataOutput(output);
     this.writeHeader();
   }
 
@@ -65,51 +65,24 @@ public class SpectrumWriter {
      * @param transaction
      * @throws IOException
      */
-    public static void serialize(final DataOutputStream out, final Transaction transaction)
+    public static void serialize(final CompactDataOutput out, final Transaction transaction)
         throws IOException {
       if (transaction.hasActivations()) {
         out.writeByte(SerialisationIdentifiers.BLOCK_TRANSACTION);
         out.writeUTF(transaction.getName());
 
         Map<String, Pair<String, boolean[]>> activity = transaction.getActivity();
-        out.writeInt(activity.size());
+        out.writeVarInt(activity.size());
 
         for (Entry<String, Pair<String, boolean[]>> entry : activity.entrySet()) {
           out.writeUTF(entry.getKey()); // hash
           out.writeUTF(entry.getValue().getLeft()); // name
-          writeBooleanArray(out, entry.getValue().getRight()); // hitArray
+          out.writeBooleanArray(entry.getValue().getRight()); // hitArray
         }
 
         out.writeUTF(transaction.getTransactionOutcome().name());
         out.writeLong(transaction.getRuntime());
         out.writeUTF(transaction.getStackTrace());
-      }
-    }
-
-    /**
-     * Writes a boolean array. Internally a sequence of boolean values is packed into single bits.
-     * 
-     * @param out
-     * @param value boolean array
-     * @throws IOException if thrown by the underlying stream
-     */
-    private static void writeBooleanArray(final DataOutputStream out, final boolean[] value)
-        throws IOException {
-      out.writeInt(value.length);
-      int buffer = 0;
-      int bufferSize = 0;
-      for (final boolean b : value) {
-        if (b) {
-          buffer |= 0x01 << bufferSize;
-        }
-        if (++bufferSize == 8) {
-          out.writeByte(buffer);
-          buffer = 0;
-          bufferSize = 0;
-        }
-      }
-      if (bufferSize > 0) {
-        out.writeByte(buffer);
       }
     }
   }

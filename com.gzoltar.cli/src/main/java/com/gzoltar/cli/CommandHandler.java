@@ -10,6 +10,12 @@ import org.kohsuke.args4j.spi.Parameters;
 import org.kohsuke.args4j.spi.Setter;
 import com.gzoltar.cli.commands.Commands;
 
+/**
+ * {@link org.kohsuke.args4j.spi.OptionHandler} which uses {@link com.gzoltar.cli.CommandParser}
+ * internally to provide help context also for sub-commands.
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's cli module for convenience.
+ */
 public class CommandHandler extends OptionHandler<Command> {
 
   /**

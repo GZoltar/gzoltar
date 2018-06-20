@@ -5,6 +5,11 @@ import java.util.List;
 
 /**
  * Internal utility to parse and create command lines arguments.
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's core module and not imported as it is
+ * usually done. The reason is that the original class in JaCoCo's core module has no declared
+ * access modifier, therefore it is only visible to the package <code>org.jacoco.core.runtime</code>
+ * and cannot be instantiated anywhere else.
  */
 public final class CommandLineSupport {
 

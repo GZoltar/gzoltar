@@ -17,6 +17,8 @@ import org.apache.tools.ant.UnknownElement;
  * <li>Task must be either JUnit or TestNG</li>
  * <li>Task must be using a forked VM (so VM args can be passed)</li>
  * </ul>
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's ant module for convenience.
  */
 public class CoverageTask extends AbstractCoverageTask implements TaskContainer {
 

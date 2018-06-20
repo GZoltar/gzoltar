@@ -9,6 +9,13 @@ import java.util.regex.Pattern;
  * Internal utility to load runtime configuration from system properties. System property keys are
  * prefixed with <code>gzoltar-agent.</code>. If the same property is defined twice the system
  * property takes precedence.
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's agent runtime module and not imported as
+ * it is usually done. The reason is that the original class in JaCoCo's agent runtime module has no
+ * declared access modifier, therefore it is only visible to the package
+ * <code>org.jacoco.agent.rt.internal</code> and cannot be instantiated anywhere else. Additional to
+ * this, the field <code>SYS_PREFIX</code> is final and cannot be overwritten with a proper
+ * GZoltar's message.
  */
 public final class ConfigLoader {
 

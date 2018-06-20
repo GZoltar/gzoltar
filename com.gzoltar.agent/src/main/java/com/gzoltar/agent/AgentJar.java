@@ -9,6 +9,11 @@ import java.io.OutputStream;
 
 /**
  * API to access the agent JAR file as a resource.
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's agent module and updated. In here, it
+ * would be desirable to extend JaCoCo's class (using the <code>extends</code> keyword) rather than
+ * including a very similar one, however JaCoCo's class is final (as all it's fields) and therefore
+ * cannot be extended/augmented/overwritten.
  */
 public final class AgentJar {
 

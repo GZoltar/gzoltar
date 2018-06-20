@@ -9,6 +9,9 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Base class for GZoltar Mojos.
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's maven module (originally called
+ * <code>org.jacoco.maven.AbstractJacocoMojo</code>) for convenience.
  */
 public abstract class AbstractGZoltarMojo extends AbstractMojo {
 

@@ -119,6 +119,7 @@
     <junit.version>4.12</junit.version>
     <testng.version>6.11</testng.version>
     <javassist.version>3.22.0-GA</javassist.version>
+    <jacoco.version>0.8.1</jacoco.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-lang.version>3.7</commons-lang.version>
     <ant.version>1.10.1</ant.version>

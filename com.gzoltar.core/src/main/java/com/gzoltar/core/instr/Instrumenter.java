@@ -13,12 +13,12 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import org.jacoco.core.internal.ContentTypeDetector;
+import org.jacoco.core.internal.Pack200Streams;
+import org.jacoco.core.internal.instr.SignatureRemover;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.pass.IPass;
 import com.gzoltar.core.instr.pass.InstrumentationPass;
-import com.gzoltar.core.util.BinaryTypeDetector;
-import com.gzoltar.core.util.Pack200Streams;
-import com.gzoltar.core.util.SignatureRemover;
 import javassist.ClassPool;
 import javassist.CtClass;
 
@@ -108,20 +108,20 @@ public class Instrumenter {
    * @throws Exception if reading data from the stream fails or a class cannot be instrumented
    */
   public int instrumentToFile(final InputStream input, final OutputStream output) throws Exception {
-    final BinaryTypeDetector binaryType = new BinaryTypeDetector(input);
-    switch (binaryType.getType()) {
-      case BinaryTypeDetector.CLASSFILE:
-        output.write(this.instrument(binaryType.getInputStream()));
+    final ContentTypeDetector detector = new ContentTypeDetector(input);
+    switch (detector.getType()) {
+      case ContentTypeDetector.CLASSFILE:
+        output.write(this.instrument(detector.getInputStream()));
         return 1;
-      case BinaryTypeDetector.GZFILE:
-        return this.instrumentGzip(binaryType.getInputStream(), output);
-      case BinaryTypeDetector.PACK200FILE:
-        return this.instrumentPack200(binaryType.getInputStream(), output);
-      case BinaryTypeDetector.ZIPFILE:
-        return this.instrumentZip(binaryType.getInputStream(), output);
-      case BinaryTypeDetector.UNKNOWN:
+      case ContentTypeDetector.GZFILE:
+        return this.instrumentGzip(detector.getInputStream(), output);
+      case ContentTypeDetector.PACK200FILE:
+        return this.instrumentPack200(detector.getInputStream(), output);
+      case ContentTypeDetector.ZIPFILE:
+        return this.instrumentZip(detector.getInputStream(), output);
+      case ContentTypeDetector.UNKNOWN:
       default:
-        this.copy(binaryType.getInputStream(), output);
+        this.copy(detector.getInputStream(), output);
         return 0;
     }
   }

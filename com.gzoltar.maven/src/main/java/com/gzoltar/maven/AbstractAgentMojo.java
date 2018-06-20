@@ -13,6 +13,8 @@ import com.gzoltar.core.AgentConfigs;
 /**
  * Base class for preparing a property pointing to the GZoltar runtime agent that can be passed as a
  * VM argument to the application under test.
+ * 
+ * DISCLAIMER: this class has been exported from JaCoCo's maven module for convenience.
  */
 public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
 
