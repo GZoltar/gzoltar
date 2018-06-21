@@ -23,7 +23,19 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.core</artifactId>
+      <version>${project.version}</version>
+      <classifier>javadoc</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>com.gzoltar.agent</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.agent</artifactId>
+      <version>${project.version}</version>
+      <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -33,13 +45,31 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.agent.rt</artifactId>
+      <version>${project.version}</version>
+      <classifier>javadoc</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>com.gzoltar.fl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.fl</artifactId>
+      <version>${project.version}</version>
+      <classifier>javadoc</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.report</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>com.gzoltar.report</artifactId>
       <version>${project.version}</version>
+      <classifier>javadoc</classifier>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -57,6 +87,12 @@
       <artifactId>com.gzoltar.cli</artifactId>
       <version>${project.version}</version>
       <classifier>jar-with-dependencies</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.doc</artifactId>
+      <version>${project.version}</version>
+      <classifier>javadoc</classifier>
     </dependency>
   </dependencies>
 

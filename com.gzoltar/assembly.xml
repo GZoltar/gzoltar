@@ -6,8 +6,11 @@
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
+    <!--
+      Libraries and Plugins
+    -->
     <dependencySet>
-      <outputDirectory>jars</outputDirectory>
+      <outputDirectory>/lib</outputDirectory>
       <outputFileNameMapping>gzoltarant.jar</outputFileNameMapping>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
@@ -15,7 +18,7 @@
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>jars</outputDirectory>
+      <outputDirectory>/lib</outputDirectory>
       <outputFileNameMapping>gzoltarcli.jar</outputFileNameMapping>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
@@ -23,7 +26,7 @@
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>jars</outputDirectory>
+      <outputDirectory>/lib</outputDirectory>
       <outputFileNameMapping>gzoltaragent.jar</outputFileNameMapping>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
@@ -31,7 +34,7 @@
       </includes>
     </dependencySet>
     <dependencySet>
-      <outputDirectory>jars</outputDirectory>
+      <outputDirectory>/lib</outputDirectory>
       <outputFileNameMapping>${artifact.artifactId}-${dist.version}.${artifact.extension}</outputFileNameMapping>
       <useProjectArtifact>false</useProjectArtifact>
       <includes>
@@ -42,10 +45,39 @@
         <include>${project.groupId}:com.gzoltar.ant</include>
       </includes>
       <excludes>
+        <exclude>${project.groupId}:com.gzoltar*:*:javadoc</exclude>
         <exclude>${project.groupId}:com.gzoltar.agent:*:runtime</exclude>
         <exclude>${project.groupId}:com.gzoltar.ant:*:jar-with-dependencies</exclude>
         <exclude>${project.groupId}:com.gzoltar.cli:*:jar-with-dependencies</exclude>
       </excludes>
+    </dependencySet>
+    <!--
+      Javadoc
+    -->
+    <dependencySet>
+      <outputDirectory>/api</outputDirectory>
+      <unpack>true</unpack>
+      <useProjectArtifact>false</useProjectArtifact>
+      <unpackOptions>
+        <excludes>
+          <exclude>META-INF/</exclude>
+        </excludes>
+      </unpackOptions>
+      <includes>
+        <include>${project.groupId}:com.gzoltar.doc:*:javadoc</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/api/jar</outputDirectory>
+      <unpack>false</unpack>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>${project.groupId}:com.gzoltar.core:*:javadoc</include>
+        <include>${project.groupId}:com.gzoltar.agent:*:javadoc</include>
+        <include>${project.groupId}:com.gzoltar.agent.rt:*:javadoc</include>
+        <include>${project.groupId}:com.gzoltar.fl:*:javadoc</include>
+        <include>${project.groupId}:com.gzoltar.report:*:javadoc</include>
+      </includes>
     </dependencySet>
   </dependencySets>
 </assembly>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.gzoltar</groupId>
+    <artifactId>com.gzoltar.build</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../com.gzoltar.build</relativePath>
+  </parent>
+
+  <artifactId>com.gzoltar.doc</artifactId>
+
+  <name>GZoltar :: Documentation</name>
+  <description>GZoltar Documentation</description>
+
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.agent</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.agent.rt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.fl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>com.gzoltar.report</artifactId>
+    </dependency>
+    <!-- deps -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <!-- Because this module does not have any .java file, maven throws a warning
+            message: "[WARNING] JAR will be empty - no content was marked for inclusion!".
+            To address this warning, maven-jar-plugin is disabled for this module. -->
+            <phase>never</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <reportOutputDirectory>${project.build.directory}/apidocs</reportOutputDirectory>
+              <includeDependencySources>true</includeDependencySources>
+              <excludePackageNames>junit,org.junit,org.testng,com.beust.testng</excludePackageNames>
+              <dependencySourceIncludes>
+                <dependencySourceInclude>com.gzoltar:*</dependencySourceInclude>
+              </dependencySourceIncludes>
+              <dependencySourceExcludes>
+                <dependencySourceExclude>com.gzoltar:*.test</dependencySourceExclude>
+              </dependencySourceExcludes>
+              <doctitle>GZoltar ${project.version} API</doctitle>
+              <windowtitle>GZoltar ${project.version} API</windowtitle>
+              <use>true</use>
+              <version>false</version>
+              <groups>
+                <group>
+                  <title>Bundle com.gzoltar.core</title>
+                  <packages>com.gzoltar.core*</packages>
+                </group>
+                <group>
+                  <title>Bundle com.gzoltar.agent</title>
+                  <packages>com.gzoltar.agent*</packages>
+                </group>
+                <group>
+                  <title>Bundle com.gzoltar.agent.rt</title>
+                  <packages>com.gzoltar.agent.rt*</packages>
+                </group>
+                <group>
+                  <title>Bundle com.gzoltar.fl</title>
+                  <packages>com.gzoltar.fl*</packages>
+                </group>
+                <group>
+                  <title>Bundle com.gzoltar.report</title>
+                  <packages>com.gzoltar.report*</packages>
+                </group>
+              </groups>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

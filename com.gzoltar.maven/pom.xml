@@ -76,6 +76,19 @@
           <goalPrefix>gzoltar</goalPrefix>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <tagletArtifacts>
+            <tagletArtifact>
+              <groupId>org.apache.maven.plugin-tools</groupId>
+              <artifactId>maven-plugin-tools-javadoc</artifactId>
+              <version>3.5.2</version>
+            </tagletArtifact>
+          </tagletArtifacts>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

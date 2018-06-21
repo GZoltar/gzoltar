@@ -74,6 +74,7 @@
     <module>../com.gzoltar.maven</module>
     <module>../com.gzoltar.ant</module>
     <module>../com.gzoltar.cli</module>
+    <module>../com.gzoltar.doc</module>
     <module>../com.gzoltar</module>
   </modules>
 
@@ -217,6 +218,20 @@
           <artifactId>maven-bundle-plugin</artifactId>
           <version>3.3.0</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.0.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.0.1</version>
+          <configuration>
+            <quiet>true</quiet>
+            <detectOfflineLinks>false</detectOfflineLinks>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -227,5 +242,33 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>sources</id>
+      <activation>
+        <file>
+          <exists>src/main/java</exists>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Generates Javadoc -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
