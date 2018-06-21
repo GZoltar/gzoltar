@@ -46,6 +46,7 @@
       </includes>
       <excludes>
         <exclude>${project.groupId}:com.gzoltar*:*:javadoc</exclude>
+        <exclude>${project.groupId}:com.gzoltar*:*:sources</exclude>
         <exclude>${project.groupId}:com.gzoltar.agent:*:runtime</exclude>
         <exclude>${project.groupId}:com.gzoltar.ant:*:jar-with-dependencies</exclude>
         <exclude>${project.groupId}:com.gzoltar.cli:*:jar-with-dependencies</exclude>
@@ -77,6 +78,21 @@
         <include>${project.groupId}:com.gzoltar.agent.rt:*:javadoc</include>
         <include>${project.groupId}:com.gzoltar.fl:*:javadoc</include>
         <include>${project.groupId}:com.gzoltar.report:*:javadoc</include>
+      </includes>
+    </dependencySet>
+    <!--
+      Sources
+    -->
+    <dependencySet>
+      <outputDirectory>/src</outputDirectory>
+      <unpack>false</unpack>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>${project.groupId}:com.gzoltar.core:*:sources</include>
+        <include>${project.groupId}:com.gzoltar.agent:*:sources</include>
+        <include>${project.groupId}:com.gzoltar.agent.rt:*:sources</include>
+        <include>${project.groupId}:com.gzoltar.fl:*:sources</include>
+        <include>${project.groupId}:com.gzoltar.report:*:sources</include>
       </includes>
     </dependencySet>
   </dependencySets>

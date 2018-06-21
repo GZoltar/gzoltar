@@ -253,6 +253,19 @@
       </activation>
       <build>
         <plugins>
+          <!-- Generates jar with sources -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
           <!-- Generates Javadoc -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
