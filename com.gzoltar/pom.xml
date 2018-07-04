@@ -178,7 +178,7 @@
               <rules>
                 <requireFilesSize>
                   <maxsize>8500000</maxsize>
-                  <minsize>7500000</minsize>
+                  <minsize>7000000</minsize>
                   <files>
                     <file>${project.build.directory}/gzoltar-${dist.version}.zip</file>
                   </files>
