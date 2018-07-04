@@ -116,7 +116,7 @@ public final class AgentConfigs {
 
   /**
    * Specifies whether public static constructors of each class under test should be instrumented.
-   * Default is <code>false</code>.
+   * Default is <code>true</code>.
    */
   public static final String INCLSTATICCONSTRUCTORS_KEY = "inclstaticconstructors";
 
