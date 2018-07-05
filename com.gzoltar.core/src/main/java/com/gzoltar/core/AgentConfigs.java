@@ -18,6 +18,10 @@ package com.gzoltar.core;
 
 import static java.lang.String.format;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -269,7 +273,16 @@ public final class AgentConfigs {
    * @return wildcard expression for classes to include
    */
   public String getIncludes() {
-    return this.getConfig(INCLUDES_KEY, DEFAULT_INCLUDES);
+    String includes = this.getConfig(INCLUDES_KEY, DEFAULT_INCLUDES);
+    if (!includes.isEmpty() && new File(includes).exists()) {
+      try {
+        includes = new String(Files.readAllBytes(Paths.get(includes)), Charset.defaultCharset());
+      } catch (IOException e) {
+        e.printStackTrace();
+        includes = DEFAULT_INCLUDES;
+      }
+    }
+    return includes;
   }
 
   /**
@@ -287,7 +300,16 @@ public final class AgentConfigs {
    * @return wildcard expression for classes to exclude
    */
   public String getExcludes() {
-    return this.getConfig(EXCLUDES_KEY, DEFAULT_EXCLUDES);
+    String excludes = this.getConfig(EXCLUDES_KEY, DEFAULT_EXCLUDES);
+    if (!excludes.isEmpty() && new File(excludes).exists()) {
+      try {
+        excludes = new String(Files.readAllBytes(Paths.get(excludes)), Charset.defaultCharset());
+      } catch (IOException e) {
+        e.printStackTrace();
+        excludes = DEFAULT_EXCLUDES;
+      }
+    }
+    return excludes;
   }
 
   /**
