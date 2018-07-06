@@ -94,6 +94,13 @@
     <module>../com.gzoltar</module>
   </modules>
 
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License, Version 3.0</name>
+      <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+    </license>
+  </licenses>
+
   <scm>
     <connection>scm:git:git://github.com/gzoltar/gzoltar.git</connection>
     <developerConnection>scm:git:ssh://git@github.com:gzoltar/gzoltar.git</developerConnection>
