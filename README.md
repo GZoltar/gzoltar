@@ -1,5 +1,7 @@
 # GZoltar Java Library for Automatic Debugging
 
+[![Build Status](https://travis-ci.org/GZoltar/gzoltar.svg?branch=master)](https://travis-ci.org/GZoltar/gzoltar)
+
 GZoltar is a library for automatic debugging of Java applications. At the
 moment, the library is available as:
 
