@@ -1,5 +1,8 @@
 language: java
 
+# Skip "install" stage:
+install: true
+
 # Use container-based infrastructure:
 sudo: false
 
@@ -18,4 +21,4 @@ jdk:
   - openjdk11
 
 script:
-  - mvn clean package install -DskipTests=true # TODO enable tests once we create a comprehensive test suite
+  - mvn clean package -Dmaven.javadoc.failOnError=false -Dmaven.javadoc.failOnWarnings=false -DskipTests=true # TODO enable tests once we create a comprehensive test suite
