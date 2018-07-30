@@ -51,7 +51,7 @@ public final class AgentJar {
    * 
    * @return content of the JAR file
    */
-  public static InputStream getResourceAsStream() {
+  protected static InputStream getResourceAsStream() {
     final InputStream stream = AgentJar.class.getResourceAsStream(RESOURCE);
     if (stream == null) {
       throw new AssertionError(ERRORMSG);
@@ -82,7 +82,7 @@ public final class AgentJar {
    * @param destination Location to write GZoltar Agent Jar to. Must be writable
    * @throws IOException Unable to unpack the agent jar
    */
-  private static void extractTo(File destination) throws IOException {
+  protected static void extractTo(File destination) throws IOException {
     InputStream inputJarStream = getResourceAsStream();
     OutputStream outputJarStream = null;
 
