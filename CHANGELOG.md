@@ -4,6 +4,8 @@ All notable changes will be documented in this file.
 
 ## [Unreleased]
 
+- GZoltar now depends on javassist v3.23.1-GA
+
 ### New Features
 
 - GZoltar Agent options:
