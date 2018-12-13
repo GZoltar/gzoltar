@@ -57,7 +57,7 @@
       <plugin>
         <groupId>com.gzoltar</groupId>
         <artifactId>com.gzoltar.maven</artifactId>
-        <version>1.7.1-SNAPSHOT</version>
+        <version>1.7.1</version>
         <executions>
           <execution>
             <id>pre-unit-test</id>
