@@ -94,6 +94,7 @@
               <goal>jar</goal>
             </goals>
             <configuration>
+              <doclint>none</doclint>
               <reportOutputDirectory>${project.build.directory}/apidocs</reportOutputDirectory>
               <includeDependencySources>true</includeDependencySources>
               <excludePackageNames>junit,org.junit,org.testng,com.beust.testng</excludePackageNames>
