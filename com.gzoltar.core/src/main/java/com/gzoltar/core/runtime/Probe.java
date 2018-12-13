@@ -63,6 +63,16 @@ public final class Probe {
   }
 
   /**
+   * Returns true if this probe has been injected in a class initialiser (static initialiser).
+   * 
+   * @return <code>true</code> if this probe has been injected in a class initialiser, false
+   *         otherwise.
+   */
+  public boolean isProbeInClassInitialiser() {
+    return this.ctBehavior.getMethodInfo2().isStaticInitializer();
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
