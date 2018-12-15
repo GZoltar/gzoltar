@@ -136,13 +136,16 @@ public class Collector {
         new LinkedHashMap<String, Pair<String, boolean[]>>();
     for (Entry<String, Pair<String, boolean[]>> entry : this.hitArrays.entrySet()) {
 
+      String hash = entry.getKey();
       boolean[] hitArray = entry.getValue().getRight();
+
       if (!ArrayUtils.containsValue(hitArray, true)) {
-        // no coverage
+        // although the class has been loaded and instrumented, no line has been covered
+        activity.put(hash,
+            new ImmutablePair<String, boolean[]>(entry.getValue().getLeft(), hitArray));
         continue;
       }
 
-      String hash = entry.getKey();
       boolean[] cloneHitArray = new boolean[hitArray.length];
       System.arraycopy(hitArray, 0, cloneHitArray, 0, hitArray.length);
       activity.put(hash,
