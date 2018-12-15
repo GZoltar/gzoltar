@@ -174,11 +174,7 @@ public class InstrumentationPass implements IPass {
     MethodInfo methodInfo = ctBehavior.getMethodInfo();
     CodeAttribute ca = methodInfo.getCodeAttribute();
 
-    if (ca == null) {
-      // do not instrument methods with no code
-      return instrumented;
-    }
-
+    assert ca != null;
     CodeIterator ci = ca.iterator();
 
     for (int index, curLine; ci.hasNext(); this.uniqueLineNumbers.add(curLine)) {
