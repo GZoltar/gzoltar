@@ -42,7 +42,7 @@
       <groupId>com.gzoltar</groupId>
       <artifactId>com.gzoltar.agent</artifactId>
       <classifier>runtime</classifier>
-      <version>1.7.1</version>
+      <version>1.7.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -64,7 +64,7 @@
       <plugin>
         <groupId>com.gzoltar</groupId>
         <artifactId>com.gzoltar.maven</artifactId>
-        <version>1.7.1</version>
+        <version>1.7.2-SNAPSHOT</version>
         <executions>
           <execution>
             <id>default-instrument</id>

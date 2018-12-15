@@ -28,7 +28,7 @@
   <property name="build.classes.dir" location="${build.dir}/classes" />
   <property name="build.test.classes.dir" location="${build.dir}/tests" />
 
-  <property name="gzoltar.version" value="1.7.1" />
+  <property name="gzoltar.version" value="1.7.2-SNAPSHOT" />
   <property name="gzoltar.report.dir" location="${build.dir}/gzoltar" />
   <property name="gzoltar.exec.file" location="${build.dir}/gzoltar.exec" />
 
