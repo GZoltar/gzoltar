@@ -17,13 +17,12 @@
 package com.gzoltar.core.instr.pass;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
+import com.gzoltar.core.instr.actions.AnonymousClassConstructorFilter;
 import com.gzoltar.core.instr.filter.DuplicateCollectorReferenceFilter;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
@@ -60,8 +59,6 @@ public class InstrumentationPass implements IPass {
 
   private final List<IFilter> filters = new ArrayList<IFilter>();
 
-  private final Set<Integer> uniqueLineNumbers = new LinkedHashSet<Integer>();
-
   private ProbeGroup probeGroup;
 
   public InstrumentationPass(final AgentConfigs agentConfigs) {
@@ -87,16 +84,15 @@ public class InstrumentationPass implements IPass {
 
     // exclude methods without any source code
     this.filters.add(new EmptyMethodFilter());
+
+    // exclude constructor of an Anonymous class as the same line number is handled by the
+    // superclass
+    this.filters.add(new AnonymousClassConstructorFilter());
   }
 
   @Override
   public synchronized Outcome transform(final CtClass ctClass) throws Exception {
     boolean instrumented = false;
-
-    // as the constructor of this class is only called once, the set of unique line numbers is only
-    // initialised once. and as the instrumentation of previous classes could have populated this
-    // set of unique line numbers, we must restart it
-    this.uniqueLineNumbers.clear();
 
     byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozens the class
     // in order to be able to modify it, it has to be defrosted
@@ -177,14 +173,11 @@ public class InstrumentationPass implements IPass {
     assert ca != null;
     CodeIterator ci = ca.iterator();
 
-    for (int index, curLine; ci.hasNext(); this.uniqueLineNumbers.add(curLine)) {
-      index = ci.next();
+    while (ci.hasNext()) {
+      int index = ci.next();
+      int curLine = methodInfo.getLineNumber(index);
 
-      curLine = methodInfo.getLineNumber(index);
-
-      if (curLine == -1 || this.uniqueLineNumbers.contains(curLine)) {
-        continue;
-      } else if (methodInfo.isConstructor() && curLine == 1) {
+      if (curLine == -1) {
         continue;
       }
 

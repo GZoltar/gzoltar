@@ -82,8 +82,11 @@ public final class ProbeGroup {
    * Registers a new {@link com.gzoltar.core.runtime.Probe} object.
    */
   public Probe registerProbe(final Node node, final CtBehavior ctBehavior) {
-    Probe probe = new Probe(this.probes.size(), node, ctBehavior);
-    this.probes.add(probe);
+    Probe probe = this.findProbeByNode(node);
+    if (probe == null) {
+      probe = new Probe(this.probes.size(), node, ctBehavior);
+      this.probes.add(probe);
+    }
     return probe;
   }
 
