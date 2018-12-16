@@ -171,6 +171,10 @@ public class InstrumentationPass implements IPass {
       }
     }
 
+    boolean injectBytecode = this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT
+        && (this.instrumentationLevel == InstrumentationLevel.FULL
+            || this.instrumentationLevel == InstrumentationLevel.OFFLINE);
+
     MethodInfo methodInfo = ctBehavior.getMethodInfo();
     CodeAttribute ca = methodInfo.getCodeAttribute();
 
@@ -210,9 +214,7 @@ public class InstrumentationPass implements IPass {
         Probe probe = this.probeGroup.registerProbe(node, ctBehavior);
         assert probe != null;
 
-        if (this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT
-            && (this.instrumentationLevel == InstrumentationLevel.FULL
-                || this.instrumentationLevel == InstrumentationLevel.OFFLINE)) {
+        if (injectBytecode) {
           Bytecode bc = this.getInstrumentationCode(ctClass, probe, methodInfo.getConstPool());
           ci.insert(index, bc.get());
           instrSize += bc.length();
