@@ -24,11 +24,13 @@ import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationLevel;
-import com.gzoltar.core.instr.Instrumenter;
+import com.gzoltar.core.instr.CoverageInstrumenter;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.spectrum.ISpectrum;
+import com.gzoltar.core.util.MD5;
 import javassist.ClassPool;
+import javassist.CtClass;
 
 public class TestJUnitListener {
 
@@ -53,9 +55,11 @@ public class TestJUnitListener {
 
     Collector.instance().addListener(configs.getEventListener());
 
-    Instrumenter instrumenter = new Instrumenter(configs);
+    CoverageInstrumenter instrumenter = new CoverageInstrumenter(configs);
     for (String classUnderTest : classesUnderTest) {
-      instrumenter.instrument(pool.get(classUnderTest));
+      CtClass cc = pool.get(classUnderTest);
+      String hash = MD5.calculateHash(cc);
+      instrumenter.instrument(cc, hash);
     }
     JUnitCore core = new JUnitCore();
     core.addListener(new JUnitListener());

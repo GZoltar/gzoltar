@@ -29,7 +29,7 @@ public class FieldPass implements IPass {
           + InstrumentationConstants.FIELD_INIT_VALUE + InstrumentationConstants.EOL;
 
   @Override
-  public Outcome transform(CtClass ctClass) throws Exception {
+  public Outcome transform(CtClass ctClass, final String ctClassHash) throws Exception {
     CtField f = CtField.make(fieldStr, ctClass);
     f.setModifiers(f.getModifiers() | InstrumentationConstants.FIELD_ACC);
     ctClass.addField(f);

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
@@ -35,7 +34,6 @@ import com.gzoltar.core.model.NodeFactory;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.runtime.Probe;
 import com.gzoltar.core.runtime.ProbeGroup;
-import com.gzoltar.core.util.MD5;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -65,9 +63,9 @@ public class CoveragePass implements IPass {
 
   private ProbeGroup probeGroup;
 
-  public CoveragePass(final AgentConfigs agentConfigs) {
+  public CoveragePass(final InstrumentationLevel instrumentationLevel) {
 
-    this.instrumentationLevel = agentConfigs.getInstrumentationLevel();
+    this.instrumentationLevel = instrumentationLevel;
     switch (this.instrumentationLevel) {
       case FULL:
       default:
@@ -95,15 +93,10 @@ public class CoveragePass implements IPass {
   }
 
   @Override
-  public synchronized Outcome transform(final CtClass ctClass) throws Exception {
+  public synchronized Outcome transform(final CtClass ctClass, final String ctClassHash) throws Exception {
     boolean instrumented = false;
 
-    byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozens the class
-    // in order to be able to modify it, it has to be defrosted
-    ctClass.defrost();
-
-    String hash = MD5.calculateHash(originalBytes);
-    this.probeGroup = new ProbeGroup(hash, ctClass);
+    this.probeGroup = new ProbeGroup(ctClassHash, ctClass);
 
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
@@ -121,11 +114,10 @@ public class CoveragePass implements IPass {
 
     if (instrumented && this.initMethodPass != null) {
       // make GZoltar's field
-      this.fieldPass.transform(ctClass);
+      this.fieldPass.transform(ctClass, "");
 
       // make method to init GZoltar's field
-      this.initMethodPass.setHash(hash);
-      this.initMethodPass.transform(ctClass);
+      this.initMethodPass.transform(ctClass, ctClassHash);
 
       // make sure GZoltar's field is initialised. note: the following code requires the init method
       // to be in the instrumented class, otherwise a compilation error is thrown
@@ -199,6 +191,31 @@ public class CoveragePass implements IPass {
       if (curLine == -1) {
         continue;
       }
+
+      /**
+       * TODO: if instruction is a static call to a static field in another class, add an
+       * instruction to call $_clinit_clone_ of the target class before the call to the static
+       * field.
+       */
+      /*int op = ci.byteAt(index);
+      if (op == Opcode.PUTSTATIC) {
+        System.out.println("[PUTSTATIC] Line: " + curLine + " Byte: " + ci.byteAt(index));
+
+        // remove loaded valued from the stack, otherwise stack won't be valid
+        ci.writeByte((byte) Opcode.POP, index);
+
+        // remove PUTSTATIC call
+        ci.writeByte((byte) Opcode.NOP, index + 1);
+        ci.writeByte((byte) Opcode.NOP, index + 2);
+
+        // TODO inject new code to call reset
+
+        // TODO add a new PUTSTATIC call (same as the original one that just got deleted)
+        // TODO
+
+        // update number of bytes
+        instrSize += 2;
+      }*/
 
       boolean isNewBlock = !blocks.isEmpty() && index >= instrSize + blocks.peek();
       if (isNewBlock) {

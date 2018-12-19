@@ -26,7 +26,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationLevel;
-import com.gzoltar.core.instr.Instrumenter;
+import com.gzoltar.core.instr.CoverageInstrumenter;
 
 /**
  * The <code>instrument</code> command.
@@ -62,7 +62,7 @@ public class Instrument extends AbstractAgent implements Serializable {
     // configure instrumentation
     AgentConfigs agentConfigs = this.prepareAgentOptions();
     agentConfigs.setInstrumentationLevel(InstrumentationLevel.OFFLINE);
-    Instrumenter instrumenter = new Instrumenter(agentConfigs);
+    CoverageInstrumenter instrumenter = new CoverageInstrumenter(agentConfigs);
 
     final File absoluteOut = this.outputDirectory.getAbsoluteFile();
 

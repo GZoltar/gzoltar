@@ -25,7 +25,7 @@ import javassist.bytecode.MethodInfo;
 public class StackSizePass implements IPass {
 
   @Override
-  public Outcome transform(final CtClass ctClass) throws Exception {
+  public Outcome transform(final CtClass ctClass, final String ctClassHash) throws Exception {
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       if (this.transform(ctClass, ctBehavior) == Outcome.REJECT) {
         return Outcome.REJECT;

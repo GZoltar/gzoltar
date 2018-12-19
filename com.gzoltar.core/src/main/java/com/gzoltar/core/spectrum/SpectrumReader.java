@@ -25,10 +25,11 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jacoco.core.internal.data.CompactDataInput;
 import com.gzoltar.core.AgentConfigs;
-import com.gzoltar.core.instr.Instrumenter;
+import com.gzoltar.core.instr.CoverageInstrumenter;
 import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.runtime.Collector;
+import com.gzoltar.core.util.MD5;
 import com.gzoltar.core.util.SerialisationIdentifiers;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -42,7 +43,7 @@ public class SpectrumReader {
 
   private boolean firstBlock = true;
 
-  private Instrumenter instrumenter = null;
+  private CoverageInstrumenter instrumenter = null;
 
   private final TransactionDeserialize transactionDeserialize = new TransactionDeserialize();
 
@@ -58,7 +59,7 @@ public class SpectrumReader {
       final InputStream input) {
     this.spectrum = Collector.instance().getSpectrum();
     this.in = new CompactDataInput(input);
-    this.instrumenter = new Instrumenter(agentConfigs);
+    this.instrumenter = new CoverageInstrumenter(agentConfigs);
 
     try {
       ClassPool.getDefault().appendClassPath(buildLocation);
@@ -137,7 +138,7 @@ public class SpectrumReader {
           // probeGroup has not been instrumented
           try {
             CtClass ctClass = ClassPool.getDefault().get(probeGroupName);
-            instrumenter.instrument(ctClass);
+            instrumenter.instrument(ctClass, MD5.calculateHash(ctClass));
           } catch (Exception e) {
             throw new RuntimeException(e);
           }

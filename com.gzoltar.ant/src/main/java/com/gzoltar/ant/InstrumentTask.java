@@ -27,7 +27,7 @@ import org.apache.tools.ant.types.Resource;
 import org.apache.tools.ant.types.ResourceCollection;
 import org.apache.tools.ant.types.resources.Union;
 import com.gzoltar.core.instr.InstrumentationLevel;
-import com.gzoltar.core.instr.Instrumenter;
+import com.gzoltar.core.instr.CoverageInstrumenter;
 import javassist.ClassPool;
 import javassist.NotFoundException;
 
@@ -102,7 +102,7 @@ public class InstrumentTask extends AbstractCoverageTask {
 
     // configure instrumentation
     this.agentConfigs.setInstrumentationLevel(InstrumentationLevel.OFFLINE);
-    Instrumenter instrumenter = new Instrumenter(this.agentConfigs);
+    CoverageInstrumenter instrumenter = new CoverageInstrumenter(this.agentConfigs);
     instrumenter.setRemoveSignatures(this.removesignatures);
 
     // update classpath
@@ -135,7 +135,7 @@ public class InstrumentTask extends AbstractCoverageTask {
     log("* Done!");
   }
 
-  private int instrument(Instrumenter instrumenter, final Resource source) throws Exception {
+  private int instrument(CoverageInstrumenter instrumenter, final Resource source) throws Exception {
     final File dest = new File(this.destdir, source.getName());
     dest.getParentFile().mkdirs();
 

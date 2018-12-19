@@ -21,20 +21,25 @@ import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import com.gzoltar.core.AgentConfigs;
-import com.gzoltar.core.instr.Instrumenter;
+import com.gzoltar.core.instr.ClinitInstrumenter;
+import com.gzoltar.core.instr.CoverageInstrumenter;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.filter.Filter;
+import com.gzoltar.core.instr.filter.TestFilter;
 import com.gzoltar.core.instr.matchers.ClassNameMatcher;
 import com.gzoltar.core.instr.matchers.PrefixMatcher;
 import com.gzoltar.core.instr.matchers.SourceLocationMatcher;
+import com.gzoltar.core.util.MD5;
 import javassist.ClassPool;
 import javassist.CtClass;
 
 public class CoverageTransformer implements ClassFileTransformer {
 
-  private final Instrumenter instrumenter;
+  private final CoverageInstrumenter coverageInstrumenter;
+
+  private final ClinitInstrumenter clinitInstrumenter;
 
   private final String buildLocation;
 
@@ -43,7 +48,8 @@ public class CoverageTransformer implements ClassFileTransformer {
   private final Filter filter;
 
   public CoverageTransformer(final AgentConfigs agentConfigs) throws Exception {
-    this.instrumenter = new Instrumenter(agentConfigs);
+    this.coverageInstrumenter = new CoverageInstrumenter(agentConfigs);
+    this.clinitInstrumenter = new ClinitInstrumenter(agentConfigs);
 
     this.buildLocation = new File(agentConfigs.getBuildLocation()).getCanonicalPath();
     this.inclNoLocationClasses = agentConfigs.getInclNoLocationClasses();
@@ -92,12 +98,35 @@ public class CoverageTransformer implements ClassFileTransformer {
         return null;
       }
 
-      // check whether this class should be instrumented
-      if (this.filter.filter(cc) == Outcome.REJECT) {
+      // skipt JUnit/TestNG classes
+      TestFilter t = new TestFilter();
+      if (t.filter(cc) == Outcome.REJECT) {
         return null;
       }
 
-      return this.instrumenter.instrument(cc);
+      /**
+       * Compute bytecode hash before *any* instrumentation takes place
+       */
+      String hash = MD5.calculateHash(cc);
+
+      /**
+       * Instrument *all* classes for re-clinit purpose
+       */
+      byte[] clinitInst = this.clinitInstrumenter.instrument(cc, hash);
+
+      // check whether this class should be instrumented
+      if (this.filter.filter(cc) == Outcome.REJECT) {
+        return clinitInst;
+      }
+
+      /**
+       * Instrument *allowed* classes for coverage purpose
+       */
+      byte[] coverageInst = this.coverageInstrumenter.instrument(cc, hash);
+      if (coverageInst == null) {
+        return clinitInst;
+      }
+      return coverageInst;
     } catch (Exception e) {
       e.printStackTrace();
       return null;

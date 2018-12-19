@@ -16,8 +16,11 @@
  */
 package com.gzoltar.core.util;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import javassist.CannotCompileException;
+import javassist.CtClass;
 
 public final class MD5 {
 
@@ -41,6 +44,14 @@ public final class MD5 {
     }
 
     return sb.toString();
+  }
+
+  public static String calculateHash(CtClass ctClass)
+      throws NoSuchAlgorithmException, IOException, CannotCompileException {
+    byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozens the class
+    // in order to be able to modify it, it has to be defrosted
+    ctClass.defrost();
+    return MD5.calculateHash(originalBytes);
   }
 
 }

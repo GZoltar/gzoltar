@@ -25,7 +25,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationLevel;
-import com.gzoltar.core.instr.Instrumenter;
+import com.gzoltar.core.instr.CoverageInstrumenter;
 
 @Mojo(name = "instrument", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true)
 public class InstrumentMojo extends AbstractAgentMojo {
@@ -64,7 +64,7 @@ public class InstrumentMojo extends AbstractAgentMojo {
     // configure instrumentation
     AgentConfigs agentConfigs = this.createAgentConfigurations();
     agentConfigs.setInstrumentationLevel(InstrumentationLevel.OFFLINE);
-    Instrumenter instrumenter = new Instrumenter(agentConfigs);
+    CoverageInstrumenter instrumenter = new CoverageInstrumenter(agentConfigs);
 
     // instrument recursively
     try {

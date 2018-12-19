@@ -39,7 +39,9 @@ import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.spectrum.ISpectrum;
+import com.gzoltar.core.util.MD5;
 import javassist.ClassPool;
+import javassist.CtClass;
 
 @SuppressWarnings("deprecation")
 public class TestLineInstrumentation {
@@ -58,9 +60,11 @@ public class TestLineInstrumentation {
 
     Collector.instance().addListener(configs.getEventListener());
 
-    CoveragePass instrumentationPass = new CoveragePass(configs);
+    CoveragePass instrumentationPass = new CoveragePass(configs.getInstrumentationLevel());
     for (String classUnderTest : classesUnderTest) {
-      instrumentationPass.transform(pool.get(classUnderTest));
+      CtClass cc = pool.get(classUnderTest);
+      String hash = MD5.calculateHash(cc);
+      instrumentationPass.transform(cc, hash);
     }
 
     ISpectrum spectrum = Collector.instance().getSpectrum();

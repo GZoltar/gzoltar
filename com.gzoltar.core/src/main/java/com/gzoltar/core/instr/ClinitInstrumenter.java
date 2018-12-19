@@ -14,26 +14,23 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.core.instr.pass;
+package com.gzoltar.core.instr;
 
-import com.gzoltar.core.instr.Outcome;
-import com.gzoltar.core.instr.filter.DuplicateCollectorReferenceFilter;
-import javassist.CtBehavior;
-import javassist.CtClass;
+import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.pass.ClinitPass;
+import com.gzoltar.core.instr.pass.IPass;
+import com.gzoltar.core.instr.pass.ResetPass;
 
-public class DuplicateCollectorReferencePass implements IPass {
+public class ClinitInstrumenter extends AbstractInstrumenter {
 
-  private final DuplicateCollectorReferenceFilter duplicateCollectorReferenceFilter =
-      new DuplicateCollectorReferenceFilter();
-
-  @Override
-  public Outcome transform(CtClass ctClass, final String ctClassHash) throws Exception {
-    return this.duplicateCollectorReferenceFilter.filter(ctClass);
+  /**
+   * 
+   * @param agentConfigs
+   */
+  public ClinitInstrumenter(final AgentConfigs agentConfigs) {
+    super(new IPass[] {
+        new ClinitPass(agentConfigs.getInstrumentationLevel()),
+        new ResetPass(agentConfigs.getInstrumentationLevel())
+    });
   }
-
-  @Override
-  public Outcome transform(CtClass ctClass, CtBehavior ctBehavior) throws Exception {
-    return this.duplicateCollectorReferenceFilter.filter(ctBehavior);
-  }
-
 }

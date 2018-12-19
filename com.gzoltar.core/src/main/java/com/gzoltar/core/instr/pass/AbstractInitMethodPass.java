@@ -32,8 +32,6 @@ public abstract class AbstractInitMethodPass implements IPass {
 
   private final EmptyMethodFilter emptyMethodFilter = new EmptyMethodFilter();
 
-  private String classHash = null;
-
   protected String collectorCall = null;
 
   static {
@@ -51,10 +49,10 @@ public abstract class AbstractInitMethodPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(CtClass ctClass) throws Exception {
+  public Outcome transform(CtClass ctClass, String ctClassHash) throws Exception {
     CtMethod gzoltarInit =
-        CtMethod.make(String.format(METHOD_STR, this.classHash, ctClass.getName(),
-            Collector.instance().getProbeGroupByHash(this.classHash).getNumberOfProbes(),
+        CtMethod.make(String.format(METHOD_STR, ctClassHash, ctClass.getName(),
+            Collector.instance().getProbeGroupByHash(ctClassHash).getNumberOfProbes(),
             this.collectorCall), ctClass);
     gzoltarInit.setModifiers(gzoltarInit.getModifiers() | InstrumentationConstants.INIT_METHOD_ACC);
     ctClass.addMethod(gzoltarInit);
@@ -73,14 +71,6 @@ public abstract class AbstractInitMethodPass implements IPass {
     ctBehavior.insertBefore(
         InstrumentationConstants.INIT_METHOD_NAME_WITH_ARGS + InstrumentationConstants.EOL);
     return Outcome.ACCEPT;
-  }
-
-  /**
-   * 
-   * @param hash
-   */
-  public void setHash(String hash) {
-    this.classHash = hash;
   }
 
 }

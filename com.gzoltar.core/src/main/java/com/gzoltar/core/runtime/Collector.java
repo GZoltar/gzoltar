@@ -39,6 +39,8 @@ public class Collector {
   /** <ProbeGroup hash, hitArray> */
   private final Map<String, Pair<String, boolean[]>> hitArrays;
 
+  private final Map<String, boolean[]> resetFlags;
+
   /**
    * 
    * @return
@@ -69,6 +71,7 @@ public class Collector {
     this.listener = new MultiEventListener();
     this.spectrum = new Spectrum();
     this.hitArrays = new LinkedHashMap<String, Pair<String, boolean[]>>();
+    this.resetFlags = new LinkedHashMap<String, boolean[]>();
   }
 
   /**
@@ -156,6 +159,11 @@ public class Collector {
       }
     }
 
+    // reset Class' static fields
+    for (String hash : this.resetFlags.keySet()) {
+      this.resetFlags.get(hash)[0] = true;
+    }
+
     // create a new transaction
     Transaction transaction = new Transaction(transactionName, activity, outcome, runtime, stackTrace);
     this.spectrum.addTransaction(transaction);
@@ -190,6 +198,21 @@ public class Collector {
   }
 
   /**
+   * 
+   * @param args
+   */
+  public synchronized void getResetFlag(final Object[] args) {
+    assert args.length == 1;
+
+    final String hash = (String) args[0];
+    if (!this.resetFlags.containsKey(hash)) {
+      this.resetFlags.put(hash, new boolean[] { true });
+    }
+
+    args[0] = this.resetFlags.get(hash);
+  }
+
+  /**
    * In violation of the regular semantic of {@link Object#equals(Object)} this implementation is
    * used as the interface to the runtime data.
    * 
@@ -199,7 +222,12 @@ public class Collector {
   @Override
   public boolean equals(final Object args) {
     if (args instanceof Object[]) {
-      this.getHitArray((Object[]) args);
+      Object[] arrayObject = (Object[]) args;
+      if (arrayObject.length == 1) {
+        this.getResetFlag((Object[]) args);
+      } else {
+        this.getHitArray((Object[]) args);
+      }
     }
     return super.equals(args);
   }

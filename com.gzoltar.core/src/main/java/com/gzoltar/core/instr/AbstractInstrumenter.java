@@ -32,31 +32,26 @@ import java.util.zip.ZipOutputStream;
 import org.jacoco.core.internal.ContentTypeDetector;
 import org.jacoco.core.internal.Pack200Streams;
 import org.jacoco.core.internal.instr.SignatureRemover;
-import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.pass.IPass;
-import com.gzoltar.core.instr.pass.CoveragePass;
+import com.gzoltar.core.util.MD5;
 import javassist.ClassPool;
 import javassist.CtClass;
 
 /**
  * Several APIs to instrument Java class definitions for coverage tracing.
  */
-public class Instrumenter {
+public abstract class AbstractInstrumenter {
 
   private final IPass[] passes;
 
-  private final SignatureRemover signatureRemover;
+  private static final SignatureRemover signatureRemover = new SignatureRemover();
 
   /**
    * 
-   * @param agentConfigs
+   * @param passes
    */
-  public Instrumenter(final AgentConfigs agentConfigs) {
-    this.passes = new IPass[] {
-        //new TestFilterPass(), // do not instrument test classes/cases
-        new CoveragePass(agentConfigs)
-    };
-    this.signatureRemover = new SignatureRemover();
+  protected AbstractInstrumenter(IPass[] passes) {
+    this.passes = passes;
   }
 
   /**
@@ -67,7 +62,7 @@ public class Instrumenter {
    * @param flag <code>true</code> if signatures should be removed
    */
   public void setRemoveSignatures(final boolean flag) {
-    this.signatureRemover.setActive(flag);
+    signatureRemover.setActive(flag);
   }
 
   /**
@@ -88,7 +83,7 @@ public class Instrumenter {
    */
   public byte[] instrument(final InputStream sourceStream) throws Exception {
     CtClass cc = ClassPool.getDefault().makeClassIfNew(sourceStream);
-    return this.instrument(cc);
+    return this.instrument(cc, MD5.calculateHash(cc));
   }
 
   /**
@@ -97,9 +92,13 @@ public class Instrumenter {
    * @return
    * @throws Exception
    */
-  public byte[] instrument(final CtClass cc) throws Exception {
+  public byte[] instrument(final CtClass cc, final String ccHash) throws Exception {
+    if (cc.isFrozen()) {
+      cc.defrost();
+    }
+
     for (IPass p : this.passes) {
-      switch (p.transform(cc)) {
+      switch (p.transform(cc, ccHash)) {
         case REJECT:
           cc.detach();
           return null;
@@ -110,6 +109,7 @@ public class Instrumenter {
     }
 
     byte[] bytecode = cc.toBytecode();
+    cc.writeFile("/tmp/.classes");
     return bytecode;
   }
 
@@ -200,12 +200,12 @@ public class Instrumenter {
 
     while ((entry = zipInputStream.getNextEntry()) != null) {
       final String entryName = entry.getName();
-      if (this.signatureRemover.removeEntry(entryName)) {
+      if (signatureRemover.removeEntry(entryName)) {
         continue;
       }
 
       zipOutputStream.putNextEntry(new ZipEntry(entryName));
-      if (!this.signatureRemover.filterEntry(entryName, zipInputStream, zipOutputStream)) {
+      if (!signatureRemover.filterEntry(entryName, zipInputStream, zipOutputStream)) {
         count += this.instrumentToFile(zipInputStream, zipOutputStream);
       }
       zipOutputStream.closeEntry();
