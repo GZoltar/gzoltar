@@ -24,7 +24,7 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtMethod;
 
-public abstract class AbstractInitMethodInstrumentationPass implements IPass {
+public abstract class AbstractInitMethodPass implements IPass {
 
   private static final String METHOD_STR;
 

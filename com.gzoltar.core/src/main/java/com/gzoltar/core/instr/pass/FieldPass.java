@@ -22,7 +22,7 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
 
-public class FieldInstrumentationPass implements IPass {
+public class FieldPass implements IPass {
 
   private static final String fieldStr =
       InstrumentationConstants.FIELD_DESC_HUMAN + InstrumentationConstants.FIELD_NAME + " = "

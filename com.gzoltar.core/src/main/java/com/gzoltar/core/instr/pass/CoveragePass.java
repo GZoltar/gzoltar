@@ -48,13 +48,13 @@ import javassist.bytecode.Opcode;
 import javassist.bytecode.analysis.ControlFlow;
 import javassist.bytecode.analysis.ControlFlow.Block;
 
-public class InstrumentationPass implements IPass {
+public class CoveragePass implements IPass {
 
   private final InstrumentationLevel instrumentationLevel;
 
-  private final FieldInstrumentationPass fieldPass = new FieldInstrumentationPass();
+  private final FieldPass fieldPass = new FieldPass();
 
-  private AbstractInitMethodInstrumentationPass initMethodPass = null;
+  private AbstractInitMethodPass initMethodPass = null;
 
   private final StackSizePass stackSizePass = new StackSizePass();
 
@@ -65,16 +65,16 @@ public class InstrumentationPass implements IPass {
 
   private ProbeGroup probeGroup;
 
-  public InstrumentationPass(final AgentConfigs agentConfigs) {
+  public CoveragePass(final AgentConfigs agentConfigs) {
 
     this.instrumentationLevel = agentConfigs.getInstrumentationLevel();
     switch (this.instrumentationLevel) {
       case FULL:
       default:
-        this.initMethodPass = new InitMethodInstrumentationPass();
+        this.initMethodPass = new InitMethodPass();
         break;
       case OFFLINE:
-        this.initMethodPass = new OfflineInitMethodInstrumentationPass();
+        this.initMethodPass = new OfflineInitMethodPass();
         break;
       case NONE:
         break;

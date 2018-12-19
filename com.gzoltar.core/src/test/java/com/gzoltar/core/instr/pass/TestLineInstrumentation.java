@@ -55,7 +55,7 @@ public class TestLineInstrumentation {
 
     Collector.instance().addListener(configs.getEventListener());
 
-    InstrumentationPass instrumentationPass = new InstrumentationPass(configs);
+    CoveragePass instrumentationPass = new CoveragePass(configs);
     for (String classUnderTest : classesUnderTest) {
       instrumentationPass.transform(pool.get(classUnderTest));
     }

@@ -34,7 +34,7 @@ import org.jacoco.core.internal.Pack200Streams;
 import org.jacoco.core.internal.instr.SignatureRemover;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.pass.IPass;
-import com.gzoltar.core.instr.pass.InstrumentationPass;
+import com.gzoltar.core.instr.pass.CoveragePass;
 import javassist.ClassPool;
 import javassist.CtClass;
 
@@ -54,7 +54,7 @@ public class Instrumenter {
   public Instrumenter(final AgentConfigs agentConfigs) {
     this.passes = new IPass[] {
         //new TestFilterPass(), // do not instrument test classes/cases
-        new InstrumentationPass(agentConfigs)
+        new CoveragePass(agentConfigs)
     };
     this.signatureRemover = new SignatureRemover();
   }

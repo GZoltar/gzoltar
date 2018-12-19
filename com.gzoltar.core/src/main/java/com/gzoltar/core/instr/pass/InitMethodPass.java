@@ -16,11 +16,15 @@
  */
 package com.gzoltar.core.instr.pass;
 
-public class OfflineInitMethodInstrumentationPass extends AbstractInitMethodInstrumentationPass {
+import com.gzoltar.core.instr.InstrumentationConstants;
 
-  public OfflineInitMethodInstrumentationPass() {
-    this.collectorCall =
-        "com.gzoltar.internal.agent.rt.Offline.getHitArray(" + ARRAY_OBJECT_NAME + "); ";
+public class InitMethodPass extends AbstractInitMethodPass {
+
+  private static final String call = InstrumentationConstants.SYSTEM_CLASS_NAME_JVM + "."
+      + InstrumentationConstants.SYSTEM_CLASS_FIELD_NAME + ".equals(" + ARRAY_OBJECT_NAME + "); ";
+
+  public InitMethodPass() {
+    this.collectorCall = call;
   }
 
 }
