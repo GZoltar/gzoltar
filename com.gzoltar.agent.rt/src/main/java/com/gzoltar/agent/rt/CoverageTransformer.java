@@ -24,9 +24,7 @@ import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.AbstractInstrumenter;
 import com.gzoltar.core.instr.ClinitInstrumenter;
 import com.gzoltar.core.instr.CoverageInstrumenter;
-import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.PutGetStaticInstrumenter;
-import com.gzoltar.core.instr.filter.TestFilter;
 import com.gzoltar.core.instr.matchers.SourceLocationMatcher;
 import com.gzoltar.core.util.MD5;
 import javassist.ClassPool;
@@ -71,12 +69,6 @@ public class CoverageTransformer implements ClassFileTransformer {
       SourceLocationMatcher excludeClassesNotInBuildLocation = new SourceLocationMatcher(
           this.inclNoLocationClasses, this.buildLocation, protectionDomain);
       if (!excludeClassesNotInBuildLocation.matches(cc)) {
-        return null;
-      }
-
-      // skip JUnit/TestNG classes
-      TestFilter t = new TestFilter();
-      if (t.filter(cc) == Outcome.REJECT) {
         return null;
       }
 
