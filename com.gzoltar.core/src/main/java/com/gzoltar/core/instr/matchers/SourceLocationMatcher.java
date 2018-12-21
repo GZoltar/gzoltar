@@ -16,8 +16,12 @@
  */
 package com.gzoltar.core.instr.matchers;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.List;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
@@ -26,14 +30,16 @@ public class SourceLocationMatcher implements IMatcher {
 
   private final boolean inclNoLocationClasses;
 
-  private final String buildLocation;
+  private final List<String> buildLocations = new ArrayList<String>();
 
   private final ProtectionDomain protectionDomain;
 
-  public SourceLocationMatcher(final boolean inclNoLocationClasses, final String buildLocation,
-      final ProtectionDomain protectionDomain) {
+  public SourceLocationMatcher(final boolean inclNoLocationClasses, final String buildLocations,
+      final ProtectionDomain protectionDomain) throws IOException {
     this.inclNoLocationClasses = inclNoLocationClasses;
-    this.buildLocation = buildLocation.replace(" ", "%20");
+    for (String buildLocation : buildLocations.split(":")) {
+      this.buildLocations.add(new File(buildLocation.replace(" ", "%20")).getCanonicalPath());
+    }
     this.protectionDomain = protectionDomain;
   }
 
@@ -62,7 +68,12 @@ public class SourceLocationMatcher implements IMatcher {
     if (codeSource.getLocation() == null) {
       return false;
     }
-    return codeSource.getLocation().getPath().startsWith(this.buildLocation);
+    for (String buildLocation : this.buildLocations) {
+      if (codeSource.getLocation().getPath().startsWith(buildLocation)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override

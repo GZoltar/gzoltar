@@ -17,7 +17,6 @@
 package com.gzoltar.agent.rt;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import com.gzoltar.core.AgentConfigs;
@@ -34,15 +33,15 @@ public class CoverageTransformer implements ClassFileTransformer {
 
   private final AbstractInstrumenter[] instrumenters;
 
-  private final String buildLocation;
+  private final String buildLocations;
 
   private final boolean inclNoLocationClasses;
 
-  public CoverageTransformer(final AgentConfigs agentConfigs) throws Exception {
+  public CoverageTransformer(final AgentConfigs agentConfigs) {
     this.instrumenters = new AbstractInstrumenter[] {new PutGetStaticInstrumenter(agentConfigs),
         new ClinitInstrumenter(agentConfigs), new CoverageInstrumenter(agentConfigs),};
 
-    this.buildLocation = new File(agentConfigs.getBuildLocation()).getCanonicalPath();
+    this.buildLocations = agentConfigs.getBuildLocation();
     this.inclNoLocationClasses = agentConfigs.getInclNoLocationClasses();
   }
 
@@ -67,7 +66,7 @@ public class CoverageTransformer implements ClassFileTransformer {
 
       // only instrument classes under a build location, e.g., target/classes/ or build/classes/
       SourceLocationMatcher excludeClassesNotInBuildLocation = new SourceLocationMatcher(
-          this.inclNoLocationClasses, this.buildLocation, protectionDomain);
+          this.inclNoLocationClasses, this.buildLocations, protectionDomain);
       if (!excludeClassesNotInBuildLocation.matches(cc)) {
         return null;
       }
