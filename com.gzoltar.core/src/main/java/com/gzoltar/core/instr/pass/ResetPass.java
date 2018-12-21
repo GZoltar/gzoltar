@@ -44,6 +44,17 @@ public class ResetPass implements IPass {
     this.instrumentationLevel = instrumentationLevel;
   }
 
+  public static Outcome makeEmptyResetter(final CtClass ctClass) throws Exception {
+    if (ctClass.isInterface()) {
+      return Outcome.REJECT;
+    }
+
+    CtMethod gzoltarResetter = CtMethod.make("void $gzoltarResetter() { }", ctClass); // TODO
+    gzoltarResetter.setModifiers(AccessFlag.PUBLIC | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC*/); // TODO
+    ctClass.addMethod(gzoltarResetter);
+    return Outcome.ACCEPT;
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -69,11 +80,12 @@ public class ResetPass implements IPass {
     if (clinit != null) {
       // inject field
       CtField f = CtField.make(fieldStr, ctClass);
-      f.setModifiers(f.getModifiers() | AccessFlag.PRIVATE | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC | AccessFlag.TRANSIENT*/); // TODO
+      f.setModifiers(f.getModifiers() | AccessFlag.PRIVATE | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC*/ | AccessFlag.TRANSIENT); // TODO
       ctClass.addField(f);
 
-      // inject reset method
-      CtMethod gzoltarReseter = CtMethod.make("void $gzoltarReseter() { "
+      // inject code in the resetter method
+      CtMethod gzoltarResetter = ctClass.getMethod("$gzoltarResetter", "()V"); // FIXME
+      gzoltarResetter.setBody("{ "
             + "if ($gzoltarResetFlag == null) { "
               + "Object[] $tmpFlag = new Object[] { \"" + ctClassHash + "\" }; "
               + call + " "
@@ -84,17 +96,15 @@ public class ResetPass implements IPass {
             + "} "
             + "$gzoltarResetFlag[0] = false; "
             + "$_clinit_clone_(); "
-          + "}", ctClass);
-      gzoltarReseter.setModifiers(AccessFlag.PRIVATE | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC*/); // TODO
-      ctClass.addMethod(gzoltarReseter);
+          + "}");
 
       // replace body of original <clinit> method (which should at this stage point to '$_clinit_clone_();')
-      // with a call to our reseter
-      clinit.setBody("$gzoltarReseter();"); // FIXME hardcoded string
+      // with a call to our resetter
+      clinit.setBody("{ $gzoltarResetter(); }"); // FIXME hardcoded string
 
       for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
-        if (ctBehavior.getName().equals("$gzoltarReseter")) {
-          // for obvious reasons, reseter method cannot call itself
+        if (ctBehavior.getName().equals("$gzoltarResetter")) {
+          // for obvious reasons, resetter method cannot call itself
           continue;
         }
         if (ctBehavior.getLongName().equals(ctClass.getName() + ".<clinit>()")) { // FIXME hardcoded string
@@ -125,7 +135,7 @@ public class ResetPass implements IPass {
    */
   @Override
   public Outcome transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
-    ctBehavior.insertBefore("$gzoltarReseter();");
+    ctBehavior.insertBefore("$gzoltarResetter();");
     return Outcome.ACCEPT;
   }
 }

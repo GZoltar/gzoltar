@@ -59,7 +59,7 @@ public class ClinitPass implements IPass {
       }
 
       // replace body of original <clinit> method with a call to clinit clone
-      clinit.setBody("$_clinit_clone_();"); // FIXME hardcoded string
+      clinit.setBody("{ $_clinit_clone_(); }"); // FIXME hardcoded string
       return Outcome.ACCEPT;
     }
 
@@ -89,15 +89,12 @@ public class ClinitPass implements IPass {
               return;
             }
 
-            //fieldAccess.replace("{ $gzoltarReseter(); $_ = $proceed($$); }");
-            System.out.println("-> WRITE " + ctClass.getName() + ":" + field.getName());
+            //fieldAccess.replace("{ $_ = $proceed($$); }");
 
             if (Modifier.isFinal(field.getModifiers())) {
               // keep all modified flags other than FINAL
               field.setModifiers(field.getModifiers() & ~Modifier.FINAL);
             }
-          } else if (fieldAccess.isStatic() && fieldAccess.isReader()) {
-            System.out.println("-> READ " + ctClass.getName() + ":" + fieldAccess.getField().getName());
           }
         } catch (NotFoundException e) {
           throw new CannotCompileException(e);

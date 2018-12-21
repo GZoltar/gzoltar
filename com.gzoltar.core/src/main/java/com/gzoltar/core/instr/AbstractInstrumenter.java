@@ -50,7 +50,7 @@ public abstract class AbstractInstrumenter {
    * 
    * @param passes
    */
-  protected AbstractInstrumenter(IPass[] passes) {
+  protected AbstractInstrumenter(final IPass[] passes) {
     this.passes = passes;
   }
 
@@ -83,7 +83,8 @@ public abstract class AbstractInstrumenter {
    */
   public byte[] instrument(final InputStream sourceStream) throws Exception {
     CtClass cc = ClassPool.getDefault().makeClassIfNew(sourceStream);
-    return this.instrument(cc, MD5.calculateHash(cc));
+    this.instrument(cc, MD5.calculateHash(cc));
+    return cc.toBytecode();
   }
 
   /**
@@ -92,25 +93,17 @@ public abstract class AbstractInstrumenter {
    * @return
    * @throws Exception
    */
-  public byte[] instrument(final CtClass cc, final String ccHash) throws Exception {
-    if (cc.isFrozen()) {
-      cc.defrost();
-    }
-
+  public Outcome instrument(final CtClass cc, final String ccHash) throws Exception {
     for (IPass p : this.passes) {
       switch (p.transform(cc, ccHash)) {
         case REJECT:
-          cc.detach();
-          return null;
+          return Outcome.REJECT;
         case ACCEPT:
         default:
           continue;
       }
     }
-
-    byte[] bytecode = cc.toBytecode();
-    cc.writeFile("/tmp/.classes");
-    return bytecode;
+    return Outcome.ACCEPT;
   }
 
   /**

@@ -192,31 +192,6 @@ public class CoveragePass implements IPass {
         continue;
       }
 
-      /**
-       * TODO: if instruction is a static call to a static field in another class, add an
-       * instruction to call $_clinit_clone_ of the target class before the call to the static
-       * field.
-       */
-      /*int op = ci.byteAt(index);
-      if (op == Opcode.PUTSTATIC) {
-        System.out.println("[PUTSTATIC] Line: " + curLine + " Byte: " + ci.byteAt(index));
-
-        // remove loaded valued from the stack, otherwise stack won't be valid
-        ci.writeByte((byte) Opcode.POP, index);
-
-        // remove PUTSTATIC call
-        ci.writeByte((byte) Opcode.NOP, index + 1);
-        ci.writeByte((byte) Opcode.NOP, index + 2);
-
-        // TODO inject new code to call reset
-
-        // TODO add a new PUTSTATIC call (same as the original one that just got deleted)
-        // TODO
-
-        // update number of bytes
-        instrSize += 2;
-      }*/
-
       boolean isNewBlock = !blocks.isEmpty() && index >= instrSize + blocks.peek();
       if (isNewBlock) {
         blocks.poll();

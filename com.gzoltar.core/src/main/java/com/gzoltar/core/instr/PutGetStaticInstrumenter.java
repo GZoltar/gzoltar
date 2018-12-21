@@ -17,23 +17,21 @@
 package com.gzoltar.core.instr;
 
 import com.gzoltar.core.AgentConfigs;
-import com.gzoltar.core.instr.pass.ClinitPass;
 import com.gzoltar.core.instr.pass.IPass;
-import com.gzoltar.core.instr.pass.ResetPass;
+import com.gzoltar.core.instr.pass.PutGetStaticPass;
 
 /**
- * Instrument *all* classes for re-clinit purpose
+ * Instrument *all* getstatic and putstatic instructions
  */
-public class ClinitInstrumenter extends AbstractInstrumenter {
+public class PutGetStaticInstrumenter extends AbstractInstrumenter {
 
   /**
    * 
    * @param agentConfigs
    */
-  public ClinitInstrumenter(final AgentConfigs agentConfigs) {
+  public PutGetStaticInstrumenter(final AgentConfigs agentConfigs) {
     super(new IPass[] {
-        new ClinitPass(agentConfigs.getInstrumentationLevel()),
-        new ResetPass(agentConfigs.getInstrumentationLevel())
+        new PutGetStaticPass(agentConfigs.getInstrumentationLevel())
     });
   }
 }

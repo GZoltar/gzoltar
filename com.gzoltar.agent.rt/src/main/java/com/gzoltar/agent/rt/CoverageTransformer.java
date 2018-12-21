@@ -21,15 +21,12 @@ import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.AbstractInstrumenter;
 import com.gzoltar.core.instr.ClinitInstrumenter;
 import com.gzoltar.core.instr.CoverageInstrumenter;
 import com.gzoltar.core.instr.Outcome;
-import com.gzoltar.core.instr.actions.BlackList;
-import com.gzoltar.core.instr.actions.WhiteList;
-import com.gzoltar.core.instr.filter.Filter;
+import com.gzoltar.core.instr.PutGetStaticInstrumenter;
 import com.gzoltar.core.instr.filter.TestFilter;
-import com.gzoltar.core.instr.matchers.ClassNameMatcher;
-import com.gzoltar.core.instr.matchers.PrefixMatcher;
 import com.gzoltar.core.instr.matchers.SourceLocationMatcher;
 import com.gzoltar.core.util.MD5;
 import javassist.ClassPool;
@@ -37,42 +34,21 @@ import javassist.CtClass;
 
 public class CoverageTransformer implements ClassFileTransformer {
 
-  private final CoverageInstrumenter coverageInstrumenter;
-
-  private final ClinitInstrumenter clinitInstrumenter;
+  private final AbstractInstrumenter[] instrumenters;
 
   private final String buildLocation;
 
   private final boolean inclNoLocationClasses;
 
-  private final Filter filter;
-
   public CoverageTransformer(final AgentConfigs agentConfigs) throws Exception {
-    this.coverageInstrumenter = new CoverageInstrumenter(agentConfigs);
-    this.clinitInstrumenter = new ClinitInstrumenter(agentConfigs);
+    this.instrumenters = new AbstractInstrumenter[] {new PutGetStaticInstrumenter(agentConfigs),
+        new ClinitInstrumenter(agentConfigs), new CoverageInstrumenter(agentConfigs),};
 
     this.buildLocation = new File(agentConfigs.getBuildLocation()).getCanonicalPath();
     this.inclNoLocationClasses = agentConfigs.getInclNoLocationClasses();
-
-    // exclude *all* GZoltar's runtime classes from instrumentation
-    BlackList excludeGZoltarClasses = new BlackList(new PrefixMatcher("com.gzoltar.internal."));
-
-    // instrument some classes
-    WhiteList includeClasses =
-        new WhiteList(new ClassNameMatcher(agentConfigs.getIncludes()));
-
-    // do not instrument some classes
-    BlackList excludeClasses =
-        new BlackList(new ClassNameMatcher(agentConfigs.getExcludes()));
-
-    // do not instrument some classloaders
-    BlackList excludeClassLoaders =
-        new BlackList(new ClassNameMatcher(agentConfigs.getExclClassloader()));
-
-    this.filter =
-        new Filter(excludeGZoltarClasses, includeClasses, excludeClasses, excludeClassLoaders);
   }
 
+  @Override
   public byte[] transform(final ClassLoader loader, final String className,
       final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain,
       final byte[] classfileBuffer) {
@@ -98,35 +74,22 @@ public class CoverageTransformer implements ClassFileTransformer {
         return null;
       }
 
-      // skipt JUnit/TestNG classes
+      // skip JUnit/TestNG classes
       TestFilter t = new TestFilter();
       if (t.filter(cc) == Outcome.REJECT) {
         return null;
       }
 
-      /**
-       * Compute bytecode hash before *any* instrumentation takes place
-       */
+      // compute bytecode hash before *any* instrumentation takes place
       String hash = MD5.calculateHash(cc);
 
-      /**
-       * Instrument *all* classes for re-clinit purpose
-       */
-      byte[] clinitInst = this.clinitInstrumenter.instrument(cc, hash);
-
-      // check whether this class should be instrumented
-      if (this.filter.filter(cc) == Outcome.REJECT) {
-        return clinitInst;
+      for (AbstractInstrumenter instrumenter : this.instrumenters) {
+        instrumenter.instrument(cc, hash);
+        // for now all instrumenters have the chance to modify the loaded class, however in the
+        // future we might want to skip instrumentation if one of the instrumenters rejects it
       }
 
-      /**
-       * Instrument *allowed* classes for coverage purpose
-       */
-      byte[] coverageInst = this.coverageInstrumenter.instrument(cc, hash);
-      if (coverageInst == null) {
-        return clinitInst;
-      }
-      return coverageInst;
+      return cc.toBytecode();
     } catch (Exception e) {
       e.printStackTrace();
       return null;
