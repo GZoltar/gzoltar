@@ -50,7 +50,7 @@ public class ResetPass implements IPass {
     }
 
     CtMethod gzoltarResetter = CtMethod.make("void $gzoltarResetter() { }", ctClass); // TODO
-    gzoltarResetter.setModifiers(AccessFlag.PUBLIC | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC*/); // TODO
+    gzoltarResetter.setModifiers(AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.SYNTHETIC); // TODO
     ctClass.addMethod(gzoltarResetter);
     return Outcome.ACCEPT;
   }
@@ -80,8 +80,12 @@ public class ResetPass implements IPass {
     if (clinit != null) {
       // inject field
       CtField f = CtField.make(fieldStr, ctClass);
-      f.setModifiers(f.getModifiers() | AccessFlag.PRIVATE | AccessFlag.STATIC /*| AccessFlag.SYNTHETIC*/ | AccessFlag.TRANSIENT); // TODO
+      f.setModifiers(f.getModifiers() | AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC | AccessFlag.TRANSIENT); // TODO
       ctClass.addField(f);
+
+      CtField f2 = CtField.make("java.util.Properties $gzoltarDefaultProperties = null;", ctClass);
+      f2.setModifiers(f2.getModifiers() | AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC | AccessFlag.TRANSIENT); // TODO
+      ctClass.addField(f2);
 
       // inject code in the resetter method
       CtMethod gzoltarResetter = ctClass.getMethod("$gzoltarResetter", "()V"); // FIXME
@@ -90,11 +94,13 @@ public class ResetPass implements IPass {
               + "Object[] $tmpFlag = new Object[] { \"" + ctClassHash + "\" }; "
               + call + " "
               + "$gzoltarResetFlag = (boolean[]) $tmpFlag[0]; "
+              + "$gzoltarDefaultProperties = (java.util.Properties) java.lang.System.getProperties().clone(); "
             + "} "
             + "if ($gzoltarResetFlag[0] == false) { "
                + "return; "
             + "} "
             + "$gzoltarResetFlag[0] = false; "
+            + "java.lang.System.setProperties((java.util.Properties) $gzoltarDefaultProperties.clone()); "
             + "$_clinit_clone_(); "
           + "}");
 
