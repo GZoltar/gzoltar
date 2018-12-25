@@ -39,7 +39,7 @@ public class CoverageTransformer implements ClassFileTransformer {
 
   public CoverageTransformer(final AgentConfigs agentConfigs) {
     this.instrumenters = new AbstractInstrumenter[] {new PutGetStaticInstrumenter(agentConfigs),
-        new ClinitInstrumenter(agentConfigs), new CoverageInstrumenter(agentConfigs),};
+        new ClinitInstrumenter(agentConfigs), new CoverageInstrumenter(agentConfigs)};
 
     this.buildLocations = agentConfigs.getBuildLocation();
     this.inclNoLocationClasses = agentConfigs.getInclNoLocationClasses();
