@@ -50,7 +50,7 @@ public class ResetPass implements IPass {
     }
 
     CtMethod gzoltarResetter = CtMethod.make("void $gzoltarResetter() { }", ctClass); // TODO
-    gzoltarResetter.setModifiers(AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.SYNTHETIC); // TODO
+    gzoltarResetter.setModifiers(AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.SYNCHRONIZED | AccessFlag.SYNTHETIC); // TODO
     ctClass.addMethod(gzoltarResetter);
     return Outcome.ACCEPT;
   }
