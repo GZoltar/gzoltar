@@ -17,15 +17,16 @@
 package com.gzoltar.core.instr.filter;
 
 import com.gzoltar.core.instr.actions.BlackList;
-import com.gzoltar.core.instr.matchers.DuplicateCollectorReferenceMatcher;
+import com.gzoltar.core.instr.matchers.DuplicateMatcher;
 
 /**
- * Filter classes that have been instrumented.
+ * Filter duplicated methods/fields.
  */
-public class DuplicateCollectorReferenceFilter extends Filter {
+public class DuplicateFilter extends Filter {
 
-  public DuplicateCollectorReferenceFilter() {
-    this.add(new BlackList(new DuplicateCollectorReferenceMatcher()));
+  public DuplicateFilter(final String classNameMatcher,
+      final String methodNameMatcher) {
+    this.add(new BlackList(new DuplicateMatcher(classNameMatcher, methodNameMatcher)));
   }
 
 }

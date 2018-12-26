@@ -16,12 +16,21 @@
  */
 package com.gzoltar.core.instr.matchers;
 
-import com.gzoltar.core.instr.InstrumentationConstants;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtField;
 
-public class DuplicateCollectorReferenceMatcher implements IMatcher {
+public class DuplicateMatcher implements IMatcher {
+
+  private final String classNameMatcher;
+
+  private final String methodNameMatcher;
+
+  public DuplicateMatcher(final String classNameMatcher,
+      final String methodNameMatcher) {
+    this.classNameMatcher = classNameMatcher;
+    this.methodNameMatcher = methodNameMatcher;
+  }
 
   @Override
   public boolean matches(final CtClass ctClass) {
@@ -35,12 +44,12 @@ public class DuplicateCollectorReferenceMatcher implements IMatcher {
 
   @Override
   public boolean matches(final CtBehavior ctBehavior) {
-    return ctBehavior.getName().equals(InstrumentationConstants.INIT_METHOD_NAME);
+    return ctBehavior.getName().equals(this.classNameMatcher);
   }
 
   @Override
   public boolean matches(final CtField ctField) {
-    return ctField.getName().equals(InstrumentationConstants.FIELD_NAME);
+    return ctField.getName().equals(this.methodNameMatcher);
   }
 
 }

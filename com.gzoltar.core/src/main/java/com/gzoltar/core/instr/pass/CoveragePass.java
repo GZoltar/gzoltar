@@ -24,7 +24,7 @@ import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.AnonymousClassConstructorFilter;
-import com.gzoltar.core.instr.filter.DuplicateCollectorReferenceFilter;
+import com.gzoltar.core.instr.filter.DuplicateFilter;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.IFilter;
@@ -56,8 +56,8 @@ public class CoveragePass implements IPass {
 
   private final StackSizePass stackSizePass = new StackSizePass();
 
-  private final DuplicateCollectorReferenceFilter duplicateCollectorFilter =
-      new DuplicateCollectorReferenceFilter();
+  private final DuplicateFilter duplicateCollectorFilter = new DuplicateFilter(
+      InstrumentationConstants.INIT_METHOD_NAME, InstrumentationConstants.FIELD_NAME);
 
   private final List<IFilter> filters = new ArrayList<IFilter>();
 
