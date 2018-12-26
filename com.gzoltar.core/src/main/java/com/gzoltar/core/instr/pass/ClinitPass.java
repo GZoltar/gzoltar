@@ -26,6 +26,7 @@ import javassist.CtField;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.AccessFlag;
+import javassist.bytecode.analysis.Type;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 
@@ -74,6 +75,46 @@ public class ClinitPass implements IPass {
     CtConstructor staticConstructorClone = new CtConstructor((CtConstructor) clinit, ctClass, null);
     staticConstructorClone.getMethodInfo().setName("$_clinit_clone_"); // FIXME hardcoded string
     staticConstructorClone.setModifiers(AccessFlag.PRIVATE | AccessFlag.STATIC); // FIXME hardcoded access
+
+    // reset static non-final fields to their default values
+    StringBuilder str = new StringBuilder();
+    for (CtField ctField : ctClass.getDeclaredFields()) {
+      if (!Modifier.isStatic(ctField.getModifiers()) || Modifier.isFinal(ctField.getModifiers())) {
+        // skip static final fields of being reset, i.e., only static non-final fields are reset
+        continue;
+      }
+
+      Object value = ctField.getConstantValue();
+      if (value == null) {
+        Type type = Type.get(ctField.getType());
+
+        if (type.isAssignableFrom(Type.DOUBLE)) {
+          str.append(ctField.getName() + " = (double) 0.0; ");
+        } else if (type.isAssignableFrom(Type.BOOLEAN)) {
+          str.append(ctField.getName() + " = (boolean) false; ");
+        } else if (type.isAssignableFrom(Type.LONG)) {
+          str.append(ctField.getName() + " = (long) 0; ");
+        } else if (type.isAssignableFrom(Type.CHAR)) {
+          str.append(ctField.getName() + " = (char) '\0'; ");
+        } else if (type.isAssignableFrom(Type.BYTE)) {
+          str.append(ctField.getName() + " = (byte) 0; ");
+        } else if (type.isAssignableFrom(Type.SHORT)) {
+          str.append(ctField.getName() + " = (short) 0; ");
+        } else if (type.isAssignableFrom(Type.INTEGER)) {
+          str.append(ctField.getName() + " = (int) 0; ");
+        } else if (type.isAssignableFrom(Type.FLOAT)) {
+          str.append(ctField.getName() + " = (float) 0.0; ");
+        } else { // Object || Array
+          str.append(ctField.getName() + " = null; ");
+        }
+      } else {
+        // non-null fields are handled by the <clinit> method itself (which at this point has been
+        // cloned)
+        // str.append(ctField.getName() + " = " + value + "; ");
+      }
+    }
+    staticConstructorClone.insertBefore(str.toString());
+
     ctClass.addConstructor(staticConstructorClone);
 
     // remove 'final' access of all static write fields
