@@ -52,6 +52,13 @@ public class ClinitPass implements IPass {
       return Outcome.REJECT;
     }
 
+    // avoid adding the $_clinit_clone_ method more than once
+    for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
+      if (ctBehavior.getLongName().equals(ctClass.getName() + ".<clinit>()")) { // FIXME
+        return Outcome.REJECT;
+      }
+    }
+
     CtConstructor clinit = ctClass.makeClassInitializer();
     if (clinit != null) {
       // clone <clinit> method

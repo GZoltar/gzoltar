@@ -19,6 +19,7 @@ package com.gzoltar.core.instr.pass;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
+import com.gzoltar.core.instr.filter.DuplicateFilter;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -36,6 +37,8 @@ public class ResetPass implements IPass {
   private static final String call = InstrumentationConstants.SYSTEM_CLASS_NAME_JVM + "."
       + InstrumentationConstants.SYSTEM_CLASS_FIELD_NAME + ".equals(" + ARRAY_OBJECT_NAME + "); ";
 
+  private static final DuplicateFilter duplicateFilter = new DuplicateFilter("$gzoltarResetter", null);
+
   private final EmptyMethodFilter emptyMethodFilter = new EmptyMethodFilter();
 
   private final InstrumentationLevel instrumentationLevel;
@@ -46,6 +49,11 @@ public class ResetPass implements IPass {
 
   public static Outcome makeEmptyResetter(final CtClass ctClass) throws Exception {
     if (ctClass.isInterface()) {
+      return Outcome.REJECT;
+    }
+
+    // avoid adding the resetter method more than once
+    if (duplicateFilter.filter(ctClass) == Outcome.REJECT) {
       return Outcome.REJECT;
     }
 
