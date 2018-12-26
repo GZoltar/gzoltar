@@ -56,7 +56,7 @@ public class CoveragePass implements IPass {
 
   private final StackSizePass stackSizePass = new StackSizePass();
 
-  private final DuplicateFilter duplicateCollectorFilter = new DuplicateFilter(
+  private final DuplicateFilter duplicateFilter = new DuplicateFilter(
       InstrumentationConstants.INIT_METHOD_NAME, InstrumentationConstants.FIELD_NAME);
 
   private final List<IFilter> filters = new ArrayList<IFilter>();
@@ -163,7 +163,7 @@ public class CoveragePass implements IPass {
       }
     }
 
-    boolean injectBytecode = this.duplicateCollectorFilter.filter(ctClass) == Outcome.ACCEPT
+    boolean injectBytecode = this.duplicateFilter.filter(ctClass) == Outcome.ACCEPT
         && (this.instrumentationLevel == InstrumentationLevel.FULL
             || this.instrumentationLevel == InstrumentationLevel.OFFLINE);
 
