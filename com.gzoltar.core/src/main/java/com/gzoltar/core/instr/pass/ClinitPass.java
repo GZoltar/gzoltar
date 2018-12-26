@@ -52,7 +52,7 @@ public class ClinitPass implements IPass {
       return Outcome.REJECT;
     }
 
-    CtConstructor clinit = ctClass.getClassInitializer();
+    CtConstructor clinit = ctClass.makeClassInitializer();
     if (clinit != null) {
       // clone <clinit> method
       if (this.transform(ctClass, clinit) == Outcome.REJECT) {
