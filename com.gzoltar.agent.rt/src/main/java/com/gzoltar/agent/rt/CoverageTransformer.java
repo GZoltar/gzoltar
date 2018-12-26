@@ -23,8 +23,11 @@ import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.AbstractInstrumenter;
 import com.gzoltar.core.instr.ClinitInstrumenter;
 import com.gzoltar.core.instr.CoverageInstrumenter;
+import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.PutGetStaticInstrumenter;
-import com.gzoltar.core.instr.matchers.SourceLocationMatcher;
+import com.gzoltar.core.instr.actions.BlackList;
+import com.gzoltar.core.instr.filter.Filter;
+import com.gzoltar.core.instr.matchers.PrefixMatcher;
 import com.gzoltar.core.util.MD5;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -33,16 +36,15 @@ public class CoverageTransformer implements ClassFileTransformer {
 
   private final AbstractInstrumenter[] instrumenters;
 
-  private final String buildLocations;
-
-  private final boolean inclNoLocationClasses;
+  private final Filter blackListClasses;
 
   public CoverageTransformer(final AgentConfigs agentConfigs) {
     this.instrumenters = new AbstractInstrumenter[] {new PutGetStaticInstrumenter(agentConfigs),
         new ClinitInstrumenter(agentConfigs), new CoverageInstrumenter(agentConfigs)};
 
-    this.buildLocations = agentConfigs.getBuildLocation();
-    this.inclNoLocationClasses = agentConfigs.getInclNoLocationClasses();
+    this.blackListClasses = new Filter(
+        new BlackList(new PrefixMatcher("com.gzoltar.", "javax.", "java.", "sun.", "com.sun.",
+            "org.junit.", "junit.framework.", "org.hamcrest.", "org.apache.tools.ant.")));
   }
 
   @Override
@@ -64,10 +66,7 @@ public class CoverageTransformer implements ClassFileTransformer {
       ClassPool cp = ClassPool.getDefault();
       CtClass cc = cp.makeClassIfNew(new ByteArrayInputStream(classfileBuffer));
 
-      // only instrument classes under a build location, e.g., target/classes/ or build/classes/
-      SourceLocationMatcher excludeClassesNotInBuildLocation = new SourceLocationMatcher(
-          this.inclNoLocationClasses, this.buildLocations, protectionDomain);
-      if (!excludeClassesNotInBuildLocation.matches(cc)) {
+      if (this.blackListClasses.filter(cc) == Outcome.REJECT) {
         return null;
       }
 
