@@ -24,9 +24,8 @@ import com.gzoltar.core.instr.matchers.DuplicateMatcher;
  */
 public class DuplicateFilter extends Filter {
 
-  public DuplicateFilter(final String classNameMatcher,
-      final String methodNameMatcher) {
-    this.add(new BlackList(new DuplicateMatcher(classNameMatcher, methodNameMatcher)));
+  public DuplicateFilter(final String methodNameMatcher, final String fieldNameMatcher) {
+    this.add(new BlackList(new DuplicateMatcher(methodNameMatcher, fieldNameMatcher)));
   }
 
 }

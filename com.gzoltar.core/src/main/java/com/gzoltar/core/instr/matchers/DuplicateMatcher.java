@@ -22,13 +22,13 @@ import javassist.CtField;
 
 public class DuplicateMatcher implements IMatcher {
 
-  private final String classNameMatcher;
-
   private final String methodNameMatcher;
 
-  public DuplicateMatcher(final String classNameMatcher, final String methodNameMatcher) {
-    this.classNameMatcher = classNameMatcher;
+  private final String fieldNameMatcher;
+
+  public DuplicateMatcher(final String methodNameMatcher, final String fieldNameMatcher) {
     this.methodNameMatcher = methodNameMatcher;
+    this.fieldNameMatcher = fieldNameMatcher;
   }
 
   @Override
@@ -43,18 +43,18 @@ public class DuplicateMatcher implements IMatcher {
 
   @Override
   public boolean matches(final CtBehavior ctBehavior) {
-    if (this.classNameMatcher == null) {
+    if (this.methodNameMatcher == null) {
       return false;
     }
-    return ctBehavior.getName().equals(this.classNameMatcher);
+    return ctBehavior.getName().equals(this.methodNameMatcher);
   }
 
   @Override
   public boolean matches(final CtField ctField) {
-    if (this.methodNameMatcher == null) {
+    if (this.fieldNameMatcher == null) {
       return false;
     }
-    return ctField.getName().equals(this.methodNameMatcher);
+    return ctField.getName().equals(this.fieldNameMatcher);
   }
 
 }
