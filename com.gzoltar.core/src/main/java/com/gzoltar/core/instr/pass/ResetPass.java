@@ -27,6 +27,7 @@ import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.bytecode.AccessFlag;
+import javassist.bytecode.MethodInfo;
 
 public class ResetPass implements IPass {
 
@@ -75,7 +76,9 @@ public class ResetPass implements IPass {
     // if there is not a method called '$_clinit_clone_' no need to do anything!
     boolean foundClinitClone = false;
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
-      if (ctBehavior.getLongName().equals(ctClass.getName() + ".<clinit>()")) { // FIXME hardcoded string
+      MethodInfo methodInfo = ctBehavior.getMethodInfo2();
+      if (!methodInfo.isStaticInitializer() && methodInfo.isMethod()
+          && ctBehavior.getLongName().equals(ctClass.getName() + ".<clinit>()")) { // FIXME hardcoded string
         foundClinitClone = true;
         break;
       }
