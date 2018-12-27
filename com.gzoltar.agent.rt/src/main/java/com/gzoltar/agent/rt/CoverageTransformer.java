@@ -64,7 +64,7 @@ public class CoverageTransformer implements ClassFileTransformer {
 
     try {
       ClassPool cp = ClassPool.getDefault();
-      CtClass cc = cp.makeClassIfNew(new ByteArrayInputStream(classfileBuffer));
+      CtClass cc = cp.makeClass(new ByteArrayInputStream(classfileBuffer));
 
       if (this.blackListClasses.filter(cc) == Outcome.REJECT) {
         return null;
@@ -79,7 +79,10 @@ public class CoverageTransformer implements ClassFileTransformer {
         // future we might want to skip instrumentation if one of the instrumenters rejects it
       }
 
-      return cc.toBytecode();
+      byte[] b = cc.toBytecode();
+      cc.detach();
+
+      return b;
     } catch (Exception e) {
       e.printStackTrace();
       return null;
