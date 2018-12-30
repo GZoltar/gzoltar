@@ -41,7 +41,8 @@ public class PutGetStaticPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(final CtClass ctClass, final String ctClassHash) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final String ctClassHash) throws Exception {
     if (this.instrumentationLevel == InstrumentationLevel.NONE) {
       return Outcome.REJECT;
     }
@@ -51,7 +52,7 @@ public class PutGetStaticPass implements IPass {
     ResetPass.makeEmptyResetter(ctClass);
 
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
-      this.transform(ctClass, ctBehavior);
+      this.transform(loader, ctClass, ctBehavior);
     }
 
     return Outcome.ACCEPT;
@@ -61,7 +62,8 @@ public class PutGetStaticPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final CtBehavior ctBehavior) throws Exception {
     if (this.emptyMethodFilter.filter(ctBehavior) == Outcome.REJECT) {
       // skip empty methods
       return Outcome.ACCEPT;
@@ -90,6 +92,7 @@ public class PutGetStaticPass implements IPass {
         int targetFieldAddr = (ci.byteAt(index + 1) << 8) + ci.byteAt(index + 2);
         //fieldName = methodInfo.getConstPool().getFieldrefName(targetFieldAddr);
         className = methodInfo.getConstPool().getFieldrefClassName(targetFieldAddr);
+
         if (className.equals(ctClass.getName())) {
           // skip calls to its own static fields
           continue;

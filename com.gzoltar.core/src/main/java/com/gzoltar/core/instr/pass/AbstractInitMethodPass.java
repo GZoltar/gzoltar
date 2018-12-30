@@ -49,7 +49,8 @@ public abstract class AbstractInitMethodPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(CtClass ctClass, String ctClassHash) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final String ctClassHash) throws Exception {
     CtMethod gzoltarInit =
         CtMethod.make(String.format(METHOD_STR, ctClassHash, ctClass.getName(),
             Collector.instance().getProbeGroupByHash(ctClassHash).getNumberOfProbes(),
@@ -63,7 +64,8 @@ public abstract class AbstractInitMethodPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(CtClass ctClass, CtBehavior ctBehavior) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final CtBehavior ctBehavior) throws Exception {
     if (this.emptyMethodFilter.filter(ctBehavior) == Outcome.REJECT) {
       return Outcome.REJECT;
     }

@@ -138,7 +138,7 @@ public class SpectrumReader {
           // probeGroup has not been instrumented
           try {
             CtClass ctClass = ClassPool.getDefault().get(probeGroupName);
-            instrumenter.instrument(ctClass, MD5.calculateHash(ctClass));
+            instrumenter.instrument(null, ctClass, MD5.calculateHash(ctClass));
           } catch (Exception e) {
             throw new RuntimeException(e);
           }

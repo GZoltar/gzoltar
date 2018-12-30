@@ -202,9 +202,11 @@ public class Collector {
    * @param args
    */
   public synchronized void getResetFlag(final Object[] args) {
-    assert args.length == 1;
+    assert args.length == 2;
 
-    final String hash = (String) args[0];
+    final String classLoaderHashCode = (String) args[0];
+    final String classHash = (String) args[1];
+    final String hash = classLoaderHashCode + ":" + classHash;
     if (!this.resetFlags.containsKey(hash)) {
       this.resetFlags.put(hash, new boolean[] { true });
     }
@@ -223,7 +225,7 @@ public class Collector {
   public boolean equals(final Object args) {
     if (args instanceof Object[]) {
       Object[] arrayObject = (Object[]) args;
-      if (arrayObject.length == 1) {
+      if (arrayObject.length == 2) {
         this.getResetFlag((Object[]) args);
       } else {
         this.getHitArray((Object[]) args);

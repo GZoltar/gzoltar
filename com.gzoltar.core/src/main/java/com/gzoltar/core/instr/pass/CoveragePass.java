@@ -93,19 +93,20 @@ public class CoveragePass implements IPass {
   }
 
   @Override
-  public synchronized Outcome transform(final CtClass ctClass, final String ctClassHash) throws Exception {
+  public synchronized Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final String ctClassHash) throws Exception {
     boolean instrumented = false;
 
     this.probeGroup = new ProbeGroup(ctClassHash, ctClass);
 
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
-          this.transform(ctClass, ctBehavior).equals(Outcome.REJECT) ? false : true;
+          this.transform(loader, ctClass, ctBehavior).equals(Outcome.REJECT) ? false : true;
       instrumented = instrumented || behaviorInstrumented;
 
       if (behaviorInstrumented) {
         // update stack size
-        this.stackSizePass.transform(ctClass, ctBehavior);
+        this.stackSizePass.transform(loader, ctClass, ctBehavior);
       }
     }
 
@@ -114,10 +115,10 @@ public class CoveragePass implements IPass {
 
     if (instrumented && this.initMethodPass != null) {
       // make GZoltar's field
-      this.fieldPass.transform(ctClass, "");
+      this.fieldPass.transform(loader, ctClass, "");
 
       // make method to init GZoltar's field
-      this.initMethodPass.transform(ctClass, ctClassHash);
+      this.initMethodPass.transform(loader, ctClass, ctClassHash);
 
       // make sure GZoltar's field is initialised. note: the following code requires the init method
       // to be in the instrumented class, otherwise a compilation error is thrown
@@ -131,7 +132,7 @@ public class CoveragePass implements IPass {
 
         // before executing the code of every single method, check whether FIELD_NAME has been
         // initialised. if not, init method should initialise the field
-        this.initMethodPass.transform(ctClass, ctBehavior);
+        this.initMethodPass.transform(loader, ctClass, ctBehavior);
 
         if (hasAnyStaticInitializerBeenInstrumented == false
             && ctBehavior.getMethodInfo2().isStaticInitializer()) {
@@ -141,7 +142,7 @@ public class CoveragePass implements IPass {
 
       if (!hasAnyStaticInitializerBeenInstrumented) {
         CtConstructor clinit = ctClass.makeClassInitializer();
-        this.initMethodPass.transform(ctClass, clinit);
+        this.initMethodPass.transform(loader, ctClass, clinit);
       }
     }
 
@@ -149,7 +150,8 @@ public class CoveragePass implements IPass {
   }
 
   @Override
-  public Outcome transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final CtBehavior ctBehavior) throws Exception {
     Outcome instrumented = Outcome.REJECT;
 
     // check whether this method should be instrumented

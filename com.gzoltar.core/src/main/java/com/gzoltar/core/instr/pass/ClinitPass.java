@@ -42,7 +42,8 @@ public class ClinitPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(final CtClass ctClass, final String ctClassHash) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final String ctClassHash) throws Exception {
     if (this.instrumentationLevel == InstrumentationLevel.NONE) {
       return Outcome.REJECT;
     }
@@ -55,7 +56,7 @@ public class ClinitPass implements IPass {
     CtConstructor clinit = ctClass.makeClassInitializer();
     if (clinit != null) {
       // clone <clinit> method
-      if (this.transform(ctClass, clinit) == Outcome.REJECT) {
+      if (this.transform(loader, ctClass, clinit) == Outcome.REJECT) {
         return Outcome.REJECT;
       }
 
@@ -71,7 +72,8 @@ public class ClinitPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(final CtClass ctClass, final CtBehavior clinit) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass, final CtBehavior clinit)
+      throws Exception {
     CtConstructor staticConstructorClone = new CtConstructor((CtConstructor) clinit, ctClass, null);
     staticConstructorClone.getMethodInfo().setName("$_clinit_clone_"); // FIXME hardcoded string
     staticConstructorClone.setModifiers(AccessFlag.PRIVATE | AccessFlag.STATIC); // FIXME hardcoded access

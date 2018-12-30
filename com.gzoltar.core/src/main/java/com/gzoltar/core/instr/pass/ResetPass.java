@@ -68,7 +68,8 @@ public class ResetPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(final CtClass ctClass, final String ctClassHash) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final String ctClassHash) throws Exception {
     if (this.instrumentationLevel == InstrumentationLevel.NONE) {
       return Outcome.REJECT;
     }
@@ -102,7 +103,7 @@ public class ResetPass implements IPass {
       CtMethod gzoltarResetter = ctClass.getMethod("$gzoltarResetter", "()V"); // FIXME
       gzoltarResetter.setBody("{ "
             + "if ($gzoltarResetFlag == null) { "
-              + "Object[] $tmpFlag = new Object[] { \"" + ctClassHash + "\" }; "
+              + "Object[] $tmpFlag = new Object[] { \"" + (loader == null ? "" : loader.hashCode()) + "\", \"" + ctClassHash + "\" }; "
               + call + " "
               + "$gzoltarResetFlag = (boolean[]) $tmpFlag[0]; "
               + "$gzoltarDefaultProperties = (java.util.Properties) java.lang.System.getProperties().clone(); "
@@ -138,7 +139,7 @@ public class ResetPass implements IPass {
           continue;
         }
 
-        this.transform(ctClass, ctBehavior);
+        this.transform(loader, ctClass, ctBehavior);
       }
 
       return Outcome.ACCEPT;
@@ -151,7 +152,8 @@ public class ResetPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final CtBehavior ctBehavior) throws Exception {
     ctBehavior.insertBefore("$gzoltarResetter();");
     return Outcome.ACCEPT;
   }

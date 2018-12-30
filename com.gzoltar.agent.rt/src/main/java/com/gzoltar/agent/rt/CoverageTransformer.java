@@ -74,7 +74,7 @@ public class CoverageTransformer implements ClassFileTransformer {
       String hash = MD5.calculateHash(cc);
 
       for (AbstractInstrumenter instrumenter : this.instrumenters) {
-        instrumenter.instrument(cc, hash);
+        instrumenter.instrument(loader, cc, hash);
         // for now all instrumenters have the chance to modify the loaded class, however in the
         // future we might want to skip instrumentation if one of the instrumenters rejects it
       }

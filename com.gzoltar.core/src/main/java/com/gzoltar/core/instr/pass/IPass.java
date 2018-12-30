@@ -22,8 +22,10 @@ import javassist.CtClass;
 
 public interface IPass {
 
-  public Outcome transform(final CtClass ctClass, final String ctClassHash) throws Exception;
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final String ctClassHash) throws Exception;
 
-  public Outcome transform(final CtClass ctClass, final CtBehavior ctBehavior) throws Exception;
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final CtBehavior ctBehavior) throws Exception;
 
 }

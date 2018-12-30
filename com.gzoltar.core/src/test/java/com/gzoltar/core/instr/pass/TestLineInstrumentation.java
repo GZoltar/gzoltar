@@ -64,7 +64,7 @@ public class TestLineInstrumentation {
     for (String classUnderTest : classesUnderTest) {
       CtClass cc = pool.get(classUnderTest);
       String hash = MD5.calculateHash(cc);
-      instrumentationPass.transform(cc, hash);
+      instrumentationPass.transform(null, cc, hash);
     }
 
     ISpectrum spectrum = Collector.instance().getSpectrum();

@@ -83,19 +83,22 @@ public abstract class AbstractInstrumenter {
    */
   public byte[] instrument(final InputStream sourceStream) throws Exception {
     CtClass cc = ClassPool.getDefault().makeClassIfNew(sourceStream);
-    this.instrument(cc, MD5.calculateHash(cc));
+    this.instrument(null, cc, MD5.calculateHash(cc));
     return cc.toBytecode();
   }
 
   /**
    * 
+   * @param loader
    * @param cc
+   * @param ccHash
    * @return
    * @throws Exception
    */
-  public Outcome instrument(final CtClass cc, final String ccHash) throws Exception {
+  public Outcome instrument(final ClassLoader loader, final CtClass cc, final String ccHash)
+      throws Exception {
     for (IPass p : this.passes) {
-      switch (p.transform(cc, ccHash)) {
+      switch (p.transform(loader, cc, ccHash)) {
         case REJECT:
           return Outcome.REJECT;
         case ACCEPT:

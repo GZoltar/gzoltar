@@ -65,11 +65,12 @@ public class CoverageInstrumenter extends AbstractInstrumenter {
    * {@inheritDoc}
    */
   @Override
-  public Outcome instrument(final CtClass cc, final String ccHash) throws Exception {
+  public Outcome instrument(final ClassLoader loader, final CtClass cc, final String ccHash)
+      throws Exception {
     // check whether this class should be instrumented
     if (this.filter.filter(cc) == Outcome.REJECT) {
       return Outcome.REJECT;
     }
-    return super.instrument(cc, ccHash);
+    return super.instrument(loader, cc, ccHash);
   }
 }

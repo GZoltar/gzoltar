@@ -59,7 +59,7 @@ public class TestJUnitListener {
     for (String classUnderTest : classesUnderTest) {
       CtClass cc = pool.get(classUnderTest);
       String hash = MD5.calculateHash(cc);
-      instrumenter.instrument(cc, hash);
+      instrumenter.instrument(null, cc, hash);
     }
     JUnitCore core = new JUnitCore();
     core.addListener(new JUnitListener());

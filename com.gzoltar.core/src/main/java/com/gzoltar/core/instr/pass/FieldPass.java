@@ -29,7 +29,8 @@ public class FieldPass implements IPass {
           + InstrumentationConstants.FIELD_INIT_VALUE + InstrumentationConstants.EOL;
 
   @Override
-  public Outcome transform(CtClass ctClass, final String ctClassHash) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final String ctClassHash) throws Exception {
     CtField f = CtField.make(fieldStr, ctClass);
     f.setModifiers(f.getModifiers() | InstrumentationConstants.FIELD_ACC);
     ctClass.addField(f);
@@ -38,7 +39,8 @@ public class FieldPass implements IPass {
   }
 
   @Override
-  public Outcome transform(CtClass ctClass, CtBehavior ctBehavior) throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final CtBehavior ctBehavior) throws Exception {
     return Outcome.REJECT;
   }
 
