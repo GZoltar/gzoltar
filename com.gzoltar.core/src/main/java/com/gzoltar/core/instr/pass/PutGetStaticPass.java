@@ -19,6 +19,7 @@ package com.gzoltar.core.instr.pass;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
+import javassist.ClassPool;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.bytecode.Bytecode;
@@ -84,14 +85,25 @@ public class PutGetStaticPass implements IPass {
         continue;
       }
 
-      //String fieldName = null;
+      String fieldName = null;
       String className = null;
 
       int op = ci.byteAt(index);
       if (op == Opcode.PUTSTATIC || op == Opcode.GETSTATIC) {
         int targetFieldAddr = (ci.byteAt(index + 1) << 8) + ci.byteAt(index + 2);
-        //fieldName = methodInfo.getConstPool().getFieldrefName(targetFieldAddr);
+        fieldName = methodInfo.getConstPool().getFieldrefName(targetFieldAddr);
         className = methodInfo.getConstPool().getFieldrefClassName(targetFieldAddr);
+
+        if (fieldName.startsWith("class$")) {
+          className = fieldName;
+          className = className.replaceFirst("class\\$", "");
+          while (className.contains("$")) {
+            if (ClassPool.getDefault().find(className) != null) {
+              break;
+            }
+            className = className.replaceFirst("\\$", ".");
+          }
+        }
 
         if (className.equals(ctClass.getName())) {
           // skip calls to its own static fields
@@ -101,6 +113,11 @@ public class PutGetStaticPass implements IPass {
             || className.startsWith("sun.") || className.startsWith("com.sun.")) {
           // skip calls to java classes, "javax.", "java.", "sun.", "com.sun."
           // TODO are there any others we might need to exclude?
+          continue;
+        }
+        CtClass targetClass = ClassPool.getDefault().get(className);
+        if (targetClass.isInterface()) {
+          // at the moment interface classes do not have a resetter method
           continue;
         }
       } else {
