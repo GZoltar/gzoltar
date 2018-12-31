@@ -18,17 +18,13 @@ package com.gzoltar.core.instr.pass;
 
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
-import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.Modifier;
-import javassist.NotFoundException;
 import javassist.bytecode.AccessFlag;
 import javassist.bytecode.analysis.Type;
-import javassist.expr.ExprEditor;
-import javassist.expr.FieldAccess;
 
 public class ClinitPass implements IPass {
 
@@ -78,11 +74,11 @@ public class ClinitPass implements IPass {
     staticConstructorClone.getMethodInfo().setName("$_clinit_clone_"); // FIXME hardcoded string
     staticConstructorClone.setModifiers(AccessFlag.PRIVATE | AccessFlag.STATIC); // FIXME hardcoded access
 
-    // reset static non-final fields to their default values
+    // reset static fields to their default values
     StringBuilder str = new StringBuilder();
     for (CtField ctField : ctClass.getDeclaredFields()) {
-      if (!Modifier.isStatic(ctField.getModifiers()) || Modifier.isFinal(ctField.getModifiers())) {
-        // skip static final fields of being reset, i.e., only static non-final fields are reset
+      if (!Modifier.isStatic(ctField.getModifiers())) {
+        // skip static final fields of being reset
         continue;
       }
 
@@ -118,32 +114,6 @@ public class ClinitPass implements IPass {
     staticConstructorClone.insertBefore(str.toString());
 
     ctClass.addConstructor(staticConstructorClone);
-
-    // remove 'final' access of all static write fields
-    staticConstructorClone.instrument(new ExprEditor() {
-      @Override
-      public void edit(FieldAccess fieldAccess) throws CannotCompileException {
-        try {
-          if (fieldAccess.isStatic() && fieldAccess.isWriter()) {
-            final CtField field = fieldAccess.getField();
-            if (field.getName().equals("serialVersionUID")) {
-              // We must not remove final from serialVersionUID or else the class cannot be
-              // serialised and de-serialised any more
-              return;
-            }
-
-            //fieldAccess.replace("{ $_ = $proceed($$); }");
-
-            if (Modifier.isFinal(field.getModifiers())) {
-              // keep all modified flags other than FINAL
-              field.setModifiers(field.getModifiers() & ~Modifier.FINAL);
-            }
-          }
-        } catch (NotFoundException e) {
-          throw new CannotCompileException(e);
-        }
-      }
-    });
 
     return Outcome.ACCEPT;
   }
