@@ -81,6 +81,12 @@ public class ClinitPass implements IPass {
         // skip static final fields of being reset
         continue;
       }
+      if (ctField.getName().equals("serialVersionUID")) {
+        // in theory the field named serialVersionUID is a constant which should not be reset in any
+        // circumstances as it will break the serialization of the class. in here, we just make sure
+        // the reset does not occur.
+        continue;
+      }
 
       Object value = ctField.getConstantValue();
       if (value == null) {
