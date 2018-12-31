@@ -17,23 +17,34 @@
 package com.gzoltar.core.instr;
 
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.matchers.ClassNoLineOfCodeMatcher;
 import com.gzoltar.core.instr.pass.ClinitPass;
 import com.gzoltar.core.instr.pass.IPass;
 import com.gzoltar.core.instr.pass.ResetPass;
+import javassist.CtClass;
 
 /**
  * Instrument *all* classes for re-clinit purpose
  */
 public class ClinitInstrumenter extends AbstractInstrumenter {
 
+  private static final ClassNoLineOfCodeMatcher classNoLineOfCodeMatcher =
+      new ClassNoLineOfCodeMatcher();
+
   /**
    * 
    * @param agentConfigs
    */
   public ClinitInstrumenter(final AgentConfigs agentConfigs) {
-    super(new IPass[] {
-        new ClinitPass(agentConfigs.getInstrumentationLevel()),
-        new ResetPass(agentConfigs.getInstrumentationLevel())
-    });
+    super(new IPass[] {new ClinitPass(agentConfigs.getInstrumentationLevel()),
+        new ResetPass(agentConfigs.getInstrumentationLevel())});
+  }
+
+  @Override
+  public Outcome instrument(ClassLoader loader, CtClass cc, String ccHash) throws Exception {
+    if (!classNoLineOfCodeMatcher.matches(cc)) {
+      return Outcome.REJECT;
+    }
+    return super.instrument(loader, cc, ccHash);
   }
 }
