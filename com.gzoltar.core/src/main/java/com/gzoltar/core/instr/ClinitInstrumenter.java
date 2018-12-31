@@ -31,18 +31,25 @@ public class ClinitInstrumenter extends AbstractInstrumenter {
   private static final ClassNoLineOfCodeMatcher classNoLineOfCodeMatcher =
       new ClassNoLineOfCodeMatcher();
 
+  private final InstrumentationLevel instrumentationLevel;
+
   /**
    * 
    * @param agentConfigs
    */
   public ClinitInstrumenter(final AgentConfigs agentConfigs) {
-    super(new IPass[] {new ClinitPass(agentConfigs.getInstrumentationLevel()),
-        new ResetPass(agentConfigs.getInstrumentationLevel())});
+    super(new IPass[] {new ClinitPass(), new ResetPass()});
+    this.instrumentationLevel = agentConfigs.getInstrumentationLevel();
   }
 
   @Override
   public Outcome instrument(ClassLoader loader, CtClass cc, String ccHash) throws Exception {
     if (!classNoLineOfCodeMatcher.matches(cc)) {
+      return Outcome.REJECT;
+    }
+    if (this.instrumentationLevel == InstrumentationLevel.NONE) {
+      // minor optimization. if no instrumentation is required, there is no need to waste cpu cycles
+      // on it.
       return Outcome.REJECT;
     }
     return super.instrument(loader, cc, ccHash);

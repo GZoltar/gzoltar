@@ -17,7 +17,6 @@
 package com.gzoltar.core.instr.pass;
 
 import com.gzoltar.core.instr.InstrumentationConstants;
-import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.filter.MethodNoBodyFilter;
 import javassist.CtBehavior;
@@ -39,12 +38,6 @@ public class ResetPass implements IPass {
 
   private final MethodNoBodyFilter methodNoBodyFilter = new MethodNoBodyFilter();
 
-  private final InstrumentationLevel instrumentationLevel;
-
-  public ResetPass(final InstrumentationLevel instrumentationLevel) {
-    this.instrumentationLevel = instrumentationLevel;
-  }
-
   public static Outcome makeEmptyResetter(final CtClass ctClass) throws Exception {
     if (ctClass.isInterface()) {
       return Outcome.REJECT;
@@ -62,9 +55,6 @@ public class ResetPass implements IPass {
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
       final String ctClassHash) throws Exception {
-    if (this.instrumentationLevel == InstrumentationLevel.NONE) {
-      return Outcome.REJECT;
-    }
 
     // if there is not a method called '$_clinit_clone_' no need to do anything!
     boolean foundClinitClone = false;

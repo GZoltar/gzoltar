@@ -16,7 +16,6 @@
  */
 package com.gzoltar.core.instr.pass;
 
-import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -28,22 +27,12 @@ import javassist.bytecode.analysis.Type;
 
 public class ClinitPass implements IPass {
 
-  private final InstrumentationLevel instrumentationLevel;
-
-  public ClinitPass(final InstrumentationLevel instrumentationLevel) {
-    this.instrumentationLevel = instrumentationLevel;
-  }
-
   /**
    * {@inheritDoc}
    */
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
       final String ctClassHash) throws Exception {
-    if (this.instrumentationLevel == InstrumentationLevel.NONE) {
-      return Outcome.REJECT;
-    }
-
     if (ctClass.isInterface()) {
       // TODO add support for interfaces
       return Outcome.REJECT;
