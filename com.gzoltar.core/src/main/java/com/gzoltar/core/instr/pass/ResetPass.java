@@ -19,7 +19,7 @@ package com.gzoltar.core.instr.pass;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
-import com.gzoltar.core.instr.filter.EmptyMethodFilter;
+import com.gzoltar.core.instr.filter.MethodNoBodyFilter;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -37,7 +37,7 @@ public class ResetPass implements IPass {
   private static final String call = InstrumentationConstants.SYSTEM_CLASS_NAME_JVM + "."
       + InstrumentationConstants.SYSTEM_CLASS_FIELD_NAME + ".equals(" + ARRAY_OBJECT_NAME + "); ";
 
-  private final EmptyMethodFilter emptyMethodFilter = new EmptyMethodFilter();
+  private final MethodNoBodyFilter methodNoBodyFilter = new MethodNoBodyFilter();
 
   private final InstrumentationLevel instrumentationLevel;
 
@@ -126,8 +126,8 @@ public class ResetPass implements IPass {
           continue;
         }
 
-        if (this.emptyMethodFilter.filter(ctBehavior) == Outcome.REJECT) {
-          // skip empty methods
+        if (this.methodNoBodyFilter.filter(ctBehavior) == Outcome.REJECT) {
+          // skip methods with no body
           continue;
         }
 

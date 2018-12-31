@@ -14,27 +14,18 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.core.instr.matchers;
+package com.gzoltar.core.instr.filter;
 
-import javassist.CtBehavior;
-import javassist.CtClass;
-import javassist.CtField;
+import com.gzoltar.core.instr.actions.BlackList;
+import com.gzoltar.core.instr.matchers.MethodNoBodyMatcher;
 
-public class MethodEmptyMatcher implements IMatcher {
+/**
+ * Filters all Java methods with no body.
+ */
+public class MethodNoBodyFilter extends Filter {
 
-  @Override
-  public boolean matches(CtClass ctClass) {
-    return false;
-  }
-
-  @Override
-  public boolean matches(CtBehavior ctBehavior) {
-    return ctBehavior.getMethodInfo().getCodeAttribute() == null;
-  }
-
-  @Override
-  public boolean matches(CtField ctField) {
-    return false;
+  public MethodNoBodyFilter() {
+    this.add(new BlackList(new MethodNoBodyMatcher()));
   }
 
 }

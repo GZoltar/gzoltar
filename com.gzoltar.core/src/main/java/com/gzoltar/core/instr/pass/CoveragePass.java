@@ -25,7 +25,7 @@ import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.AnonymousClassConstructorFilter;
 import com.gzoltar.core.instr.filter.DuplicateFilter;
-import com.gzoltar.core.instr.filter.EmptyMethodFilter;
+import com.gzoltar.core.instr.filter.MethodNoBodyFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.IFilter;
 import com.gzoltar.core.instr.filter.SyntheticFilter;
@@ -85,7 +85,7 @@ public class CoveragePass implements IPass {
     this.filters.add(new EnumFilter());
 
     // exclude methods without any source code
-    this.filters.add(new EmptyMethodFilter());
+    this.filters.add(new MethodNoBodyFilter());
 
     // exclude constructor of an Anonymous class as the same line number is handled by the
     // superclass
