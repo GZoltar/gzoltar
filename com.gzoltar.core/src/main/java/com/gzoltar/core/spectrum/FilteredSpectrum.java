@@ -150,9 +150,11 @@ public class FilteredSpectrum {
 
         ProbeGroup probeGroup = source.getProbeGroupByHash(hash);
         boolean[] hitArray = transaction.getHitArrayByProbeGroupHash(hash);
+        assert hitArray.length == probeGroup.getNumberOfProbes();
 
         ProbeGroup newProbeGroup = filteredSpectrum.getProbeGroupByHash(hash);
         boolean[] newHitArray = new boolean[newProbeGroup.getNumberOfProbes()];
+        assert hitArray.length == newHitArray.length;
 
         for (Probe probe : probeGroup.getProbes()) {
           Probe newProbe = newProbeGroup.findProbeByNode(probe.getNode());

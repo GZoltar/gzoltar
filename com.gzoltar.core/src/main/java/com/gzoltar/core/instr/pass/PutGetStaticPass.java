@@ -103,6 +103,8 @@ public class PutGetStaticPass implements IPass {
             }
             className = className.replaceFirst("\\$", ".");
           }
+        } else if (fieldName.startsWith("$gzoltar")) {
+          continue;
         }
 
         if (className.equals(ctClass.getName())) {
