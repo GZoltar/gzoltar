@@ -67,6 +67,7 @@ public class CoverageTransformer implements ClassFileTransformer {
       CtClass cc = cp.makeClass(new ByteArrayInputStream(classfileBuffer));
 
       if (this.blackListClasses.filter(cc) == Outcome.REJECT) {
+        cc.detach();
         return null;
       }
 
