@@ -50,13 +50,18 @@ public class PutGetStaticPass implements IPass {
 
     // Add an empty $gzoltarReseter method to avoid *any* java.lang.NoSuchMethodError when a static
     // field is accessed (either write or read access) by another class
-    ResetPass.makeEmptyResetter(ctClass);
-
-    for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
-      this.transform(loader, ctClass, ctBehavior);
+    if (ResetPass.makeEmptyResetter(ctClass) == Outcome.REJECT) {
+      return Outcome.REJECT;
     }
 
-    return Outcome.ACCEPT;
+    boolean instrumented = false;
+    for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
+      if (this.transform(loader, ctClass, ctBehavior) == Outcome.ACCEPT) {
+        instrumented = true;
+      }
+    }
+
+    return instrumented ? Outcome.ACCEPT : Outcome.REJECT;
   }
 
   /**
@@ -65,9 +70,11 @@ public class PutGetStaticPass implements IPass {
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
       final CtBehavior ctBehavior) throws Exception {
+    Outcome instrumented = Outcome.REJECT;
+
     if (this.methodNoBodyFilter.filter(ctBehavior) == Outcome.REJECT) {
       // skip methods with no body
-      return Outcome.ACCEPT;
+      return instrumented;
     }
 
     MethodInfo methodInfo = ctBehavior.getMethodInfo();
@@ -133,9 +140,11 @@ public class PutGetStaticPass implements IPass {
       Bytecode b = new Bytecode(methodInfo.getConstPool());
       b.addInvokestatic(className, "$gzoltarResetter", "()V"); // FIXME harcoded string
       ci.insert(index, b.get());
+
+      instrumented = Outcome.ACCEPT;
     }
 
-    return Outcome.ACCEPT;
+    return instrumented;
   }
 
 }

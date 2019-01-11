@@ -59,15 +59,14 @@ public class ClinitPass implements IPass {
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass, final CtBehavior clinit)
       throws Exception {
-    CtConstructor staticConstructorClone = new CtConstructor((CtConstructor) clinit, ctClass, null);
-    staticConstructorClone.getMethodInfo().setName("$_clinit_clone_"); // FIXME hardcoded string
-    staticConstructorClone.setModifiers(AccessFlag.PRIVATE | AccessFlag.STATIC); // FIXME hardcoded access
+
+    boolean instrumented = false;
 
     // reset static fields to their default values
     StringBuilder str = new StringBuilder();
     for (CtField ctField : ctClass.getDeclaredFields()) {
       if (!Modifier.isStatic(ctField.getModifiers())) {
-        // skip static final fields of being reset
+        // skip non static fields of being reset
         continue;
       }
       if (ctField.getName().equals("serialVersionUID")) {
@@ -100,14 +99,23 @@ public class ClinitPass implements IPass {
         } else { // Object || Array
           str.append(ctField.getName() + " = null; ");
         }
+
+        instrumented = true;
       } else {
         // non-null fields are handled by the <clinit> method itself (which at this point has been
         // cloned)
         // str.append(ctField.getName() + " = " + value + "; ");
       }
     }
-    staticConstructorClone.insertBefore(str.toString());
 
+    if (!instrumented) {
+      return Outcome.REJECT;
+    }
+
+    CtConstructor staticConstructorClone = new CtConstructor((CtConstructor) clinit, ctClass, null);
+    staticConstructorClone.getMethodInfo().setName("$_clinit_clone_"); // FIXME hardcoded string
+    staticConstructorClone.setModifiers(AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNCHRONIZED); // FIXME hardcoded access
+    staticConstructorClone.insertBefore(str.toString());
     ctClass.addConstructor(staticConstructorClone);
 
     return Outcome.ACCEPT;
