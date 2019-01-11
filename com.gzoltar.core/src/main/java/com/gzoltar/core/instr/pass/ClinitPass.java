@@ -102,8 +102,7 @@ public class ClinitPass implements IPass {
 
         instrumented = true;
       } else {
-        // non-null fields are handled by the <clinit> method itself (which at this point has been
-        // cloned)
+        // non-null fields are handled by the <clinit> method itself
         // str.append(ctField.getName() + " = " + value + "; ");
       }
     }
