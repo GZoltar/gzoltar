@@ -43,7 +43,7 @@ public class CoverageTransformer implements ClassFileTransformer {
         new PutGetStaticInstrumenter(agentConfigs), new ClinitInstrumenter(agentConfigs)};
 
     this.blackListClasses = new Filter(
-        new BlackList(new PrefixMatcher("com.gzoltar.", "javax.", "java.", "sun.", "com.sun.",
+        new BlackList(new PrefixMatcher("com.gzoltar.internal.", "javax.", "java.", "sun.", "com.sun.",
             "org.junit.", "junit.framework.", "org.hamcrest.", "org.apache.tools.ant.")));
   }
 
