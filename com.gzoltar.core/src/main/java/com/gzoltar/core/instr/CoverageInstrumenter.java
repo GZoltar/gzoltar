@@ -16,12 +16,15 @@
  */
 package com.gzoltar.core.instr;
 
+import java.io.IOException;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.actions.AbstractAction;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.matchers.ClassNameMatcher;
 import com.gzoltar.core.instr.matchers.PrefixMatcher;
+import com.gzoltar.core.instr.matchers.SourceLocationMatcher;
 import com.gzoltar.core.instr.pass.CoveragePass;
 import com.gzoltar.core.instr.pass.IPass;
 import javassist.CtClass;
@@ -57,8 +60,24 @@ public class CoverageInstrumenter extends AbstractInstrumenter {
     BlackList excludeClassLoaders =
         new BlackList(new ClassNameMatcher(agentConfigs.getExclClassloader()));
 
+    // only instrument classes under a build location, e.g., target/classes/ or build/classes/
+    AbstractAction sourceLocation = null;
+    try {
+      if (agentConfigs.getInclNoLocationClasses()) {
+        sourceLocation =
+            new WhiteList(new SourceLocationMatcher(agentConfigs.getInclNoLocationClasses(),
+                agentConfigs.getBuildLocation(), this.protectionDomain));
+      } else {
+        sourceLocation =
+            new BlackList(new SourceLocationMatcher(agentConfigs.getInclNoLocationClasses(),
+                agentConfigs.getBuildLocation(), this.protectionDomain));
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
     this.filter =
-        new Filter(excludeGZoltarClasses, includeClasses, excludeClasses, excludeClassLoaders);
+        new Filter(excludeGZoltarClasses, includeClasses, excludeClasses, excludeClassLoaders, sourceLocation);
   }
 
   /**

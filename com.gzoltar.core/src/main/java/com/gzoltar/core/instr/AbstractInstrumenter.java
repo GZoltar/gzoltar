@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.ProtectionDomain;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -46,6 +47,8 @@ public abstract class AbstractInstrumenter {
 
   private static final SignatureRemover signatureRemover = new SignatureRemover();
 
+  protected ProtectionDomain protectionDomain = null;
+
   /**
    * 
    * @param passes
@@ -63,6 +66,15 @@ public abstract class AbstractInstrumenter {
    */
   public void setRemoveSignatures(final boolean flag) {
     signatureRemover.setActive(flag);
+  }
+
+  /**
+   * Sets the protection domain used to load a Java class.
+   * 
+   * @param protectionDomain a {@link java.security.ProtectionDomain} object
+   */
+  public void setProtectionDomain(final ProtectionDomain protectionDomain) {
+    this.protectionDomain = protectionDomain;
   }
 
   /**
