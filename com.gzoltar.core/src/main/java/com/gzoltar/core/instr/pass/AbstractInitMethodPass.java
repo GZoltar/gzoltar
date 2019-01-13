@@ -28,6 +28,8 @@ public abstract class AbstractInitMethodPass implements IPass {
 
   private static final String METHOD_STR;
 
+  private static final String METHOD_BODY_STR;
+
   protected static final String ARRAY_OBJECT_NAME = "$tmpGZoltarData";
 
   private final MethodNoBodyFilter methodNoBodyFilter = new MethodNoBodyFilter();
@@ -35,14 +37,16 @@ public abstract class AbstractInitMethodPass implements IPass {
   protected String collectorCall = null;
 
   static {
+    METHOD_BODY_STR = 
+        "if (" + InstrumentationConstants.FIELD_NAME + " == " + InstrumentationConstants.FIELD_INIT_VALUE + ") { "
+          + "Object[] " + ARRAY_OBJECT_NAME + " = new Object[] { \"%s\",\"%s\",\"%d\" }; "
+          + "%s "
+          + InstrumentationConstants.FIELD_NAME + " = (" + InstrumentationConstants.FIELD_DESC_HUMAN + ") " + ARRAY_OBJECT_NAME + "[0]; "
+        + "}";
     METHOD_STR = 
         InstrumentationConstants.INIT_METHOD_DESC_HUMAN + InstrumentationConstants.INIT_METHOD_NAME_WITH_ARGS + " { "
-              + "if (" + InstrumentationConstants.FIELD_NAME + " == " + InstrumentationConstants.FIELD_INIT_VALUE + ") { "
-                + "Object[] " + ARRAY_OBJECT_NAME + " = new Object[] { \"%s\",\"%s\",\"%d\" }; "
-                + "%s "
-                + InstrumentationConstants.FIELD_NAME + " = (" + InstrumentationConstants.FIELD_DESC_HUMAN + ") " + ARRAY_OBJECT_NAME + "[0]; "
-              + "}"
-            + "}";
+        + METHOD_BODY_STR
+        + "}";
   }
 
   /**
@@ -51,12 +55,17 @@ public abstract class AbstractInitMethodPass implements IPass {
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
       final String ctClassHash) throws Exception {
+    if (ctClass.isInterface()) {
+      return Outcome.ACCEPT;
+    }
+
     CtMethod gzoltarInit =
         CtMethod.make(String.format(METHOD_STR, ctClassHash, ctClass.getName(),
             Collector.instance().getProbeGroupByHash(ctClassHash).getNumberOfProbes(),
             this.collectorCall), ctClass);
     gzoltarInit.setModifiers(gzoltarInit.getModifiers() | InstrumentationConstants.INIT_METHOD_ACC);
     ctClass.addMethod(gzoltarInit);
+
     return Outcome.ACCEPT;
   }
 
@@ -65,13 +74,20 @@ public abstract class AbstractInitMethodPass implements IPass {
    */
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
-      final CtBehavior ctBehavior) throws Exception {
+      final String ctClassHash, final CtBehavior ctBehavior) throws Exception {
     if (this.methodNoBodyFilter.filter(ctBehavior) == Outcome.REJECT) {
       return Outcome.REJECT;
     }
 
-    ctBehavior.insertBefore(
-        InstrumentationConstants.INIT_METHOD_NAME_WITH_ARGS + InstrumentationConstants.EOL);
+    if (ctClass.isInterface()) {
+      ctBehavior.insertBefore(String.format(METHOD_BODY_STR, ctClassHash, ctClass.getName(),
+          Collector.instance().getProbeGroupByHash(ctClassHash).getNumberOfProbes(),
+          this.collectorCall));
+    } else {
+      ctBehavior.insertBefore(
+          InstrumentationConstants.INIT_METHOD_NAME_WITH_ARGS + InstrumentationConstants.EOL);
+    }
+
     return Outcome.ACCEPT;
   }
 

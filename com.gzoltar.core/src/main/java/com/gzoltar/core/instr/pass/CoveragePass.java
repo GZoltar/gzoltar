@@ -25,9 +25,9 @@ import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.AnonymousClassConstructorFilter;
 import com.gzoltar.core.instr.filter.DuplicateFilter;
-import com.gzoltar.core.instr.filter.MethodNoBodyFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.IFilter;
+import com.gzoltar.core.instr.filter.MethodNoBodyFilter;
 import com.gzoltar.core.instr.filter.SyntheticFilter;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeFactory;
@@ -36,7 +36,6 @@ import com.gzoltar.core.runtime.Probe;
 import com.gzoltar.core.runtime.ProbeGroup;
 import javassist.CtBehavior;
 import javassist.CtClass;
-import javassist.CtConstructor;
 import javassist.bytecode.Bytecode;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.CodeIterator;
@@ -101,12 +100,12 @@ public class CoveragePass implements IPass {
 
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
       boolean behaviorInstrumented =
-          this.transform(loader, ctClass, ctBehavior).equals(Outcome.REJECT) ? false : true;
+          this.transform(loader, ctClass, ctClassHash, ctBehavior).equals(Outcome.REJECT) ? false : true;
       instrumented = instrumented || behaviorInstrumented;
 
       if (behaviorInstrumented) {
         // update stack size
-        this.stackSizePass.transform(loader, ctClass, ctBehavior);
+        this.stackSizePass.transform(loader, ctClass, ctClassHash, ctBehavior);
       }
     }
 
@@ -120,10 +119,12 @@ public class CoveragePass implements IPass {
       // make method to init GZoltar's field
       this.initMethodPass.transform(loader, ctClass, ctClassHash);
 
+      // make <clinit> method (in case there is not one)
+      ctClass.makeClassInitializer();
+
       // make sure GZoltar's field is initialised. note: the following code requires the init method
       // to be in the instrumented class, otherwise a compilation error is thrown
 
-      boolean hasAnyStaticInitializerBeenInstrumented = false;
       for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
         if (ctBehavior.getName().equals(InstrumentationConstants.INIT_METHOD_NAME)) {
           // for obvious reasons, init method cannot call itself
@@ -132,17 +133,7 @@ public class CoveragePass implements IPass {
 
         // before executing the code of every single method, check whether FIELD_NAME has been
         // initialised. if not, init method should initialise the field
-        this.initMethodPass.transform(loader, ctClass, ctBehavior);
-
-        if (hasAnyStaticInitializerBeenInstrumented == false
-            && ctBehavior.getMethodInfo2().isStaticInitializer()) {
-          hasAnyStaticInitializerBeenInstrumented = true;
-        }
-      }
-
-      if (!hasAnyStaticInitializerBeenInstrumented) {
-        CtConstructor clinit = ctClass.makeClassInitializer();
-        this.initMethodPass.transform(loader, ctClass, clinit);
+        this.initMethodPass.transform(loader, ctClass, ctClassHash, ctBehavior);
       }
     }
 
@@ -151,7 +142,7 @@ public class CoveragePass implements IPass {
 
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
-      final CtBehavior ctBehavior) throws Exception {
+      final String ctClassHash, final CtBehavior ctBehavior) throws Exception {
     Outcome instrumented = Outcome.REJECT;
 
     // check whether this method should be instrumented
