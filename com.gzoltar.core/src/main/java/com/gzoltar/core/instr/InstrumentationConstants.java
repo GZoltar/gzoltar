@@ -25,6 +25,8 @@ public final class InstrumentationConstants {
 
   public static final String EOL = ";";
 
+  public static final String PREFIX = "$gzoltar";
+
   // === System Class' Field ===
 
   public static final String SYSTEM_CLASS_NAME = "java/lang/UnknownError";
@@ -40,7 +42,7 @@ public final class InstrumentationConstants {
 
   // === Data Field ===
 
-  public static final String FIELD_NAME = "$gzoltarData";
+  public static final String FIELD_NAME = PREFIX + "Data";
 
   public static final String FIELD_INIT_VALUE = "null";
 
@@ -56,7 +58,7 @@ public final class InstrumentationConstants {
 
   // === Init method ===
 
-  public static final String INIT_METHOD_NAME = "$gzoltarInit";
+  public static final String INIT_METHOD_NAME = PREFIX + "Init";
 
   public static final String INIT_METHOD_NAME_WITH_ARGS = INIT_METHOD_NAME + "()";
 
