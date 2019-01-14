@@ -61,11 +61,6 @@ public class ResetterInstrumenter extends AbstractInstrumenter {
       return instrument;
     }
 
-    if (ctClass.getClassInitializer() == null) {
-      // in case there is not a static constructor, no need to perform any reset operation
-      return instrument;
-    }
-
     if (!classNoLineOfCodeMatcher.matches(ctClass)) {
       // TODO why is not Javassist able to get the class?!
       // FIXME it seems because there is no .class file for ctClass
