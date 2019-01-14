@@ -76,6 +76,10 @@ public class ClinitPass implements IPass {
         // the reset does not occur.
         continue;
       }
+      if (ctField.getName().startsWith(InstrumentationConstants.PREFIX)) {
+        // skip GZoltar fields
+        continue;
+      }
 
       Object value = ctField.getConstantValue();
       if (value == null) {
