@@ -16,9 +16,11 @@
  */
 package com.gzoltar.core.instr.pass;
 
+import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.filter.MethodNoBodyFilter;
+import com.gzoltar.core.util.ClassUtils;
 import javassist.ClassPool;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -48,15 +50,9 @@ public class PutGetStaticPass implements IPass {
       return Outcome.REJECT;
     }
 
-    // Add an empty $gzoltarReseter method to avoid *any* java.lang.NoSuchMethodError when a static
-    // field is accessed (either write or read access) by another class
-    if (ResetPass.makeEmptyResetter(ctClass) == Outcome.REJECT) {
-      return Outcome.REJECT;
-    }
-
     boolean instrumented = false;
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
-      if (this.transform(loader, ctClass, ctBehavior) == Outcome.ACCEPT) {
+      if (this.transform(loader, ctClass, ctClassHash, ctBehavior) == Outcome.ACCEPT) {
         instrumented = true;
       }
     }
@@ -69,7 +65,7 @@ public class PutGetStaticPass implements IPass {
    */
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
-      final CtBehavior ctBehavior) throws Exception {
+      final String ctClassHash, final CtBehavior ctBehavior) throws Exception {
     Outcome instrumented = Outcome.REJECT;
 
     if (this.methodNoBodyFilter.filter(ctBehavior) == Outcome.REJECT) {
@@ -101,6 +97,12 @@ public class PutGetStaticPass implements IPass {
         fieldName = methodInfo.getConstPool().getFieldrefName(targetFieldAddr);
         className = methodInfo.getConstPool().getFieldrefClassName(targetFieldAddr);
 
+        CtClass targetCtClass = ClassPool.getDefault().get(className);
+        if (targetCtClass.getClassInitializer() == null) {
+          // a class without a static constructor has no resetter method
+          continue;
+        }
+
         if (fieldName.startsWith("class$")) {
           className = fieldName;
           className = className.replaceFirst("class\\$", "");
@@ -124,9 +126,7 @@ public class PutGetStaticPass implements IPass {
           // TODO are there any others we might need to exclude?
           continue;
         }
-        CtClass targetClass = ClassPool.getDefault().get(className);
-        if (targetClass.isInterface()) {
-          // at the moment interface classes do not have a resetter method
+        if (targetCtClass.isInterface() && !ClassUtils.isInterfaceClassSupported(targetCtClass)) {
           continue;
         }
       } else {
@@ -138,7 +138,8 @@ public class PutGetStaticPass implements IPass {
        * call $_clinit_clone_ of the target class before the call to the static field.
        */
       Bytecode b = new Bytecode(methodInfo.getConstPool());
-      b.addInvokestatic(className, "$gzoltarResetter", "()V"); // FIXME harcoded string
+      b.addInvokestatic(className, InstrumentationConstants.RESETTER_METHOD_NAME,
+          InstrumentationConstants.RESETTER_METHOD_DESC);
       ci.insert(index, b.get());
 
       instrumented = Outcome.ACCEPT;

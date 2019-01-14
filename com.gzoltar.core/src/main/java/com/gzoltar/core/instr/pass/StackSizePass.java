@@ -28,7 +28,7 @@ public class StackSizePass implements IPass {
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
       final String ctClassHash) throws Exception {
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
-      if (this.transform(loader, ctClass, ctBehavior) == Outcome.REJECT) {
+      if (this.transform(loader, ctClass, ctClassHash, ctBehavior) == Outcome.REJECT) {
         return Outcome.REJECT;
       }
     }
@@ -37,7 +37,7 @@ public class StackSizePass implements IPass {
 
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
-      final CtBehavior ctBehavior) throws Exception {
+      final String ctClassHash, final CtBehavior ctBehavior) throws Exception {
     MethodInfo info = ctBehavior.getMethodInfo();
     CodeAttribute ca = info.getCodeAttribute();
 

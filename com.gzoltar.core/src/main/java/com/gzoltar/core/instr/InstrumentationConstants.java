@@ -67,7 +67,51 @@ public final class InstrumentationConstants {
   public static final int INIT_METHOD_ACC =
       AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC;
 
-  // TODO we may need extra constants for the init method of Java-8 interfaces
+  public static final int INIT_METHOD_INTF_ACC =
+      AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC;
+
+  // === Clinit clone method ===
+
+  public static final String CLINIT_CLONE_METHOD_NAME = "$_clinit_clone_";
+
+  public static final String CLINIT_CLONE_METHOD_NAME_WITH_ARGS = CLINIT_CLONE_METHOD_NAME + "()";
+
+  public static final String CLINIT_CLONE_METHOD_DESC_HUMAN = "void ";
+
+  public static final int CLINIT_CLONE_METHOD_ACC =
+      AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC;
+
+  public static final int CLINIT_CLONE_METHOD_INTF_ACC =
+      AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC;
+
+  // === Reset field ===
+
+  public static final String RESET_FIELD_NAME = PREFIX + "ResetFlag";
+
+  public static final String RESET_FIELD_INIT_VALUE = "null";
+
+  public static final String RESET_FIELD_DESC_BYTECODE = "[Z";
+
+  public static final String RESET_FIELD_DESC_HUMAN = "boolean[] ";
+
+  public static final int RESET_FIELD_ACC =
+      AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC | AccessFlag.TRANSIENT;
+
+  public static final int RESET_FIELD_INTF_ACC =
+      AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.FINAL | AccessFlag.SYNTHETIC;
+
+  // === Reset method ===
+
+  public static final String RESETTER_METHOD_NAME = PREFIX + "Resetter";
+
+  public static final String RESETTER_METHOD_NAME_WITH_ARGS = RESETTER_METHOD_NAME + "()";
+
+  public static final String RESETTER_METHOD_DESC = "()V";
+
+  public static final String RESETTER_METHOD_DESC_HUMAN = "void ";
+
+  public static final int RESETTER_METHOD_ACC =
+      AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.SYNCHRONIZED | AccessFlag.SYNTHETIC;
 
   private InstrumentationConstants() {
     // NO-OP

@@ -16,13 +16,14 @@
  */
 package com.gzoltar.core.instr.pass;
 
+import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
+import com.gzoltar.core.util.ClassUtils;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.Modifier;
-import javassist.bytecode.AccessFlag;
 import javassist.bytecode.analysis.Type;
 
 public class ClinitPass implements IPass {
@@ -33,20 +34,17 @@ public class ClinitPass implements IPass {
   @Override
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
       final String ctClassHash) throws Exception {
-    if (ctClass.isInterface()) {
-      // TODO add support for interfaces
+    if (ctClass.isInterface() && !ClassUtils.isInterfaceClassSupported(ctClass)) {
       return Outcome.REJECT;
     }
 
     CtConstructor clinit = ctClass.getClassInitializer();
     if (clinit != null) {
-      // clone <clinit> method
-      if (this.transform(loader, ctClass, clinit) == Outcome.REJECT) {
+      // clone or adapt <clinit> static constructor to call the .$gzoltarResetter() method
+      if (this.transform(loader, ctClass, ctClassHash, clinit) == Outcome.REJECT) {
         return Outcome.REJECT;
       }
 
-      // replace body of original <clinit> method with a call to clinit clone
-      clinit.setBody("{ $_clinit_clone_(); }"); // FIXME hardcoded string
       return Outcome.ACCEPT;
     }
 
@@ -57,8 +55,11 @@ public class ClinitPass implements IPass {
    * {@inheritDoc}
    */
   @Override
-  public Outcome transform(final ClassLoader loader, final CtClass ctClass, final CtBehavior clinit)
-      throws Exception {
+  public Outcome transform(final ClassLoader loader, final CtClass ctClass,
+      final String ctClassHash, final CtBehavior clinit) throws Exception {
+    if (ctClass.isInterface() && !ClassUtils.isInterfaceClassSupported(ctClass)) {
+      return Outcome.REJECT;
+    }
 
     boolean instrumented = false;
 
@@ -112,10 +113,16 @@ public class ClinitPass implements IPass {
     }
 
     CtConstructor staticConstructorClone = new CtConstructor((CtConstructor) clinit, ctClass, null);
-    staticConstructorClone.getMethodInfo().setName("$_clinit_clone_"); // FIXME hardcoded string
-    staticConstructorClone.setModifiers(AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNCHRONIZED); // FIXME hardcoded access
+    staticConstructorClone.getMethodInfo()
+        .setName(InstrumentationConstants.CLINIT_CLONE_METHOD_NAME);
+    staticConstructorClone
+        .setModifiers(ctClass.isInterface() ? InstrumentationConstants.CLINIT_CLONE_METHOD_INTF_ACC
+            : InstrumentationConstants.CLINIT_CLONE_METHOD_ACC);
     staticConstructorClone.insertBefore(str.toString());
     ctClass.addConstructor(staticConstructorClone);
+
+    // replace body of original <clinit> method with a call to clinit clone
+    clinit.setBody("{ " + InstrumentationConstants.CLINIT_CLONE_METHOD_NAME_WITH_ARGS + "; }");
 
     return Outcome.ACCEPT;
   }

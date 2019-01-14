@@ -21,10 +21,9 @@ import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.AbstractInstrumenter;
-import com.gzoltar.core.instr.ClinitInstrumenter;
 import com.gzoltar.core.instr.CoverageInstrumenter;
 import com.gzoltar.core.instr.Outcome;
-import com.gzoltar.core.instr.PutGetStaticInstrumenter;
+import com.gzoltar.core.instr.ResetterInstrumenter;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.matchers.PrefixMatcher;
@@ -40,7 +39,7 @@ public class CoverageTransformer implements ClassFileTransformer {
 
   public CoverageTransformer(final AgentConfigs agentConfigs) {
     this.instrumenters = new AbstractInstrumenter[] {new CoverageInstrumenter(agentConfigs),
-        new PutGetStaticInstrumenter(agentConfigs), new ClinitInstrumenter(agentConfigs)};
+        new ResetterInstrumenter(agentConfigs)};
 
     this.blackListClasses = new Filter(
         new BlackList(new PrefixMatcher("com.gzoltar.internal.", "javax.", "java.", "sun.", "com.sun.",

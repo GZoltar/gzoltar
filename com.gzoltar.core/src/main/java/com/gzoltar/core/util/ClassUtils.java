@@ -17,6 +17,7 @@
 package com.gzoltar.core.util;
 
 import javassist.CtClass;
+import javassist.bytecode.ClassFile;
 
 public class ClassUtils {
 
@@ -32,5 +33,16 @@ public class ClassUtils {
       return false;
     }
     return Character.isDigit(clazz.getName().charAt(pos + 1));
+  }
+
+  /**
+   * Returns <code>true</code> if a {@link javassist.CtClass} object is a Java interface and its
+   * version is 52 or above (i.e., >= Java 1.8), false otherwise.
+   * 
+   * @param ctClass
+   * @return
+   */
+  public static boolean isInterfaceClassSupported(final CtClass ctClass) {
+    return ctClass.isInterface() && ctClass.getClassFile().getMajorVersion() >= ClassFile.JAVA_8;
   }
 }

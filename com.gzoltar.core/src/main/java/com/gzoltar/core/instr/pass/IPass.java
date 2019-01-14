@@ -26,6 +26,6 @@ public interface IPass {
       final String ctClassHash) throws Exception;
 
   public Outcome transform(final ClassLoader loader, final CtClass ctClass,
-      final CtBehavior ctBehavior) throws Exception;
+      final String ctClassHash, final CtBehavior ctBehavior) throws Exception;
 
 }
