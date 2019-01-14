@@ -64,7 +64,6 @@ public class ResetterInstrumenter extends AbstractInstrumenter {
     if (!classNoLineOfCodeMatcher.matches(ctClass)) {
       // TODO why is not Javassist able to get the class?!
       // FIXME it seems because there is no .class file for ctClass
-      System.out.println("[RESETTER_INST] NO LINES OF CODE");
       return instrument;
     }
 
