@@ -50,14 +50,11 @@ public class PutGetStaticPass implements IPass {
       return Outcome.REJECT;
     }
 
-    boolean instrumented = false;
     for (CtBehavior ctBehavior : ctClass.getDeclaredBehaviors()) {
-      if (this.transform(loader, ctClass, ctClassHash, ctBehavior) == Outcome.ACCEPT) {
-        instrumented = true;
-      }
+      this.transform(loader, ctClass, ctClassHash, ctBehavior);
     }
 
-    return instrumented ? Outcome.ACCEPT : Outcome.REJECT;
+    return Outcome.ACCEPT;
   }
 
   /**
