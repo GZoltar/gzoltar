@@ -38,7 +38,6 @@ public class ResetterInstrumenter extends AbstractInstrumenter {
   private static final ClassNoLineOfCodeMatcher classNoLineOfCodeMatcher =
       new ClassNoLineOfCodeMatcher();
 
-  public static final String RESETTER_CLASS_SUFFIX = "$$GZoltarResetter";
   /**
    * 
    * @param agentConfigs
