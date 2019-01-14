@@ -97,12 +97,6 @@ public class PutGetStaticPass implements IPass {
         fieldName = methodInfo.getConstPool().getFieldrefName(targetFieldAddr);
         className = methodInfo.getConstPool().getFieldrefClassName(targetFieldAddr);
 
-        CtClass targetCtClass = ClassPool.getDefault().get(className);
-        if (targetCtClass.getClassInitializer() == null) {
-          // a class without a static constructor has no resetter method
-          continue;
-        }
-
         if (fieldName.startsWith("class$")) {
           className = fieldName;
           className = className.replaceFirst("class\\$", "");
@@ -113,6 +107,12 @@ public class PutGetStaticPass implements IPass {
             className = className.replaceFirst("\\$", ".");
           }
         } else if (fieldName.startsWith("$gzoltar")) {
+          continue;
+        }
+
+        CtClass targetCtClass = ClassPool.getDefault().get(className);
+        if (targetCtClass.getClassInitializer() == null) {
+          // a class without a static constructor has no resetter method
           continue;
         }
 
