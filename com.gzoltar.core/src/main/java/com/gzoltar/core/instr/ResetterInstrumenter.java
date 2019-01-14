@@ -39,14 +39,13 @@ public class ResetterInstrumenter extends AbstractInstrumenter {
       new ClassNoLineOfCodeMatcher();
 
   public static final String RESETTER_CLASS_SUFFIX = "$$GZoltarResetter";
-
   /**
    * 
    * @param agentConfigs
    */
   public ResetterInstrumenter(final AgentConfigs agentConfigs) {
-    super(new IPass[] {new ClinitPass(), new ResetPass(),
-        new PutGetStaticPass(agentConfigs.getInstrumentationLevel())});
+    super(new IPass[] {new PutGetStaticPass(agentConfigs.getInstrumentationLevel()),
+        new ClinitPass(), new ResetPass()});
     this.instrumentationLevel = agentConfigs.getInstrumentationLevel();
   }
 
