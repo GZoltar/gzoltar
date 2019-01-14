@@ -25,9 +25,11 @@ import com.gzoltar.core.instr.pass.ResetPass;
 import javassist.CtClass;
 
 /**
- * For each Java class <code>C</code> this class creates a copy of <code>C</code> and rename it to
- * <code>C$$GZoltarResetter</code>. The new class will be responsible for resetting all static
- * fields of <code>C</code>.
+ * In order to reset all static fields of a Java class <code>C</code>, this class performs the
+ * following instrumentation: 1) instrument all putstatic and getstatic calls by appending a call to
+ * a custom resetter method; 2) creates a custom resetter method by clonning the existing static
+ * constructor of a Java class <code>C</code>; 3) instrument all methods of <code>C</code> by
+ * appending a calling to its custom resetter method.
  */
 public class ResetterInstrumenter extends AbstractInstrumenter {
 
