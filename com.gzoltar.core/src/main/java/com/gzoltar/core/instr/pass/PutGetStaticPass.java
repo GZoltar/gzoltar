@@ -89,44 +89,45 @@ public class PutGetStaticPass implements IPass {
       String className = null;
 
       int op = ci.byteAt(index);
-      if (op == Opcode.PUTSTATIC || op == Opcode.GETSTATIC) {
-        int targetFieldAddr = (ci.byteAt(index + 1) << 8) + ci.byteAt(index + 2);
-        fieldName = methodInfo.getConstPool().getFieldrefName(targetFieldAddr);
-        className = methodInfo.getConstPool().getFieldrefClassName(targetFieldAddr);
+      if (op != Opcode.PUTSTATIC && op != Opcode.GETSTATIC) {
+        continue;
+      }
+      // only PUTSTATIC AND GETSTATIC instructions are considered
 
-        if (fieldName.startsWith("class$")) {
-          className = fieldName;
-          className = className.replaceFirst("class\\$", "");
-          while (className.contains("$")) {
-            if (ClassPool.getDefault().find(className) != null) {
-              break;
-            }
-            className = className.replaceFirst("\\$", ".");
+      int targetFieldAddr = (ci.byteAt(index + 1) << 8) + ci.byteAt(index + 2);
+      fieldName = methodInfo.getConstPool().getFieldrefName(targetFieldAddr);
+      className = methodInfo.getConstPool().getFieldrefClassName(targetFieldAddr);
+
+      if (fieldName.startsWith("class$")) {
+        className = fieldName;
+        className = className.replaceFirst("class\\$", "");
+        while (className.contains("$")) {
+          if (ClassPool.getDefault().find(className) != null) {
+            break;
           }
-        } else if (fieldName.startsWith(InstrumentationConstants.PREFIX)) {
-          continue;
+          className = className.replaceFirst("\\$", ".");
         }
+      } else if (fieldName.startsWith(InstrumentationConstants.PREFIX)) {
+        continue;
+      }
 
-        CtClass targetCtClass = ClassPool.getDefault().get(className);
-        if (targetCtClass.getClassInitializer() == null) {
-          // a class without a static constructor has no resetter method
-          continue;
-        }
+      CtClass targetCtClass = ClassPool.getDefault().get(className);
+      if (targetCtClass.getClassInitializer() == null) {
+        // a class without a static constructor has no resetter method
+        continue;
+      }
 
-        if (className.equals(ctClass.getName())) {
-          // skip calls to its own static fields
-          continue;
-        }
-        if (className.startsWith("javax.") || className.startsWith("java.")
-            || className.startsWith("sun.") || className.startsWith("com.sun.")) {
-          // skip calls to java classes, "javax.", "java.", "sun.", "com.sun."
-          // TODO are there any others we might need to exclude?
-          continue;
-        }
-        if (targetCtClass.isInterface() && !ClassUtils.isInterfaceClassSupported(targetCtClass)) {
-          continue;
-        }
-      } else {
+      if (className.equals(ctClass.getName())) {
+        // skip calls to its own static fields
+        continue;
+      }
+      if (className.startsWith("javax.") || className.startsWith("java.")
+          || className.startsWith("sun.") || className.startsWith("com.sun.")) {
+        // skip calls to java classes, "javax.", "java.", "sun.", "com.sun."
+        // TODO are there any others we might need to exclude?
+        continue;
+      }
+      if (targetCtClass.isInterface() && !ClassUtils.isInterfaceClassSupported(targetCtClass)) {
         continue;
       }
 
