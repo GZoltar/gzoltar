@@ -19,11 +19,14 @@ package com.gzoltar.core.instr.actions;
 import com.gzoltar.core.instr.Outcome;
 import javassist.CtBehavior;
 import javassist.CtClass;
+import javassist.CtField;
 
 public interface IAction {
 
   public Outcome getAction(final CtClass c);
 
   public Outcome getAction(final CtBehavior b);
+
+  public Outcome getAction(final CtField f);
 
 }

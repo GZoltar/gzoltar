@@ -20,6 +20,7 @@ import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.matchers.IMatcher;
 import javassist.CtBehavior;
 import javassist.CtClass;
+import javassist.CtField;
 
 public abstract class AbstractAction implements IAction {
 
@@ -37,6 +38,11 @@ public abstract class AbstractAction implements IAction {
   @Override
   public Outcome getAction(final CtBehavior b) {
     return this.getAction(this.matcher.matches(b));
+  }
+
+  @Override
+  public Outcome getAction(final CtField f) {
+    return this.getAction(this.matcher.matches(f));
   }
 
   protected abstract Outcome getAction(final boolean matches);
