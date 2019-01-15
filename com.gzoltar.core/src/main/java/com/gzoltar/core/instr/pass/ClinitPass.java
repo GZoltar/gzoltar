@@ -24,6 +24,7 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
+import javassist.bytecode.AccessFlag;
 import javassist.bytecode.analysis.Type;
 
 public class ClinitPass implements IPass {
@@ -72,6 +73,9 @@ public class ClinitPass implements IPass {
       if (fieldWorthyToBeResetFilter.filter(ctField) == Outcome.REJECT) {
         continue;
       }
+
+      // keep all modified flags other than FINAL
+      ctField.setModifiers(ctField.getModifiers() & ~AccessFlag.FINAL);
 
       Object value = ctField.getConstantValue();
       if (value == null) {
