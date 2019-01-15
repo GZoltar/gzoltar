@@ -19,6 +19,7 @@ package com.gzoltar.core.instr.pass;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.filter.MethodNoBodyFilter;
+import com.gzoltar.core.instr.filter.FieldWorthyToBeResetFilter;
 import com.gzoltar.core.util.ClassUtils;
 import javassist.CtBehavior;
 import javassist.CtClass;
@@ -32,6 +33,9 @@ public class ResetPass implements IPass {
 
   private static final String call = InstrumentationConstants.SYSTEM_CLASS_NAME_JVM + "."
       + InstrumentationConstants.SYSTEM_CLASS_FIELD_NAME + ".equals($tmpFlag); ";
+
+  private static final FieldWorthyToBeResetFilter fieldWorthyToBeResetFilter =
+      new FieldWorthyToBeResetFilter();
 
   private final MethodNoBodyFilter methodNoBodyFilter = new MethodNoBodyFilter();
 
@@ -49,11 +53,18 @@ public class ResetPass implements IPass {
       return Outcome.REJECT;
     }
 
-    CtMethod gzoltarResetter = CtMethod.make(InstrumentationConstants.RESETTER_METHOD_DESC_HUMAN
-        + InstrumentationConstants.RESETTER_METHOD_NAME_WITH_ARGS + " { }", ctClass);
-    gzoltarResetter.setModifiers(InstrumentationConstants.RESETTER_METHOD_ACC);
-    ctClass.addMethod(gzoltarResetter);
-    return Outcome.ACCEPT;
+    // Is there at least one static field that must be reset?
+    for (CtField ctField : ctClass.getDeclaredFields()) {
+      if (fieldWorthyToBeResetFilter.filter(ctField) == Outcome.ACCEPT) {
+        CtMethod gzoltarResetter = CtMethod.make(InstrumentationConstants.RESETTER_METHOD_DESC_HUMAN
+            + InstrumentationConstants.RESETTER_METHOD_NAME_WITH_ARGS + " { }", ctClass);
+        gzoltarResetter.setModifiers(InstrumentationConstants.RESETTER_METHOD_ACC);
+        ctClass.addMethod(gzoltarResetter);
+        return Outcome.ACCEPT;
+      }
+    }
+
+    return Outcome.REJECT;
   }
 
   /**
