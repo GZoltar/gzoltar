@@ -18,15 +18,18 @@ package com.gzoltar.core.instr.pass;
 
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.Outcome;
+import com.gzoltar.core.instr.filter.FieldWorthyToBeResetFilter;
 import com.gzoltar.core.util.ClassUtils;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
-import javassist.Modifier;
 import javassist.bytecode.analysis.Type;
 
 public class ClinitPass implements IPass {
+
+  private static final FieldWorthyToBeResetFilter fieldWorthyToBeResetFilter =
+      new FieldWorthyToBeResetFilter();
 
   /**
    * {@inheritDoc}
@@ -66,18 +69,7 @@ public class ClinitPass implements IPass {
     // reset static fields to their default values
     StringBuilder str = new StringBuilder();
     for (CtField ctField : ctClass.getDeclaredFields()) {
-      if (!Modifier.isStatic(ctField.getModifiers())) {
-        // skip non static fields of being reset
-        continue;
-      }
-      if (ctField.getName().equals("serialVersionUID")) {
-        // in theory the field named serialVersionUID is a constant which should not be reset in any
-        // circumstances as it will break the serialization of the class. in here, we just make sure
-        // the reset does not occur.
-        continue;
-      }
-      if (ctField.getName().startsWith(InstrumentationConstants.PREFIX)) {
-        // skip GZoltar fields
+      if (fieldWorthyToBeResetFilter.filter(ctField) == Outcome.REJECT) {
         continue;
       }
 
