@@ -17,6 +17,7 @@
 package com.gzoltar.core.instr.pass;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import org.gzoltar.examples.AbstractClass;
@@ -33,6 +34,7 @@ import org.gzoltar.examples.PublicStaticModifiers;
 import org.junit.Before;
 import org.junit.Test;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.runtime.Collector;
@@ -49,9 +51,10 @@ public class TestLineInstrumentation {
     Collector.restart();
   }
 
-  private void test(List<String> classesUnderTest, List<String> lineNumbers) throws Exception {
+  private void test(List<String> classesUnderTest, List<Integer> lineNumbers) throws Exception {
     AgentConfigs configs = new AgentConfigs();
     configs.setGranularity(GranularityLevel.LINE);
+    configs.setInstrumentationLevel(InstrumentationLevel.NONE);
 
     Collector.instance().addListener(configs.getEventListener());
 
@@ -71,7 +74,7 @@ public class TestLineInstrumentation {
     assertEquals(lineNumbers.size(), leafs.size());
 
     for (int i = 0; i < lineNumbers.size(); i++) {
-      assertEquals(lineNumbers.get(i), leafs.get(i).getName());
+      assertTrue(lineNumbers.get(i) == leafs.get(i).getLineNumber());
     }
 
   }
@@ -81,11 +84,12 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(EnumClass.class.getCanonicalName());
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("3");
-    lineNumbers.add("8");
-    lineNumbers.add("13");
-    lineNumbers.add("18");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    lineNumbers.add(19); // "normal" constructor
+    lineNumbers.add(24);
+    lineNumbers.add(29);
+    lineNumbers.add(34);
+    lineNumbers.add(19); // clinit
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -95,7 +99,7 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(InterfaceClass.class.getCanonicalName());
 
-    this.test(classesUnderTest, new ArrayList<String>());
+    this.test(classesUnderTest, new ArrayList<Integer>());
   }
 
   @Test
@@ -103,9 +107,9 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(AbstractClass.class.getCanonicalName());
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("3");
-    lineNumbers.add("8");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    lineNumbers.add(19);
+    lineNumbers.add(24);
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -116,16 +120,17 @@ public class TestLineInstrumentation {
     classesUnderTest.add(AnonymousClass.class.getCanonicalName());
     classesUnderTest.add(AnonymousClass.class.getCanonicalName() + "$1");
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("7");
-    lineNumbers.add("10");
-    lineNumbers.add("22");
-    lineNumbers.add("10");
-    lineNumbers.add("13");
-    lineNumbers.add("14");
-    lineNumbers.add("15");
-    lineNumbers.add("16");
-    lineNumbers.add("18");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    // AnonymousClass
+    lineNumbers.add(23);
+    lineNumbers.add(26);
+    lineNumbers.add(38);
+    // AnonymousClass$1
+    lineNumbers.add(29);
+    lineNumbers.add(30);
+    lineNumbers.add(31);
+    lineNumbers.add(32);
+    lineNumbers.add(34);
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -137,17 +142,20 @@ public class TestLineInstrumentation {
     classesUnderTest.add(InnerClass.class.getCanonicalName() + "$InnerPrivateClass");
     classesUnderTest.add(InnerClass.class.getCanonicalName() + "$InnerPublicClass");
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("5");
-    lineNumbers.add("6");
-    lineNumbers.add("7");
-    lineNumbers.add("10");
-    lineNumbers.add("11");
-    lineNumbers.add("12");
-    lineNumbers.add("17");
-    lineNumbers.add("18");
-    lineNumbers.add("19");
-    lineNumbers.add("21");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    // $InnerClass
+    lineNumbers.add(21);
+    lineNumbers.add(22);
+    lineNumbers.add(23);
+    // $InnerClass$InnerPrivateClass
+    lineNumbers.add(26);
+    lineNumbers.add(27);
+    lineNumbers.add(28);
+    // $InnerClass$InnerPublicClass
+    lineNumbers.add(33);
+    lineNumbers.add(34);
+    lineNumbers.add(35);
+    lineNumbers.add(37);
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -157,12 +165,12 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(PrivateModifiers.class.getCanonicalName());
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("4");
-    lineNumbers.add("6");
-    lineNumbers.add("9");
-    lineNumbers.add("10");
-    lineNumbers.add("12");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    lineNumbers.add(20);
+    lineNumbers.add(22);
+    lineNumbers.add(25);
+    lineNumbers.add(26);
+    lineNumbers.add(28);
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -172,12 +180,12 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(ProtectedModifiers.class.getCanonicalName());
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("3");
-    lineNumbers.add("5");
-    lineNumbers.add("8");
-    lineNumbers.add("9");
-    lineNumbers.add("11");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    lineNumbers.add(19);
+    lineNumbers.add(21);
+    lineNumbers.add(24);
+    lineNumbers.add(25);
+    lineNumbers.add(27);
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -187,12 +195,12 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(PublicModifiers.class.getCanonicalName());
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("3");
-    lineNumbers.add("5");
-    lineNumbers.add("9");
-    lineNumbers.add("10");
-    lineNumbers.add("12");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    lineNumbers.add(19);
+    lineNumbers.add(21);
+    lineNumbers.add(25);
+    lineNumbers.add(26);
+    lineNumbers.add(28);
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -202,12 +210,12 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(PublicFinalModifiers.class.getCanonicalName());
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("3");
-    lineNumbers.add("5");
-    lineNumbers.add("8");
-    lineNumbers.add("9");
-    lineNumbers.add("11");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    lineNumbers.add(19);
+    lineNumbers.add(21);
+    lineNumbers.add(24);
+    lineNumbers.add(25);
+    lineNumbers.add(27);
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -217,12 +225,12 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(PublicStaticModifiers.class.getCanonicalName());
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("5");
-    lineNumbers.add("3");
-    lineNumbers.add("8");
-    lineNumbers.add("9");
-    lineNumbers.add("11");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    lineNumbers.add(19);
+    lineNumbers.add(21);
+    lineNumbers.add(24);
+    lineNumbers.add(25);
+    lineNumbers.add(27);
 
     this.test(classesUnderTest, lineNumbers);
   }
@@ -232,17 +240,17 @@ public class TestLineInstrumentation {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(DeprecatedAnnotation.class.getCanonicalName());
 
-    List<String> lineNumbers = new ArrayList<String>();
-    lineNumbers.add("4");
-    lineNumbers.add("6");
-    lineNumbers.add("10");
-    lineNumbers.add("11");
-    lineNumbers.add("12");
-    lineNumbers.add("14");
-    lineNumbers.add("19");
-    lineNumbers.add("20");
-    lineNumbers.add("21");
-    lineNumbers.add("23");
+    List<Integer> lineNumbers = new ArrayList<Integer>();
+    lineNumbers.add(20);
+    lineNumbers.add(22);
+    lineNumbers.add(26);
+    lineNumbers.add(27);
+    lineNumbers.add(28);
+    lineNumbers.add(30);
+    lineNumbers.add(35);
+    lineNumbers.add(36);
+    lineNumbers.add(37);
+    lineNumbers.add(39);
 
     this.test(classesUnderTest, lineNumbers);
   }
