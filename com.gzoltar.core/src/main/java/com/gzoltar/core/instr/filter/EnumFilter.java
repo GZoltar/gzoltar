@@ -26,6 +26,7 @@ import com.gzoltar.core.instr.matchers.SuperclassMatcher;
 import com.gzoltar.core.util.VMUtils;
 import javassist.CtBehavior;
 import javassist.CtClass;
+import javassist.bytecode.Descriptor;
 
 /**
  * Filters methods 'values' and 'valueOf' of enum classes.
@@ -58,9 +59,11 @@ public final class EnumFilter extends Filter {
   private IAction enumFilterAction(final String className) {
     String classNameWithSlash = VMUtils.toVMName(className);
     IAction enumMethods = new BlackList(new AndMatcher(new SuperclassMatcher("java.lang.Enum"),
-        new OrMatcher(new MethodNameMatcher("values" + "()[L" + classNameWithSlash + ";"),
+        new OrMatcher(
             new MethodNameMatcher(
-                "valueOf" + "(Ljava/lang/String;)L" + classNameWithSlash + ";"))));
+                "values" + Descriptor.toString("()[L" + classNameWithSlash + ";")),
+            new MethodNameMatcher("valueOf"
+                + Descriptor.toString("(Ljava/lang/String;)L" + classNameWithSlash + ";")))));
     return enumMethods;
   }
 
