@@ -23,6 +23,7 @@ import org.gzoltar.examples.tests.TestEnumClass;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Instrumenter;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.runtime.Collector;
@@ -48,6 +49,7 @@ public class TestJUnitListener {
 
     AgentConfigs configs = new AgentConfigs();
     configs.setGranularity(GranularityLevel.LINE);
+    configs.setInstrumentationLevel(InstrumentationLevel.NONE);
 
     Collector.instance().addListener(configs.getEventListener());
 
