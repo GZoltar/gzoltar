@@ -17,7 +17,6 @@
 package com.gzoltar.core.runtime;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -151,20 +150,9 @@ public class Collector {
       activity.put(hash,
           new ImmutablePair<String, boolean[]>(entry.getValue().getLeft(), cloneHitArray));
 
-      ProbeGroup probeGroup = this.spectrum.getProbeGroupByHash(entry.getKey());
-      assert probeGroup != null;
-
-      List<Probe> probes = probeGroup.getProbes();
-      assert probes != null;
-      assert probes.size() == hitArray.length;
-
       // reset probes
       for (int i = 0; i < hitArray.length; i++) {
-        Probe probe = probes.get(i);
-        if (!probe.isProbeInClassInitialiser()) {
-          // reset probes that have not been injected in class initialisers, i.e., <clinit> methods
-          hitArray[i] = false;
-        }
+        hitArray[i] = false;
       }
     }
 
