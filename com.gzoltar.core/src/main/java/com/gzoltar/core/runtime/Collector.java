@@ -138,17 +138,15 @@ public class Collector {
       String hash = entry.getKey();
       boolean[] hitArray = entry.getValue().getRight();
 
-      if (!ArrayUtils.containsValue(hitArray, true)) {
-        // although the class has been loaded and instrumented, no line has been covered
-        activity.put(hash,
-            new ImmutablePair<String, boolean[]>(entry.getValue().getLeft(), hitArray));
-        continue;
-      }
-
       boolean[] cloneHitArray = new boolean[hitArray.length];
       System.arraycopy(hitArray, 0, cloneHitArray, 0, hitArray.length);
       activity.put(hash,
           new ImmutablePair<String, boolean[]>(entry.getValue().getLeft(), cloneHitArray));
+
+      if (!ArrayUtils.containsValue(hitArray, true)) {
+        // although the class has been loaded and instrumented, no line has been covered
+        continue;
+      }
 
       // reset probes
       for (int i = 0; i < hitArray.length; i++) {
