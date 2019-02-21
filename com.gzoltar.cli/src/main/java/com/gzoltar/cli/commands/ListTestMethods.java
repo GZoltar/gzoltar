@@ -35,9 +35,9 @@ import com.gzoltar.core.instr.matchers.JUnitMatcher;
 import com.gzoltar.core.instr.matchers.TestNGMatcher;
 
 /**
- * The <code>listTests</code> command.
+ * The <code>listTestMethods</code> command.
  */
-public class ListUnitTests extends Command {
+public class ListTestMethods extends Command {
 
   @Argument(usage = "list of folders that contain test classes", metaVar = "<path>",
       required = true)
@@ -75,7 +75,7 @@ public class ListUnitTests extends Command {
    */
   @Override
   public String name() {
-    return "listTests";
+    return "listTestMethods";
   }
 
   /**
