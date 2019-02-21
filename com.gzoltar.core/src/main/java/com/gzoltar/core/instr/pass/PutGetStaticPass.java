@@ -111,12 +111,6 @@ public class PutGetStaticPass implements IPass {
         continue;
       }
 
-      CtClass targetCtClass = ClassPool.getDefault().get(className);
-      if (targetCtClass.getClassInitializer() == null) {
-        // a class without a static constructor has no resetter method
-        continue;
-      }
-
       if (className.equals(ctClass.getName())) {
         // skip calls to its own static fields
         continue;
@@ -127,6 +121,13 @@ public class PutGetStaticPass implements IPass {
         // TODO are there any others we might need to exclude?
         continue;
       }
+
+      CtClass targetCtClass = ClassPool.getDefault().get(className);
+      if (targetCtClass.getClassInitializer() == null) {
+        // a class without a static constructor has no resetter method
+        continue;
+      }
+
       if (targetCtClass.isInterface() && !ClassUtils.isInterfaceClassSupported(targetCtClass)) {
         continue;
       }
