@@ -56,6 +56,9 @@ public class ResetPass implements IPass {
     // Is there at least one static field that must be reset?
     for (CtField ctField : ctClass.getDeclaredFields()) {
       if (fieldWorthyToBeResetFilter.filter(ctField) == Outcome.ACCEPT) {
+        // in certain cases, a Java class could has static fields but no <clinit> method
+        ctClass.makeClassInitializer();
+
         CtMethod gzoltarResetter = CtMethod.make(InstrumentationConstants.RESETTER_METHOD_DESC_HUMAN
             + InstrumentationConstants.RESETTER_METHOD_NAME_WITH_ARGS + " { }", ctClass);
         gzoltarResetter.setModifiers(InstrumentationConstants.RESETTER_METHOD_ACC);
