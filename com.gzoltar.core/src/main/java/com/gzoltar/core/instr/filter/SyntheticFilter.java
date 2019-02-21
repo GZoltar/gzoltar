@@ -16,20 +16,44 @@
  */
 package com.gzoltar.core.instr.filter;
 
+import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.matchers.AndMatcher;
+import com.gzoltar.core.instr.matchers.ClassAttributeMatcher;
+import com.gzoltar.core.instr.matchers.ClassModifierMatcher;
 import com.gzoltar.core.instr.matchers.MethodAttributeMatcher;
 import com.gzoltar.core.instr.matchers.MethodModifierMatcher;
 import com.gzoltar.core.instr.matchers.NotMatcher;
 import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.instr.matchers.PrefixMatcher;
+import javassist.CtBehavior;
+import javassist.CtClass;
 import javassist.bytecode.AccessFlag;
 import javassist.bytecode.SyntheticAttribute;
 
 /**
- * Filters synthetic methods unless they represent bodies of lambda expressions.
+ * Filters synthetic classes or synthetic methods unless they represent bodies of lambda expressions.
  */
 public final class SyntheticFilter extends Filter {
+
+  private static final BlackList SYNTHETIC_CLASS =
+      new BlackList(new OrMatcher(new ClassModifierMatcher(AccessFlag.BRIDGE),
+          new ClassModifierMatcher(AccessFlag.SYNTHETIC),
+          new ClassAttributeMatcher(SyntheticAttribute.tag)));
+
+  private static final BlackList SYNTHETIC_METHOD = new BlackList(new AndMatcher(
+      new OrMatcher(new MethodModifierMatcher(AccessFlag.BRIDGE),
+          new MethodModifierMatcher(AccessFlag.SYNTHETIC),
+          new MethodAttributeMatcher(SyntheticAttribute.tag)),
+      new NotMatcher(new PrefixMatcher("lambda$"))));
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public Outcome filter(final CtClass ctClass) {
+    return super.filter(ctClass, SYNTHETIC_CLASS);
+  }
 
   /**
    * Suppose we compile the following snippet of code with a JDK version < 5.
@@ -71,14 +95,9 @@ public final class SyntheticFilter extends Filter {
    * static method in Access which simply returns the field from the passed in object. The
    * compiler also replaces the call to "a.y" with "access$000(a)".
    */
-  public SyntheticFilter() {
-    BlackList bridgeSyntheticMethods = new BlackList(new AndMatcher(
-        new OrMatcher(new MethodModifierMatcher(AccessFlag.BRIDGE),
-            new MethodModifierMatcher(AccessFlag.SYNTHETIC),
-            new MethodAttributeMatcher(SyntheticAttribute.tag)),
-        new NotMatcher(new PrefixMatcher("lambda$"))));
-
-    this.add(bridgeSyntheticMethods);
+  @Override
+  public Outcome filter(final CtBehavior ctBehavior) {
+    return super.filter(ctBehavior, SYNTHETIC_METHOD);
   }
 
 }
