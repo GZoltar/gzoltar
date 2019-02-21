@@ -18,22 +18,30 @@ package com.gzoltar.cli.commands;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.io.Serializable;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import com.gzoltar.cli.Command;
-import com.gzoltar.cli.slave.Slave;
-import com.gzoltar.cli.slave.SlaveListUnitTests;
+import com.gzoltar.cli.test.FindTestMethods;
+import com.gzoltar.cli.test.TestMethod;
+import com.gzoltar.cli.utils.SystemProperties;
+import com.gzoltar.core.instr.actions.BlackList;
+import com.gzoltar.core.instr.actions.WhiteList;
+import com.gzoltar.core.instr.filter.Filter;
+import com.gzoltar.core.instr.matchers.ClassNameMatcher;
+import com.gzoltar.core.instr.matchers.JUnitMatcher;
+import com.gzoltar.core.instr.matchers.TestNGMatcher;
 
 /**
  * The <code>listTests</code> command.
  */
-public class ListUnitTests extends Command implements Serializable {
+public class ListUnitTests extends Command {
 
-  private static final long serialVersionUID = -7315345017175317773L;
-
-  @Option(name = "--projectCP", usage = "classpath of the project under test",
-      metaVar = "<directories and/or jar files separated by ':'>", required = true)
-  private String projectCP;
+  @Argument(usage = "list of folders that contain test classes", metaVar = "<path>",
+      required = true)
+  private List<File> testDirs = new ArrayList<File>();
 
   @Option(name = "--outputDirectory", usage = "path to which the 'outputFile' will be written",
       metaVar = "<path>", required = true)
@@ -76,40 +84,29 @@ public class ListUnitTests extends Command implements Serializable {
   @Override
   public int execute(final PrintStream out, final PrintStream err) throws Exception {
     out.println("* " + this.description());
-    Slave.launch(out, err, this, SlaveListUnitTests.class.getCanonicalName(), this.projectCP,
-        this.timeout);
+
+    // only test classes
+    WhiteList includeJUnitClasses = new WhiteList(new JUnitMatcher());
+    WhiteList includeTestNGClasses = new WhiteList(new TestNGMatcher());
+    // load some test classes
+    WhiteList includeClasses = new WhiteList(new ClassNameMatcher(this.includes));
+    // do not load some test classes
+    BlackList excludeClasses = new BlackList(new ClassNameMatcher(this.excludes));
+
+    Filter filter =
+        new Filter(includeJUnitClasses, includeTestNGClasses, includeClasses, excludeClasses);
+
+    PrintWriter testsWriter = new PrintWriter(
+        this.outputDirectory + SystemProperties.FILE_SEPARATOR + this.outputFile, "UTF-8");
+
+    for (File testDir : this.testDirs) {
+      for (TestMethod testMethod : FindTestMethods.findTestMethodsInPath(filter, testDir)) {
+        testsWriter.println(testMethod.getLongName());
+      }
+    }
+
+    testsWriter.close();
+
     return 0;
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public File getOutputDirectory() {
-    return this.outputDirectory;
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public String getOutputFile() {
-    return this.outputFile == null ? "tests" : this.outputFile;
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public String getIncludes() {
-    return this.includes;
-  }
-
-  /**
-   * 
-   * @return
-   */
-  public String getExcludes() {
-    return this.excludes;
   }
 }

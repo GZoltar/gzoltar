@@ -17,15 +17,16 @@
 package com.gzoltar.cli.test.testng;
 
 import java.util.List;
+import com.gzoltar.cli.test.TestMethod;
 
-public class FindTestNGAtomicTests {
+public class FindTestNGTestMethods {
 
   /**
    * 
-   * @param testClass
+   * @param testClassName
    * @return
    */
-  public static List<String> find(final String testClass) {
+  public static List<TestMethod> find(final String testClassName) {
     // TODO
     return null;
   }
