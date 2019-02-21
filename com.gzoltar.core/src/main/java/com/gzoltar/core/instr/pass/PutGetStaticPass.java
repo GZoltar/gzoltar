@@ -20,6 +20,7 @@ import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.filter.MethodNoBodyFilter;
+import com.gzoltar.core.instr.filter.SyntheticFilter;
 import com.gzoltar.core.util.ClassUtils;
 import javassist.ClassPool;
 import javassist.CtBehavior;
@@ -35,6 +36,8 @@ public class PutGetStaticPass implements IPass {
   private final MethodNoBodyFilter methodNoBodyFilter = new MethodNoBodyFilter();
 
   private final InstrumentationLevel instrumentationLevel;
+
+  private final SyntheticFilter syntheticFilter = new SyntheticFilter();
 
   public PutGetStaticPass(final InstrumentationLevel instrumentationLevel) {
     this.instrumentationLevel = instrumentationLevel;
@@ -67,6 +70,10 @@ public class PutGetStaticPass implements IPass {
 
     if (this.methodNoBodyFilter.filter(ctBehavior) == Outcome.REJECT) {
       // skip methods with no body
+      return instrumented;
+    }
+
+    if (this.syntheticFilter.filter(ctBehavior) == Outcome.REJECT) {
       return instrumented;
     }
 
@@ -129,6 +136,10 @@ public class PutGetStaticPass implements IPass {
       }
 
       if (targetCtClass.isInterface() && !ClassUtils.isInterfaceClassSupported(targetCtClass)) {
+        continue;
+      }
+
+      if (this.syntheticFilter.filter(targetCtClass) == Outcome.REJECT) {
         continue;
       }
 

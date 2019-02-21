@@ -17,6 +17,7 @@
 package com.gzoltar.core.instr;
 
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.instr.filter.SyntheticFilter;
 import com.gzoltar.core.instr.matchers.ClassNoLineOfCodeMatcher;
 import com.gzoltar.core.instr.pass.ClinitPass;
 import com.gzoltar.core.instr.pass.IPass;
@@ -64,6 +65,11 @@ public class ResetterInstrumenter extends AbstractInstrumenter {
     if (!classNoLineOfCodeMatcher.matches(ctClass)) {
       // TODO why is not Javassist able to get the class?!
       // FIXME it seems because there is no .class file for ctClass
+      return instrument;
+    }
+
+    SyntheticFilter syntheticFilter = new SyntheticFilter();
+    if (syntheticFilter.filter(ctClass) == Outcome.REJECT) {
       return instrument;
     }
 
