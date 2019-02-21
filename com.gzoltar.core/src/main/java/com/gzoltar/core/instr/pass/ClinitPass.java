@@ -73,6 +73,7 @@ public class ClinitPass implements IPass {
       if (fieldWorthyToBeResetFilter.filter(ctField) == Outcome.REJECT) {
         continue;
       }
+      instrumented = true;
 
       // keep all modified flags other than FINAL
       ctField.setModifiers(ctField.getModifiers() & ~AccessFlag.FINAL);
@@ -100,8 +101,6 @@ public class ClinitPass implements IPass {
         } else { // Object || Array
           str.append(ctField.getName() + " = null; ");
         }
-
-        instrumented = true;
       } else {
         // non-null fields are handled by the <clinit> method itself
         // str.append(ctField.getName() + " = " + value + "; ");
