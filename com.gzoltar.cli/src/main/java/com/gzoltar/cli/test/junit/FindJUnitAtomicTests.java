@@ -59,9 +59,7 @@ public final class FindJUnitAtomicTests {
           // JUnit 3: an atomic test case is "public", does not return anything ("void"), has 0
           // parameters and starts with the word "test"
           // JUnit 4: an atomic test case is annotated with @Test
-          if (m.isAnnotationPresent(org.junit.Test.class)
-              || Modifier.isPublic(m.getModifiers()) && m.getReturnType().equals(Void.TYPE)
-                  && m.getParameterTypes().length == 0 && m.getName().startsWith("test")) {
+          if (looksLikeTest(m)) {
             Set<String> ms = (methods.containsKey(testClass) ? methods.get(testClass)
                 : new LinkedHashSet<String>());
             ms.add(m.getName() + test.getDisplayName());
@@ -85,5 +83,15 @@ public final class FindJUnitAtomicTests {
     }
 
     return unitTestCases;
+  }
+
+  private static boolean looksLikeTest(final Method m) {
+    // JUnit 3: an atomic test case is "public", does not return anything ("void"), has 0
+    // parameters and starts with the word "test"
+    // JUnit 4: an atomic test case is annotated with @Test
+    return (m.isAnnotationPresent(org.junit.Test.class) || (m.getParameterTypes().length == 0
+        && m.getReturnType().equals(Void.TYPE) && Modifier.isPublic(m.getModifiers())
+        && (m.getName().startsWith("test") || m.getName().endsWith("Test")
+            || m.getName().startsWith("Test") || m.getName().endsWith("test"))));
   }
 }
