@@ -19,22 +19,36 @@ package com.gzoltar.cli.test;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.gzoltar.cli.utils.ClassType;
 import com.gzoltar.core.listeners.Listener;
 
 public class TestMethod implements Comparable<TestMethod> {
 
+  private final ClassType testType;
+
   private final String testClassName;
+
   private final String testMethodName;
 
   /**
    * Unit test method constructor.
    * 
+   * @paramt testType type of test class
    * @param testClassName parent class name of test method
    * @param testMethodName test method name
    */
-  public TestMethod(final String testClassName, final String testMethodName) {
+  public TestMethod(final ClassType testType, final String testClassName,
+      final String testMethodName) {
+    this.testType = testType;
     this.testClassName = testClassName;
     this.testMethodName = testMethodName;
+  }
+
+  /**
+   * Retrieves class type (e.g., JUnit).
+   */
+  public ClassType getClassType() {
+    return this.testType;
   }
 
   /**
@@ -69,6 +83,7 @@ public class TestMethod implements Comparable<TestMethod> {
   @Override
   public int hashCode() {
     HashCodeBuilder builder = new HashCodeBuilder();
+    builder.append(this.testType);
     builder.append(this.testClassName);
     builder.append(this.testMethodName);
     return builder.toHashCode();
@@ -89,6 +104,7 @@ public class TestMethod implements Comparable<TestMethod> {
     TestMethod testMethod = (TestMethod) obj;
 
     EqualsBuilder builder = new EqualsBuilder();
+    builder.append(this.testType, testMethod.testType);
     builder.append(this.testClassName, testMethod.testClassName);
     builder.append(this.testMethodName, testMethod.testMethodName);
 
@@ -110,6 +126,7 @@ public class TestMethod implements Comparable<TestMethod> {
     TestMethod testMethod = (TestMethod) obj;
 
     CompareToBuilder builder = new CompareToBuilder();
+    builder.append(this.testType, testMethod.testType);
     builder.append(this.testClassName, testMethod.testClassName);
     builder.append(this.testMethodName, testMethod.testMethodName);
 

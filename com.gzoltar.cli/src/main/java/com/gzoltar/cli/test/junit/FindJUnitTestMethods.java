@@ -23,6 +23,7 @@ import java.util.List;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import com.gzoltar.cli.test.TestMethod;
+import com.gzoltar.cli.utils.ClassType;
 
 public final class FindJUnitTestMethods {
 
@@ -44,12 +45,14 @@ public final class FindJUnitTestMethods {
       if (test.getMethodName() == null) {
         for (Method m : clazz.getMethods()) {
           if (looksLikeTest(m)) {
-            testMethods.add(new TestMethod(clazz.getName(), m.getName() + test.getDisplayName()));
+            testMethods.add(new TestMethod(ClassType.JUNIT, clazz.getName(),
+                m.getName() + test.getDisplayName()));
           }
         }
       } else {
         // non-parameterised atomic test case
-        testMethods.add(new TestMethod(test.getTestClass().getName(), test.getMethodName()));
+        testMethods.add(
+            new TestMethod(ClassType.JUNIT, test.getTestClass().getName(), test.getMethodName()));
       }
     }
 
