@@ -27,7 +27,6 @@ public class FindTestNGTestMethods {
    * @return
    */
   public static List<TestMethod> find(final String testClassName) {
-    // TODO
-    return null;
+    throw new RuntimeException("Not implemented");
   }
 }
