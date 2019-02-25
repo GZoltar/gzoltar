@@ -27,7 +27,6 @@ import org.kohsuke.args4j.Option;
 import com.gzoltar.cli.Command;
 import com.gzoltar.cli.test.FindTestMethods;
 import com.gzoltar.cli.test.TestMethod;
-import com.gzoltar.cli.utils.SystemProperties;
 
 /**
  * The <code>listTestMethods</code> command.
@@ -38,14 +37,10 @@ public class ListTestMethods extends Command {
       required = true)
   private List<File> testClassesDirs = new ArrayList<File>();
 
-  @Option(name = "--outputDirectory", usage = "path to which the 'outputFile' will be written",
-      metaVar = "<path>", required = true)
-  private File outputDirectory;
-
   @Option(name = "--outputFile",
-      usage = "file to which the name of all (JUnit/TestNG) unit test cases in the classpath will be written (default 'outputDirectory/tests')",
+      usage = "file to which the name of all (JUnit/TestNG) unit test cases in the classpath will be written (default 'tests.txt')",
       metaVar = "<file>", required = false)
-  private String outputFile = "tests";
+  private String outputFile = "tests.txt";
 
   @Option(name = "--includes",
       usage = "expression to identify which test methods to consider, may use wildcard characters (* and ?) and ':' to define more than one expression",
@@ -75,13 +70,12 @@ public class ListTestMethods extends Command {
   public int execute(final PrintStream out, final PrintStream err) throws Exception {
     out.println("* " + this.description());
 
-    PrintWriter testsWriter = new PrintWriter(
-        this.outputDirectory + SystemProperties.FILE_SEPARATOR + this.outputFile, "UTF-8");
+    PrintWriter testsWriter = new PrintWriter(this.outputFile, "UTF-8");
 
     for (File testClassesDir : this.testClassesDirs) {
       for (TestMethod testMethod : FindTestMethods.findTestMethodsInPath(testClassesDir,
           new WildcardMatcher(this.includes))) {
-        testsWriter.println(testMethod.getLongName());
+        testsWriter.println(testMethod.getClassType().name() + "," + testMethod.getLongName());
       }
     }
 
