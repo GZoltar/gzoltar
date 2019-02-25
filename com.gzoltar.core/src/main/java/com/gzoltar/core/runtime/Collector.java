@@ -130,11 +130,14 @@ public class Collector {
   public synchronized void endTransaction(final String transactionName,
       final TransactionOutcome outcome, final long runtime, final String stackTrace) {
 
+    if (this.hitArrays.isEmpty()) {
+      return;
+    }
+
     // collect coverage
     Map<String, Pair<String, boolean[]>> activity =
         new LinkedHashMap<String, Pair<String, boolean[]>>();
     for (Entry<String, Pair<String, boolean[]>> entry : this.hitArrays.entrySet()) {
-
       String hash = entry.getKey();
       boolean[] hitArray = entry.getValue().getRight();
 
@@ -154,6 +157,10 @@ public class Collector {
       for (int i = 0; i < hitArray.length; i++) {
         hitArray[i] = false;
       }
+    }
+
+    if (activity.isEmpty()) {
+      return;
     }
 
     // create a new transaction
