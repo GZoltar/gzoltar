@@ -52,7 +52,7 @@ public final class JUnitListener extends Listener {
 
   @Override
   public void testAssumptionFailure(final Failure failure) {
-    super.onTestFailure(failure.getTrace());
+    // an assumption failure is not propagated to org.junit.runner.Result
   }
 
   @Override
