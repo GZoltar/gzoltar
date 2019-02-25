@@ -17,16 +17,19 @@
 package com.gzoltar.cli.test.testng;
 
 import java.util.List;
+import org.jacoco.core.runtime.WildcardMatcher;
 import com.gzoltar.cli.test.TestMethod;
 
 public class FindTestNGTestMethods {
 
   /**
    * 
+   * @param testsMatcher
    * @param testClassName
    * @return
    */
-  public static List<TestMethod> find(final String testClassName) {
+  public static List<TestMethod> find(final WildcardMatcher testsMatcher,
+      final String testClassName) {
     throw new RuntimeException("Not implemented");
   }
 }

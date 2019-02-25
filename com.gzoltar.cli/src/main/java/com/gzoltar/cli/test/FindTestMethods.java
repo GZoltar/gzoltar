@@ -26,29 +26,36 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
+import org.jacoco.core.runtime.WildcardMatcher;
 import com.gzoltar.cli.test.junit.FindJUnitTestMethods;
 import com.gzoltar.cli.test.testng.FindTestNGTestMethods;
 import com.gzoltar.cli.utils.ClassType;
 import com.gzoltar.core.instr.Outcome;
+import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.matchers.JUnitMatcher;
+import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.instr.matchers.TestNGMatcher;
 import javassist.ClassPool;
 import javassist.CtClass;
 
 public abstract class FindTestMethods {
 
+  private static final Filter testClassesFilter =
+      new Filter(new WhiteList(new OrMatcher(new JUnitMatcher(), new TestNGMatcher())));
+
   private static final ClassPool classPool = ClassPool.getDefault();
 
   /**
    * 
-   * @param testClasses
+   * @param path
+   * @param testsMatcher
    * @return
    * @throws IOException
    * @throws ClassNotFoundException
    */
-  public static List<TestMethod> findTestMethodsInPath(final Filter filter, final File path)
-      throws IOException, ClassNotFoundException {
+  public static List<TestMethod> findTestMethodsInPath(final File path,
+      final WildcardMatcher testsMatcher) throws IOException, ClassNotFoundException {
     final List<TestMethod> testMethods = new ArrayList<TestMethod>();
 
     if (!path.exists()) {
@@ -62,7 +69,7 @@ public abstract class FindTestMethods {
     if (path.isDirectory()) {
       // get all .class, and .jar files
       for (File file : FileUtils.listFiles(path, new String[] {"class", "jar"}, true)) {
-        testMethods.addAll(findTestMethodsInPath(filter, file));
+        testMethods.addAll(findTestMethodsInPath(file, testsMatcher));
       }
     } else if (path.getAbsolutePath().endsWith(".jar")) {
       // iterate over all (.class, or .jar) files in the .jar
@@ -77,7 +84,7 @@ public abstract class FindTestMethods {
           InputStream in = jarFile.getInputStream(entry);
 
           CtClass ctClass = classPool.makeClassIfNew(in);
-          testMethods.addAll(findTestMethodsInClass(filter, ctClass));
+          testMethods.addAll(findTestMethodsInClass(testsMatcher, ctClass));
           ctClass.detach();
 
           in.close();
@@ -92,7 +99,7 @@ public abstract class FindTestMethods {
       FileInputStream fin = new FileInputStream(path);
 
       CtClass ctClass = classPool.makeClassIfNew(fin);
-      testMethods.addAll(findTestMethodsInClass(filter, ctClass));
+      testMethods.addAll(findTestMethodsInClass(testsMatcher, ctClass));
       ctClass.detach();
 
       fin.close();
@@ -103,25 +110,25 @@ public abstract class FindTestMethods {
 
   /**
    * 
-   * @param filter
+   * @param testsMatcher
    * @param ctClass
    * @return
    * @throws ClassNotFoundException
    */
-  public static List<TestMethod> findTestMethodsInClass(final Filter filter, final CtClass ctClass)
-      throws ClassNotFoundException {
-    if (!isAllowed(filter, ctClass)) {
-      return new ArrayList<TestMethod>();
+  private static List<TestMethod> findTestMethodsInClass(final WildcardMatcher testsMatcher,
+      final CtClass ctClass) throws ClassNotFoundException {
+    if (testClassesFilter.filter(ctClass) == Outcome.REJECT) {
+      return new ArrayList<TestMethod>(0);
     }
 
     ClassType classType = getClassType(ctClass);
     switch (classType) {
       case JUNIT:
-        return FindJUnitTestMethods.find(ctClass.getName());
+        return FindJUnitTestMethods.find(testsMatcher, ctClass.getName());
       case TESTNG:
-        return FindTestNGTestMethods.find(ctClass.getName());
+        return FindTestNGTestMethods.find(testsMatcher, ctClass.getName());
       default:
-        return new ArrayList<TestMethod>();
+        return new ArrayList<TestMethod>(0);
     }
   }
 
@@ -133,9 +140,5 @@ public abstract class FindTestMethods {
       return ClassType.TESTNG;
     }
     return ClassType.CLASS;
-  }
-
-  private static boolean isAllowed(final Filter filter, final CtClass ctClass) {
-    return filter.filter(ctClass) == Outcome.REJECT ? false : true;
   }
 }

@@ -20,19 +20,23 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import org.jacoco.core.runtime.WildcardMatcher;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
 import com.gzoltar.cli.test.TestMethod;
 import com.gzoltar.cli.utils.ClassType;
+import com.gzoltar.core.listeners.Listener;
 
 public final class FindJUnitTestMethods {
 
   /**
    * 
+   * @param testsMatcher
    * @param testClassName
    * @return
    */
-  public static List<TestMethod> find(final String testClassName) throws ClassNotFoundException {
+  public static List<TestMethod> find(final WildcardMatcher testsMatcher,
+      final String testClassName) throws ClassNotFoundException {
     final List<TestMethod> testMethods = new ArrayList<TestMethod>();
 
     // load the test class using a default classloader
@@ -45,14 +49,20 @@ public final class FindJUnitTestMethods {
       if (test.getMethodName() == null) {
         for (Method m : clazz.getMethods()) {
           if (looksLikeTest(m)) {
-            testMethods.add(new TestMethod(ClassType.JUNIT, clazz.getName(),
-                m.getName() + test.getDisplayName()));
+            String testMethodFullName = clazz.getName() + Listener.TEST_CLASS_NAME_SEPARATOR
+                + m.getName() + test.getDisplayName();
+            if (testsMatcher.matches(testMethodFullName)) {
+              testMethods.add(new TestMethod(ClassType.JUNIT, testMethodFullName));
+            }
           }
         }
       } else {
         // non-parameterised atomic test case
-        testMethods.add(
-            new TestMethod(ClassType.JUNIT, test.getTestClass().getName(), test.getMethodName()));
+        String testMethodFullName = test.getTestClass().getName()
+            + Listener.TEST_CLASS_NAME_SEPARATOR + test.getMethodName();
+        if (testsMatcher.matches(testMethodFullName)) {
+          testMethods.add(new TestMethod(ClassType.JUNIT, testMethodFullName));
+        }
       }
     }
 

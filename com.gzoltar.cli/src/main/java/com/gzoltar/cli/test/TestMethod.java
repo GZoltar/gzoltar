@@ -33,7 +33,20 @@ public class TestMethod implements Comparable<TestMethod> {
   /**
    * Unit test method constructor.
    * 
-   * @paramt testType type of test class
+   * @param testType type of test class
+   * @param testFullName test full name
+   */
+  public TestMethod(final ClassType testType, final String testFullName) {
+    this.testType = testType;
+    String[] str = testFullName.split(Listener.TEST_CLASS_NAME_SEPARATOR);
+    this.testClassName = str[0];
+    this.testMethodName = str[1];
+  }
+
+  /**
+   * Unit test method constructor.
+   * 
+   * @param testType type of test class
    * @param testClassName parent class name of test method
    * @param testMethodName test method name
    */
