@@ -14,41 +14,24 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.commands;
+package com.gzoltar.cli.test;
 
-import java.util.Arrays;
-import java.util.List;
-import com.gzoltar.cli.Command;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import org.junit.runner.notification.RunListener;
 
-/**
- * List of all available commands.
- */
-public final class Commands {
-
-  private Commands() {
-    // no-op
-  }
+public abstract class TestListener extends RunListener {
 
   /**
-   * @return list of new instances of all available commands
+   * Converts the stack trace of a throwable exception to string.
+   * 
+   * @param exception The exception thrown.
+   * @return A string of the stack trace of a throwable exception.
    */
-  public static List<Command> get() {
-    return Arrays.asList(new Version(), new ListTestMethods(), new Instrument(),
-        new RunTestMethods());
+  protected final String traceToString(Throwable exception) {
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
+    exception.printStackTrace(writer);
+    return stringWriter.toString();
   }
-
-  /**
-   * @return String containing all available command names
-   */
-  public static String names() {
-    final StringBuilder sb = new StringBuilder();
-    for (final Command c : get()) {
-      if (sb.length() > 0) {
-        sb.append('|');
-      }
-      sb.append(c.name());
-    }
-    return sb.toString();
-  }
-
 }

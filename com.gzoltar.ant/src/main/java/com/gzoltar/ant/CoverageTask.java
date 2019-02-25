@@ -47,6 +47,7 @@ public class CoverageTask extends AbstractCoverageTask implements TaskContainer 
    */
   public CoverageTask() {
     super();
+    this.taskEnhancers.add(new JavaLikeTaskEnhancer("java"));
     this.taskEnhancers.add(new JavaLikeTaskEnhancer("junit"));
     this.taskEnhancers.add(new TestNGTaskEnhancer("testng"));
   }
