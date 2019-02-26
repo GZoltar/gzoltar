@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Properties;
 import org.kohsuke.args4j.Option;
 import com.gzoltar.cli.Command;
 import com.gzoltar.cli.test.TestMethod;
@@ -61,6 +62,8 @@ public class RunTestMethods extends Command {
   public int execute(final PrintStream out, final PrintStream err) throws Exception {
     out.println("* " + this.description());
 
+    Properties backupProperties = (Properties) System.getProperties().clone();
+
     if (!this.testMethods.exists() || !this.testMethods.canRead()) {
       throw new RuntimeException(this.testMethods + " does not exist or cannot be read");
     }
@@ -90,6 +93,9 @@ public class RunTestMethods extends Command {
 
         TestRunner.run(testTask);
         testTask = null;
+
+        // restore system properties
+        System.setProperties((Properties) backupProperties.clone());
       }
     }
 
