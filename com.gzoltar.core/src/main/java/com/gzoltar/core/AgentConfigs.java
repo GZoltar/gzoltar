@@ -364,7 +364,7 @@ public final class AgentConfigs {
    */
   public AgentOutput getOutput() {
     final String value = this.configs.get(OUTPUT_KEY);
-    return value == null ? DEFAULT_OUTPUT : AgentOutput.valueOf(value);
+    return value == null ? DEFAULT_OUTPUT : AgentOutput.valueOf(value.toUpperCase());
   }
 
   /**
