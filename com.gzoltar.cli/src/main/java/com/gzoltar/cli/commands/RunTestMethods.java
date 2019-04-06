@@ -99,6 +99,8 @@ public class RunTestMethods extends Command {
       }
     }
 
+    out.println("* Done!");
+
     return 0;
   }
 }
