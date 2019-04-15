@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2018 GZoltar contributors.
+  Copyright (C) 2019 GZoltar contributors.
 
   This file is part of GZoltar.
 
@@ -277,7 +277,7 @@
                   <fileset dir="${project.basedir}" includes="**/*.java,**/*.xml,**/*.js,**/*.html" excludes=".git/**,target/**,.idea/**,.style/**" id="missinglicense.fileset">
                     <not>
                       <and>
-                        <contains text="Copyright (C) 2018 GZoltar contributors."/>
+                        <contains text="Copyright (C) 2019 GZoltar contributors."/>
                         <contains text="This file is part of GZoltar."/>
                         <contains text="GZoltar is free software: you can redistribute it and/or modify it under the terms of the GNU"/>
                         <contains text="Lesser General Public License as published by the Free Software Foundation, either version 3 of"/>
