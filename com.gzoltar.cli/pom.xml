@@ -43,6 +43,16 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.fl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.report</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>args4j</groupId>
       <artifactId>args4j</artifactId>
       <version>${args4j.version}</version>
@@ -92,6 +102,18 @@
                 <relocation>
                   <pattern>com.gzoltar.core</pattern>
                   <shadedPattern>com.gzoltar.internal.core</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.gzoltar.fl</pattern>
+                  <shadedPattern>com.gzoltar.internal.fl</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.gzoltar.report</pattern>
+                  <shadedPattern>com.gzoltar.internal.report</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>com.gzoltar.sfl</pattern>
+                  <shadedPattern>com.gzoltar.internal.sfl</shadedPattern>
                 </relocation>
                 <relocation>
                   <pattern>javassist</pattern>

@@ -34,7 +34,7 @@ public final class Commands {
    */
   public static List<Command> get() {
     return Arrays.asList(new Version(), new ListTestMethods(), new Instrument(),
-        new RunTestMethods());
+        new RunTestMethods(), new FaultLocalizationReport());
   }
 
   /**
