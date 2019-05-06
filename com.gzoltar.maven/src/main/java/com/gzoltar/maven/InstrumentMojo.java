@@ -23,11 +23,15 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Instrumenter;
+import javassist.ClassPool;
 
-@Mojo(name = "instrument", defaultPhase = LifecyclePhase.PROCESS_CLASSES, threadSafe = true)
+@Mojo(name = "instrument", defaultPhase = LifecyclePhase.PROCESS_CLASSES,
+    requiresDependencyResolution = ResolutionScope.TEST,
+    requiresDependencyCollection = ResolutionScope.TEST, threadSafe = true)
 public class InstrumentMojo extends AbstractAgentMojo {
 
   /**
@@ -48,6 +52,16 @@ public class InstrumentMojo extends AbstractAgentMojo {
       getLog()
           .info("Skipping GZoltar execution due to missing classes directory:" + projectClassesDir);
       return;
+    }
+
+    // make sure classpath has all test dependencies
+    try {
+      for (String element : getProject().getTestClasspathElements()) {
+        getLog().debug("TestClasspathElement: " + element);
+        ClassPool.getDefault().appendClassPath(element);
+      }
+    } catch (Exception e) {
+      throw new MojoExecutionException(e.getMessage(), e);
     }
 
     final File backupDir =
