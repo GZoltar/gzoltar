@@ -16,6 +16,8 @@
  */
 package com.gzoltar.agent.rt.output;
 
+import java.io.IOException;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.spectrum.ISpectrum;
 
 public class ConsoleOutput implements IAgentOutput {
@@ -26,5 +28,13 @@ public class ConsoleOutput implements IAgentOutput {
   @Override
   public void writeSpectrum(final ISpectrum spectrum) throws Exception {
     System.out.println(spectrum.toString());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void writeTransaction(final Transaction transaction) throws IOException {
+    System.out.println(transaction.toString());
   }
 }

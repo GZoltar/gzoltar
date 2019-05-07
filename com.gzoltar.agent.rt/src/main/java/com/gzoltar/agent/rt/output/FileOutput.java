@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.model.Transaction;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.core.spectrum.SpectrumWriter;
 
@@ -51,6 +52,20 @@ public class FileOutput implements IAgentOutput {
     try {
       final SpectrumWriter writer = new SpectrumWriter(output);
       writer.writeSpectrum(spectrum);
+    } finally {
+      output.close();
+    }
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void writeTransaction(final Transaction transaction) throws IOException {
+    final OutputStream output = this.openFile();
+    try {
+      final SpectrumWriter writer = new SpectrumWriter(output);
+      writer.writeTransaction(transaction);
     } finally {
       output.close();
     }
