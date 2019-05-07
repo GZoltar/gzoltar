@@ -18,10 +18,10 @@ directory:
   following format:
   `<class name>#<method name>(<method parameters>):<line number>` e.g.,
   `org.gzoltar.examples$CharacterCounter#processString(java.lang.String):37`.
-* `build/sfl/txt/matrix.txt` - a binary coverage matrix produced by GZoltar
-  where each row represents the coverage of each individual test case and its
-  outcome ("-" if the test case failed, "+" otherwise), and each column a line
-  of code. 1 means that a test case covered a line of code, 0 otherwise.
+* `build/gzoltar/sfl/txt/matrix.txt` - a binary coverage matrix produced by
+  GZoltar where each row represents the coverage of each individual test case
+  and its outcome ("-" if the test case failed, "+" otherwise), and each column
+  a line of code. 1 means that a test case covered a line of code, 0 otherwise.
 * `build/gzoltar/sfl/txt/{barinel|dstar|ochiai|tarantula}.ranking.csv` - the
   fault localization report, i.e., the ranking of lines of code (one per row),
   produced by the spectrum-based fault localization formula
