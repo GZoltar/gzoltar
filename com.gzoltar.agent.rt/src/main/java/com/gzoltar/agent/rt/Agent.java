@@ -16,12 +16,9 @@
  */
 package com.gzoltar.agent.rt;
 
-import com.gzoltar.agent.rt.output.ConsoleOutput;
-import com.gzoltar.agent.rt.output.FileOutput;
-import com.gzoltar.agent.rt.output.IAgentOutput;
-import com.gzoltar.agent.rt.output.NoneOutput;
+import com.gzoltar.agent.rt.output.AgentOutputFactory;
+import com.gzoltar.agent.rt.output.OutputEventListener;
 import com.gzoltar.core.AgentConfigs;
-import com.gzoltar.core.AgentOutput;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.spectrum.ISpectrum;
 
@@ -29,9 +26,7 @@ public class Agent implements IAgent {
 
   private static Agent singleton;
 
-  private final AgentConfigs agentConfigs;
-
-  private IAgentOutput output;
+  private final OutputEventListener outputListener;
 
   public static synchronized Agent getInstance(final AgentConfigs agentConfigs) {
     if (singleton == null) {
@@ -55,34 +50,16 @@ public class Agent implements IAgent {
   }
 
   private Agent(final AgentConfigs agentConfigs) {
-    this.agentConfigs = agentConfigs;
-    this.output = this.createAgentOutput();
-  }
-
-  private IAgentOutput createAgentOutput() {
-    final AgentOutput controllerType = this.agentConfigs.getOutput();
-    switch (controllerType) {
-      case FILE:
-        return new FileOutput(this.agentConfigs);
-      case CONSOLE:
-        return new ConsoleOutput();
-      case NONE:
-        return new NoneOutput();
-      default:
-        throw new AssertionError(controllerType);
-    }
+    this.outputListener =
+        new OutputEventListener(AgentOutputFactory.createAgentOutput(agentConfigs));
   }
 
   public void startup() {
-    Collector.instance().addListener(this.agentConfigs.getEventListener());
+    Collector.instance().addListener(this.outputListener);
   }
 
   public synchronized void shutdown() {
-    try {
-      this.output.writeSpectrum(this.getData());
-    } catch (final Exception e) {
-      e.printStackTrace();
-    }
+    singleton = null;
   }
 
   public ISpectrum getData() {
