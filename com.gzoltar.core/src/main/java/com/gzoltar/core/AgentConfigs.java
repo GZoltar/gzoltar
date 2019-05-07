@@ -30,8 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
-import com.gzoltar.core.events.EmptyEventListener;
-import com.gzoltar.core.events.IEventListener;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.util.CommandLineSupport;
@@ -494,16 +492,6 @@ public final class AgentConfigs {
    */
   public void setInstrumentationLevel(final InstrumentationLevel instrumentationLevel) {
     this.setConfig(INSTRUMENTATION_LEVEL_KEY, instrumentationLevel.name());
-  }
-
-  /**
-   * Returns an instance of an {@link com.gzoltar.core.events.EmptyEventListener}. TODO we might
-   * want to allow user to configure other listeners.
-   * 
-   * @return
-   */
-  public IEventListener getEventListener() {
-    return new EmptyEventListener();
   }
 
   /**

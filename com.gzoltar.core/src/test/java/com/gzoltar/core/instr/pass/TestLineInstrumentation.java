@@ -34,6 +34,7 @@ import org.gzoltar.examples.PublicStaticModifiers;
 import org.junit.Before;
 import org.junit.Test;
 import com.gzoltar.core.AgentConfigs;
+import com.gzoltar.core.events.EmptyEventListener;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.model.Node;
@@ -56,7 +57,7 @@ public class TestLineInstrumentation {
     configs.setGranularity(GranularityLevel.LINE);
     configs.setInstrumentationLevel(InstrumentationLevel.NONE);
 
-    Collector.instance().addListener(configs.getEventListener());
+    Collector.instance().addListener(new EmptyEventListener());
 
     CoveragePass instrumentationPass = new CoveragePass(configs);
     for (String classUnderTest : classesUnderTest) {
