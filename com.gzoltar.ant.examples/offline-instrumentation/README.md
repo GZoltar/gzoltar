@@ -1,5 +1,5 @@
 # Ant example
 
 ```
-ant -f build.xml clean compile instrument test report
+ant -f build.xml clean report
 ```
