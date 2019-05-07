@@ -19,17 +19,17 @@ package com.gzoltar.cli.test.testng;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.runner.notification.RunListener;
 import org.testng.TestNG;
 import com.gzoltar.cli.test.TestMethod;
 import com.gzoltar.cli.test.TestTask;
 import com.gzoltar.cli.utils.IsolatingClassLoader;
-import com.gzoltar.core.listeners.TestNGListener;
 
 public class TestNGTestTask extends TestTask {
 
-  public TestNGTestTask(final URL[] searchPathURLs, final boolean collectCoverage,
-      final TestMethod testMethod) {
-    super(searchPathURLs, collectCoverage, testMethod);
+  public TestNGTestTask(final URL[] searchPathURLs, final boolean offline,
+      final boolean collectCoverage, final TestMethod testMethod) {
+    super(searchPathURLs, offline, collectCoverage, testMethod);
   }
 
   /**
@@ -60,7 +60,13 @@ public class TestNGTestTask extends TestTask {
     // runner.setListenerClasses(listeners);
     runner.addListener(new TestNGTextListener());
     if (this.collectCoverage) {
-      runner.addListener(new TestNGListener());
+      if (this.offline) {
+        runner.addListener((RunListener) Class
+            .forName("com.gzoltar.core.listeners.TestNGListener", false, classLoader)
+            .newInstance());
+      } else {
+        runner.addListener(new com.gzoltar.core.listeners.TestNGListener());
+      }
     }
     runner.setThreadCount(1);
     runner.setPreserveOrder(true);

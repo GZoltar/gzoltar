@@ -19,16 +19,16 @@ package com.gzoltar.cli.test.junit;
 import java.net.URL;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
+import org.junit.runner.notification.RunListener;
 import com.gzoltar.cli.test.TestMethod;
 import com.gzoltar.cli.test.TestTask;
 import com.gzoltar.cli.utils.IsolatingClassLoader;
-import com.gzoltar.core.listeners.JUnitListener;
 
 public class JUnitTestTask extends TestTask {
 
-  public JUnitTestTask(final URL[] searchPathURLs, final boolean collectCoverage,
-      final TestMethod testMethod) {
-    super(searchPathURLs, collectCoverage, testMethod);
+  public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
+      final boolean collectCoverage, final TestMethod testMethod) {
+    super(searchPathURLs, offline, collectCoverage, testMethod);
   }
 
   /**
@@ -53,7 +53,12 @@ public class JUnitTestTask extends TestTask {
     JUnitCore runner = new JUnitCore();
     runner.addListener(new JUnitTextListener());
     if (this.collectCoverage) {
-      runner.addListener(new JUnitListener());
+      if (this.offline) {
+        runner.addListener((RunListener) Class
+            .forName("com.gzoltar.core.listeners.JUnitListener", false, classLoader).newInstance());
+      } else {
+        runner.addListener(new com.gzoltar.core.listeners.JUnitListener());
+      }
     }
     JUnitTestResult result = new JUnitTestResult(runner.run(request));
     classLoader.close();

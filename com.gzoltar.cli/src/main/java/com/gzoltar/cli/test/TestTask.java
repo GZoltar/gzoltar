@@ -28,6 +28,8 @@ public abstract class TestTask implements Callable<TestResult> {
 
   protected final URL[] searchPathURLs;
 
+  protected final boolean offline;
+
   protected final boolean collectCoverage;
 
   protected final TestMethod testMethod;
@@ -35,10 +37,11 @@ public abstract class TestTask implements Callable<TestResult> {
   /**
    * Constructor for task to run a JUnit test method.
    */
-  protected TestTask(final URL[] searchPathURLs, final boolean collectCoverage,
-      final TestMethod testMethod) {
+  protected TestTask(final URL[] searchPathURLs, final boolean offline,
+      final boolean collectCoverage, final TestMethod testMethod) {
     this.id = INC.incrementAndGet();
     this.searchPathURLs = searchPathURLs;
+    this.offline = offline;
     this.collectCoverage = collectCoverage;
     this.testMethod = testMethod;
   }

@@ -45,6 +45,11 @@ public class RunTestMethods extends Command {
       metaVar = "<boolean>", required = false)
   private Boolean collectCoverage = false;
 
+  @Option(name = "--offline",
+      usage = "inform GZoltar that classes have been instrumented using offline instrumentation",
+      metaVar = "<boolean>", required = false)
+  private Boolean offline = false;
+
   @Override
   public String description() {
     return "Run test methods in isolation.";
@@ -81,10 +86,12 @@ public class RunTestMethods extends Command {
 
         switch (testMethod.getClassType()) {
           case JUNIT:
-            testTask = new JUnitTestTask(classpathURLs, this.collectCoverage, testMethod);
+            testTask =
+                new JUnitTestTask(classpathURLs, this.offline, this.collectCoverage, testMethod);
             break;
           case TESTNG:
-            testTask = new TestNGTestTask(classpathURLs, this.collectCoverage, testMethod);
+            testTask =
+                new TestNGTestTask(classpathURLs, this.offline, this.collectCoverage, testMethod);
             break;
           default:
             throw new RuntimeException(testMethod.getLongName() + " is not supported");
