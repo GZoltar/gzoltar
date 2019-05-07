@@ -38,6 +38,7 @@
   <property name="junit.jar" value="${lib.dir}/junit.jar" />
   <property name="hamcrest.jar" value="${lib.dir}/hamcrest-core.jar" />
   <property name="gzoltar-ant.jar" value="../../com.gzoltar.ant/target/com.gzoltar.ant-${gzoltar.version}-jar-with-dependencies.jar" />
+  <property name="gzoltar-cli.jar" value="../../com.gzoltar.cli/target/com.gzoltar.cli-${gzoltar.version}-jar-with-dependencies.jar" />
   <property name="gzoltar-agent-rt.jar" value="../../com.gzoltar.agent.rt/target/com.gzoltar.agent.rt-${gzoltar.version}-all.jar" />
 
   <!-- Step 1: Import GZoltar Ant tasks -->
@@ -92,27 +93,55 @@
   </target>
 
   <target name="test" depends="instrument">
-    <junit printsummary="yes" haltonfailure="no" haltonerror="no" fork="true" forkmode="once" showOutput="true">
-      <classpath>
-        <pathelement location="${instrumented.classes.dir}" />
-        <pathelement location="${build.test.classes.dir}" />
-        <pathelement path="${junit.jar}" />
-        <pathelement path="${hamcrest.jar}" />
-        <!-- Add GZoltar to the classpath -->
-        <pathelement path="${gzoltar-ant.jar}" />
-        <pathelement path="${gzoltar-agent-rt.jar}" />
-      </classpath>
+    <!--
+      Step 3: Get list of all test method(s) to run
+     -->
+    <property name="test.methods.file" value="${build.classes.dir}/.test_methods.txt" />
+    <delete file="${test.methods.file}" />
+    <java classname="com.gzoltar.cli.Main" fork="true">
+        <classpath>
+            <pathelement location="${instrumented.classes.dir}" />
+            <pathelement location="${build.test.classes.dir}" />
+            <pathelement path="${junit.jar}" />
+            <pathelement path="${hamcrest.jar}" />
+            <pathelement path="${gzoltar-cli.jar}" />
+        </classpath>
+        <arg value="listTestMethods" />
+        <arg value="${build.test.classes.dir}" />
+        <arg value="--outputFile" />
+        <arg value="${test.methods.file}" />
+        <arg value="--includes" />
+        <arg value="org.gzoltar.examples.CharacterCounterTest#*:org.gzoltar.examples.StaticFieldTest#*" />
+    </java>
 
-      <!-- Step 3: Setup GZoltar's runtime property and test listener -->
-      <sysproperty key="gzoltar-agent.destfile" file="${gzoltar.exec.file}"/>
-      <formatter classname="com.gzoltar.ant.listener.JUnitFormatter" usefile="false" />
+    <!--
+      Step 4: Get coverage of the pre-selected list of test method(s) by
+      wrappring test method execution with the GZoltar coverage task
+     -->
+    <delete file="${gzoltar.exec.file}"/>
 
-      <test name="org.gzoltar.examples.CharacterCounterTest"/>
-    </junit>
+    <java classname="com.gzoltar.cli.Main" fork="true">
+        <classpath>
+            <pathelement location="${instrumented.classes.dir}" />
+            <pathelement location="${build.test.classes.dir}" />
+            <pathelement path="${junit.jar}" />
+            <pathelement path="${hamcrest.jar}" />
+            <pathelement path="${gzoltar-agent-rt.jar}" />
+            <pathelement path="${gzoltar-cli.jar}" />
+        </classpath>
+        <jvmArg value="-XX:MaxPermSize=2048M" />
+        <jvmArg value="-Dgzoltar-agent.destfile=${gzoltar.exec.file}" />
+        <jvmArg value="-Dgzoltar-agent.output=file" />
+        <arg value="runTestMethods" />
+        <arg value="--testMethods" />
+        <arg value="${test.methods.file}" />
+        <arg value="--offline" />
+        <arg value="--collectCoverage" />
+    </java>
   </target>
 
   <target name="report" depends="test">
-    <!-- Step 4: Create fault localization report -->
+    <!-- Step 5: Create fault localization report -->
     <gzoltar:fl-report buildLocation="${build.classes.dir}"
                        granularity="line"
                        dataFile="${gzoltar.exec.file}"
