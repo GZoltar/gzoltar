@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.test;
+package com.gzoltar.core.test;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import com.gzoltar.cli.utils.ClassType;
+import com.gzoltar.core.util.ClassType;
 import com.gzoltar.core.listeners.Listener;
 
 public class TestMethod implements Comparable<TestMethod> {

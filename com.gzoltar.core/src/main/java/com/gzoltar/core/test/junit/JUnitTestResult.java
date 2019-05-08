@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.test.junit;
+package com.gzoltar.core.test.junit;
 
 import org.junit.runner.Result;
-import com.gzoltar.cli.test.TestResult;
+import com.gzoltar.core.test.TestResult;
 
 public class JUnitTestResult extends TestResult {
 

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.test;
+package com.gzoltar.core.test;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,15 +27,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
 import org.jacoco.core.runtime.WildcardMatcher;
-import com.gzoltar.cli.test.junit.FindJUnitTestMethods;
-import com.gzoltar.cli.test.testng.FindTestNGTestMethods;
-import com.gzoltar.cli.utils.ClassType;
+import com.gzoltar.core.util.ClassType;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.WhiteList;
 import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.matchers.JUnitMatcher;
 import com.gzoltar.core.instr.matchers.OrMatcher;
 import com.gzoltar.core.instr.matchers.TestNGMatcher;
+import com.gzoltar.core.test.junit.FindJUnitTestMethods;
+import com.gzoltar.core.test.testng.FindTestNGTestMethods;
 import javassist.ClassPool;
 import javassist.CtClass;
 

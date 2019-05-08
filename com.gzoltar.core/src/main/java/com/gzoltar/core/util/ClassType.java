@@ -14,15 +14,22 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.test.testng;
+package com.gzoltar.core.util;
 
-import org.testng.ITestResult;
-import com.gzoltar.cli.test.TestResult;
+public enum ClassType {
 
-public class TestNGTestResult extends TestResult {
+  /**
+   * 
+   */
+  JUNIT,
 
-  public TestNGTestResult(final ITestResult result) {
-    super(result.getEndMillis() - result.getStartMillis(), result.getThrowable(),
-        result.isSuccess());
-  }
+  /**
+   * 
+   */
+  TESTNG,
+
+  /**
+   * 
+   */
+  CLASS
 }

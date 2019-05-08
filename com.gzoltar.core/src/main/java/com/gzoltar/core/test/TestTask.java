@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.test;
+package com.gzoltar.core.test;
 
 import java.net.URL;
 import java.util.concurrent.Callable;

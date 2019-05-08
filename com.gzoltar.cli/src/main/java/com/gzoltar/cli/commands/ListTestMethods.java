@@ -25,8 +25,8 @@ import org.jacoco.core.runtime.WildcardMatcher;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 import com.gzoltar.cli.Command;
-import com.gzoltar.cli.test.FindTestMethods;
-import com.gzoltar.cli.test.TestMethod;
+import com.gzoltar.core.test.FindTestMethods;
+import com.gzoltar.core.test.TestMethod;
 
 /**
  * The <code>listTestMethods</code> command.

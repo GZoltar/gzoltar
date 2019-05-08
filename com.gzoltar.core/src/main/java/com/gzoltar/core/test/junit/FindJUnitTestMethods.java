@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.test.junit;
+package com.gzoltar.core.test.junit;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -23,9 +23,9 @@ import java.util.List;
 import org.jacoco.core.runtime.WildcardMatcher;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
-import com.gzoltar.cli.test.TestMethod;
-import com.gzoltar.cli.utils.ClassType;
+import com.gzoltar.core.util.ClassType;
 import com.gzoltar.core.listeners.Listener;
+import com.gzoltar.core.test.TestMethod;
 
 public final class FindJUnitTestMethods {
 

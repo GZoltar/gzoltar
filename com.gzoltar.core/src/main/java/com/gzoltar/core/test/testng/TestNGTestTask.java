@@ -14,19 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.test.junit;
+package com.gzoltar.core.test.testng;
 
 import java.net.URL;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.runner.notification.RunListener;
-import com.gzoltar.cli.test.TestMethod;
-import com.gzoltar.cli.test.TestTask;
-import com.gzoltar.cli.utils.IsolatingClassLoader;
+import org.testng.TestNG;
+import com.gzoltar.core.util.IsolatingClassLoader;
+import com.gzoltar.core.test.TestMethod;
+import com.gzoltar.core.test.TestTask;
 
-public class JUnitTestTask extends TestTask {
+public class TestNGTestTask extends TestTask {
 
-  public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
+  public TestNGTestTask(final URL[] searchPathURLs, final boolean offline,
       final boolean collectCoverage, final TestMethod testMethod) {
     super(searchPathURLs, offline, collectCoverage, testMethod);
   }
@@ -36,32 +37,43 @@ public class JUnitTestTask extends TestTask {
    * 
    * {@inheritDoc}
    */
+  @SuppressWarnings("deprecation")
   @Override
-  public JUnitTestResult call() throws Exception {
+  public TestNGTestResult call() throws Exception {
     // Create a new isolated classloader with the same classpath as the current one
     IsolatingClassLoader classLoader = new IsolatingClassLoader(this.searchPathURLs,
         Thread.currentThread().getContextClassLoader());
 
-    // Make the isolating classloader the thread's new classloader. This method is called in a
+    // Make the isolated classloader the thread's new classloader. This method is called in a
     // dedicated thread that ends right after this method returns, so there is no need to restore
     // the old/original classloader when it finishes.
     Thread.currentThread().setContextClassLoader(classLoader);
 
     Class<?> clazz = Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 
-    Request request = Request.method(clazz, this.testMethod.getTestMethodName());
-    JUnitCore runner = new JUnitCore();
-    runner.addListener(new JUnitTextListener());
+    List<String> testMethod = new ArrayList<String>();
+    testMethod.add(this.testMethod.getTestMethodName());
+
+    TestNG runner = new TestNG();
+    runner.setTestClasses(new Class[] {clazz});
+    runner.setTestNames(testMethod);
+    // runner.setListenerClasses(listeners);
+    runner.addListener(new TestNGTextListener());
     if (this.collectCoverage) {
       if (this.offline) {
         runner.addListener((RunListener) Class
-            .forName("com.gzoltar.core.listeners.JUnitListener", false, classLoader).newInstance());
+            .forName("com.gzoltar.core.listeners.TestNGListener", false, classLoader)
+            .newInstance());
       } else {
-        runner.addListener(new com.gzoltar.core.listeners.JUnitListener());
+        runner.addListener(new com.gzoltar.core.listeners.TestNGListener());
       }
     }
-    JUnitTestResult result = new JUnitTestResult(runner.run(request));
-    classLoader.close();
-    return result;
+    runner.setThreadCount(1);
+    runner.setPreserveOrder(true);
+    runner.setVerbose(0);
+    runner.setUseDefaultListeners(false);
+
+    runner.run();
+    return null; // FIXME
   }
 }

@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.test.junit;
+package com.gzoltar.core.test.junit;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
-import com.gzoltar.cli.test.TestListener;
 import com.gzoltar.core.listeners.Listener;
+import com.gzoltar.core.test.TestListener;
 
 public class JUnitTextListener extends TestListener {
 
