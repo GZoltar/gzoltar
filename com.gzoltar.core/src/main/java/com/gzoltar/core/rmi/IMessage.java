@@ -14,30 +14,24 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.utils;
+package com.gzoltar.core.rmi;
 
-public final class SystemProperties {
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
-  public static final String PATH_SEPARATOR = System.getProperty("path.separator");
-  public static final String FILE_SEPARATOR = System.getProperty("file.separator");
-  public static final String JAVA_HOME = System.getProperty("java.home")
-      + SystemProperties.FILE_SEPARATOR + "bin" + SystemProperties.FILE_SEPARATOR + "java";
-
-  public static final String OS_NAME = System.getProperty("os.name").toLowerCase();
+public interface IMessage extends Remote {
 
   /**
    * 
    * @return
+   * @throws RemoteException
    */
-  public static String getClasspathString() {
-    return System.getProperty("java.class.path");
-  }
+  public Response getResponse() throws RemoteException;
 
   /**
    * 
-   * @return
+   * @param response
+   * @throws RemoteException
    */
-  public static String[] getClasspathArray() {
-    return System.getProperty("java.class.path").split(SystemProperties.PATH_SEPARATOR);
-  }
+  public void setResponse(final Response response) throws RemoteException;
 }

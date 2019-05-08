@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.slave;
+package com.gzoltar.core.rmi;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -24,12 +24,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import com.gzoltar.cli.Command;
-import com.gzoltar.cli.rmi.IMessage;
-import com.gzoltar.cli.rmi.Message;
-import com.gzoltar.cli.rmi.RegistrySingleton;
-import com.gzoltar.cli.rmi.Response;
-import com.gzoltar.cli.utils.SystemProperties;
+import com.gzoltar.core.util.SystemProperties;
 
 public class Slave {
 
@@ -42,8 +37,8 @@ public class Slave {
    * @param classpath
    * @return
    */
-  public static Response launch(final PrintStream out, final PrintStream err, final Command command,
-      final String runner, final String classpath, final int timeout) {
+  public static Response launch(final PrintStream out, final PrintStream err, final String runner,
+      final String classpath, final int timeout) {
 
     String messageName = UUID.randomUUID().toString();
 
@@ -52,7 +47,7 @@ public class Slave {
 
     try {
       IMessage message = new Message();
-      message.setCommand(command);
+      // TODO set parameters or properties to send
 
       RegistrySingleton.register(messageName, message);
 
@@ -87,7 +82,7 @@ public class Slave {
         @Override
         public void run() {
           p.destroy();
-          err.println("[ERROR] A timeout has occured");
+          err.println("A timeout has occured");
         }
       }, timeout * 1000);
 

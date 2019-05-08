@@ -14,17 +14,14 @@
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
-package com.gzoltar.cli.rmi;
+package com.gzoltar.core.rmi;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import com.gzoltar.cli.Command;
 
 public class Message extends UnicastRemoteObject implements IMessage {
 
   private static final long serialVersionUID = 1598755164497706252L;
-
-  private Command command = null;
 
   private Response response = null;
 
@@ -34,20 +31,6 @@ public class Message extends UnicastRemoteObject implements IMessage {
    */
   public Message() throws RemoteException {
     super();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public Command getCommand() throws RemoteException {
-    return this.command;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public void setCommand(final Command command) throws RemoteException {
-    this.command = command;
   }
 
   /**
