@@ -18,16 +18,16 @@ java -jar gzoltarcli.jar <command> -help
 ```
 
 
-## listTests
+## listTestMethods
 
-Writes to a file named "tests" all JUnit / TestNG unit test cases in a provided
-set of directories and/or .jar files. Usage:
+Writes to a file named "tests.txt" all JUnit / TestNG unit test cases in a
+provided set of directories and/or .jar files. Usage:
 
 ```
-java -jar gzoltarcli.jar listTests \
-  --projectCP <directories with .class files and/or jar files
-  separated by ':'> \
-  --outputDirectory <directory to which the outcome will be written>
+java -cp <project_classpath:gzoltarcli.jar> com.gzoltar.cli.Main listTestMethods \
+  <list of folders that contain test classes> \
+  --outputFile <path> \
+  --includes <test classes/cases to consider, e.g., org.TestFoo#* to include all test cases of test class TestFoo>
 ```
 
 
