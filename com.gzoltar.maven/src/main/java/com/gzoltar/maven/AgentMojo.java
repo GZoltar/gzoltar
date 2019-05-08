@@ -23,7 +23,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
- * Prepares a property pointing to the JaCoCo runtime agent that can be passed as a VM argument to
+ * Prepares a property pointing to the GZoltar runtime agent that can be passed as a VM argument to
  * the application under test.
  * 
  * DISCLAIMER: this class has been exported from JaCoCo's maven module for convenience.
