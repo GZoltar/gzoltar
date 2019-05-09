@@ -16,12 +16,14 @@
  */
 package com.gzoltar.maven;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.reporting.MavenReportException;
+import com.gzoltar.maven.utils.ClasspathUtils;
 import com.gzoltar.report.fl.FaultLocalizationReportBuilder;
 import com.gzoltar.report.fl.config.ConfigFaultLocalizationFamily;
 
@@ -39,6 +41,8 @@ public final class FaultLocalizationReportMojo extends AbstractReportMojo {
   @Override
   protected void executeReport(final Locale locale) throws MavenReportException {
     try {
+      URL[] testClasspathURLs = ClasspathUtils.getTestClasspath(this.getProject());
+      ClasspathUtils.setClassLoaderClasspath(testClasspathURLs);
 
       // build a fault localization report
       FaultLocalizationReportBuilder.build(this.getProject().getBuild().getOutputDirectory(),
