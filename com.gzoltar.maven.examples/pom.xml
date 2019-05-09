@@ -23,7 +23,7 @@
   <artifactId>simple</artifactId>
   <packaging>jar</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <name>simple</name>
+  <name>maven.example</name>
   <inceptionYear>2018</inceptionYear>
 
   <properties>
@@ -38,11 +38,24 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.agent</artifactId>
+      <classifier>runtime</classifier>
+      <version>1.7.2-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.gzoltar</groupId>
+      <artifactId>com.gzoltar.cli</artifactId>
+      <version>1.7.2-SNAPSHOT</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../com.gzoltar.cli/target/com.gzoltar.cli-1.7.2-SNAPSHOT-jar-with-dependencies.jar</systemPath>
+    </dependency>
   </dependencies>
 
   <build>
     <defaultGoal>package</defaultGoal>
-
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -60,19 +73,15 @@
         <version>1.7.2-SNAPSHOT</version>
         <executions>
           <execution>
-            <id>pre-unit-test</id>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>post-unit-test</id>
-            <phase>test</phase>
+            <id>fl-report</id>
             <goals>
               <goal>fl-report</goal>
             </goals>
             <configuration>
               <granularity>line</granularity>
+              <inclPublicMethods>true</inclPublicMethods>
+              <inclStaticConstructors>true</inclStaticConstructors>
+              <inclDeprecatedMethods>true</inclDeprecatedMethods>
               <flFamilies>
                 <flFamily>
                   <name>sfL</name>
@@ -105,29 +114,90 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M3</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.surefire</groupId>
-            <artifactId>surefire-junit47</artifactId>
-            <version>3.0.0-M3</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <testFailureIgnore>true</testFailureIgnore>
-          <properties>
-            <property>
-              <name>listener</name>
-              <value>com.gzoltar.internal.core.listeners.JUnitListener</value>
-            </property>
-          </properties>
-        </configuration>
-      </plugin>
     </plugins>
-
   </build>
+
+  <profiles>
+    <!--
+      Custom test case executor
+    -->
+    <profile>
+      <id>custom</id>
+      <activation>
+        <property>
+          <name>custom</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.gzoltar</groupId>
+            <artifactId>com.gzoltar.maven</artifactId>
+            <version>1.7.2-SNAPSHOT</version>
+            <dependencies>
+              <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!--
+      Maven-sufire test case executor
+    -->
+    <profile>
+      <id>sufire</id>
+      <activation>
+        <property>
+          <name>sufire</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.gzoltar</groupId>
+            <artifactId>com.gzoltar.maven</artifactId>
+            <version>1.7.2-SNAPSHOT</version>
+            <dependencies>
+              <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M3</version>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.maven.surefire</groupId>
+                <artifactId>surefire-junit47</artifactId>
+                <version>3.0.0-M3</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <testFailureIgnore>true</testFailureIgnore>
+              <systemPropertyVariables>
+                <gzoltar-agent.destfile>${project.build.directory}/gzoltar.ser</gzoltar-agent.destfile>
+              </systemPropertyVariables>
+              <properties>
+                <property>
+                  <name>listener</name>
+                  <value>com.gzoltar.internal.core.listeners.JUnitListener</value>
+                </property>
+              </properties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 </project>

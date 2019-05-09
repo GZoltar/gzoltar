@@ -86,6 +86,15 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
     projectProperties.setProperty(SUREFIRE_ARG_LINE, newValue);
   }
 
+  /**
+   * Return a string representation of the GZoltar Java agent with all properties defined.
+   * 
+   * @return
+   */
+  public String prepareAgentVM() {
+    return this.createAgentConfigurations().prependVMArguments("", getAgentJarFile());
+  }
+
   private File getAgentJarFile() {
     final Artifact gzoltarAgentArtifact = this.pluginArtifactMap.get(AGENT_ARTIFACT_NAME);
     return gzoltarAgentArtifact.getFile();
@@ -123,6 +132,10 @@ public abstract class AbstractAgentMojo extends AbstractGZoltarMojo {
     }
 
     return agentConfigs;
+  }
+
+  public String getOutput() {
+    return this.output;
   }
 
   /**

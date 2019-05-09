@@ -21,6 +21,8 @@
         <goals>
           <goal>prepare-agent</goal>
           <goal>instrument</goal>
+          <goal>list-test-methods</goal>
+          <goal>run-test-methods</goal>
           <goal>fl-report</goal>
         </goals>
       </pluginExecutionFilter>
