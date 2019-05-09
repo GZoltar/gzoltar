@@ -41,14 +41,14 @@ public abstract class AbstractGZoltarMojo extends AbstractMojo {
    * A list of class files to include in instrumentation/analysis/reports. May use wildcard
    * characters (* and ?). When not specified everything will be included.
    */
-  @Parameter
+  @Parameter(property = "gzoltar.includes", defaultValue = "*")
   private List<String> includes;
 
   /**
    * A list of class files to exclude from instrumentation/analysis/reports. May use wildcard
    * characters (* and ?). When not specified nothing will be excluded.
    */
-  @Parameter
+  @Parameter(property = "gzoltar.excludes", defaultValue = "")
   private List<String> excludes;
 
   private boolean shouldInstrument() {
