@@ -20,7 +20,7 @@
 
   <groupId>com.gzoltar</groupId>
   <artifactId>com.gzoltar.build</artifactId>
-  <version>1.7.2-SNAPSHOT</version>
+  <version>1.7.2</version>
   <packaging>pom</packaging>
 
   <name>GZoltar</name>
