@@ -26,7 +26,7 @@ die() {
 
 # ------------------------------------------------------------------ Envs & Args
 
-GZOLTAR_VERSION="1.7.2"
+GZOLTAR_VERSION="1.7.3-SNAPSHOT"
 
 # Check whether GZOLTAR_CLI_JAR is set
 export GZOLTAR_CLI_JAR="$SCRIPT_DIR/../com.gzoltar.cli/target/com.gzoltar.cli-$GZOLTAR_VERSION-jar-with-dependencies.jar"
