@@ -7,7 +7,7 @@ moment, the library is available as:
 
 * [Command line interface](com.gzoltar.cli)
 * [Ant tasks](com.gzoltar.ant)
-* [Maven plug-in](com.gzoltar.ant)
+* [Maven plug-in](com.gzoltar.maven)
 
 GZoltar is an on-going project. Hence, there might be interesting features that
 have not yet been implemented, or even unexpected behaviour. We would like to
