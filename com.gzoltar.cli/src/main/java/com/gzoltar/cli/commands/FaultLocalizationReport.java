@@ -40,17 +40,17 @@ public class FaultLocalizationReport extends AbstractReport {
   @Option(name = "--inclPublicMethods",
       usage = "specifies whether public static methods of each class should be reported",
       metaVar = "<boolean>", required = false)
-  private Boolean inclPublicMethods = true;
+  private Boolean inclPublicMethods = false;
 
   @Option(name = "--inclStaticConstructors",
       usage = "specifies whether public static constructors of each class should be reported",
       metaVar = "<boolean>", required = false)
-  private Boolean inclStaticConstructors = true;
+  private Boolean inclStaticConstructors = false;
 
   @Option(name = "--inclDeprecatedMethods",
       usage = "specifies whether methods annotated as deprecated should be reported",
       metaVar = "<boolean>", required = false)
-  private Boolean inclDeprecatedMethods = true;
+  private Boolean inclDeprecatedMethods = false;
 
   @Option(name = "--family", usage = "fault localization family", metaVar = "<family>",
       required = false)
