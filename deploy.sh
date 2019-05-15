@@ -27,9 +27,6 @@
 #      <settings>
 #        <servers>
 #          <server>
-#            <id>__GZoltar_GPG_KEY_ID__</id>
-#          </server>
-#          <server>
 #            <id>sonatype-nexus-staging</id>
 #            <username>__GZoltar_USERNAME__</username>
 #            <password>__GZoltar_GPG_KEY_PASSWORD__</password>
@@ -71,7 +68,7 @@ fi
 
 pushd . > /dev/null 2>&1
 cd "$SCRIPT_DIR/com.gzoltar.build"
-  mvn clean deploy || die "Deploy has failed!"
+  mvn clean -P release deploy || die "Deploy has failed!"
 popd > /dev/null 2>&1
 
 echo "DONE!"
