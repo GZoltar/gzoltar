@@ -25,6 +25,7 @@ import com.gzoltar.core.instr.Instrumenter;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.BlackList;
 import com.gzoltar.core.instr.actions.WhiteList;
+import com.gzoltar.core.instr.filter.DuplicateCollectorReferenceFilter;
 import com.gzoltar.core.instr.filter.Filter;
 import com.gzoltar.core.instr.matchers.ClassNameMatcher;
 import com.gzoltar.core.instr.matchers.PrefixMatcher;
@@ -41,6 +42,8 @@ public class CoverageTransformer implements ClassFileTransformer {
   private final boolean inclNoLocationClasses;
 
   private final Filter filter;
+
+  private final DuplicateCollectorReferenceFilter duplicateCollectorFilter;
 
   public CoverageTransformer(final AgentConfigs agentConfigs) throws Exception {
     this.instrumenter = new Instrumenter(agentConfigs);
@@ -65,6 +68,9 @@ public class CoverageTransformer implements ClassFileTransformer {
 
     this.filter =
         new Filter(excludeGZoltarClasses, includeClasses, excludeClasses, excludeClassLoaders);
+
+    // avoid re-instrumenting previously instrumented classes
+    this.duplicateCollectorFilter = new DuplicateCollectorReferenceFilter();
   }
 
   public byte[] transform(final ClassLoader loader, final String className,
@@ -84,6 +90,12 @@ public class CoverageTransformer implements ClassFileTransformer {
     try {
       ClassPool cp = ClassPool.getDefault();
       CtClass cc = cp.makeClassIfNew(new ByteArrayInputStream(classfileBuffer));
+
+      // check whether this class has been instrumented, if so return the
+      // previously instrumented code, if not try to instrument it
+      if (this.duplicateCollectorFilter.filter(cc) == Outcome.REJECT) {
+        return cc.toBytecode();
+      }
 
       // only instrument classes under a build location, e.g., target/classes/ or build/classes/
       SourceLocationMatcher excludeClassesNotInBuildLocation = new SourceLocationMatcher(
