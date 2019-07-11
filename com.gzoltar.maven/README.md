@@ -36,7 +36,7 @@ To use GZoltar's Maven plug-in, it first needs to be configured in the
 <plugin>
   <groupId>com.gzoltar</groupId>
   <artifactId>com.gzoltar.maven</artifactId>
-  <version>0.0.1</version>
+  <version>1.7.2</version>
   <executions>
     <execution>
       <id>pre-unit-test</id>
@@ -88,7 +88,7 @@ plug-in has to be configured as follows:
 <plugin>
   <groupId>com.gzoltar</groupId>
   <artifactId>com.gzoltar.maven</artifactId>
-  <version>0.0.1</version>
+  <version>1.7.2</version>
   <executions>
     <execution>
       <id>post-unit-test</id>
