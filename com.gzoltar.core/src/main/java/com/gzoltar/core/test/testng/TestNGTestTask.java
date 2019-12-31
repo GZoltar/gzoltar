@@ -21,15 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.runner.notification.RunListener;
 import org.testng.TestNG;
-import com.gzoltar.core.util.IsolatingClassLoader;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
+import com.gzoltar.core.util.IsolatingClassLoader;
 
 public class TestNGTestTask extends TestTask {
 
   public TestNGTestTask(final URL[] searchPathURLs, final boolean offline,
-      final boolean collectCoverage, final TestMethod testMethod) {
-    super(searchPathURLs, offline, collectCoverage, testMethod);
+      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
+    super(searchPathURLs, offline, collectCoverage, initTestClass, testMethod);
   }
 
   /**
@@ -49,7 +49,8 @@ public class TestNGTestTask extends TestTask {
     // the old/original classloader when it finishes.
     Thread.currentThread().setContextClassLoader(classLoader);
 
-    Class<?> clazz = Class.forName(this.testMethod.getTestClassName(), false, classLoader);
+    Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
+        : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 
     List<String> testMethod = new ArrayList<String>();
     testMethod.add(this.testMethod.getTestMethodName());
@@ -61,9 +62,11 @@ public class TestNGTestTask extends TestTask {
     runner.addListener(new TestNGTextListener());
     if (this.collectCoverage) {
       if (this.offline) {
-        runner.addListener((RunListener) Class
-            .forName("com.gzoltar.core.listeners.TestNGListener", false, classLoader)
-            .newInstance());
+        runner.addListener(this.initTestClass
+            ? (RunListener) Class.forName("com.gzoltar.core.listeners.TestNGListener").newInstance()
+            : (RunListener) Class
+                .forName("com.gzoltar.core.listeners.TestNGListener", false, classLoader)
+                .newInstance());
       } else {
         runner.addListener(new com.gzoltar.core.listeners.TestNGListener());
       }

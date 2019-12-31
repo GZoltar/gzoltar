@@ -50,6 +50,10 @@ public class RunTestMethods extends Command {
       metaVar = "<boolean>", required = false)
   private Boolean offline = false;
 
+  @Option(name = "--initTestClass", usage = "initialize test class with thread classloader",
+      metaVar = "<boolean>", required = false)
+  private Boolean initTestClass = false;
+
   @Override
   public String description() {
     return "Run test methods in isolation.";
@@ -86,12 +90,12 @@ public class RunTestMethods extends Command {
 
         switch (testMethod.getClassType()) {
           case JUNIT:
-            testTask =
-                new JUnitTestTask(classpathURLs, this.offline, this.collectCoverage, testMethod);
+            testTask = new JUnitTestTask(classpathURLs, this.offline, this.collectCoverage,
+                this.initTestClass, testMethod);
             break;
           case TESTNG:
-            testTask =
-                new TestNGTestTask(classpathURLs, this.offline, this.collectCoverage, testMethod);
+            testTask = new TestNGTestTask(classpathURLs, this.offline, this.collectCoverage,
+                this.initTestClass, testMethod);
             break;
           default:
             throw new RuntimeException(testMethod.getLongName() + " is not supported");

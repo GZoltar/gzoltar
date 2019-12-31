@@ -20,15 +20,15 @@ import java.net.URL;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.notification.RunListener;
-import com.gzoltar.core.util.IsolatingClassLoader;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
+import com.gzoltar.core.util.IsolatingClassLoader;
 
 public class JUnitTestTask extends TestTask {
 
   public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
-      final boolean collectCoverage, final TestMethod testMethod) {
-    super(searchPathURLs, offline, collectCoverage, testMethod);
+      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
+    super(searchPathURLs, offline, collectCoverage, initTestClass, testMethod);
   }
 
   /**
@@ -47,15 +47,19 @@ public class JUnitTestTask extends TestTask {
     // the old/original classloader when it finishes.
     Thread.currentThread().setContextClassLoader(classLoader);
 
-    Class<?> clazz = Class.forName(this.testMethod.getTestClassName(), false, classLoader);
+    Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
+        : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 
     Request request = Request.method(clazz, this.testMethod.getTestMethodName());
     JUnitCore runner = new JUnitCore();
     runner.addListener(new JUnitTextListener());
     if (this.collectCoverage) {
       if (this.offline) {
-        runner.addListener((RunListener) Class
-            .forName("com.gzoltar.core.listeners.JUnitListener", false, classLoader).newInstance());
+        runner.addListener(this.initTestClass
+            ? (RunListener) Class.forName("com.gzoltar.core.listeners.JUnitListener").newInstance()
+            : (RunListener) Class
+                .forName("com.gzoltar.core.listeners.JUnitListener", false, classLoader)
+                .newInstance());
       } else {
         runner.addListener(new com.gzoltar.core.listeners.JUnitListener());
       }
