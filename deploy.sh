@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-#  Copyright (C) 2019 GZoltar contributors.
+#  Copyright (C) 2020 GZoltar contributors.
 #
 #  This file is part of GZoltar.
 #
