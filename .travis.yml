@@ -12,6 +12,7 @@ cache:
     - '$HOME/.m2/repository'
 
 jdk:
+  - openjdk7
   - openjdk8
   - openjdk10
   - openjdk11
