@@ -14,7 +14,7 @@ java -jar gzoltarcli.jar <command> [parameters]
 To see the available parameters of each command, use:
 
 ```
-java -jar gzoltarcli.jar <command> -help
+java -jar gzoltarcli.jar <command> --help
 ```
 
 
