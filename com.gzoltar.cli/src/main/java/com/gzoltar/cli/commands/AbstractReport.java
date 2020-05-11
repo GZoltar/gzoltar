@@ -41,6 +41,16 @@ public abstract class AbstractReport extends Command {
       required = true)
   protected File dataFile = null;
 
+  @Option(name = "--includes",
+      usage = "expression to identify which classes to report on, may use wildcard characters (* and ?) and ':' to define more than one expression",
+      metaVar = "<expression(s)>", required = false)
+  protected String includes = "*";
+
+  @Option(name = "--excludes",
+      usage = "expression to identify which classes to not report on, may use wildcard characters (* and ?) and ':' to define more than one expression",
+      metaVar = "<expression(s)>", required = false)
+  protected String excludes = "";
+
   protected final AgentConfigs agentConfigs;
 
   protected AbstractReport() {

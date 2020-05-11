@@ -93,6 +93,8 @@ public class FaultLocalizationReport extends AbstractReport {
     this.agentConfigs.setInclPublicMethods(this.inclPublicMethods);
     this.agentConfigs.setInclStaticConstructors(this.inclStaticConstructors);
     this.agentConfigs.setInclDeprecatedMethods(this.inclDeprecatedMethods);
+    this.agentConfigs.setIncludes(this.includes);
+    this.agentConfigs.setExcludes(this.excludes);
 
     final ConfigFaultLocalizationFamily configFlFamily = new ConfigFaultLocalizationFamily();
 
