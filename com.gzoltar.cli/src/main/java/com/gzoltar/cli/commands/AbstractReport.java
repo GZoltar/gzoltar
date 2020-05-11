@@ -51,38 +51,6 @@ public abstract class AbstractReport extends Command {
 
   /**
    * 
-   * @param granularity
-   */
-  public void setGranularity(String granularity) {
-    this.agentConfigs.setGranularity(granularity);
-  }
-
-  /**
-   * 
-   * @param inclPublicMethods
-   */
-  public void setInclPublicMethods(Boolean inclPublicMethods) {
-    this.agentConfigs.setInclPublicMethods(inclPublicMethods);
-  }
-
-  /**
-   * 
-   * @param inclStaticConstructors
-   */
-  public void setInclStaticConstructors(Boolean inclStaticConstructors) {
-    this.agentConfigs.setInclStaticConstructors(inclStaticConstructors);
-  }
-
-  /**
-   * 
-   * @param inclDeprecatedMethods
-   */
-  public void setInclDeprecatedMethods(Boolean inclDeprecatedMethods) {
-    this.agentConfigs.setInclDeprecatedMethods(inclDeprecatedMethods);
-  }
-
-  /**
-   * 
    * @return
    */
   private boolean canGenerateReport(final PrintStream out, final PrintStream err) {

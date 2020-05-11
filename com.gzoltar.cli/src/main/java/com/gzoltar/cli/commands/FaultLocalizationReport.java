@@ -89,10 +89,10 @@ public class FaultLocalizationReport extends AbstractReport {
    */
   @Override
   protected void generateReport(final Locale locale) throws Exception {
-    this.setGranularity(this.granularity);
-    this.setInclPublicMethods(this.inclPublicMethods);
-    this.setInclStaticConstructors(this.inclStaticConstructors);
-    this.setInclDeprecatedMethods(this.inclDeprecatedMethods);
+    this.agentConfigs.setGranularity(this.granularity);
+    this.agentConfigs.setInclPublicMethods(this.inclPublicMethods);
+    this.agentConfigs.setInclStaticConstructors(this.inclStaticConstructors);
+    this.agentConfigs.setInclDeprecatedMethods(this.inclDeprecatedMethods);
 
     final ConfigFaultLocalizationFamily configFlFamily = new ConfigFaultLocalizationFamily();
 
