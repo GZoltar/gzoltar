@@ -34,8 +34,10 @@ public class ConfigHTMLReportFormatter extends AbstractReportFormatter {
   public ConfigHTMLReportFormatter() {
     super(ReportFormatter.HTML);
 
-    // default view
+    // default set of views
+    this.htmlViews.add(HTMLViews.BUBBLE_HIERARCHY);
     this.htmlViews.add(HTMLViews.SUNBURST);
+    this.htmlViews.add(HTMLViews.VERTICAL_PARTITION);
   }
 
   /**
