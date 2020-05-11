@@ -36,17 +36,21 @@ public abstract class TestTask implements Callable<TestResult> {
 
   protected final TestMethod testMethod;
 
+  protected final int timeout;
+
   /**
    * Constructor for task to run a JUnit test method.
    */
   protected TestTask(final URL[] searchPathURLs, final boolean offline,
-      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
+      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod,
+      final int timeout) {
     this.id = INC.incrementAndGet();
     this.searchPathURLs = searchPathURLs;
     this.offline = offline;
     this.collectCoverage = collectCoverage;
     this.initTestClass = initTestClass;
     this.testMethod = testMethod;
+    this.timeout = timeout;
   }
 
   /**
@@ -56,6 +60,15 @@ public abstract class TestTask implements Callable<TestResult> {
    */
   public TestMethod getTestMethod() {
     return this.testMethod;
+  }
+
+  /**
+   * Returns the timeout (in seconds) associated to the {@link TestMethod}.
+   * 
+   * @return
+   */
+  public int getTimeout() {
+    return this.timeout;
   }
 
   /**
