@@ -27,9 +27,8 @@ import com.gzoltar.core.util.IsolatingClassLoader;
 public class JUnitTestTask extends TestTask {
 
   public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
-      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod,
-      final int timeout) {
-    super(searchPathURLs, offline, collectCoverage, initTestClass, testMethod, timeout);
+      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
+    super(searchPathURLs, offline, collectCoverage, initTestClass, testMethod);
   }
 
   /**

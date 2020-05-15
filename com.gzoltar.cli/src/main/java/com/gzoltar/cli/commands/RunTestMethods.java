@@ -54,10 +54,6 @@ public class RunTestMethods extends Command {
       metaVar = "<boolean>", required = false)
   private Boolean initTestClass = false;
 
-  @Option(name = "--timeout", usage = "time (in seconds) allowed to run a test method (any negative value disables the timeout)",
-      metaVar = "<seconds>", required = false)
-  private int timeout = -1;
-
   @Override
   public String description() {
     return "Run test methods in isolation.";
@@ -95,11 +91,11 @@ public class RunTestMethods extends Command {
         switch (testMethod.getClassType()) {
           case JUNIT:
             testTask = new JUnitTestTask(classpathURLs, this.offline, this.collectCoverage,
-                this.initTestClass, testMethod, this.timeout);
+                this.initTestClass, testMethod);
             break;
           case TESTNG:
             testTask = new TestNGTestTask(classpathURLs, this.offline, this.collectCoverage,
-                this.initTestClass, testMethod, this.timeout);
+                this.initTestClass, testMethod);
             break;
           default:
             throw new RuntimeException(testMethod.getLongName() + " is not supported");

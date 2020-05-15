@@ -18,8 +18,6 @@ package com.gzoltar.core.test;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class TestRunner {
 
@@ -29,14 +27,8 @@ public class TestRunner {
     Thread thread = new Thread(group, task, "[thread for " + testTask.toString() + "]");
     thread.start();
     try {
-      TestResult testResult = null;
-      if (testTask.getTimeout() < 0) {
-        testResult = task.get();
-      } else {
-        testResult = task.get(testTask.getTimeout(), TimeUnit.SECONDS);
-      }
-      return testResult;
-    } catch (ExecutionException | InterruptedException | TimeoutException e) {
+      return task.get();
+    } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
       killThreadGroup(group);
       thread.interrupt();
