@@ -1,5 +1,10 @@
 # Ant example
 
+The following command performs fault-localization on a Java toy project using
+the [GZoltar Ant tasks](../com.gzoltar.ant). Note that the GZoltar project must
+be 'packaged' before running the following command, i.e., `mvn package` must be
+executed on the root directory.
+
 ```
 ant -f build.xml clean report
 ```

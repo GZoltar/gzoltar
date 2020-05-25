@@ -1,8 +1,10 @@
 # Command line example
 
 The script `run.sh` performs fault-localization on a Java toy project using the
-GZoltar command line interface. Fault-localization can either be performed with
-offline or online (i.e., at runtime) instrumentation.
+[GZoltar command line interface](../com.gzoltar.cli). Fault-localization can
+either be performed with offline or online (i.e., at runtime) instrumentation.
+Note that the GZoltar project must be 'packaged' before running the following
+command, i.e., `mvn package` must be executed on the root directory.
 
 Usage:
 

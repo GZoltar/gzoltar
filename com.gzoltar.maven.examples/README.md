@@ -1,5 +1,11 @@
 # Maven example
 
+This document lists a few usage examples of the
+[GZoltar Maven plug-in](../com.gzoltar.maven). Note that the GZoltar project
+must be 'packaged' before running any of the usage examples described below,
+i.e., `mvn package` must be executed on the root directory.
+
+
 ### Online instrumentation with custom test case executor
 
 ```
