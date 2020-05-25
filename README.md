@@ -15,7 +15,7 @@ at:
 
 * [Command line interface usage example](com.gzoltar.cli.examples)
 * [Ant tasks usage examples](com.gzoltar.ant.examples)
-* [Maven plug-in usage example](com.gzoltar.ant.examples)
+* [Maven plug-in usage example](com.gzoltar.maven.examples)
 
 GZoltar is an on-going project. Hence, there might be interesting features that
 have not yet been implemented, or even unexpected behaviour. We would like to
