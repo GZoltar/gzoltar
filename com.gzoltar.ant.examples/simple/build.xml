@@ -45,7 +45,7 @@
 
   <target name="install-deps">
     <mkdir dir="${lib.dir}" />
-    <get dest="${junit.jar}" src="http://search.maven.org/remotecontent?filepath=junit/junit/4.12/junit-4.12.jar" skipexisting="true" />
+    <get dest="${junit.jar}" src="https://repo1.maven.org/maven2/junit/junit/4.12/junit-4.12.jar" skipexisting="true" />
     <get dest="${hamcrest.jar}" src="https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" skipexisting="true" />
   </target>
 
