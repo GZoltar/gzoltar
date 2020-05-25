@@ -68,12 +68,23 @@ if [ "$INSTRUMENTATION" != "online" ] && [ "$INSTRUMENTATION" != "offline" ]; th
   die "$USAGE"
 fi
 
+#
+# Prepare runtime dependencies
+#
 LIB_DIR="$SCRIPT_DIR/lib"
+mkdir -p "$LIB_DIR" || die "Failed to create $LIB_DIR!"
 [ -d "$LIB_DIR" ] || die "$LIB_DIR does not exist!"
 
 JUNIT_JAR="$LIB_DIR/junit.jar"
+if [ ! -s "$JUNIT_JAR" ]; then
+  wget "https://repo1.maven.org/maven2/junit/junit/4.12/junit-4.12.jar" -O "$JUNIT_JAR" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
+fi
 [ -s "$JUNIT_JAR" ] || die "$JUNIT_JAR does not exist or it is empty!"
+
 HAMCREST_JAR="$LIB_DIR/hamcrest-core.jar"
+if [ ! -s "$HAMCREST_JAR" ]; then
+  wget -np -nv "https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" -O "$HAMCREST_JAR" || die "Failed to get hamcrest-core-1.3.jar from https://repo1.maven.org!"
+fi
 [ -s "$HAMCREST_JAR" ] || die "$HAMCREST_JAR does not exist or it is empty!"
 
 BUILD_DIR="$SCRIPT_DIR/build"
