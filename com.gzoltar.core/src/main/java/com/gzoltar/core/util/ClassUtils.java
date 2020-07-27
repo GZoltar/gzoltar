@@ -31,6 +31,7 @@ public class ClassUtils {
     if (pos < 0) {
       return false;
     }
-    return Character.isDigit(clazz.getName().charAt(pos + 1));
+    return pos == clazz.getName().length() - 1
+        || Character.isDigit(clazz.getName().charAt(pos + 1));
   }
 }
