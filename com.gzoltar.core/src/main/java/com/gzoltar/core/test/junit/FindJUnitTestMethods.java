@@ -21,8 +21,10 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import org.jacoco.core.runtime.WildcardMatcher;
+import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Request;
+import org.junit.runner.Runner;
 import com.gzoltar.core.util.ClassType;
 import com.gzoltar.core.listeners.Listener;
 import com.gzoltar.core.test.TestMethod;
@@ -44,7 +46,32 @@ public final class FindJUnitTestMethods {
         Class.forName(testClassName, false, Thread.currentThread().getContextClassLoader());
     assert clazz != null;
 
-    for (Description test : Request.aClass(clazz).getRunner().getDescription().getChildren()) {
+    Request request = Request.aClass(clazz);
+    assert request != null;
+    Runner runner = request.getRunner();
+    assert runner != null;
+    Description description = null;
+
+    try {
+      description = runner.getDescription();
+    } catch (NullPointerException e) {
+      /**
+      public class XTestSuite extends TestCase {
+          public static Test suite() {
+              return null;
+          }
+      }
+      */
+      if (runner instanceof JUnit38ClassRunner) {
+        System.err.println("Failed to find unit test methods in " + testClassName);
+        e.printStackTrace();
+        return testMethods;
+      }
+      throw e;
+    }
+    assert description != null;
+
+    for (Description test : description.getChildren()) {
       // a parameterised atomic test case does not have a method name
       if (test.getMethodName() == null) {
         for (Method m : clazz.getMethods()) {
