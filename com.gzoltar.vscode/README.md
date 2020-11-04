@@ -66,14 +66,29 @@ When a file is opened after performing an analysis, it will show an icon to indi
 
 ## Compiling and Publishing
 
-Before compiling and attempting to work directly on the extension, ensure the following files are on the `tools` folder:
+Before compiling and attempting to work directly on the extension, ensure the following files are on the `tools` folder with the names specified below:
 
 ```
 gzoltaragent.jar
 gzoltarcli.jar
-hamcrest-core-2.2.jar
-junit-4.13.jar
+hamcrest-core.jar
+junit.jar
 ```
+
+To obtain the first two jars (`gzoltaragent.jar` and `gzoltarcli.jar`), run the following commands:
+
+```
+cd ..
+mvn package
+```
+
+This will generate the necessary jars, and they can be found in the target directories of the folders `com.gzoltar.agent` and `com.gzoltar.cli` respectively.
+
+Regarding the last two jars, these can be obtained from the Maven Repository page:
+
+[JUnit](https://repo1.maven.org/maven2/junit/junit/4.13/junit-4.13.jar)
+
+[HamCrest Core](https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/2.2/hamcrest-core-2.2.jar)
 
 To compile the extension, run the command:
 

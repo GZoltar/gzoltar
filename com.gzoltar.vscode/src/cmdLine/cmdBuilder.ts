@@ -9,7 +9,7 @@ function listFunction(destPath: string, dependencies: string, testFolder: string
         .cd(destPath)
         .newCmd()
         .java()
-        .cp('"build/"', dependencies, '"hamcrest-core-2.2.jar"', '"gzoltarcli.jar"')
+        .cp('"build/"', dependencies, '"hamcrest-core.jar"', '"gzoltarcli.jar"')
         .main(`com.gzoltar.cli.Main listTestMethods ${testFolder}`)
         .toString();
 }
@@ -20,7 +20,7 @@ function runFunction(destPath: string, dependencies: string, includes: string): 
         .newCmd()
         .java()
         .javaagent(`gzoltaragent.jar=includes="${includes}"`)
-        .cp('"build/"', dependencies, '"junit-4.13.jar"', '"hamcrest-core-2.2.jar"', '"gzoltarcli.jar"')
+        .cp('"build/"', dependencies, '"junit.jar"', '"hamcrest-core.jar"', '"gzoltarcli.jar"')
         .main(`com.gzoltar.cli.Main runTestMethods --testMethods "tests.txt" --collectCoverage`)
         .toString();
 }
