@@ -112,6 +112,15 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+###
+# Visual Studio Code
+###
+
+out
+node_modules
+.vscode-test/
+*.vsix
+
 # --------------------------------------------------------------------
 # OS's
 # --------------------------------------------------------------------
