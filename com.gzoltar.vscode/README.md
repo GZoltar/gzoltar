@@ -33,7 +33,17 @@ regular Visual Studio Code window.
 
 ## Install GZoltar's Visual Studio Code extension from the marketplace
 
-TODO
+There are two possible ways to install GZoltar's Visual Studio Code extension
+from the marketplace.  The first method can be done from inside Visual Studio
+Code itself, on the Extensions icon in the tree view container.  From there, you
+can search for GZoltar on the prompt and install it.
+
+![GZoltar inside VS Code](resources/docs/gzcode.png)
+
+Alternatively, the extension can be found and installed from the
+[marketplace webpage](https://marketplace.visualstudio.com/items?itemName=GZoltar.vscode-gzoltar).
+
+![GZoltar in the Marketplace](resources/docs/gzmarket.png)
 
 ## Usage
 
