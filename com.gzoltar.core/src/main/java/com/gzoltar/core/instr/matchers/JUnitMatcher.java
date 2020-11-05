@@ -41,7 +41,9 @@ public class JUnitMatcher implements IMatcher {
             new SuperclassMatcher("junit.framework.TestCase"),
             // a JUnit4 test class must has at least one method annotated with specific JUnit tags
             new OrMatcher(new MethodAnnotationMatcher("org.junit.Test"),
-                new MethodAnnotationMatcher("org.junit.experimental.theories.Theory"))));
+                new MethodAnnotationMatcher("org.junit.experimental.theories.Theory")),
+            // a JUnit5 test class must has at least one method annotated with specific JUnit tags
+            new MethodAnnotationMatcher("org.junit.jupiter.api.Test")));
   }
 
   @Override
