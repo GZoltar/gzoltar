@@ -44,6 +44,9 @@ public abstract class AbstractModifierMatcher implements IMatcher {
   }
 
   private final boolean matches(final int modifier) {
+    if (modifier == 0 && this.modifierMask == 0) {
+      return true; // 'default' modifier
+    }
     return (modifier & this.modifierMask) != 0;
   }
 

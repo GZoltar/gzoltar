@@ -27,8 +27,8 @@ public class JUnitMatcher implements IMatcher {
 
   public JUnitMatcher() {
     this.matcher = new AndMatcher(
-        // a JUnit test class must be public
-        new ClassModifierMatcher(Modifier.PUBLIC),
+        // a JUnit test class must be public or 'default' package access
+        new OrMatcher(new ClassModifierMatcher(Modifier.PUBLIC), new ClassModifierMatcher(0)),
         // a JUnit test class cannot be an abstract class
         new NotMatcher(new ClassModifierMatcher(Modifier.ABSTRACT)),
         // a JUnit test class cannot be an interface class
