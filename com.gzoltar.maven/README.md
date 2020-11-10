@@ -24,7 +24,7 @@ mvn help:describe -Dplugin=com.gzoltar:com.gzoltar.maven -Ddetail
 ```
 
 A simple working Maven project can be found in
-[here](../com.gzoltar.maven.examples/simple).
+[here](../com.gzoltar.maven.examples).
 
 
 ## Configuring the coverage collection
