@@ -30,6 +30,8 @@ public class Node {
 
   private final int lineNumber;
 
+  private boolean startBlock;
+
   private NodeType type;
 
   private int depth;
@@ -46,8 +48,8 @@ public class Node {
    * @param lineNumber
    * @param type
    */
-  public Node(final String name, final int lineNumber, final NodeType type) {
-    this(name, lineNumber, type, null);
+  public Node(final String name, final int lineNumber, final boolean startBlock, final NodeType type) {
+    this(name, lineNumber, startBlock, type, null);
   }
 
   /**
@@ -56,10 +58,11 @@ public class Node {
    * @param type
    * @param parent
    */
-  public Node(final String name, final int lineNumber, final NodeType type, final Node parent) {
+  public Node(final String name, final int lineNumber, final boolean startBlock, final NodeType type, final Node parent) {
     this.type = type;
     this.name = name;
     this.lineNumber = lineNumber;
+    this.startBlock = startBlock;
     this.setParent(parent);
   }
 
@@ -123,6 +126,22 @@ public class Node {
    */
   public void setNodeType(final NodeType type) {
     this.type = type;
+  }
+
+  /**
+   * 
+   * @return
+   */
+  public boolean isStartBlock() {
+    return this.startBlock;
+  }
+
+  /**
+   * 
+   * @param startBlock
+   */
+  public void setStartBlock(final boolean startBlock) {
+    this.startBlock = startBlock;
   }
 
   /**

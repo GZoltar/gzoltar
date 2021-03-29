@@ -47,7 +47,7 @@ public class Tree implements Iterable<Node> {
    */
   public Tree(final boolean createRoot) {
     if (createRoot) {
-      this.root = new Node(ROOT_NAME, -1, NodeType.PACKAGE, null);
+      this.root = new Node(ROOT_NAME, -1, false, NodeType.PACKAGE, null);
       this.nodes.put(ROOT_NAME, this.root);
     }
   }

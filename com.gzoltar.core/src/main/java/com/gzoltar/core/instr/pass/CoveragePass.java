@@ -204,7 +204,7 @@ public class CoveragePass implements IPass {
         // a line is always considered for instrumentation if and only if: 1) it's line number has
         // not been instrumented; 2) or, if it's in a different block
 
-        Node node = NodeFactory.createNode(ctClass, ctBehavior, curLine);
+        Node node = NodeFactory.createNode(ctClass, ctBehavior, curLine, isNewBlock);
         assert node != null;
         Probe probe = this.probeGroup.registerProbe(node, ctBehavior);
         assert probe != null;

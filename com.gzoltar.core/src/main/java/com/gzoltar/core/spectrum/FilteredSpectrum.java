@@ -114,17 +114,26 @@ public class FilteredSpectrum {
           continue;
         }
 
-        newProbeGroup.registerProbe(probe.getNode(), probe.getCtBehavior());
-
-        if (this.granularity == GranularityLevel.CLASS) {
+        if (this.granularity == GranularityLevel.LINE) {
+          // register Line probe
+          newProbeGroup.registerProbe(probe.getNode(), probe.getCtBehavior());
+        } else if (this.granularity == GranularityLevel.CLASS) {
+          // register Class probe
+          newProbeGroup.registerProbe(probe.getNode(), probe.getCtBehavior());
           break;
         } else if (this.granularity == GranularityLevel.METHOD) {
+          // register Method probe
+          newProbeGroup.registerProbe(probe.getNode(), probe.getCtBehavior());
+
           Node node = probe.getNode();
           String methodName =
               node.getName().substring(node.getName().indexOf(NodeType.METHOD.getSymbol()) + 1,
                   node.getName().indexOf(NodeType.LINE.getSymbol()));
 
           granularityMethodFilter.add(new BlackList(new MethodNameMatcher(methodName)));
+        } else if (this.granularity == GranularityLevel.BASICBLOCK && probe.getNode().isStartBlock()) {
+          // register BasicBlock probe
+          newProbeGroup.registerProbe(probe.getNode(), probe.getCtBehavior());
         }
       }
 
