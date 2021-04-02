@@ -92,7 +92,9 @@ are the same as the ones represented in the charts.
 ## Build GZoltar's Visual Studio Code extension from the source code
 
 1. Collect the set of required experiments by executing the `get_deps.sh` script.
-2. Compile the extension's source code by executing the command `npm run compile`.
+2. Install `npm` (in case it is not installed already).
+3. Install `typescript` compiler (i.e., `npm install typescript -g`).
+4. Compile the extension's source code by executing the command `npm run compile`.
 
 ## Publish GZoltar's Visual Studio Code extension
 
