@@ -51,7 +51,7 @@ class Maven implements BuildTool {
     }
 
     async runTests(projectPath: string): Promise<CommandRet> {
-        const ret = await Command.exec(`(cd ${projectPath} && mvn test)`);
+        const ret = await Command.exec(`(cd ${projectPath} && mvn test -Dmaven.test.failure.ignore=true -Dmaven.test.error.ignore=true)`);
         return ret;
     }
 }
