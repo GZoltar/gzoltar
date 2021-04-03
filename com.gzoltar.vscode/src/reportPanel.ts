@@ -19,8 +19,6 @@
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { join, sep } from 'path';
-import { disassemble } from './cmdLine/cmdBuilder';
-import { Command } from './cmdLine/command';
 
 export class ReportPanel {
 
@@ -64,19 +62,34 @@ export class ReportPanel {
     }
 
     private async openDoc(label: string): Promise<void> {
-        const fSplit = String(label).split(ReportPanel.fileReg);
-        const packageName = fSplit[1].replace(/\./g, sep);
-        const file = join(packageName, fSplit[2]);
+        console.log("[gz] label: " + label); // mypackage$App$Foo#mid(int,int,int):13
 
-        const classFile = join('build', file) + '.class';
-        const dissassemble = await Command.exec(disassemble(this.configPath, classFile));
-        if (dissassemble.failed) {
-            throw dissassemble.stderr;
+        let packageName = label.substring(0, label.indexOf('$'));
+        packageName = packageName.replace(/\./g, sep);
+        console.log(packageName);
+
+        let className = label.substring(label.indexOf('$') + 1, label.indexOf('#'));
+        if (className.indexOf('$') != -1) {
+            className = className.substring(0, className.indexOf('$'));
         }
-        const dSplit = dissassemble.stdout.split(ReportPanel.classReg);
-        
-        const filename = join(this.workspacePath, 'src', 'main', 'java', packageName, dSplit[1]);
-        vscode.window.showTextDocument(vscode.Uri.file(filename), { viewColumn: vscode.ViewColumn.One });
+        console.log(className);
+
+        let methodName = label.substring(label.indexOf('#') + 1, label.indexOf(':'));
+        console.log(methodName);
+
+        let lineNumber = parseInt(label.substring(label.indexOf(':') + 1));
+        console.log(lineNumber);
+
+        const javaFile = join(this.workspacePath, 'src', 'main', 'java', packageName, className + '.java');
+        console.log(javaFile);
+
+        vscode.window.showTextDocument(vscode.Uri.file(javaFile), { viewColumn: vscode.ViewColumn.One }).then(textEditor => {
+            const selection = new vscode.Selection(
+                new vscode.Position(lineNumber-1, 0),
+                new vscode.Position(lineNumber-1, 0)
+            );
+            textEditor.selection = selection;
+        });
     }
 
     public static async createPanel(configPath: string, workspacePath: string): Promise<ReportPanel> {
