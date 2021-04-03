@@ -84,9 +84,12 @@ export class ReportPanel {
         console.log(javaFile);
 
         vscode.window.showTextDocument(vscode.Uri.file(javaFile), { viewColumn: vscode.ViewColumn.One }).then(textEditor => {
+            const line = lineNumber - 1;
+            // TODO replace the hardcoded column number (i.e., 1000) with the real length of line of code
+            const column = 1_000;
             const selection = new vscode.Selection(
-                new vscode.Position(lineNumber-1, 0),
-                new vscode.Position(lineNumber-1, 0)
+                new vscode.Position(line, column),
+                new vscode.Position(line, column)
             );
             textEditor.selection = selection;
         });
