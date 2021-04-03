@@ -93,7 +93,7 @@ are the same as the ones represented in the charts.
 
 1. Collect the set of required dependencies by executing the `get_deps.sh` script.
 2. Install [npm](https://www.npmjs.com) (in case it is not installed already).
-3. Install [typescript](https://www.typescriptlang.org) compiler (i.e., `npm install typescript -g`).
+3. Install project's dependencies (i.e., `npm install`).
 4. Compile the extension's source code by executing the command `npm run compile`.
 
 ## Publish GZoltar's Visual Studio Code extension
