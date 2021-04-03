@@ -20,10 +20,11 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { join, basename } from 'path';
 import { listFunction, runFunction, reportFunction } from './cmdLine/cmdBuilder';
+import { Command, CommandRet } from './cmdLine/command';
 import { ReportPanel } from './reportPanel';
 import { Decorator } from './decoration/decorator';
 import { FolderContainer } from './workspace/container';
-const exec = require('util').promisify(require('child_process').exec);
+import assert = require('assert');
 
 export class GZoltarCommander implements vscode.TreeDataProvider<GZoltarCommand> {
 
@@ -115,23 +116,70 @@ export class GZoltarCommander implements vscode.TreeDataProvider<GZoltarCommand>
     }
 
     async run(key: string) {
-        vscode.window.showInformationMessage('Run Initiated.');
+        // Sanity check whether Java is available
+        let ret = await this.execCmd('javac -version', 'Checking Java version', 'Checking whether Java is available on the command line.');
+        if (ret) {
+            console.log('bye');
+            return;
+        }
+
+        // Setup
+        vscode.window.showInformationMessage("Setting up all project's artifacts.");
         const folder = this.container.getFolder(key);
 
         this.statusBar.text = 'GZoltar: Setting up';
         this.statusBar.show();
-        await folder.runTests().catch(_ => { });
+        let commandRet = await folder.runTests();
+        if (commandRet.failed) {
+            console.log(commandRet.stdout);
+            console.error(commandRet.stderr);
+            console.log('bye');
+            return;
+        }
         await folder.cleanup();
         await folder.copyToBuild();
-        
+
         const configPath = folder.configPath;
         const includes = await folder.getIncludes();
-        const dependencies = await folder.getDependencies();
+        const ret_dependencies = await folder.getDependencies();
+        let dependencies: string = '';
+        if (ret_dependencies instanceof CommandRet) {
+            if (ret_dependencies.failed) {
+                console.log(ret_dependencies.stdout);
+                console.error(ret_dependencies.stderr);
+                console.log('bye');
+                return;
+            }
+        } else {
+            dependencies = ret_dependencies;
+        }
+        assert.notStrictEqual(dependencies, '', "Failed to collect project's dependencies");
         const rankingPath = join(configPath, 'sfl', 'txt', 'ochiai.ranking.csv');
+        vscode.window.showInformationMessage("Setting all project's artifacts. OK");
 
-        await this.execCmd(listFunction(configPath, dependencies, folder.testFolder), 'GZoltar: Listing Test Methods');
-        await this.execCmd(runFunction(configPath, dependencies, includes), 'GZoltar: Running Test Methods');
-        await this.execCmd(reportFunction(configPath, this.reportOptions['Public Methods'], this.reportOptions['Static Constructors'], this.reportOptions['Deprecated Methods']), 'GZoltar: Generating Report');
+        // Get list of test cases
+        ret = await this.execCmd(listFunction(configPath, dependencies, folder.testFolder),
+            'GZoltar: Collecting test cases', "Collecting project's test cases.");
+        if (ret) {
+            console.log('bye');
+            return;
+        }
+
+        // Run test cases
+        ret = await this.execCmd(runFunction(configPath, dependencies, includes),
+            'GZoltar: Running test cases', "Running project's test cases.");
+        if (ret) {
+            console.log('bye');
+            return;
+        }
+
+        // Create fault localization report
+        ret = await this.execCmd(reportFunction(configPath, this.reportOptions['Public Methods'], this.reportOptions['Static Constructors'], this.reportOptions['Deprecated Methods']),
+            'GZoltar: Generating fault localization report', "Generating fault localization report.");
+        if (ret) {
+            console.log('bye');
+            return;
+        }
 
         const ranking = (await fse.readFile(rankingPath)).toString();
         folder.setDecorator(Decorator.createDecorator(ranking, this.extensionPath));
@@ -144,11 +192,22 @@ export class GZoltarCommander implements vscode.TreeDataProvider<GZoltarCommand>
         this.refresh();
     }
 
-    private async execCmd(cmd: string, text: string): Promise<void> {
-        this.statusBar.text = text;
+    private async execCmd(cmd: string, statusBarText: string, windowText: string): Promise<boolean> {
+        this.statusBar.text = statusBarText;
         this.statusBar.show();
-        await exec(cmd);
+
+        vscode.window.showInformationMessage(windowText);
+        const ret = await Command.exec(cmd);
+        console.log(ret.stdout);
+        console.error(ret.stderr);
+        if (ret.failed) {
+            vscode.window.showErrorMessage(ret.stderr);
+            return true;
+        }
+        vscode.window.showInformationMessage(windowText + ' OK.');
+
         this.statusBar.hide();
+        return false;
     }
 }
 

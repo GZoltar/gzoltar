@@ -21,6 +21,7 @@ import { join } from 'path';
 import { ReportPanel } from '../reportPanel';
 import { Decorator } from '../decoration/decorator';
 import { BuildTool } from './buildTool';
+import { CommandRet } from '../cmdLine/command';
 import { Webview } from 'vscode';
 
 export class Folder {
@@ -109,11 +110,11 @@ export class Folder {
         }
     }
 
-    public async getDependencies(): Promise<string> {
+    public async getDependencies(): Promise<CommandRet | string> {
         return this.buildTool.getDependencies(this.path);
     }
 
-    public async runTests(): Promise<void> {
+    public async runTests(): Promise<CommandRet> {
         return this.buildTool.runTests(this.path);
     }
 

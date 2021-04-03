@@ -18,7 +18,7 @@
 
 import * as fse from 'fs-extra';
 import { join } from 'path';
-const exec = require('util').promisify(require('child_process').exec);
+import { Command, CommandRet } from '../cmdLine/command';
 
 export { BuildTool, Maven, Gradle };
 
@@ -26,8 +26,8 @@ interface BuildTool {
     
     getSourceFolder(): string;
     getTestFolder(): string;
-    getDependencies(projectPath: string): Promise<string>;
-    runTests(projectPath: string): Promise<void>;
+    getDependencies(projectPath: string): Promise<CommandRet | string>;
+    runTests(projectPath: string): Promise<CommandRet>;
     
 }
 
@@ -41,14 +41,18 @@ class Maven implements BuildTool {
         return '/target/test-classes';
     }
 
-    async getDependencies(projectPath: string): Promise<string> {
-        await exec(`(cd ${projectPath} && mvn dependency:build-classpath -Dmdep.outputFile="cp.txt")`);
+    async getDependencies(projectPath: string): Promise<CommandRet | string> {
+        const ret = await Command.exec(`(cd ${projectPath} && mvn dependency:build-classpath -Dmdep.outputFile="cp.txt")`);
+        if (ret.failed) {
+            return ret;
+        }
         const dep = (await fse.readFile(join(projectPath, 'cp.txt'))).toString();
         return dep.replace('\n', ':');
     }
 
-    async runTests(projectPath: string): Promise<void> {
-        await exec(`(cd ${projectPath} && mvn test)`);
+    async runTests(projectPath: string): Promise<CommandRet> {
+        const ret = await Command.exec(`(cd ${projectPath} && mvn test)`);
+        return ret;
     }
 }
 
@@ -64,16 +68,20 @@ class Gradle implements BuildTool {
         return '/build/classes/java/test';
     }
 
-    async getDependencies(projectPath: string): Promise<string> {
-        const res: { stdout: string } = await exec(`(cd ${projectPath} && gradle -q dependencies --configuration testRuntimeClasspath)`);
-        const split = res.stdout.split(this.REGEX);
+    async getDependencies(projectPath: string): Promise<CommandRet | string> {
+        const ret = await Command.exec(`(cd ${projectPath} && gradle -q dependencies --configuration testRuntimeClasspath)`);
+        if (ret.failed) {
+            return ret;
+        }
+        const split = ret.stdout.split(this.REGEX);
         return split
             .filter((_, idx) => idx % 2 !== 0)
             .map(s => `"${s.trim()}"`)
             .join(':');
     }
 
-    async runTests(projectPath: string): Promise<void> {
-        await exec(`(cd ${projectPath} && gradle test)`);
+    async runTests(projectPath: string): Promise<CommandRet> {
+        const ret = await Command.exec(`(cd ${projectPath} && gradle test)`);
+        return ret;
     }
 }

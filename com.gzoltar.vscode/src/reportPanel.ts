@@ -20,7 +20,7 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { join, sep } from 'path';
 import { disassemble } from './cmdLine/cmdBuilder';
-const exec = require('util').promisify(require('child_process').exec);
+import { Command, CommandRet } from './cmdLine/command';
 
 export class ReportPanel {
 
@@ -69,7 +69,10 @@ export class ReportPanel {
         const file = join(packageName, fSplit[2]);
 
         const classFile = join('build', file) + '.class';
-        const dissassemble = await exec(disassemble(this.configPath, classFile));
+        const dissassemble = await Command.exec(disassemble(this.configPath, classFile));
+        if (dissassemble.failed) {
+            throw dissassemble.stderr;
+        }
         const dSplit = dissassemble.stdout.split(ReportPanel.classReg);
         
         const filename = join(this.workspacePath, 'src', 'main', 'java', packageName, dSplit[1]);

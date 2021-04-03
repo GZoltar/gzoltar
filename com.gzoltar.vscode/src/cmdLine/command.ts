@@ -16,6 +16,8 @@
  */
 'use strict';
 
+const exec = require('util').promisify(require('child_process').exec);
+
 export class Command {
     
     private readonly commands: string[];
@@ -63,4 +65,35 @@ export class Command {
     public toString(): string {
         return `(${this.commands.join(' ')})`;
     }
+
+    public static async exec(cmd: string) {
+        let failed = false;
+        let stdout_str = "";
+        let stderr_str = "";
+
+        try {
+            const { stdout, stderr } = await exec(cmd);
+            stdout_str = `${stdout}`;
+            stderr_str = `${stderr}`;
+        } catch (error) {
+            failed = true;
+            stderr_str = `${error}`;
+        }
+
+        return new CommandRet(failed, stdout_str, stderr_str);
+    }
+}
+
+export class CommandRet {
+
+    public readonly failed: boolean;
+    public readonly stdout: string;
+    public readonly stderr: string;
+
+    constructor(failed: boolean, stdout: string, stderr: string) {
+        this.failed = failed;
+        this.stdout = stdout;
+        this.stderr = stderr;
+    }
+
 }
