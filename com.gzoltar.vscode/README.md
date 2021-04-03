@@ -99,7 +99,8 @@ are the same as the ones represented in the charts.
 ## Publish GZoltar's Visual Studio Code extension
 
 1. To package the extension into a [VSIX](https://docs.microsoft.com/en-us/visualstudio/extensibility/anatomy-of-a-vsix-package)
-file, execute the following command `vsce package` on the command line.
+file, execute the following command `vsce package` on the command line.  Note:
+in case `vsce` is not available, run `npm install -g vsce`.
 
 2. There are two possible ways to publish GZoltar's Visual Studio Code extension.
 Assuming you are a member of the GZoltar Publisher, you can obtain a Personal
