@@ -80,6 +80,7 @@ export class ReportPanel {
         let lineNumber = parseInt(label.substring(label.indexOf(':') + 1));
         console.log(lineNumber);
 
+        // FIXME the following line only works for Maven-based projects
         const javaFile = join(this.workspacePath, 'src', 'main', 'java', packageName, className + '.java');
         console.log(javaFile);
 
