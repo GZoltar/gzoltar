@@ -20,7 +20,7 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { join, sep } from 'path';
 import { disassemble } from './cmdLine/cmdBuilder';
-import { Command, CommandRet } from './cmdLine/command';
+import { Command } from './cmdLine/command';
 
 export class ReportPanel {
 
