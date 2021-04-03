@@ -47,7 +47,7 @@ function reportFunction(destPath: string, publMethods: boolean, staticConstr: bo
         .newCmd()
         .java()
         .cp('"."', '"gzoltarcli.jar"')
-        .main(`com.gzoltar.cli.Main faultLocalizationReport --buildLocation "build/" --dataFile gzoltar.ser --granularity "line" --family "sfl" --formula "ochiai" --outputDirectory . --formatter HTML,TXT`)
+        .main(`com.gzoltar.cli.Main faultLocalizationReport --buildLocation "build/" --dataFile gzoltar.ser --granularity "line" --family "sfl" --formula "ochiai" --outputDirectory . --formatter "txt"`)
         .toString();
 }
 
