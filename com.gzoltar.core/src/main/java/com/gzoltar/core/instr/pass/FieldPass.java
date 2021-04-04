@@ -31,7 +31,11 @@ public class FieldPass implements IPass {
   @Override
   public Outcome transform(CtClass ctClass) throws Exception {
     CtField f = CtField.make(fieldStr, ctClass);
-    f.setModifiers(f.getModifiers() | InstrumentationConstants.FIELD_ACC);
+    if (ctClass.isInterface()) {
+      f.setModifiers(f.getModifiers() | InstrumentationConstants.FIELD_INTF_ACC);
+    } else {
+      f.setModifiers(f.getModifiers() | InstrumentationConstants.FIELD_ACC);
+    }
     ctClass.addField(f);
 
     return Outcome.ACCEPT;

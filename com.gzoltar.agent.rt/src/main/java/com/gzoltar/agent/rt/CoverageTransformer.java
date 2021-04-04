@@ -111,6 +111,7 @@ public class CoverageTransformer implements ClassFileTransformer {
 
       return this.instrumenter.instrument(cc);
     } catch (Exception e) {
+      System.err.println("GZoltar failed to instrument: " + className);
       e.printStackTrace();
       return null;
     }

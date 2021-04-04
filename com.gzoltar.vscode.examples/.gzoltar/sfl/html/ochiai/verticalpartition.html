@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2020 GZoltar contributors.
+
+  This file is part of GZoltar.
+
+  GZoltar is free software: you can redistribute it and/or modify it under the terms of the GNU
+  Lesser General Public License as published by the Free Software Foundation, either version 3 of
+  the License, or (at your option) any later version.
+
+  GZoltar is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+  General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
+  not, see <https://www.gnu.org/licenses/>.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Vertical Partition View</title>
+
+    <style type="text/css">
+      svg {
+        margin: 10px 0px 0px 0px;
+      }
+      rect {
+        stroke: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+
+    <script type="text/javascript" src="gzoltar.js"></script>
+
+    <script type="text/javascript">
+      var w, h, x, y;
+
+      function initVars() {
+        w = window.innerWidth - 25;
+        h = window.innerHeight - 30;
+        x = d3.scale.linear().range([0, w]);
+        y = d3.scale.linear().range([0, h]);
+      };
+      initVars();
+
+      var svg = d3.select("body").append("svg:svg").attr("width", w).attr("height", h).call(d3.behavior.zoom().on("zoom", zoomRedraw)).on("dblclick.zoom", null).append("svg:g");
+      var partition = d3.layout.partition().value(function(d) {
+        return d.size;
+      });
+
+      // inject JSON in here, e.g.,
+      // var root = JSON.parse('...');
+var root = JSON.parse('{"children":[{"children":[{"children":[{"children":[{"children":[],"label":"mypackage$App#App():3","probability":0.4082482904638631,"size":18}],"label":"mypackage$App#App()","probability":0.4082482904638631,"size":18},{"children":[{"children":[],"label":"mypackage$App#mid(int,int,int):5","probability":0.4082482904638631,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):6","probability":0.4082482904638631,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):7","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):8","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):9","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):10","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):11","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):12","probability":0.5,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):13","probability":1.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):14","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):15","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):17","probability":0.4082482904638631,"size":18}],"label":"mypackage$App#mid(int,int,int)","probability":1.0,"size":18}],"label":"mypackage$App","probability":1.0,"size":18}],"label":"mypackage","probability":1.0,"size":18}],"label":"root","probability":1.0,"size":18}');
+
+      var clicked = root;
+      var maxProb = probabilities(root);
+      g = getG();
+      gt = getGt();
+      var colors = new Array();
+      var rect = svg.selectAll("rect").data(partition.nodes(root)).enter().append("svg:a").attr("xlink:href", function(d) {
+        return "#" + d.label
+      }).append("svg:rect").attr("fill", fill).on("mouseover", mouseover).on("mouseout", mouseout).on("dblclick", function(d) {
+        clicked = d;
+        return click(d);
+      });
+
+      function defineRect() {
+        svg.selectAll("rect").attr("x", function(d) {
+          return x(d.x);
+        }).attr("y", function(d) {
+          return y(d.y);
+        }).attr("width", function(d) {
+          return x(d.dx);
+        }).attr("height", function(d) {
+          return y(d.dy);
+        });
+      };
+      defineRect();
+      rect.append("svg:title").text(function(d) {
+        return d.label + " | " + "Suspiciousness: " + d.probability.toFixed(3)
+      });
+
+      function click(d) {
+        x.domain([d.x, d.x + d.dx]);
+        y.domain([d.y, 1]).range([d.y ? 20 : 0, h]);
+        rect.transition().duration(1000).attr("x", function(d) {
+          return x(d.x);
+        }).attr("y", function(d) {
+          return y(d.y);
+        }).attr("width", function(d) {
+          return x(d.x + d.dx) - x(d.x);
+        }).attr("height", function(d) {
+          return y(d.y + d.dy) - y(d.y);
+        });
+      };
+
+      function resize(event) {
+        initVars();
+        defineRect();
+        resizeBody();
+        resizeSvg();
+        click(clicked);
+      };
+      onResize();
+      onRightClick();
+    </script>
+  </body>
+
+</html>

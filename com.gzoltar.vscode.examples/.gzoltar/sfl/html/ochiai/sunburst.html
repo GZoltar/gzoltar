@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2020 GZoltar contributors.
+
+  This file is part of GZoltar.
+
+  GZoltar is free software: you can redistribute it and/or modify it under the terms of the GNU
+  Lesser General Public License as published by the Free Software Foundation, either version 3 of
+  the License, or (at your option) any later version.
+
+  GZoltar is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+  General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
+  not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Sunburst View</title>
+  </head>
+
+  <body>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+
+    <script type="text/javascript" src="gzoltar.js"></script>
+
+    <script type="text/javascript">
+      var w, h, r, y;
+
+      function initVars() {
+        w = window.innerWidth - 15;
+        h = window.innerHeight - 10;
+        r = Math.min(w, h) / 2.1;
+        y = d3.scale.sqrt().range([0, r]);
+      };
+      var x = d3.scale.linear().range([0, 2 * Math.PI]);
+      initVars();
+      var svg = d3.select("body").append("svg:svg").attr("width", w).attr("height", h).append("svg:g").call(d3.behavior.zoom().on("zoom", zoomRedraw)).on("dblclick.zoom", null).append("svg:g");
+      var partition = d3.layout.partition().value(function(d) {
+        return d.size;
+      });
+      var arc = d3.svg.arc();
+
+      function defineArc() {
+        arc.startAngle(function(d) {
+          return Math.max(0, Math.min(2 * Math.PI, x(d.x)));
+        }).endAngle(function(d) {
+          return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx)));
+        }).innerRadius(function(d) {
+          return Math.max(0, y(d.y));
+        }).outerRadius(function(d) {
+          return Math.max(0, y(d.y + d.dy) - 3);
+        });
+      };
+      defineArc();
+
+      // inject JSON in here, e.g.,
+      // var root = JSON.parse('...');
+var root = JSON.parse('{"children":[{"children":[{"children":[{"children":[{"children":[],"label":"mypackage$App#App():3","probability":0.4082482904638631,"size":18}],"label":"mypackage$App#App()","probability":0.4082482904638631,"size":18},{"children":[{"children":[],"label":"mypackage$App#mid(int,int,int):5","probability":0.4082482904638631,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):6","probability":0.4082482904638631,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):7","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):8","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):9","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):10","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):11","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):12","probability":0.5,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):13","probability":1.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):14","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):15","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):17","probability":0.4082482904638631,"size":18}],"label":"mypackage$App#mid(int,int,int)","probability":1.0,"size":18}],"label":"mypackage$App","probability":1.0,"size":18}],"label":"mypackage","probability":1.0,"size":18}],"label":"root","probability":1.0,"size":18}');
+
+      var clicked = root;
+      var maxProb = probabilities(root);
+      g = getG();
+      gt = getGt();
+      var colors = new Array();
+      var centered;
+      var path = svg.datum(root).selectAll("path").append("name").data(partition.nodes).enter().append("svg:a").attr("xlink:href", function(d) {
+        return "#" + d.label
+      }).append("path").style("stroke", "#fff").style("fill", fill).style("fill-rule", "evenodd").on("mouseover", mouseover).on("mouseout", mouseout).on("dblclick", function(d) {
+        clicked = d;
+        return click(root == d ? root : d);
+      });
+
+      function defineG_and_Path() {
+        d3.select("g").attr("transform", "translate(" + w / 2 + "," + h * .52 + ")");
+        svg.selectAll("path").attr("d", arc);
+      };
+      defineG_and_Path();
+      path.append("svg:title").text(function(d) {
+        return d.label + " | " + "Suspiciousness: " + d.probability.toFixed(3)
+      });
+
+      function click(d) {
+        path.transition().duration(750).attrTween("d", arcTween(d));
+      };
+
+      function arcTween(d) {
+        var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+            yd = d3.interpolate(y.domain(), [d.y, 1]),
+            yr = d3.interpolate(y.range(), [d.y ? 20 : 0, r]);
+        return function(d, i) {
+          return i ? function(t) {
+            return arc(d);
+          } : function(t) {
+            x.domain(xd(t));
+            y.domain(yd(t)).range(yr(t));
+             return arc(d);
+          };
+        };
+      };
+
+      function resize(event) {
+        initVars();
+        defineArc();
+        defineG_and_Path();
+        resizeBody();
+        resizeSvg();
+        click(clicked);
+      };
+      d3.select(self.frameElement).style("height", h + "px");
+      onResize();
+      onRightClick();
+    </script>
+  </body>
+
+</html>

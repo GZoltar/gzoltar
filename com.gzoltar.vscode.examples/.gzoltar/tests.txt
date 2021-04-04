@@ -1,0 +1,6 @@
+JUNIT,mypackage.AppTest#test1
+JUNIT,mypackage.AppTest#test2
+JUNIT,mypackage.AppTest#test3
+JUNIT,mypackage.AppTest#test4
+JUNIT,mypackage.AppTest#test5
+JUNIT,mypackage.AppTest#test6

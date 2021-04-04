@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<!--
+  Copyright (C) 2020 GZoltar contributors.
+
+  This file is part of GZoltar.
+
+  GZoltar is free software: you can redistribute it and/or modify it under the terms of the GNU
+  Lesser General Public License as published by the Free Software Foundation, either version 3 of
+  the License, or (at your option) any later version.
+
+  GZoltar is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+  General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
+  not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Bubble Hierarchy View</title>
+
+    <style type="text/css">
+      circle {
+        fill: #ccc;
+        stroke: #000;
+        pointer-events: all;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script type="text/javascript" src="https://d3js.org/d3.v3.min.js"></script>
+
+    <script type="text/javascript" src="gzoltar.js"></script>
+
+    <script type="text/javascript">
+      var w, h, r, x, y;
+
+      function initVars() {
+        w = window.innerWidth - 25;
+        h = window.innerHeight - 25;
+        r = Math.min(w, h);
+        x = d3.scale.linear().range([0, r]);
+        y = d3.scale.linear().range([0, r]);
+      };
+      initVars();
+      var node;
+      var pack = d3.layout.pack().size([r, r]).value(function(d) {
+        return d.size;
+      });
+      var svg = d3.select("body").insert("svg:svg", "h2").attr("width", w).attr("height", h).append("svg:g").call(d3.behavior.zoom().on("zoom", zoomRedraw)).on("dblclick.zoom", null).append("svg:g");
+
+      function defineG() {
+        d3.select("g").attr("transform", "translate(" + (w - r) / 2 + "," + (h - r) / 2 + ")");
+      };
+      defineG();
+
+      // inject JSON in here, e.g.,
+      // var root = JSON.parse('...');
+var root = JSON.parse('{"children":[{"children":[{"children":[{"children":[{"children":[],"label":"mypackage$App#App():3","probability":0.4082482904638631,"size":18}],"label":"mypackage$App#App()","probability":0.4082482904638631,"size":18},{"children":[{"children":[],"label":"mypackage$App#mid(int,int,int):5","probability":0.4082482904638631,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):6","probability":0.4082482904638631,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):7","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):8","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):9","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):10","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):11","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):12","probability":0.5,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):13","probability":1.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):14","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):15","probability":0.0,"size":18},{"children":[],"label":"mypackage$App#mid(int,int,int):17","probability":0.4082482904638631,"size":18}],"label":"mypackage$App#mid(int,int,int)","probability":1.0,"size":18}],"label":"mypackage$App","probability":1.0,"size":18}],"label":"mypackage","probability":1.0,"size":18}],"label":"root","probability":1.0,"size":18}');
+
+      var clicked = root;
+      var maxProb = probabilities(root);
+      node = data = root;
+      var nodes = pack.nodes(root);
+      g = getG();
+      gt = getGt();
+      var colors = new Array();
+      var circles = svg.selectAll("circle").data(noAllLevels(nodes)).enter().append("svg:a").attr("xlink:href", function(d) {
+        return "#" + d.label
+      }).append("svg:circle").attr("class", function(d) {
+        return d.children ? "parent" : "child";
+      }).attr("cx", function(d) {
+        return d.x;
+      }).attr("cy", function(d) {
+        return d.y;
+      }).attr("r", function(d) {
+        return d.r;
+      }).style("fill", fill).on("mouseover", mouseover2).on("mouseout", mouseout).on("dblclick", function(d) {
+        clicked = d;
+        return click(d);
+      });
+      circles.append("svg:title").text(function(d) {
+        return d.label + " | " + "Suspiciousness: " + d.probability.toFixed(3)
+      });
+
+      function click(d, i) {
+        var k = r / d.r / 2;
+        x.domain([d.x - d.r, d.x + d.r]);
+        y.domain([d.y - d.r, d.y + d.r]);
+        var t = svg.transition().duration(d3.event.altKey ? 7500 : 750);
+        t.selectAll("circle").attr("cx", function(d) {
+          return x(d.x);
+        }).attr("cy", function(d) {
+          return y(d.y);
+        }).attr("r", function(d) {
+          return k * d.r;
+        });
+        node = d;
+        d3.event.stopPropagation();
+      };
+
+      function resize(event) {
+        initVars();
+        defineG();
+        click(root);
+        resizeBody();
+        resizeSvg();
+        click(clicked);
+      };
+      onResize();
+      onRightClick();
+    </script>
+  </body>
+
+</html>

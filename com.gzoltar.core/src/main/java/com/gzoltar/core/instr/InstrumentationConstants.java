@@ -65,7 +65,8 @@ public final class InstrumentationConstants {
   public static final int INIT_METHOD_ACC =
       AccessFlag.PRIVATE | AccessFlag.STATIC | AccessFlag.SYNTHETIC;
 
-  // TODO we may need extra constants for the init method of Java-8 interfaces
+  public static final int INIT_METHOD_INTF_ACC =
+      AccessFlag.PUBLIC | AccessFlag.STATIC | AccessFlag.SYNTHETIC;
 
   private InstrumentationConstants() {
     // NO-OP

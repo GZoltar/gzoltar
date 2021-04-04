@@ -56,7 +56,11 @@ public abstract class AbstractInitMethodPass implements IPass {
         CtMethod.make(String.format(METHOD_STR, this.classHash, ctClass.getName(),
             Collector.instance().getProbeGroupByHash(this.classHash).getNumberOfProbes(),
             this.collectorCall), ctClass);
-    gzoltarInit.setModifiers(gzoltarInit.getModifiers() | InstrumentationConstants.INIT_METHOD_ACC);
+    if (ctClass.isInterface()) {
+      gzoltarInit.setModifiers(gzoltarInit.getModifiers() | InstrumentationConstants.INIT_METHOD_INTF_ACC);
+    } else {
+      gzoltarInit.setModifiers(gzoltarInit.getModifiers() | InstrumentationConstants.INIT_METHOD_ACC);
+    }
     ctClass.addMethod(gzoltarInit);
     return Outcome.ACCEPT;
   }
