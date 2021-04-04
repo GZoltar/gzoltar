@@ -3,7 +3,7 @@
 	"displayName": "GZoltar",
 	"description": "Automatic testing and fault localization for Java.",
 	"publisher": "GZoltar",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"homepage": "https://gzoltar.com/",
 	"icon": "resources/gzoltar.png",
 	"repository": {
