@@ -16,11 +16,14 @@
  */
 package com.gzoltar.cli.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import org.kohsuke.args4j.Option;
 import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.fl.FaultLocalizationFamily;
+import com.gzoltar.report.IReportFormatter;
 import com.gzoltar.report.ReportFormatter;
 import com.gzoltar.report.fl.FaultLocalizationReportBuilder;
 import com.gzoltar.report.fl.FaultLocalizationReportFormatterFactory;
@@ -56,15 +59,15 @@ public class FaultLocalizationReport extends AbstractReport {
       required = false)
   private String family = FaultLocalizationFamily.SFL.name();
 
-  @Option(name = "--formula", usage = "fault localization formulas", metaVar = "<formula>",
+  @Option(name = "--formula", usage = "fault localization formula (use ':' to define more than one formula)", metaVar = "<formula>",
       required = false)
   private String formula = SFLFormulas.OCHIAI.name();
 
-  @Option(name = "--metric", usage = "fault localization ranking metrics", metaVar = "<metric>",
+  @Option(name = "--metric", usage = "fault localization ranking metric (use ':' to define more than one metric)", metaVar = "<metric>",
       required = false)
   private String metric = Metric.AMBIGUITY.name();
 
-  @Option(name = "--formatter", usage = "fault localization report formatter",
+  @Option(name = "--formatter", usage = "fault localization report formatter (use ':' to define more than one formatter)",
       metaVar = "<formatter>", required = false)
   private String formatter = ReportFormatter.TXT.name();
 
@@ -103,12 +106,16 @@ public class FaultLocalizationReport extends AbstractReport {
         .setFaultLocalizationFamily(
             FaultLocalizationFamily.valueOf(this.family.toUpperCase(locale)));
     // set formula
-    configFlFamily.setFormulas(Arrays.asList(this.formula));
+    configFlFamily.setFormulas(Arrays.asList(this.formula.split("\\:")));
     // set metrics
-    configFlFamily.setMetrics(Arrays.asList(this.metric));
+    configFlFamily.setMetrics(Arrays.asList(this.metric.split("\\:")));
     // set formatters
-    configFlFamily.setFormatters(Arrays.asList(FaultLocalizationReportFormatterFactory
-        .createReportFormatter(ReportFormatter.valueOf(this.formatter.toUpperCase(locale)))));
+    List<IReportFormatter> formatters = new ArrayList<IReportFormatter>();
+    for (String formatter : this.formatter.split("\\:")) {
+      formatters.add(FaultLocalizationReportFormatterFactory
+          .createReportFormatter(ReportFormatter.valueOf(formatter.toUpperCase(Locale.ENGLISH))));
+    }
+    configFlFamily.setFormatters(formatters);
 
     // build a fault localization report
     FaultLocalizationReportBuilder.build(this.buildLocation.getAbsolutePath(), this.agentConfigs,
