@@ -196,6 +196,8 @@ export class GZoltarCommander implements vscode.TreeDataProvider<GZoltarCommand>
         });
         folder.setWebview(panel);
         this.refresh();
+
+        vscode.window.showInformationMessage('GZoltar has finished');
     }
 
     private async execCmd(cmd: string, statusBarText: string, windowText: string): Promise<boolean> {
