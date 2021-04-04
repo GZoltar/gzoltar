@@ -181,6 +181,12 @@ export class GZoltarCommander implements vscode.TreeDataProvider<GZoltarCommand>
             return;
         }
 
+        // Check whether GZoltar generated the expected ranking file
+        if (! fse.existsSync(rankingPath)) {
+            vscode.window.showErrorMessage(rankingPath + ' does not exist!');
+            return;
+        }
+
         const ranking = (await fse.readFile(rankingPath)).toString();
         folder.setDecorator(Decorator.createDecorator(ranking, this.extensionPath));
         const panel = (await ReportPanel.createPanel(configPath, folder.folderPath));
