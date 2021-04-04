@@ -38,7 +38,7 @@ public class FaultLocalizationReport extends AbstractReport {
   private String granularity = GranularityLevel.LINE.name();
 
   @Option(name = "--inclPublicMethods",
-      usage = "specifies whether public static methods of each class should be reported",
+      usage = "specifies whether public methods of each class should be reported",
       metaVar = "<boolean>", required = false)
   private Boolean inclPublicMethods = false;
 
