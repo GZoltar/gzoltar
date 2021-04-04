@@ -26,7 +26,7 @@ be met in order to use its capabilities to the fullest:
   this extension, open a new window of VS Code and click on the green arrows in
   the bottom left corner to open a remote window.
 
-  ![Remote Dev Status Bar](resources/docs/remote-dev-status-bar.png)
+  ![Remote Dev Status Bar](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/remote-dev-status-bar.png?raw=true)
 
 Now, you are able to start working with GZoltar just like you would with a
 regular Visual Studio Code window.
@@ -38,28 +38,28 @@ from the marketplace.  The first method can be done from inside Visual Studio
 Code itself, on the Extensions icon in the tree view container.  From there, you
 can search for GZoltar on the prompt and install it.
 
-![GZoltar inside VS Code](resources/docs/gzcode.png)
+![GZoltar inside VS Code](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/gzcode.png?raw=true)
 
 Alternatively, the extension can be found and installed from the
 [marketplace webpage](https://marketplace.visualstudio.com/items?itemName=GZoltar.vscode-gzoltar).
 
-![GZoltar in the Marketplace](resources/docs/gzmarket.png)
+![GZoltar in the Marketplace](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/gzmarket.png?raw=true)
 
 ## Usage
 
 To open GZoltar's menu, click on its icon in the activity bar.
 
-![GZoltar Activity Bar](resources/docs/barui.png)
+![GZoltar Activity Bar](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/barui.png?raw=true)
 
 To run GZoltar on a project that is currently in your workspace, click on the
 icon next to the project's name.
 
-![GZoltar Commands](resources/docs/gcmds.png)
+![GZoltar Commands](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/gcmds.png?raw=true)
 
 While GZoltar is running, you are able to see on the lower right corner of the
 status bar what phase it is currently on.
 
-![GZoltar Status Bar](resources/docs/statusbar.png)
+![GZoltar Status Bar](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/statusbar.png?raw=true)
 
 After it has finished, a new window will appear showcasing the results of the
 fault detection analysis.  The colors in the charts indicate the code's
@@ -69,7 +69,7 @@ The further you zoom in into the chart, the finer grained it becomes.  Meaning
 that at the beginning you are viewing the project in its entirety (at the root
 level), and at the deepest level you are viewing a single line of code.
 
-![GZoltar Results](resources/docs/result.png)
+![GZoltar Results](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/result.png?raw=true)
 
 It is possible to navigate through the chart by double clicking on each segment.
 A right click will reset the chart back to its initial state.  Clicking on an
@@ -81,13 +81,13 @@ activity bar menu, under the project that was just used to perform an analysis,
 you can choose one of the three charts to change the visualization to better
 suit your taste.
 
-![GZoltar Options](resources/docs/options.png)
+![GZoltar Options](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/options.png?raw=true)
 
 When a file is opened after performing an analysis, it will show an icon to
 indicate the level of suspiciousness for each line of code.  The icon's colors
 are the same as the ones represented in the charts.
 
-![GZoltar Open File](resources/docs/openfile.png)
+![GZoltar Open File](https://github.com/GZoltar/gzoltar/blob/master/com.gzoltar.vscode/resources/docs/openfile.png?raw=true)
 
 ## Build GZoltar's Visual Studio Code extension from the source code
 
