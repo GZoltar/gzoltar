@@ -33,11 +33,11 @@ public abstract class AbstractReport extends Command {
       required = true)
   protected File buildLocation = null;
 
-  @Option(name = "--outputDirectory", usage = "location of Java class files", metaVar = "<path>",
+  @Option(name = "--outputDirectory", usage = "output directory for the report", metaVar = "<path>",
       required = true)
   protected File outputDirectory = null;
 
-  @Option(name = "--dataFile", usage = "GZoltar *.exec file to process", metaVar = "<path>",
+  @Option(name = "--dataFile", usage = "GZoltar *.ser file to process", metaVar = "<path>",
       required = true)
   protected File dataFile = null;
 
