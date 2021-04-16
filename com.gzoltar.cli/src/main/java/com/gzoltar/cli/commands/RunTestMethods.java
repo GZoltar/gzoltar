@@ -21,8 +21,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.PrintStream;
 import java.net.URL;
+import java.net.URI;
 import java.net.URLClassLoader;
 import java.util.Properties;
+import java.util.*;
 import org.kohsuke.args4j.Option;
 import com.gzoltar.cli.Command;
 import com.gzoltar.core.test.TestMethod;
@@ -31,6 +33,8 @@ import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.test.junit.JUnitTestTask;
 import com.gzoltar.core.test.testng.TestNGTestTask;
 import com.gzoltar.core.util.ClassType;
+import io.github.classgraph.ClassGraph;
+
 
 /**
  * The <code>runTestMethods</code> command.
@@ -77,8 +81,7 @@ public class RunTestMethods extends Command {
       throw new RuntimeException(this.testMethods + " does not exist or cannot be read");
     }
 
-    final URL[] classpathURLs =
-        ((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs();
+    final URL[] classpathURLs = new ClassGraph().getClasspathURLs().toArray(new URL[0]);
 
     try (BufferedReader br = new BufferedReader(new FileReader(this.testMethods))) {
       String line;
