@@ -81,15 +81,7 @@ public class RunTestMethods extends Command {
       throw new RuntimeException(this.testMethods + " does not exist or cannot be read");
     }
 
-    List<URI> classpath = new ClassGraph().getClasspathURIs();
-    List<URL> classpathUrlList = new ArrayList();
-
-    for (URI temp : classpath) {
-	classpathUrlList.add(temp.toURL());
-    }
-
-    URL[] classpathURLs = new URL[classpathUrlList.size()];
-    classpathURLs = classpathUrlList.toArray(classpathURLs);
+    final URL[] classpathURLs = new ClassGraph().getClasspathURLs().toArray(new URL[0]);
 
     try (BufferedReader br = new BufferedReader(new FileReader(this.testMethods))) {
       String line;
