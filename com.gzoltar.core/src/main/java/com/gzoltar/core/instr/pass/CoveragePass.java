@@ -25,10 +25,7 @@ import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
 import com.gzoltar.core.instr.actions.AnonymousClassConstructorFilter;
-import com.gzoltar.core.instr.filter.EmptyMethodFilter;
-import com.gzoltar.core.instr.filter.EnumFilter;
-import com.gzoltar.core.instr.filter.IFilter;
-import com.gzoltar.core.instr.filter.SyntheticFilter;
+import com.gzoltar.core.instr.filter.*;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeFactory;
 import com.gzoltar.core.runtime.Collector;
@@ -88,6 +85,9 @@ public class CoveragePass implements IPass {
     // exclude constructor of an Anonymous class as the same line number is handled by the
     // superclass
     this.filters.add(new AnonymousClassConstructorFilter());
+
+    // exclude static initialization-block of an Interface class
+    this.filters.add(new InterfaceStaticInitializerFilter());
   }
 
   @Override

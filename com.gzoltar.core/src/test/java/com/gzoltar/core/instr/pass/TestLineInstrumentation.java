@@ -31,6 +31,7 @@ import org.gzoltar.examples.ProtectedModifiers;
 import org.gzoltar.examples.PublicFinalModifiers;
 import org.gzoltar.examples.PublicModifiers;
 import org.gzoltar.examples.PublicStaticModifiers;
+import org.gzoltar.examples.InterfaceFieldClass;
 import org.junit.Before;
 import org.junit.Test;
 import com.gzoltar.core.AgentConfigs;
@@ -99,6 +100,14 @@ public class TestLineInstrumentation {
   public void testProbesOfInterfaceClass() throws Exception {
     List<String> classesUnderTest = new ArrayList<String>();
     classesUnderTest.add(InterfaceClass.class.getCanonicalName());
+
+    this.test(classesUnderTest, new ArrayList<Integer>());
+  }
+
+  @Test
+  public void testProbesOfInterfaceWithFieldClass() throws Exception {
+    List<String> classesUnderTest = new ArrayList<String>();
+    classesUnderTest.add(InterfaceFieldClass.class.getCanonicalName());
 
     this.test(classesUnderTest, new ArrayList<Integer>());
   }
