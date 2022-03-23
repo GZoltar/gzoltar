@@ -64,7 +64,7 @@ popd > /dev/null 2>&1
 ##
 # 2. Copy GZoltar's artefacts
 
-GZOLTAR_CLI_JAR="$SCRIPT_DIR/../com.gzoltar.cli/target/com.gzoltar.cli-1.7.3-SNAPSHOT-jar-with-dependencies.jar"
+GZOLTAR_CLI_JAR="$SCRIPT_DIR/../com.gzoltar.cli/target/com.gzoltar.cli-1.7.3-jar-with-dependencies.jar"
 [ -s "$GZOLTAR_CLI_JAR" ] || die "$GZOLTAR_CLI_JAR does not exist or it is empty!"
 
 GZOLTAR_AGENT_JAR="$SCRIPT_DIR/../com.gzoltar.agent/target/classes/gzoltaragent.jar"
