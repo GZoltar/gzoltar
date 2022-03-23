@@ -42,15 +42,15 @@
       <groupId>com.gzoltar</groupId>
       <artifactId>com.gzoltar.agent</artifactId>
       <classifier>runtime</classifier>
-      <version>1.7.3</version>
+      <version>1.7.4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.gzoltar</groupId>
       <artifactId>com.gzoltar.cli</artifactId>
-      <version>1.7.3</version>
+      <version>1.7.4-SNAPSHOT</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/../com.gzoltar.cli/target/com.gzoltar.cli-1.7.3-jar-with-dependencies.jar</systemPath>
+      <systemPath>${project.basedir}/../com.gzoltar.cli/target/com.gzoltar.cli-1.7.4-SNAPSHOT-jar-with-dependencies.jar</systemPath>
     </dependency>
   </dependencies>
 
@@ -70,7 +70,7 @@
       <plugin>
         <groupId>com.gzoltar</groupId>
         <artifactId>com.gzoltar.maven</artifactId>
-        <version>1.7.3</version>
+        <version>1.7.4-SNAPSHOT</version>
         <executions>
           <execution>
             <id>fl-report</id>
@@ -133,7 +133,7 @@
           <plugin>
             <groupId>com.gzoltar</groupId>
             <artifactId>com.gzoltar.maven</artifactId>
-            <version>1.7.3</version>
+            <version>1.7.4-SNAPSHOT</version>
             <dependencies>
               <dependency>
                 <groupId>junit</groupId>
@@ -161,7 +161,7 @@
           <plugin>
             <groupId>com.gzoltar</groupId>
             <artifactId>com.gzoltar.maven</artifactId>
-            <version>1.7.3</version>
+            <version>1.7.4-SNAPSHOT</version>
             <dependencies>
               <dependency>
                 <groupId>junit</groupId>
