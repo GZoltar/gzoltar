@@ -8,7 +8,7 @@ project's test cases are run as usually, i.e., via
 which allows GZoltar Maven plug-in to support JUnit3, JUnit4, and TestNG test
 cases out-of-the-box.
 
-> In order to be able to collect any coverage, the target classes must be
+> In order to be able to collect any coverage, the target classes must be  
 compiled with debug information.
 
 > When using the `maven-surefire-plugin` to run the project's test cases, the
