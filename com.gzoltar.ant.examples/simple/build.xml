@@ -55,7 +55,7 @@
 
   <target name="compile" depends="install-deps">
     <mkdir dir="${build.classes.dir}" />
-    <javac source="1.6" target="1.6"
+    <javac source="19" target="19"
            srcdir="${src.dir}"
            destdir="${build.classes.dir}"
            debug="true"
@@ -65,7 +65,7 @@
     </javac>
 
     <mkdir dir="${build.test.classes.dir}" />
-    <javac source="1.6" target="1.6"
+    <javac source="19" target="19"
            srcdir="${tests.dir}"
            destdir="${build.test.classes.dir}">
       <classpath>
@@ -119,7 +119,6 @@
                 <pathelement path="${gzoltar-ant.jar}" />
                 <pathelement path="${gzoltar-cli.jar}" />
             </classpath>
-            <jvmArg value="-XX:MaxPermSize=2048M" />
             <arg value="runTestMethods" />
             <arg value="--testMethods" />
             <arg value="${test.methods.file}" />
