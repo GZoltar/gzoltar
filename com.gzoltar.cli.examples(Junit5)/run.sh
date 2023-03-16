@@ -76,10 +76,16 @@ mkdir -p "$LIB_DIR" || die "Failed to create $LIB_DIR!"
 [ -d "$LIB_DIR" ] || die "$LIB_DIR does not exist!"
 
 JUNIT_JAR="$LIB_DIR/junit.jar"
+JUNIT_PARAM_JAR="$LIB_DIR/junit-params.jar"
 if [ ! -s "$JUNIT_JAR" ]; then
   wget "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.9.2/junit-jupiter-api-5.9.2.jar" -O "$JUNIT_JAR" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
 fi
 [ -s "$JUNIT_JAR" ] || die "$JUNIT_JAR does not exist or it is empty!"
+if [ ! -s "$JUNIT_PARAM_JAR" ]; then
+  wget "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-params/5.9.2/junit-jupiter-params-5.9.2.jar" -O "$JUNIT_PARAM_JAR" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
+fi
+[ -s "$JUNIT_PARAM_JAR" ] || die "$JUNIT_PARAM_JAR does not exist or it is empty!"
+
 
 HAMCREST_JAR="$LIB_DIR/hamcrest-core.jar"
 if [ ! -s "$HAMCREST_JAR" ]; then
@@ -103,7 +109,7 @@ TEST_DIR="$SCRIPT_DIR/test"
 echo "Compile source and test cases ..."
 
 javac "$SRC_DIR/org/gzoltar/examples/CharacterCounter.java" -d "$BUILD_DIR" || die "Failed to compile source code!"
-javac -cp $JUNIT_JAR:$BUILD_DIR "$TEST_DIR/org/gzoltar/examples/CharacterCounterTest.java" -d "$BUILD_DIR" || die "Failed to compile test cases!"
+javac -cp $JUNIT_JAR:$JUNIT_PARAM_JAR:$BUILD_DIR "$TEST_DIR/org/gzoltar/examples/CharacterCounterTest.java" -d "$BUILD_DIR" || die "Failed to compile test cases!"
 
 #
 # Collect list of unit test cases to run
@@ -112,8 +118,8 @@ javac -cp $JUNIT_JAR:$BUILD_DIR "$TEST_DIR/org/gzoltar/examples/CharacterCounter
 echo "Collect list of unit test cases to run ..."
 
 UNIT_TESTS_FILE="$BUILD_DIR/tests.txt"
-
-java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
+#export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
   com.gzoltar.cli.Main listTestMethods $BUILD_DIR \
     --outputFile "$UNIT_TESTS_FILE" \
     --includes "org.gzoltar.examples.CharacterCounterTest#*" || die "Collection of unit test cases has failed!"
@@ -130,7 +136,7 @@ if [ "$INSTRUMENTATION" == "online" ]; then
 
   # Perform instrumentation at runtime and run each unit test case in isolation
   java -javaagent:$GZOLTAR_AGENT_RT_JAR=destfile=$SER_FILE,buildlocation=$BUILD_DIR,includes="org.gzoltar.examples.CharacterCounter:org.gzoltar.examples.CharacterCounter\$*",excludes="",inclnolocationclasses=false,output="file" \
-    -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
+    -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
     com.gzoltar.cli.Main runTestMethods \
       --testMethods "$UNIT_TESTS_FILE" \
       --collectCoverage || die "Coverage collection has failed!"
@@ -152,7 +158,7 @@ elif [ "$INSTRUMENTATION" == "offline" ]; then
   echo "Run each unit test case in isolation ..."
 
   # Run each unit test case in isolation
-  java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
+  java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
     -Dgzoltar-agent.destfile=$SER_FILE \
     -Dgzoltar-agent.output="file" \
     com.gzoltar.cli.Main runTestMethods \
@@ -177,7 +183,7 @@ SPECTRA_FILE="$BUILD_DIR/sfl/txt/spectra.csv"
 MATRIX_FILE="$BUILD_DIR/sfl/txt/matrix.txt"
 TESTS_FILE="$BUILD_DIR/sfl/txt/tests.csv"
 
-java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
+java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
   com.gzoltar.cli.Main faultLocalizationReport \
     --buildLocation "$BUILD_DIR" \
     --granularity "line" \
