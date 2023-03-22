@@ -143,7 +143,7 @@
     <!-- Dependencies versions -->
     <junit.version>4.12</junit.version>
     <testng.version>6.11</testng.version>
-    <javassist.version>3.27.0-GA</javassist.version>
+    <javassist.version>3.29.2-GA</javassist.version>
     <jacoco.version>0.8.6</jacoco.version>
     <commons-io.version>2.5</commons-io.version>
     <commons-lang.version>3.7</commons-lang.version>
