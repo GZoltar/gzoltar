@@ -26,7 +26,7 @@ public final class ClasspathUtils {
 
   public static URL[] getTestClasspath(final MavenProject mavenProject) throws Exception {
     List<String> elements = mavenProject.getTestClasspathElements();
-    URL[] urls = new URL[elements.size()];
+    URL[] urls = new URL[elements.size() + 1];
     for (int i = 0; i < elements.size(); i++) {
       urls[i] = new File(elements.get(i)).toURI().toURL();
     }
