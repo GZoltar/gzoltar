@@ -1,15 +1,19 @@
 package com.gzoltar.core.test.junit5;
 
+import java.util.Optional;
+
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 
 import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.reporting.ReportEntry;
+import org.junit.platform.engine.support.descriptor.ClassSource;
 
 import com.gzoltar.core.listeners.junit5.Listener;
 
-public class JUnit5TextListener extends TestExecutionListener {
+public class JUnit5TextListener implements TestExecutionListener {
 
     private boolean hasFailed = false;
 
@@ -49,7 +53,7 @@ public class JUnit5TextListener extends TestExecutionListener {
      * {@inheritDoc}
      */
     @Override
-    public void executionFinished(final TestIdentifier testIdentifier, final TestExecutionResult) {
+    public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
         this.hasFailed = testExecutionResult.getStatus() == TestExecutionResult.Status.FAILED;
         System.out.println(this.getName(testIdentifier) + " has finished! Has it failed? " + this.hasFailed);
     }
@@ -71,11 +75,17 @@ public class JUnit5TextListener extends TestExecutionListener {
     }
 
     private String getName(final TestIdentifier testIdentifier) {
-        // will this work?
         if (testIdentifier.isTest()) {
-            return testIdentifier.getSource().get().getClassName() + Listener.TEST_CLASS_NAME_SEPARATOR
-                    + testIdentifier.getDisplayName();
-        } else if (testIdentifier.isContainer()) {
+            Optional<TestSource> testSource = testIdentifier.getSource();
+            if (testSource.isPresent()) {
+                ClassSource classSource = (ClassSource) testSource.get();
+                String sourceName = classSource.getClassName();
+                return sourceName + Listener.TEST_CLASS_NAME_SEPARATOR + testIdentifier.getDisplayName();
+            } else {
+                return "<unknown source>"
+                    + Listener.TEST_CLASS_NAME_SEPARATOR + testIdentifier.getDisplayName();
+            }
+        } else {
             return testIdentifier.getDisplayName();
         }
     }
