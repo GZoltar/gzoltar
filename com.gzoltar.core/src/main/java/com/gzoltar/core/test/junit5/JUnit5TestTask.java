@@ -19,7 +19,7 @@ package com.gzoltar.core.test.junit5;
 
 import java.net.URL;
 
-import org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 import org.junit.platform.engine.TestExecutionResult;
 
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
@@ -32,6 +32,8 @@ import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.util.IsolatingClassLoader;
 import com.gzoltar.core.listeners.junit5.Listener;
+
+
 
 
 public class JUnit5TestTask extends TestTask {
@@ -83,7 +85,8 @@ public class JUnit5TestTask extends TestTask {
 
         final LauncherDiscoveryRequest request = requestBuilder.build();
         final Launcher launcher = LauncherFactory.create();
-        launcher.registerTestExecutionListeners(listener);
+        // dp we need this?
+        //launcher.registerTestExecutionListeners(listener);
         launcher.execute(request);
 
         // use TestExecutionResult or create a new JUnit5TestResult class?
