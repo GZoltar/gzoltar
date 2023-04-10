@@ -8,6 +8,7 @@ import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.reporting.ReportEntry;
 
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.runtime.Collector;
@@ -79,7 +80,7 @@ public class Listener implements TestExecutionListener{
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
         if (testIdentifier.isTest()){
-            if (testExecutionResult.getStatus() == Status.FAILED) {
+            if (testExecutionResult.getStatus() == TestExecutionResult.Status.FAILED) {
                 this.hasFailed = true;
                 //this.stackTrace = trace;
                 Optional<Throwable> throwableOp = testExecutionResult.getThrowable();
