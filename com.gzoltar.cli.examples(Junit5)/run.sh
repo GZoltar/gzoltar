@@ -76,15 +76,34 @@ mkdir -p "$LIB_DIR" || die "Failed to create $LIB_DIR!"
 [ -d "$LIB_DIR" ] || die "$LIB_DIR does not exist!"
 
 JUNIT_JAR="$LIB_DIR/junit.jar"
-JUNIT_PARAM_JAR="$LIB_DIR/junit-params.jar"
 if [ ! -s "$JUNIT_JAR" ]; then
   wget "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.9.2/junit-jupiter-api-5.9.2.jar" -O "$JUNIT_JAR" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
 fi
 [ -s "$JUNIT_JAR" ] || die "$JUNIT_JAR does not exist or it is empty!"
+
+JUNIT_PARAM_JAR="$LIB_DIR/junit-params.jar"
 if [ ! -s "$JUNIT_PARAM_JAR" ]; then
   wget "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-params/5.9.2/junit-jupiter-params-5.9.2.jar" -O "$JUNIT_PARAM_JAR" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
 fi
 [ -s "$JUNIT_PARAM_JAR" ] || die "$JUNIT_PARAM_JAR does not exist or it is empty!"
+
+JUNIT_ENGINE="$LIB_DIR/junit-engine.jar"
+if [ ! -s "$JUNIT_ENGINE" ]; then
+  wget "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.9.2/junit-jupiter-engine-5.9.2.jar" -O "$JUNIT_ENGINE" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
+fi
+[ -s "$JUNIT_ENGINE" ] || die "$JUNIT_ENGINE does not exist or it is empty!"
+
+JUNIT_PLATFORM_ENGINE="$LIB_DIR/junit-platform-engine.jar"
+if [ ! -s "$JUNIT_PLATFORM_ENGINE" ]; then
+  wget "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/1.9.2/junit-platform-engine-1.9.2.jar" -O "$JUNIT_PLATFORM_ENGINE" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
+fi
+[ -s "$JUNIT_PLATFORM_ENGINE" ] || die "$JUNIT_PLATFORM_ENGINE does not exist or it is empty!"
+
+JUNIT_PLATFORM_COMMONS="$LIB_DIR/junit-platform-commons.jar"
+if [ ! -s "$JUNIT_PLATFORM_COMMONS" ]; then
+  wget -np -nv "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-commons/1.9.2/junit-platform-commons-1.9.2.jar" -O "$JUNIT_PLATFORM_COMMONS" || die "Failed to get hamcrest-core-1.3.jar from https://repo1.maven.org!"
+fi
+[ -s "$JUNIT_PLATFORM_COMMONS" ] || die "$JUNIT_PLATFORM_COMMONS does not exist or it is empty!"
 
 
 HAMCREST_JAR="$LIB_DIR/hamcrest-core.jar"
@@ -119,7 +138,7 @@ echo "Collect list of unit test cases to run ..."
 
 UNIT_TESTS_FILE="$BUILD_DIR/tests.txt"
 #export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
-java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
+java -cp $BUILD_DIR:$JUNIT_ENGINE:$JUNIT_PLATFORM_ENGINE:$JUNIT_PLATFORM_COMMONS:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
   com.gzoltar.cli.Main listTestMethods $BUILD_DIR \
     --outputFile "$UNIT_TESTS_FILE" \
     --includes "org.gzoltar.examples.CharacterCounterTest#*" || die "Collection of unit test cases has failed!"

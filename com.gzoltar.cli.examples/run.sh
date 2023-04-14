@@ -81,6 +81,18 @@ if [ ! -s "$JUNIT_JAR" ]; then
 fi
 [ -s "$JUNIT_JAR" ] || die "$JUNIT_JAR does not exist or it is empty!"
 
+JUNIT_ENGINE="$LIB_DIR/junit-engine.jar"
+if [ ! -s "$JUNIT_ENGINE" ]; then
+  wget "https://repo1.maven.org/maven2/org/junit/vintage/junit-vintage-engine/5.9.2/junit-vintage-engine-5.9.2.jar" -O "$JUNIT_ENGINE" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
+fi
+[ -s "$JUNIT_ENGINE" ] || die "$JUNIT_ENGINE does not exist or it is empty!"
+
+JUNIT_PLATFORM_ENGINE="$LIB_DIR/junit-platform-engine.jar"
+if [ ! -s "$JUNIT_PLATFORM_ENGINE" ]; then
+  wget "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/1.9.2/junit-platform-engine-1.9.2.jar" -O "$JUNIT_PLATFORM_ENGINE" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
+fi
+[ -s "$JUNIT_PLATFORM_ENGINE" ] || die "$JUNIT_PLATFORM_ENGINE does not exist or it is empty!"
+
 HAMCREST_JAR="$LIB_DIR/hamcrest-core.jar"
 if [ ! -s "$HAMCREST_JAR" ]; then
   wget -np -nv "https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" -O "$HAMCREST_JAR" || die "Failed to get hamcrest-core-1.3.jar from https://repo1.maven.org!"
@@ -113,7 +125,8 @@ echo "Collect list of unit test cases to run ..."
 
 UNIT_TESTS_FILE="$BUILD_DIR/tests.txt"
 
-java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
+#export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PLATFORM_ENGINE:$JUNIT_ENGINE:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
   com.gzoltar.cli.Main listTestMethods $BUILD_DIR \
     --outputFile "$UNIT_TESTS_FILE" \
     --includes "org.gzoltar.examples.CharacterCounterTest#*" || die "Collection of unit test cases has failed!"
