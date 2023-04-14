@@ -14,7 +14,7 @@
 #
 # ------------------------------------------------------------------------------
 
-SCRIPT_DIR=$(cd `dirname ${BASH_SOURCE[0]}` && pwd)
+SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 
 #
 # Print error message and exit
@@ -83,7 +83,7 @@ fi
 
 JUNIT_ENGINE="$LIB_DIR/junit-engine.jar"
 if [ ! -s "$JUNIT_ENGINE" ]; then
-  wget "https://repo1.maven.org/maven2/org/junit/vintage/junit-vintage-engine/5.9.2/junit-vintage-engine-5.9.2.jar" -O "$JUNIT_ENGINE" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
+  wget "https://repo1.maven.org/maven2/org/junit/jupiter/junit-jupiter-api/5.9.2/junit-jupiter-api-5.9.2.jar" -O "$JUNIT_ENGINE" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
 fi
 [ -s "$JUNIT_ENGINE" ] || die "$JUNIT_ENGINE does not exist or it is empty!"
 
@@ -92,6 +92,12 @@ if [ ! -s "$JUNIT_PLATFORM_ENGINE" ]; then
   wget "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/1.9.2/junit-platform-engine-1.9.2.jar" -O "$JUNIT_PLATFORM_ENGINE" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
 fi
 [ -s "$JUNIT_PLATFORM_ENGINE" ] || die "$JUNIT_PLATFORM_ENGINE does not exist or it is empty!"
+
+JUNIT_VINTAGE_ENGINE="$LIB_DIR/junit-vintage-engine.jar"
+if [ ! -s "$JUNIT_VINTAGE_ENGINE" ]; then
+  wget "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-engine/1.9.2/junit-platform-engine-1.9.2.jar" -O "$JUNIT_VINTAGE_ENGINE" || die "Failed to get junit-4.12.jar from https://repo1.maven.org!"
+fi
+[ -s "$JUNIT_VINTAGE_ENGINE" ] || die "$JUNIT_VINTAGE_ENGINE does not exist or it is empty!"
 
 HAMCREST_JAR="$LIB_DIR/hamcrest-core.jar"
 if [ ! -s "$HAMCREST_JAR" ]; then
@@ -126,87 +132,8 @@ echo "Collect list of unit test cases to run ..."
 UNIT_TESTS_FILE="$BUILD_DIR/tests.txt"
 
 #export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
-java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PLATFORM_ENGINE:$JUNIT_ENGINE:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
+java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PLATFORM_ENGINE:$JUNIT_ENGINE:$HAMCREST_JAR:$GZOLTAR_CLI_JAR:$JUNIT_VINTAGE_ENGINE \
   com.gzoltar.cli.Main listTestMethods $BUILD_DIR \
     --outputFile "$UNIT_TESTS_FILE" \
     --includes "org.gzoltar.examples.CharacterCounterTest#*" || die "Collection of unit test cases has failed!"
 [ -s "$UNIT_TESTS_FILE" ] || die "$UNIT_TESTS_FILE does not exist or it is empty!"
-
-#
-# Collect coverage
-#
-
-SER_FILE="$BUILD_DIR/gzoltar.ser"
-
-if [ "$INSTRUMENTATION" == "online" ]; then
-  echo "Perform instrumentation at runtime and run each unit test case in isolation ..."
-
-  # Perform instrumentation at runtime and run each unit test case in isolation
-  java -javaagent:$GZOLTAR_AGENT_RT_JAR=destfile=$SER_FILE,buildlocation=$BUILD_DIR,includes="org.gzoltar.examples.CharacterCounter:org.gzoltar.examples.CharacterCounter\$*",excludes="",inclnolocationclasses=false,output="file" \
-    -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
-    com.gzoltar.cli.Main runTestMethods \
-      --testMethods "$UNIT_TESTS_FILE" \
-      --collectCoverage || die "Coverage collection has failed!"
-
-elif [ "$INSTRUMENTATION" == "offline" ]; then
-  echo "Perform offline instrumentation ..."
-
-  # Backup original classes
-  BUILD_BACKUP_DIR="$SCRIPT_DIR/.build"
-  mv "$BUILD_DIR" "$BUILD_BACKUP_DIR" || die "Backup of original classes has failed!"
-  mkdir -p "$BUILD_DIR"
-
-  # Perform offline instrumentation
-  java -cp $BUILD_BACKUP_DIR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
-    com.gzoltar.cli.Main instrument \
-    --outputDirectory "$BUILD_DIR" \
-    $BUILD_BACKUP_DIR || die "Offline instrumentation has failed!"
-
-  echo "Run each unit test case in isolation ..."
-
-  # Run each unit test case in isolation
-  java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
-    -Dgzoltar-agent.destfile=$SER_FILE \
-    -Dgzoltar-agent.output="file" \
-    com.gzoltar.cli.Main runTestMethods \
-      --testMethods "$UNIT_TESTS_FILE" \
-      --offline \
-      --collectCoverage || die "Coverage collection has failed!"
-
-  # Restore original classes
-  cp -R $BUILD_BACKUP_DIR/* "$BUILD_DIR" || die "Restore of original classes has failed!"
-  rm -rf "$BUILD_BACKUP_DIR"
-fi
-
-[ -s "$SER_FILE" ] || die "$SER_FILE does not exist or it is empty!"
-
-#
-# Create fault localization report
-#
-
-echo "Create fault localization report ..."
-
-SPECTRA_FILE="$BUILD_DIR/sfl/txt/spectra.csv"
-MATRIX_FILE="$BUILD_DIR/sfl/txt/matrix.txt"
-TESTS_FILE="$BUILD_DIR/sfl/txt/tests.csv"
-
-java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
-  com.gzoltar.cli.Main faultLocalizationReport \
-    --buildLocation "$BUILD_DIR" \
-    --granularity "line" \
-    --inclPublicMethods \
-    --inclStaticConstructors \
-    --inclDeprecatedMethods \
-    --dataFile "$SER_FILE" \
-    --outputDirectory "$BUILD_DIR" \
-    --family "sfl" \
-    --formula "ochiai" \
-    --metric "entropy" \
-    --formatter "txt" || die "Generation of fault-localization report has failed!"
-
-[ -s "$SPECTRA_FILE" ] || die "$SPECTRA_FILE does not exist or it is empty!"
-[ -s "$MATRIX_FILE" ] || die "$MATRIX_FILE does not exist or it is empty!"
-[ -s "$TESTS_FILE" ] || die "$TESTS_FILE does not exist or it is empty!"
-
-echo "DONE!"
-exit 0
