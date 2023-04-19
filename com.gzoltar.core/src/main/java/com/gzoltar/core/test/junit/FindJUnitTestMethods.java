@@ -71,19 +71,20 @@ public final class FindJUnitTestMethods {
 
     TestPlan testPlan = launcher.discover(request);
 
-    return new ArrayList<>(getTests(testPlan, testPlan.getRoots()));
+    return new ArrayList<>(getTests(testPlan, testPlan.getRoots(),testClassName));
 
 
   }
 
-  public static Collection<TestMethod> getTests(TestPlan testPlan, Set<TestIdentifier> roots){
+  public static Collection<TestMethod> getTests(TestPlan testPlan, Set<TestIdentifier> roots,String classname){
     List<TestMethod> testsList = new ArrayList<>();
 
     for (TestIdentifier test: roots){
       if (test.isTest()){
-        testsList.add(new TestMethod(ClassType.JUNIT,testPlan.getClass().getName() + Listener.TEST_CLASS_NAME_SEPARATOR + test.getDisplayName()));
+        System.out.println(test.getDisplayName());
+        testsList.add(new TestMethod(ClassType.JUNIT,classname + Listener.TEST_CLASS_NAME_SEPARATOR + test.getDisplayName()));
       }else{
-        testsList.addAll(getTests(testPlan,testPlan.getChildren(test)));
+        testsList.addAll(getTests(testPlan,testPlan.getChildren(test),classname));
       }
     }
 
