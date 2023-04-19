@@ -24,16 +24,7 @@ public class Listener extends SummaryGeneratingListener{
 
     protected String stackTrace;
     
-    /*
-     * Called when the execution of the TestPlan has started,
-     * before any test has been executed.
-     * 
-     * Note: This method corresponds to the JUnit 4 method onRunStart
-     */
-    @Override
-    public void testPlanExecutionStarted(TestPlan testPlan) {
-        // empty
-    }
+
 
     /*
      * Called when the execution of the TestPlan has finished, 
@@ -43,18 +34,10 @@ public class Listener extends SummaryGeneratingListener{
      */
     @Override
     public void testPlanExecutionFinished(TestPlan testPlan) {
-        Collector.instance().endSession();        
+        super.testPlanExecutionFinished(testPlan);
+        Collector.instance().endSession();
     }
-    
-    /*
-     * Called when the execution of a leaf or subtree
-     * of the TestPlan has been skipped.
-     */
-    @Override
-    public void executionSkipped(TestIdentifier testIdentifier, String reason) {
-        // empty
-        
-    }
+
 
     /* 
      * Called when the execution of a leaf or subtree
@@ -64,6 +47,7 @@ public class Listener extends SummaryGeneratingListener{
      */
     @Override
     public void executionStarted(TestIdentifier testIdentifier) {
+        super.executionStarted(testIdentifier);
         this.hasFailed = false;
         this.startTime = System.nanoTime();
         this.stackTrace = "";
@@ -80,6 +64,8 @@ public class Listener extends SummaryGeneratingListener{
      */
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
+        super.executionFinished(testIdentifier,testExecutionResult);
+
         if (testIdentifier.isTest()){
             if (testExecutionResult.getStatus() == TestExecutionResult.Status.FAILED) {
                 this.hasFailed = true;
@@ -95,26 +81,6 @@ public class Listener extends SummaryGeneratingListener{
             Collector.instance().endTransaction(testIdentifier.getDisplayName(),
             this.hasFailed ? TransactionOutcome.FAIL : TransactionOutcome.PASS,
             System.nanoTime() - this.startTime, this.stackTrace);
-    }
-
-    /*
-     * Called when a new, 
-     * dynamic TestIdentifier has been registered.
-     */
-    @Override
-    public void dynamicTestRegistered(TestIdentifier testIdentifier) {
-        // what to do?
-    
-    }
-
-    /*
-     * Called when additional test reporting data 
-     * has been published for the supplied TestIdentifier.
-     */
-    @Override
-    public void reportingEntryPublished(TestIdentifier testIdentifier, ReportEntry entry) {
-        // what to do?
-        
     }
 
      /**

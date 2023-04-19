@@ -49,6 +49,8 @@ import org.junit.vintage.engine.support.UniqueIdReader;
 import org.junit.vintage.engine.descriptor.VintageTestDescriptor;
 
 
+
+
 public final class FindJUnitTestMethods {
 
   /**
@@ -78,7 +80,6 @@ public final class FindJUnitTestMethods {
     List<TestMethod> testsList = new ArrayList<>();
 
     for (TestIdentifier test: roots){
-      System.out.println(test.getUniqueIdObject().toString() + test.isTest());
       if (test.isTest()){
         testsList.add(new TestMethod(ClassType.JUNIT,testPlan.getClass().getName() + Listener.TEST_CLASS_NAME_SEPARATOR + test.getDisplayName()));
       }else{

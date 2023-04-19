@@ -105,6 +105,13 @@ if [ ! -s "$JUNIT_PLATFORM_COMMONS" ]; then
 fi
 [ -s "$JUNIT_PLATFORM_COMMONS" ] || die "$JUNIT_PLATFORM_COMMONS does not exist or it is empty!"
 
+JUNIT_PLATFORM_LAUNCHER="$LIB_DIR/junit-platform-launcher.jar"
+if [ ! -s "$JUNIT_PLATFORM_LAUNCHER" ]; then
+  wget -np -nv "https://repo1.maven.org/maven2/org/junit/platform/junit-platform-launcher/1.9.2/junit-platform-launcher-1.9.2.jar" -O "$JUNIT_PLATFORM_LAUNCHER" || die "Failed to get hamcrest-core-1.3.jar from https://repo1.maven.org!"
+fi
+[ -s "$JUNIT_PLATFORM_LAUNCHER" ] || die "$JUNIT_PLATFORM_LAUNCHER does not exist or it is empty!"
+
+
 
 HAMCREST_JAR="$LIB_DIR/hamcrest-core.jar"
 if [ ! -s "$HAMCREST_JAR" ]; then
@@ -137,7 +144,6 @@ javac -cp $JUNIT_JAR:$JUNIT_PARAM_JAR:$BUILD_DIR "$TEST_DIR/org/gzoltar/examples
 echo "Collect list of unit test cases to run ..."
 
 UNIT_TESTS_FILE="$BUILD_DIR/tests.txt"
-#export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 java -cp $BUILD_DIR:$JUNIT_ENGINE:$JUNIT_PLATFORM_ENGINE:$JUNIT_PLATFORM_COMMONS:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
   com.gzoltar.cli.Main listTestMethods $BUILD_DIR \
     --outputFile "$UNIT_TESTS_FILE" \
@@ -154,6 +160,8 @@ if [ "$INSTRUMENTATION" == "online" ]; then
   echo "Perform instrumentation at runtime and run each unit test case in isolation ..."
 
   # Perform instrumentation at runtime and run each unit test case in isolation
+
+  #export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
   java -javaagent:$GZOLTAR_AGENT_RT_JAR=destfile=$SER_FILE,buildlocation=$BUILD_DIR,includes="org.gzoltar.examples.CharacterCounter:org.gzoltar.examples.CharacterCounter\$*",excludes="",inclnolocationclasses=false,output="file" \
     -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
     com.gzoltar.cli.Main runTestMethods \
@@ -177,6 +185,7 @@ elif [ "$INSTRUMENTATION" == "offline" ]; then
   echo "Run each unit test case in isolation ..."
 
   # Run each unit test case in isolation
+  #export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
   java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
     -Dgzoltar-agent.destfile=$SER_FILE \
     -Dgzoltar-agent.output="file" \
