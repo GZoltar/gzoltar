@@ -10,7 +10,6 @@ public class JUnit5TestResult extends TestResult{
     public JUnit5TestResult(TestExecutionSummary summary) {
         super(summary.getTimeFinished()-summary.getTimeStarted(),
                 summary.getFailures().get(0).getException(),
-                summary.getTestsFailedCount() > 0);
-      }
-
+                summary.getTotalFailureCount()> 0);
+    }
 }
