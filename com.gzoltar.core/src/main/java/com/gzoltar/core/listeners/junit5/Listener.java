@@ -4,16 +4,17 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Optional;
 
-import org.junit.platform.launcher.TestExecutionListener;
+//import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.reporting.ReportEntry;
 
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.runtime.Collector;
 
-public class Listener implements TestExecutionListener{
+public class Listener extends SummaryGeneratingListener{
 
     public static final String TEST_CLASS_NAME_SEPARATOR = "#";
 

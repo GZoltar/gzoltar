@@ -24,17 +24,14 @@ import org.junit.platform.engine.TestExecutionResult;
 
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
-
 
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.util.IsolatingClassLoader;
 import com.gzoltar.core.listeners.junit5.Listener;
-
-
-
 
 public class JUnit5TestTask extends TestTask {
     
@@ -66,10 +63,10 @@ public class JUnit5TestTask extends TestTask {
         
         requestBuilder.selectors(selectMethod(clazz, this.testMethod.getTestMethodName()));
 
-        // text listener - TBD
-        requestBuilder.listeners(new JUnit5TextListener());
+        //requestBuilder.listeners(new JUnit5TextListener());
 
-        Listener listener;
+        Listener listener = new Listener();
+        /* 
         if (this.collectCoverage) {
             if (this.offline) {
                 listener = this.initTestClass
@@ -80,17 +77,20 @@ public class JUnit5TestTask extends TestTask {
             } else {
                 listener = new Listener();
             }
-            requestBuilder.listeners(listener);
+            //requestBuilder.listeners(listener);
         }
-
+        */
         final LauncherDiscoveryRequest request = requestBuilder.build();
         final Launcher launcher = LauncherFactory.create();
-        // dp we need this?
-        //launcher.registerTestExecutionListeners(listener);
+        // To be tested
+        //launcher.registerTestExecutionListeners(new JUnit5TextListener());
+        // To be tested
+        launcher.registerTestExecutionListeners(listener);
         launcher.execute(request);
 
-        // use TestExecutionResult or create a new JUnit5TestResult class?
-        JUnit5TestResult result = new JUnit5TestResult(launcher.execute(request));
+        // obtain the execution result from the Listener
+        JUnit5TestResult result = new JUnit5TestResult(listener.getSummary());
+
         classLoader.close();
         return result;
     }

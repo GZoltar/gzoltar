@@ -2,7 +2,8 @@ package com.gzoltar.core.test.junit5;
 
 import java.util.Optional;
 
-import org.junit.platform.launcher.TestExecutionListener;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
+//import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 
@@ -13,7 +14,7 @@ import org.junit.platform.engine.support.descriptor.ClassSource;
 
 import com.gzoltar.core.listeners.junit5.Listener;
 
-public class JUnit5TextListener implements TestExecutionListener {
+public class JUnit5TextListener extends SummaryGeneratingListener {
 
     private boolean hasFailed = false;
 
