@@ -18,19 +18,24 @@
 package com.gzoltar.core.test.junit;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
+import com.gzoltar.core.util.ClassType;
+import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
-import org.junit.platform.launcher.Launcher;
-import org.junit.platform.launcher.LauncherDiscoveryRequest;
 
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.util.IsolatingClassLoader;
 import com.gzoltar.core.listeners.junit5.Listener;
-
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
 public class JUnitTestTask extends TestTask {
     
     public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
@@ -55,14 +60,11 @@ public class JUnitTestTask extends TestTask {
         Thread.currentThread().setContextClassLoader(classLoader);
 
         Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
-        : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
-
-        System.out.println(this.testMethod.getTestMethodName());
-        System.out.println(this.testMethod.getTestClassName());
+                : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 
         LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
-        
-        requestBuilder.selectors(selectMethod(clazz, this.testMethod.getTestMethodName()));
+        System.out.println(testMethod.getTestMethodName() + testMethod.getTestClassName());
+        var request = requestBuilder.selectors(selectMethod(testMethod.getTestClassName(), testMethod.getTestMethodName())).build();
 
         //requestBuilder.listeners(new JUnit5TextListener());
 
@@ -81,19 +83,35 @@ public class JUnitTestTask extends TestTask {
             //requestBuilder.listeners(listener);
         }
         */
-        final LauncherDiscoveryRequest request = requestBuilder.build();
-        final Launcher launcher = LauncherFactory.create();
-        // To be tested
-        //launcher.registerTestExecutionListeners(new JUnit5TextListener());
-        // To be tested
-        //launcher.registerTestExecutionListeners(listener);
-        launcher.execute(request,listener);
-        request.getDiscoveryListener();
-        System.out.println(listener.getSummary().getFailures());
-        // obtain the execution result from the Listener
-        JUnitTestResult result = new JUnitTestResult(listener.getSummary());
 
+        try (LauncherSession session = LauncherFactory.openSession()) {
+            Launcher launcher = session.getLauncher();
+            // Register a listener of your choice
+            launcher.registerTestExecutionListeners(listener);
+            // Discover tests and build a test plan
+            TestPlan testPlan = launcher.discover(request);
+            getTests(testPlan,testPlan.getRoots());
+            // Execute test plan
+            launcher.execute(testPlan);
+        }
+        System.out.println(listener.getSummary().getFailures());
+        System.out.println(listener.getSummary().getTestsStartedCount());
+
+        TestExecutionSummary summary = listener.getSummary();
+        JUnitTestResult result = new JUnitTestResult(summary);
         classLoader.close();
         return result;
+    }
+
+    public static void getTests(TestPlan testPlan, Set<TestIdentifier> roots){
+        for (TestIdentifier test: roots){
+            if (test.isTest()){
+                System.out.println("ricardo");
+                System.out.println(test.getDisplayName());
+            }else{
+                System.out.println(test.getUniqueId());
+                getTests(testPlan,testPlan.getChildren(test));
+            }
+        }
     }
 }
