@@ -131,7 +131,7 @@ echo "Collect list of unit test cases to run ..."
 
 UNIT_TESTS_FILE="$BUILD_DIR/tests.txt"
 
-export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+#export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PLATFORM_ENGINE:$JUNIT_ENGINE:$HAMCREST_JAR:$GZOLTAR_CLI_JAR:$JUNIT_VINTAGE_ENGINE \
   com.gzoltar.cli.Main listTestMethods $BUILD_DIR \
     --outputFile "$UNIT_TESTS_FILE" \
@@ -144,7 +144,7 @@ java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PLATFORM_ENGINE:$JUNIT_ENGINE:$HAMCREST_JA
 
 SER_FILE="$BUILD_DIR/gzoltar.ser"
 
-export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+#export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 
 if [ "$INSTRUMENTATION" == "online" ]; then
   echo "Perform instrumentation at runtime and run each unit test case in isolation ..."
@@ -164,7 +164,7 @@ elif [ "$INSTRUMENTATION" == "offline" ]; then
   mv "$BUILD_DIR" "$BUILD_BACKUP_DIR" || die "Backup of original classes has failed!"
   mkdir -p "$BUILD_DIR"
 
-  export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+ # export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
 
   # Perform offline instrumentation
   java -cp $BUILD_BACKUP_DIR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
@@ -175,7 +175,7 @@ elif [ "$INSTRUMENTATION" == "offline" ]; then
   echo "Run each unit test case in isolation ..."
 
 
-export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
+#export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
   # Run each unit test case in isolation
   java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
     -Dgzoltar-agent.destfile=$SER_FILE \
@@ -183,6 +183,7 @@ export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,
     com.gzoltar.cli.Main runTestMethods \
       --testMethods "$UNIT_TESTS_FILE" \
       --offline \
+      --initTestClass \
       --collectCoverage || die "Coverage collection has failed!"
 
   # Restore original classes

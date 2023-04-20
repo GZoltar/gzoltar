@@ -111,8 +111,6 @@ if [ ! -s "$JUNIT_PLATFORM_LAUNCHER" ]; then
 fi
 [ -s "$JUNIT_PLATFORM_LAUNCHER" ] || die "$JUNIT_PLATFORM_LAUNCHER does not exist or it is empty!"
 
-
-
 HAMCREST_JAR="$LIB_DIR/hamcrest-core.jar"
 if [ ! -s "$HAMCREST_JAR" ]; then
   wget -np -nv "https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" -O "$HAMCREST_JAR" || die "Failed to get hamcrest-core-1.3.jar from https://repo1.maven.org!"
@@ -163,10 +161,9 @@ if [ "$INSTRUMENTATION" == "online" ]; then
 
   #export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
   java -javaagent:$GZOLTAR_AGENT_RT_JAR=destfile=$SER_FILE,buildlocation=$BUILD_DIR,includes="org.gzoltar.examples.CharacterCounterTest:org.gzoltar.examples.CharacterCounterTest\$*",excludes="",inclnolocationclasses=false,output="file" \
-    -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
+    -cp $BUILD_DIR:$JUNIT_ENGINE:$JUNIT_PLATFORM_ENGINE:$JUNIT_PLATFORM_COMMONS:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR:"org.gzoltar.examples.CharacterCounterTest:org.gzoltar.examples.CharacterCounterTest\$*" \
     com.gzoltar.cli.Main runTestMethods \
       --testMethods "$UNIT_TESTS_FILE" \
-      --initTestClass \
       --collectCoverage || die "Coverage collection has failed!"
 
 elif [ "$INSTRUMENTATION" == "offline" ]; then
@@ -178,7 +175,7 @@ elif [ "$INSTRUMENTATION" == "offline" ]; then
   mkdir -p "$BUILD_DIR"
 
   # Perform offline instrumentation
-  java -cp $BUILD_BACKUP_DIR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
+  java -cp $BUILD_BACKUP_DIR:$GZOLTAR_AGENT_RT_JAR:$JUNIT_ENGINE:$JUNIT_PLATFORM_ENGINE:$JUNIT_PLATFORM_COMMONS:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
     com.gzoltar.cli.Main instrument \
     --outputDirectory "$BUILD_DIR" \
     $BUILD_BACKUP_DIR || die "Offline instrumentation has failed!"
@@ -187,7 +184,7 @@ elif [ "$INSTRUMENTATION" == "offline" ]; then
 
   # Run each unit test case in isolation
   #export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
-  java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
+  java -cp $BUILD_DIR:$JUNIT_ENGINE:$JUNIT_PLATFORM_ENGINE:$JUNIT_PLATFORM_COMMONS:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
     -Dgzoltar-agent.destfile=$SER_FILE \
     -Dgzoltar-agent.output="file" \
     com.gzoltar.cli.Main runTestMethods \
@@ -212,7 +209,7 @@ SPECTRA_FILE="$BUILD_DIR/sfl/txt/spectra.csv"
 MATRIX_FILE="$BUILD_DIR/sfl/txt/matrix.txt"
 TESTS_FILE="$BUILD_DIR/sfl/txt/tests.csv"
 
-java -cp $BUILD_DIR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
+java -cp $BUILD_DIR:$JUNIT_ENGINE:$JUNIT_PLATFORM_ENGINE:$JUNIT_PLATFORM_COMMONS:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
   com.gzoltar.cli.Main faultLocalizationReport \
     --buildLocation "$BUILD_DIR" \
     --granularity "line" \

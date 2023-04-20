@@ -17,25 +17,20 @@
 
 package com.gzoltar.core.test.junit;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
-
-import com.gzoltar.core.util.ClassType;
-import org.junit.platform.launcher.*;
-import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
-import org.junit.platform.launcher.core.LauncherFactory;
-
+import com.gzoltar.core.listeners.junit5.Listener;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.util.IsolatingClassLoader;
-import com.gzoltar.core.listeners.junit5.Listener;
+import org.junit.platform.launcher.*;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+
+import java.net.URL;
+import java.util.Set;
+
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
+
 public class JUnitTestTask extends TestTask {
     
     public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
@@ -62,9 +57,11 @@ public class JUnitTestTask extends TestTask {
         Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
                 : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 
-        LauncherDiscoveryRequestBuilder requestBuilder = LauncherDiscoveryRequestBuilder.request();
         System.out.println(testMethod.getTestMethodName() + testMethod.getTestClassName());
-        var request = requestBuilder.selectors(selectMethod(testMethod.getTestClassName(), testMethod.getTestMethodName())).build();
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                .selectors(
+                    selectMethod(clazz, testMethod.getTestMethodName().replaceAll("\\(\\)",""))
+                ).build();
 
         //requestBuilder.listeners(new JUnit5TextListener());
 
