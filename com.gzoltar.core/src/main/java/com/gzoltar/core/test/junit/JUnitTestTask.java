@@ -64,10 +64,12 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
                 : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 
         System.out.println(testMethod.getTestMethodName() + testMethod.getTestClassName());
+
+
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                 .selectors(
                     selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
-                ).filters(EngineFilter.excludeEngines("junit-vintage"))
+                )
                 .build();
         //requestBuilder.listeners(new JUnit5TextListener());
 
@@ -94,7 +96,13 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
             // Discover tests and build a test plan
             TestPlan testPlan = launcher.discover(request);
 
-            getTests(testPlan,testPlan.getRoots());
+            if (isJUnit5Test(testPlan,testPlan.getRoots())){
+                testPlan = launcher.discover(LauncherDiscoveryRequestBuilder.request()
+                        .selectors(
+                                selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
+                        ).filters(EngineFilter.excludeEngines("junit-vintage"))
+                        .build());
+            }
             // Execute test plan
             launcher.execute(testPlan);
 
@@ -107,14 +115,13 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
         return result;
     }
 
-    public static void getTests(TestPlan testPlan, Set<TestIdentifier> roots){
+    public static boolean isJUnit5Test(TestPlan testPlan, Set<TestIdentifier> roots){
+        boolean returnValue = false;
         for (TestIdentifier test: roots){
-            if (test.isTest()){
-                System.out.println("\t" + test.getUniqueId());
-            }else{
-                System.out.println("\t" + test.getUniqueId());
-                getTests(testPlan,testPlan.getChildren(test));
-            }
+            if (test.getUniqueId().toString().equals("[engine:junit-jupiter]"))
+                return true;
+            returnValue |= isJUnit5Test(testPlan,testPlan.getChildren(test));
         }
+        return returnValue;
     }
 }
