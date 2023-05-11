@@ -2,6 +2,7 @@ package com.gzoltar.core.test.junit;
 
 import java.util.Optional;
 
+import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 //import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
@@ -23,6 +24,7 @@ public class JUnitTextListener extends SummaryGeneratingListener {
      */
     @Override
     public void testPlanExecutionStarted(final TestPlan testPlan) {
+        super.testPlanExecutionStarted(testPlan);
         System.out.println(testPlan);
         System.out.println("Test plan execution has started!");
     }
@@ -41,8 +43,10 @@ public class JUnitTextListener extends SummaryGeneratingListener {
      */
     @Override
     public void executionSkipped(final TestIdentifier testIdentifier, final String reason) {
-        super.executionSkipped(testIdentifier,reason);
-        System.out.println(this.getName(testIdentifier) + " has been skipped! Reason: " + reason);
+        if (testIdentifier.isTest()) {
+            super.executionSkipped(testIdentifier, reason);
+            System.out.println(this.getName(testIdentifier) + " has been skipped! Reason: " + reason);
+        }
     }
 
     /**
@@ -50,8 +54,10 @@ public class JUnitTextListener extends SummaryGeneratingListener {
      */
     @Override
     public void executionStarted(final TestIdentifier testIdentifier) {
-        super.executionStarted(testIdentifier);
-        this.hasFailed = false;
+        if (testIdentifier.isTest()) {
+            super.executionStarted(testIdentifier);
+            this.hasFailed = false;
+        }
     }
 
     /**
@@ -59,16 +65,19 @@ public class JUnitTextListener extends SummaryGeneratingListener {
      */
     @Override
     public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-        super.executionFinished(testIdentifier,testExecutionResult);
-        this.hasFailed = testExecutionResult.getStatus() == TestExecutionResult.Status.FAILED;
-        System.out.println(this.getName(testIdentifier) + " has finished! Has it failed? " + this.hasFailed);
+        if (testIdentifier.isTest()) {
+            super.executionFinished(testIdentifier, testExecutionResult);
+            this.hasFailed = testExecutionResult.getStatus().equals(TestExecutionResult.Status.FAILED);
+            System.out.println(this.getName(testIdentifier) + " has finished! Has it failed? " + this.hasFailed);
+        }
     }
 
     private String getName(final TestIdentifier testIdentifier) {
         if (testIdentifier.isTest()) {
             Optional<TestSource> testSource = testIdentifier.getSource();
+
             if (testSource.isPresent()) {
-                ClassSource classSource = (ClassSource) testSource.get();
+                MethodSource classSource = (MethodSource) testSource.get();
                 String sourceName = classSource.getClassName();
                 return sourceName + Listener.TEST_CLASS_NAME_SEPARATOR + testIdentifier.getDisplayName();
             } else {

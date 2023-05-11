@@ -17,21 +17,27 @@
 
 package com.gzoltar.core.test.junit;
 
+import com.gzoltar.core.listeners.JUnitListener;
 import com.gzoltar.core.listeners.junit5.Listener;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.util.IsolatingClassLoader;
+import org.junit.platform.commons.util.ReflectionUtils;
+import org.junit.platform.engine.DiscoveryFilter;
+import org.junit.platform.engine.UniqueId;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.junit.vintage.engine.descriptor.VintageEngineDescriptor;
 
 import java.net.URL;
 import java.util.Set;
 
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
-public class JUnitTestTask extends TestTask {
+public class JUnitTestTask extends TestTask implements TestExecutionListener{
     
     public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
                          final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
@@ -60,9 +66,9 @@ public class JUnitTestTask extends TestTask {
         System.out.println(testMethod.getTestMethodName() + testMethod.getTestClassName());
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                 .selectors(
-                    selectMethod(clazz, testMethod.getTestMethodName().replaceAll("\\(\\)",""))
-                ).build();
-
+                    selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
+                ).filters(EngineFilter.excludeEngines("junit-vintage"))
+                .build();
         //requestBuilder.listeners(new JUnit5TextListener());
 
         Listener listener = new Listener();
@@ -87,15 +93,16 @@ public class JUnitTestTask extends TestTask {
             launcher.registerTestExecutionListeners(listener);
             // Discover tests and build a test plan
             TestPlan testPlan = launcher.discover(request);
+
             getTests(testPlan,testPlan.getRoots());
             // Execute test plan
             launcher.execute(testPlan);
+
         }
-        System.out.println(listener.getSummary().getFailures());
-        System.out.println(listener.getSummary().getTestsStartedCount());
 
         TestExecutionSummary summary = listener.getSummary();
         JUnitTestResult result = new JUnitTestResult(summary);
+
         classLoader.close();
         return result;
     }
@@ -103,10 +110,9 @@ public class JUnitTestTask extends TestTask {
     public static void getTests(TestPlan testPlan, Set<TestIdentifier> roots){
         for (TestIdentifier test: roots){
             if (test.isTest()){
-                System.out.println("ricardo");
-                System.out.println(test.getDisplayName());
+                System.out.println("\t" + test.getUniqueId());
             }else{
-                System.out.println(test.getUniqueId());
+                System.out.println("\t" + test.getUniqueId());
                 getTests(testPlan,testPlan.getChildren(test));
             }
         }
