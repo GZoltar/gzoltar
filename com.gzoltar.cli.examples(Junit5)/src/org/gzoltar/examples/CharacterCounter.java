@@ -34,7 +34,6 @@ public class CharacterCounter {
   }
 
   public void processString(String str) {
-    int ToTest = 0;
     for (char c : str.toCharArray()) {
       if ('A' <= c && 'Z' >= c) {
         this.numLetters += 2; /* FAULT */
@@ -46,13 +45,6 @@ public class CharacterCounter {
         this.other += 1;
       }
     }
-    ToTest = switch (str){
-      case "HelloWorl" -> -1;
-      case "JUnit5"-> -2;
-      default -> -1;
-      };
-      if(ToTest<0)
-        this.other = ToTest;
   }
 
   public int getNumLetters() {

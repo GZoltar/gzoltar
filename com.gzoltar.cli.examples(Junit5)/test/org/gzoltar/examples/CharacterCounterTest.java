@@ -29,6 +29,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CharacterCounterTest {
 
   @Test
+  public void test1() {
+    CharacterCounter cc = new CharacterCounter();
+    cc.processString("Al84");
+    assertEquals(2, cc.getNumLetters());
+    assertEquals(2, cc.getNumDigits());
+    assertEquals(0, cc.getNumOtherCharacters());
+  }
+
+  @Test
   public void test2() {
     CharacterCounter cc = new CharacterCounter();
     cc.processString("1337");
@@ -37,7 +46,14 @@ public class CharacterCounterTest {
     assertEquals(0, cc.getNumOtherCharacters());
   }
 
-
+  @Test
+  public void test3() {
+    CharacterCounter cc = new CharacterCounter();
+    cc.processString("T1");
+    assertEquals(1, cc.getNumLetters());
+    assertEquals(1, cc.getNumDigits());
+    assertEquals(0, cc.getNumOtherCharacters());
+  }
 
   @Test
   public void test4() {
@@ -57,22 +73,20 @@ public class CharacterCounterTest {
     assertEquals(1, cc.getNumOtherCharacters());
   }
 
-  @Test
+  /*@Test
   public void test6() {
     CharacterCounter cc = new CharacterCounter();
     cc.processString("\0x10\0x05\0x00");
     assertEquals(0, cc.getNumLetters());
     assertEquals(0, cc.getNumDigits());
     assertEquals(3, cc.getNumOtherCharacters());
-  }
-
+  }*/
 
   @Test
   public void test7() {
     CharacterCounter cc = new CharacterCounter();
     cc.processString("GZoltar");
     assertEquals(7, cc.getNumLetters());
-    assertEquals(7,4);
     assertEquals(0, cc.getNumDigits());
     assertEquals(0, cc.getNumOtherCharacters());
   }
@@ -84,12 +98,6 @@ public class CharacterCounterTest {
     assertEquals(0, cc.getNumLetters());
     assertEquals(0, cc.getNumDigits());
     assertEquals(0, cc.getNumOtherCharacters());
-  }
-
-  @Test
-  public void test3(int ints) {
-    CharacterCounter cc = new CharacterCounter();
-    cc.processString("T1");
   }
 
 }
