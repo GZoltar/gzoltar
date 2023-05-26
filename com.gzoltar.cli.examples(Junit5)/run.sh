@@ -160,7 +160,7 @@ if [ "$INSTRUMENTATION" == "online" ]; then
   # Perform instrumentation at runtime and run each unit test case in isolation
 
   #export JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005"
-  java -javaagent:$GZOLTAR_AGENT_RT_JAR=destfile=$SER_FILE,buildlocation=$BUILD_DIR,includes="org.gzoltar.examples.CharacterCounterTest:org.gzoltar.examples.CharacterCounterTest\$*",excludes="",inclnolocationclasses=false,output="file" \
+  java -javaagent:$GZOLTAR_AGENT_RT_JAR=destfile=$SER_FILE,buildlocation=$BUILD_DIR,includes="org.gzoltar.examples.CharacterCounter:org.gzoltar.examples.CharacterCounter\$*",excludes="",inclnolocationclasses=false,output="file" \
     -cp $BUILD_DIR:$JUNIT_ENGINE:$JUNIT_PLATFORM_ENGINE:$JUNIT_PLATFORM_COMMONS:$JUNIT_JAR:$JUNIT_PARAM_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR:"org.gzoltar.examples.CharacterCounterTest:org.gzoltar.examples.CharacterCounterTest\$*" \
     com.gzoltar.cli.Main runTestMethods \
       --testMethods "$UNIT_TESTS_FILE" \
