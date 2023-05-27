@@ -48,6 +48,7 @@ if [ "$#" -ne "1" ] && [ "$mod_of_two" -ne "0" ]; then
 fi
 
 INSTRUMENTATION=""
+TARGET=""
 
 while [[ "$1" = --* ]]; do
   OPTION=$1; shift
@@ -55,6 +56,17 @@ while [[ "$1" = --* ]]; do
     (--instrumentation)
       INSTRUMENTATION=$1;
       shift;;
+    (--target)
+      if [ -n "$1" ] && [ "$1" -eq "$1" ] 2>/dev/null; then
+        if (( $1 >= 8 && $1 <= 19 )); then
+          TARGET=$1;
+          shift;
+        else
+          die "$USAGE";
+        fi
+      else
+        die "$USAGE";
+      fi;;
     (--help)
       echo "$USAGE";
       exit 0;;
@@ -66,6 +78,18 @@ done
 [ "$INSTRUMENTATION" != "" ] || die "$USAGE"
 if [ "$INSTRUMENTATION" != "online" ] && [ "$INSTRUMENTATION" != "offline" ]; then
   die "$USAGE"
+fi
+TARGET_STR=""
+if [ "$TARGET" != "" ]; then
+  # Convert target to string
+  TARGET_STR="--target $TARGET"
+  echo "Target is set to: $TARGET_STR"
+fi
+SOURCE_STR=""
+if [ "$TARGET" != "" ]; then
+  # Convert source to string
+  SOURCE_STR="--source $TARGET"
+  echo "Source is set to: $SOURCE_STR"
 fi
 
 #
@@ -141,8 +165,8 @@ TEST_DIR="$SCRIPT_DIR/test"
 
 echo "Compile source and test cases ..."
 
-javac "$SRC_DIR/org/gzoltar/examples/CharacterCounter.java" -d "$BUILD_DIR" || die "Failed to compile source code!"
-javac -cp $JUNIT4_JAR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$BUILD_DIR "$TEST_DIR/org/gzoltar/examples/CharacterCounterTest.java" -d "$BUILD_DIR" || die "Failed to compile test cases!"
+javac $TARGET_STR $SOURCE_STR "$SRC_DIR/org/gzoltar/examples/CharacterCounter.java" -d "$BUILD_DIR" || die "Failed to compile source code!"
+javac $TARGET_STR $SOURCE_STR -cp $JUNIT4_JAR:$JUNIT_JAR:$JUNIT_PARAM_JAR:$BUILD_DIR "$TEST_DIR/org/gzoltar/examples/CharacterCounterTest.java" -d "$BUILD_DIR" || die "Failed to compile test cases!"
 
 #
 # Collect list of unit test cases to run
