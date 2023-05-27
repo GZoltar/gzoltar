@@ -71,7 +71,6 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
                     selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
                 )
                 .build();
-        //requestBuilder.listeners(new JUnit5TextListener());
 
         Listener listener = new Listener();
         /*
@@ -102,6 +101,12 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
                                 selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
                         ).filters(EngineFilter.excludeEngines("junit-vintage"))
                         .build());
+            }else{
+                testPlan = launcher.discover(LauncherDiscoveryRequestBuilder.request()
+                        .selectors(
+                                selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
+                        ).filters(EngineFilter.excludeEngines("junit-jupiter"))
+                        .build());
             }
             // Execute test plan
             launcher.execute(testPlan);
@@ -118,7 +123,7 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
     public static boolean isJUnit5Test(TestPlan testPlan, Set<TestIdentifier> roots){
         boolean returnValue = false;
         for (TestIdentifier test: roots){
-            if (test.getUniqueId().toString().equals("[engine:junit-jupiter]"))
+            if (test.getUniqueId().startsWith("[engine:junit-jupiter]/"))
                 return true;
             returnValue |= isJUnit5Test(testPlan,testPlan.getChildren(test));
         }
