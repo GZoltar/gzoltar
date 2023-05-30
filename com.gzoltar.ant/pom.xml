@@ -63,21 +63,6 @@
       <version>${ant.junit.version}</version>
       <scope>provided</scope>
     </dependency>
-      <dependency>
-          <groupId>org.junit.platform</groupId>
-          <artifactId>junit-platform-engine</artifactId>
-          <version>1.9.2</version>
-      </dependency>
-    <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-engine</artifactId>
-      <version>1.9.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.platform</groupId>
-      <artifactId>junit-platform-launcher</artifactId>
-      <version>1.9.2</version>
-    </dependency>
   </dependencies>
 
   <build>
