@@ -69,7 +69,7 @@ public class Slave {
       commandLineArgs.add(messageName);
 
       ProcessBuilder pb = new ProcessBuilder(commandLineArgs);
-      pb.redirectErrorStream(true);;
+      pb.redirectErrorStream(true);
       final Process p = pb.start();
 
       InputStream is = p.getInputStream();
