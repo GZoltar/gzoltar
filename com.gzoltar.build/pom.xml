@@ -92,7 +92,6 @@
     <module>../com.gzoltar.cli</module>
     <module>../com.gzoltar.doc</module>
     <module>../com.gzoltar.test</module>
-    <module>../com.gzoltar.systemtest</module>
     <module>../com.gzoltar</module>
   </modules>
 
