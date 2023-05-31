@@ -71,12 +71,6 @@
         <groupId>com.gzoltar</groupId>
         <artifactId>com.gzoltar.maven</artifactId>
         <version>1.7.4-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <id>fl-report</id>
-            <goals>
-              <goal>fl-report</goal>
-            </goals>
             <configuration>
               <granularity>line</granularity>
               <inclPublicMethods>true</inclPublicMethods>
@@ -111,8 +105,6 @@
                 </flFamily>
               </flFamilies>
             </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
