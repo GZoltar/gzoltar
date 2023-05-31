@@ -58,6 +58,12 @@ public interface ISpectrum {
    */
   public Collection<ProbeGroup> getProbeGroups();
 
+  /**
+   * Returns a {@link com.gzoltar.core.runtime.ProbeGroup} that matches a given name,
+   * or null if there is not any.
+   */
+  public ProbeGroup findProbeGroupByName(final String name);
+
   // === Nodes ===
 
   /**
@@ -89,6 +95,12 @@ public interface ISpectrum {
    * Returns all {@link com.gzoltar.core.model.Transaction} that have been registered.
    */
   public List<Transaction> getTransactions();
+
+  /**
+   * Returns a {@link com.gzoltar.core.model.Transaction} that matches a given name,
+   * or null if there is not any.
+   */
+  public Transaction findTransactionByName(final String lookup);
 
   /**
    * Returns the number of all {@link com.gzoltar.core.model.Transaction} that have been registered.
