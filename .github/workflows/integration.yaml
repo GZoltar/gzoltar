@@ -1,0 +1,38 @@
+name: GZoltar Test CI
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        java-version: [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Java ${{ matrix.java-version }}
+        uses: actions/setup-java@v2
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'zulu'
+
+      - name: Build the Project
+        run: mvn clean install
+
+      - name: Test GZoltar
+        run: |
+          cd com.gzoltar.systemtest
+          mvn clean test
+
