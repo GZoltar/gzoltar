@@ -28,7 +28,7 @@
   <property name="build.classes.dir" location="${build.dir}/classes" />
   <property name="build.test.classes.dir" location="${build.dir}/tests" />
 
-  <property name="gzoltar.version" value="1.7.4-SNAPSHOT" />
+  <property name="gzoltar.version" value="1.7.3" />
   <property name="gzoltar.report.dir" location="${build.dir}/gzoltar" />
   <property name="gzoltar.exec.file" location="${build.dir}/gzoltar.exec" />
 
@@ -55,7 +55,7 @@
 
   <target name="compile" depends="install-deps">
     <mkdir dir="${build.classes.dir}" />
-    <javac source="19" target="19"
+    <javac source="1.6" target="1.6"
            srcdir="${src.dir}"
            destdir="${build.classes.dir}"
            debug="true"
@@ -65,7 +65,7 @@
     </javac>
 
     <mkdir dir="${build.test.classes.dir}" />
-    <javac source="19" target="19"
+    <javac source="1.6" target="1.6"
            srcdir="${tests.dir}"
            destdir="${build.test.classes.dir}">
       <classpath>
@@ -119,6 +119,7 @@
                 <pathelement path="${gzoltar-ant.jar}" />
                 <pathelement path="${gzoltar-cli.jar}" />
             </classpath>
+            <jvmArg value="-XX:MaxPermSize=2048M" />
             <arg value="runTestMethods" />
             <arg value="--testMethods" />
             <arg value="${test.methods.file}" />
