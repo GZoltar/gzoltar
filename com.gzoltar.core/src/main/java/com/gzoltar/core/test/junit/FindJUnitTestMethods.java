@@ -18,38 +18,22 @@ package com.gzoltar.core.test.junit;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.sql.SQLOutput;
-import java.util.*;
-
-import javassist.CtClass;
-import javassist.CtMethod;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.Collection;
 import org.jacoco.core.runtime.WildcardMatcher;
-import org.junit.internal.runners.JUnit38ClassRunner;
-import org.junit.platform.engine.DiscoverySelector;
-import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
-import org.junit.runner.Description;
-import org.junit.runner.Request;
-import org.junit.runner.Runner;
 import com.gzoltar.core.util.ClassType;
 import com.gzoltar.core.listeners.Listener;
 import com.gzoltar.core.test.TestMethod;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
-
-import org.junit.vintage.engine.VintageTestEngine;
-import org.junit.vintage.engine.discovery.VintageDiscoverer;
-import org.junit.vintage.engine.support.UniqueIdReader;
-import org.junit.vintage.engine.descriptor.VintageTestDescriptor;
-
-
-
 
 public final class FindJUnitTestMethods {
 
