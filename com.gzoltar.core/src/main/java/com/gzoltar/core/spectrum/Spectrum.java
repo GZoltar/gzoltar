@@ -93,6 +93,19 @@ public class Spectrum implements ISpectrum {
     return this.probeGroups.values();
   }
 
+  /**
+   * Returns a {@link com.gzoltar.core.runtime.ProbeGroup} that matches a given name,
+   * or null if there is not any.
+   */
+  public ProbeGroup findProbeGroupByName(final String name) {
+    for (ProbeGroup probeGroup : this.probeGroups.values()) {
+      if (name.equals(probeGroup.getName())) {
+        return probeGroup;
+      }
+    }
+    return null;
+  }
+
   // === Nodes ===
 
   /**
@@ -154,6 +167,19 @@ public class Spectrum implements ISpectrum {
    */
   public List<Transaction> getTransactions() {
     return this.transactions;
+  }
+
+  /**
+   * Returns a {@link com.gzoltar.core.model.Transaction} that matches a given name,
+   * or null if there is not any.
+   */
+  public Transaction findTransactionByName(final String name) {
+    for (Transaction transaction : this.transactions) {
+      if (name.equals(transaction.getName())) {
+        return transaction;
+      }
+    }
+    return null;
   }
 
   /**

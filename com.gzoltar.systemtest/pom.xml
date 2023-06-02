@@ -25,10 +25,10 @@
     <relativePath>../com.gzoltar.build</relativePath>
   </parent>
 
-  <artifactId>com.gzoltar.test</artifactId>
+  <artifactId>com.gzoltar.systemtest</artifactId>
 
-  <name>GZoltar :: Test</name>
-  <description>GZoltar Test</description>
+  <name>GZoltar :: System Test</name>
+  <description>GZoltar System Test</description>
 
   <properties>
     <maven.deploy.skip>true</maven.deploy.skip>
@@ -71,10 +71,64 @@
       </plugin>
 
       <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <outputDirectory>${project.build.directory}/projects/examples</outputDirectory>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkCount>0</forkCount>
+          <enableAssertions>true</enableAssertions>
+        </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>java7</id>
+      <activation>
+        <jdk>[1.7,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>org/gzoltar/systemtest/Java7SystemTest.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>java8</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <includes>
+                <include>org/gzoltar/systemtest/Java7SystemTest.java</include>
+                <!-- <include>org/gzoltar/systemtest/Java8SystemTest.java</include> -->
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
