@@ -134,9 +134,8 @@
     <gzoltar.home.url>http://www.gzoltar.com</gzoltar.home.url>
     <copyright.years>${project.inceptionYear}, 2017</copyright.years>
 
-    <maven.compiler.source>19</maven.compiler.source>
-     <maven.compiler.source>19</maven.compiler.source>
-    <maven.compiler.target>19</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
 
     <jvm.args></jvm.args>
     <argLine>${jvm.args}</argLine>
@@ -211,17 +210,17 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.10.1</version>
+          <version>3.6.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.7.1</version>
+          <version>3.5</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -231,12 +230,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.2.1</version>
+          <version>3.0.0-M1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -246,17 +245,17 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>5.1.8</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.2.1</version>
+          <version>3.0.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.0.1</version>
           <configuration>
             <quiet>true</quiet>
             <detectOfflineLinks>false</detectOfflineLinks>
@@ -264,8 +263,50 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.6</version>
+          <executions>
+            <execution>
+              <id>check-license-header</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>run</goal>
+              </goals>
+              <configuration>
+                <target>
+                  <fileset dir="${project.basedir}" includes="**/*.java,**/*.xml,**/*.js,**/*.html" excludes=".git/**,target/**,.idea/**,.style/**" id="missinglicense.fileset">
+                    <not>
+                      <and>
+                        <contains text="Copyright (C) 2020 GZoltar contributors."/>
+                        <contains text="This file is part of GZoltar."/>
+                        <contains text="GZoltar is free software: you can redistribute it and/or modify it under the terms of the GNU"/>
+                        <contains text="Lesser General Public License as published by the Free Software Foundation, either version 3 of"/>
+                        <contains text="the License, or (at your option) any later version."/>
+                        <contains text="GZoltar is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even"/>
+                        <contains text="the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser"/>
+                        <contains text="General Public License for more details."/>
+                        <contains text="You should have received a copy of the GNU Lesser General Public License along with GZoltar. If"/>
+                        <contains text="not, see &lt;https://www.gnu.org/licenses/&gt;."/>
+                      </and>
+                    </not>
+                  </fileset>
+                  <pathconvert property="missing" refid="missinglicense.fileset"/>
+                  <fail message="Invalid license info in: ${missing}">
+                    <condition>
+                      <not>
+                        <equals arg1="${missing}" arg2=""/>
+                      </not>
+                    </condition>
+                  </fail>
+                </target>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>1.6</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -282,7 +323,7 @@
         <plugin>
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.13</version>
+          <version>1.6.8</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -340,7 +381,6 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>animal-sniffer-maven-plugin</artifactId>
-            <version>1.22</version>
             <executions>
               <execution>
                 <id>enforce-java-api-compatibility</id>

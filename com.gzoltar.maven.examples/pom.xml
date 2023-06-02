@@ -28,14 +28,14 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jdk.version>19</jdk.version>
+    <jdk.version>1.6</jdk.version>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>5.9.2</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -62,7 +62,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
         <configuration>
-          <debug>true</debug>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
         </configuration>
@@ -137,10 +136,9 @@
             <version>1.7.4-SNAPSHOT</version>
             <dependencies>
               <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>5.9.2</version>
-                <scope>test</scope>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
               </dependency>
             </dependencies>
           </plugin>
@@ -179,9 +177,9 @@
             <version>3.0.0-M3</version>
             <dependencies>
               <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>5.9.1</version>
+                <groupId>org.apache.maven.surefire</groupId>
+                <artifactId>surefire-junit47</artifactId>
+                <version>3.0.0-M3</version>
               </dependency>
             </dependencies>
             <configuration>
