@@ -24,7 +24,7 @@ import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.InstrumentationConstants;
 import com.gzoltar.core.instr.InstrumentationLevel;
 import com.gzoltar.core.instr.Outcome;
-import com.gzoltar.core.instr.actions.AnonymousClassConstructorFilter;
+import com.gzoltar.core.instr.filter.AnonymousClassConstructorFilter;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.IFilter;
