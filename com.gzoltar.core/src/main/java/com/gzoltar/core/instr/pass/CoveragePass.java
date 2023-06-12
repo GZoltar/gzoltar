@@ -58,7 +58,9 @@ public class CoveragePass implements IPass {
 
   private final StackSizePass stackSizePass = new StackSizePass();
 
-  private final List<IFilter> filters = new ArrayList<IFilter>();
+  private final List<IFilter> filtersAtClassLevel = new ArrayList<IFilter>();
+
+  private final List<IFilter> filtersAtMethodLevel = new ArrayList<IFilter>();
 
   private ProbeGroup probeGroup;
 
@@ -78,25 +80,36 @@ public class CoveragePass implements IPass {
     }
 
     // exclude synthetic methods
-    this.filters.add(new SyntheticFilter());
+    this.filtersAtMethodLevel.add(new SyntheticFilter());
 
     // exclude methods 'values' and 'valuesOf' of enum classes
-    this.filters.add(new EnumFilter());
+    this.filtersAtMethodLevel.add(new EnumFilter());
 
     // exclude methods without any source code
-    this.filters.add(new EmptyMethodFilter());
+    this.filtersAtMethodLevel.add(new EmptyMethodFilter());
 
     // exclude constructor of an Anonymous class as the same line number is handled by the
     // superclass
-    this.filters.add(new AnonymousClassConstructorFilter());
+    this.filtersAtMethodLevel.add(new AnonymousClassConstructorFilter());
 
     // exclude Java-7 interfaces from being instrumented
-    this.filters.add(new Java7InterfaceFilter());
+    this.filtersAtClassLevel.add(new Java7InterfaceFilter());
   }
 
   @Override
   public synchronized Outcome transform(final CtClass ctClass) throws Exception {
     boolean instrumented = false;
+
+    // check whether this class could/should be instrumented
+    for (IFilter filter : this.filtersAtClassLevel) {
+      switch (filter.filter(ctClass)) {
+        case REJECT:
+          return Outcome.REJECT;
+        case ACCEPT:
+        default:
+          continue;
+      }
+    }
 
     byte[] originalBytes = ctClass.toBytecode(); // toBytecode() method frozens the class
     // in order to be able to modify it, it has to be defrosted
@@ -161,7 +174,7 @@ public class CoveragePass implements IPass {
     Outcome instrumented = Outcome.REJECT;
 
     // check whether this method should be instrumented
-    for (IFilter filter : this.filters) {
+    for (IFilter filter : this.filtersAtMethodLevel) {
       switch (filter.filter(ctBehavior)) {
         case REJECT:
           return instrumented;
