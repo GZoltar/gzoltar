@@ -29,6 +29,7 @@ import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.IFilter;
 import com.gzoltar.core.instr.filter.SyntheticFilter;
+import com.gzoltar.core.instr.filter.Java7InterfaceFilter;
 import com.gzoltar.core.model.Node;
 import com.gzoltar.core.model.NodeFactory;
 import com.gzoltar.core.runtime.Collector;
@@ -88,6 +89,9 @@ public class CoveragePass implements IPass {
     // exclude constructor of an Anonymous class as the same line number is handled by the
     // superclass
     this.filters.add(new AnonymousClassConstructorFilter());
+
+    // exclude Java-7 interfaces from being instrumented
+    this.filters.add(new Java7InterfaceFilter());
   }
 
   @Override
