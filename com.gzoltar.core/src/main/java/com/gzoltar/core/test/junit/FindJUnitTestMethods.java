@@ -34,6 +34,8 @@ import com.gzoltar.core.listeners.Listener;
 import com.gzoltar.core.test.TestMethod;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
+import org.junit.vintage.engine.VintageTestEngine;
+import org.junit.platform.launcher.listeners.UniqueIdTrackingListener;
 
 public final class FindJUnitTestMethods {
 
@@ -46,6 +48,9 @@ public final class FindJUnitTestMethods {
   public static List<TestMethod> find(final WildcardMatcher testsMatcher,
                                       final String testClassName) throws ClassNotFoundException {
 
+    //I think that this prevents the optimization of needed dependencies
+    VintageTestEngine vintageTestEngine = new VintageTestEngine();
+    UniqueIdTrackingListener a = new UniqueIdTrackingListener();
     LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
             .selectors(
                     selectClass(testClassName)
