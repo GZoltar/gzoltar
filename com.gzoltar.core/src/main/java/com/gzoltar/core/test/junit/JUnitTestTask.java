@@ -16,56 +16,116 @@
  */
 package com.gzoltar.core.test.junit;
 
-import java.net.URL;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
-import org.junit.runner.notification.RunListener;
+import com.gzoltar.core.listeners.JUnitListener;
+import com.gzoltar.core.listeners.junit5.Listener;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.util.IsolatingClassLoader;
+import org.junit.platform.commons.util.ReflectionUtils;
+import org.junit.platform.engine.DiscoveryFilter;
+import org.junit.platform.engine.UniqueId;
+import org.junit.platform.launcher.*;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.junit.vintage.engine.descriptor.VintageEngineDescriptor;
 
-public class JUnitTestTask extends TestTask {
+import java.net.URL;
+import java.util.Set;
 
-  public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
-      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
-    super(searchPathURLs, offline, collectCoverage, initTestClass, testMethod);
-  }
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
-  /**
-   * Callable method to run JUnit test and return result.
-   * 
-   * {@inheritDoc}
-   */
-  @Override
-  public JUnitTestResult call() throws Exception {
-    // Create a new isolated classloader with the same classpath as the current one
-    IsolatingClassLoader classLoader = new IsolatingClassLoader(this.searchPathURLs,
+public class JUnitTestTask extends TestTask implements TestExecutionListener{
+    
+    public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
+                         final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
+        super (searchPathURLs, offline, collectCoverage, initTestClass, testMethod);
+    }
+
+    /**
+     * Callable method to run JUnit test and return result.
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public JUnitTestResult call() throws Exception {
+        // Create a new isolated classloader with the same classpath as the current one
+        IsolatingClassLoader classLoader = new IsolatingClassLoader(this.searchPathURLs,
         Thread.currentThread().getContextClassLoader());
 
-    // Make the isolating classloader the thread's new classloader. This method is called in a
-    // dedicated thread that ends right after this method returns, so there is no need to restore
-    // the old/original classloader when it finishes.
-    Thread.currentThread().setContextClassLoader(classLoader);
+        // Make the isolating classloader the thread's new classloader. This method is called in a
+        // dedicated thread that ends right after this method returns, so there is no need to restore
+        // the old/original classloader when it finishes.
+        Thread.currentThread().setContextClassLoader(classLoader);
 
-    Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
-        : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
+        Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
+                : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 
-    Request request = Request.method(clazz, this.testMethod.getTestMethodName());
-    JUnitCore runner = new JUnitCore();
-    runner.addListener(new JUnitTextListener());
-    if (this.collectCoverage) {
-      if (this.offline) {
-        runner.addListener(this.initTestClass
-            ? (RunListener) Class.forName("com.gzoltar.core.listeners.JUnitListener").newInstance()
-            : (RunListener) Class
-                .forName("com.gzoltar.core.listeners.JUnitListener", false, classLoader)
-                .newInstance());
-      } else {
-        runner.addListener(new com.gzoltar.core.listeners.JUnitListener());
-      }
+        System.out.println(testMethod.getTestMethodName() + testMethod.getTestClassName());
+
+
+        LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                .selectors(
+                    selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
+                )
+                .build();
+
+        Listener listener = new Listener();
+        /*
+        if (this.collectCoverage) {
+            if (this.offline) {
+                listener = this.initTestClass
+                ? (Listener) Class.forName("com.gzoltar.core.listeners.Listener").newInstance()
+                : (Listener) Class
+                    .forName("com.gzoltar.core.listeners.Listener", false, classLoader)
+                    .newInstance();
+            } else {
+                listener = new Listener();
+            }
+            //requestBuilder.listeners(listener);
+        }
+        */
+
+        try (LauncherSession session = LauncherFactory.openSession()) {
+            Launcher launcher = session.getLauncher();
+            // Register a listener of your choice
+            launcher.registerTestExecutionListeners(listener);
+            // Discover tests and build a test plan
+            TestPlan testPlan = launcher.discover(request);
+
+            if (isJUnit5Test(testPlan,testPlan.getRoots())){
+                testPlan = launcher.discover(LauncherDiscoveryRequestBuilder.request()
+                        .selectors(
+                                selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
+                        ).filters(EngineFilter.excludeEngines("junit-vintage"))
+                        .build());
+            }else{
+                testPlan = launcher.discover(LauncherDiscoveryRequestBuilder.request()
+                        .selectors(
+                                selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
+                        ).filters(EngineFilter.excludeEngines("junit-jupiter"))
+                        .build());
+            }
+            // Execute test plan
+            launcher.execute(testPlan);
+
+        }
+
+        TestExecutionSummary summary = listener.getSummary();
+        JUnitTestResult result = new JUnitTestResult(summary);
+
+        classLoader.close();
+        return result;
     }
-    JUnitTestResult result = new JUnitTestResult(runner.run(request));
-    classLoader.close();
-    return result;
-  }
+
+    public static boolean isJUnit5Test(TestPlan testPlan, Set<TestIdentifier> roots){
+        boolean returnValue = false;
+        for (TestIdentifier test: roots){
+            if (test.getUniqueId().startsWith("[engine:junit-jupiter]/"))
+                return true;
+            returnValue |= isJUnit5Test(testPlan,testPlan.getChildren(test));
+        }
+        return returnValue;
+    }
 }

@@ -20,89 +20,73 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.Collection;
 import org.jacoco.core.runtime.WildcardMatcher;
-import org.junit.internal.runners.JUnit38ClassRunner;
-import org.junit.runner.Description;
-import org.junit.runner.Request;
-import org.junit.runner.Runner;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.TestIdentifier;
+import org.junit.platform.launcher.TestPlan;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
 import com.gzoltar.core.util.ClassType;
 import com.gzoltar.core.listeners.Listener;
 import com.gzoltar.core.test.TestMethod;
 
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
+import org.junit.vintage.engine.VintageTestEngine;
+import org.junit.platform.launcher.listeners.UniqueIdTrackingListener;
+
 public final class FindJUnitTestMethods {
 
   /**
-   * 
+   *
    * @param testsMatcher
    * @param testClassName
    * @return
    */
   public static List<TestMethod> find(final WildcardMatcher testsMatcher,
-      final String testClassName) throws ClassNotFoundException {
-    final List<TestMethod> testMethods = new ArrayList<TestMethod>();
+                                      final String testClassName) throws ClassNotFoundException {
 
-    // load the test class using a default classloader
-    Class<?> clazz =
-        Class.forName(testClassName, false, Thread.currentThread().getContextClassLoader());
-    assert clazz != null;
+    //I think that this prevents the optimization of needed dependencies
+    VintageTestEngine vintageTestEngine = new VintageTestEngine();
+    UniqueIdTrackingListener a = new UniqueIdTrackingListener();
+    LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+            .selectors(
+                    selectClass(testClassName)
+            ).build();
 
-    Request request = Request.aClass(clazz);
-    assert request != null;
-    Runner runner = request.getRunner();
-    assert runner != null;
-    Description description = null;
+    Launcher launcher = LauncherFactory.create();
 
-    try {
-      description = runner.getDescription();
-    } catch (NullPointerException e) {
-      /**
-      public class XTestSuite extends TestCase {
-          public static Test suite() {
-              return null;
-          }
-      }
-      */
-      if (runner instanceof JUnit38ClassRunner) {
-        System.err.println("Failed to find unit test methods in " + testClassName);
-        e.printStackTrace();
-        return testMethods;
-      }
-      throw e;
-    }
-    assert description != null;
+    TestPlan testPlan = launcher.discover(request);
 
-    for (Description test : description.getChildren()) {
-      // a parameterised atomic test case does not have a method name
-      if (test.getMethodName() == null) {
-        for (Method m : clazz.getMethods()) {
-          if (looksLikeTest(m)) {
-            String testMethodFullName = clazz.getName() + Listener.TEST_CLASS_NAME_SEPARATOR
-                + m.getName() + test.getDisplayName();
-            if (testsMatcher.matches(testMethodFullName)) {
-              testMethods.add(new TestMethod(ClassType.JUNIT, testMethodFullName));
-            }
-          }
-        }
-      } else {
-        // non-parameterised atomic test case
-        String testMethodFullName = test.getTestClass().getName()
-            + Listener.TEST_CLASS_NAME_SEPARATOR + test.getMethodName();
-        if (testsMatcher.matches(testMethodFullName)) {
-          testMethods.add(new TestMethod(ClassType.JUNIT, testMethodFullName));
-        }
+    return new ArrayList<>(getTests(testPlan, testPlan.getRoots(),testClassName));
+
+
+  }
+
+  public static Collection<TestMethod> getTests(TestPlan testPlan, Set<TestIdentifier> roots,String classname){
+    List<TestMethod> testsList = new ArrayList<>();
+
+    for (TestIdentifier test: roots){
+      if (test.isTest()){
+        System.out.println(test.getDisplayName());
+        testsList.add(new TestMethod(ClassType.JUNIT,classname + Listener.TEST_CLASS_NAME_SEPARATOR + test.getDisplayName()));
+      }else{
+        testsList.addAll(getTests(testPlan,testPlan.getChildren(test),classname));
       }
     }
 
-    return testMethods;
+    return testsList;
   }
 
   private static boolean looksLikeTest(final Method m) {
     // JUnit 3: an atomic test case is "public", does not return anything ("void"), has 0
     // parameters and starts with the word "test"
     // JUnit 4: an atomic test case is annotated with @Test
-    return (m.isAnnotationPresent(org.junit.Test.class) || (m.getParameterTypes().length == 0
-        && m.getReturnType().equals(Void.TYPE) && Modifier.isPublic(m.getModifiers())
-        && (m.getName().startsWith("test") || m.getName().endsWith("Test")
+    return (m.isAnnotationPresent(org.junit.Test.class) || m.isAnnotationPresent(org.junit.jupiter.api.Test.class)|| (m.getParameterTypes().length == 0
+            && m.getReturnType().equals(Void.TYPE) && Modifier.isPublic(m.getModifiers())
+            && (m.getName().startsWith("test") || m.getName().endsWith("Test")
             || m.getName().startsWith("Test") || m.getName().endsWith("test"))));
   }
 }
