@@ -70,9 +70,8 @@
     <dependency>
       <groupId>io.github.classgraph</groupId>
       <artifactId>classgraph</artifactId>
-      <version>4.8.104</version>
+      <version>4.8.160</version>
     </dependency>
-
   </dependencies>
 
   <build>
