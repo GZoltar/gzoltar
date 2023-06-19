@@ -16,8 +16,13 @@
  */
 package com.gzoltar.core.util;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A classloader that should have the same classpath as the "normal" classloader, but shares
@@ -43,17 +48,72 @@ public class IsolatingClassLoader extends URLClassLoader {
         || name.startsWith("org.hamcrest.")) {
       return super.loadClass(name, resolve);
     }
-    Class<?> c = findLoadedClass(name);
-    if (c == null) {
+
+    // Load class from this classloader
+    Class<?> clazz = this.findLoadedClass(name);
+    if (clazz == null) {
       try {
-        c = findClass(name);
+        // Not loaded yet, try to find it in this classloader
+        clazz = this.findClass(name);
       } catch (ClassNotFoundException e) {
-        c = super.loadClass(name, resolve);
+        // Not found in this classloader, try to find it in parent classloaders
+        clazz = super.loadClass(name, resolve);
       }
     }
     if (resolve) {
-      resolveClass(c);
+      this.resolveClass(clazz);
     }
-    return c;
+    return clazz;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public synchronized Enumeration<URL> getResources(final String name) throws IOException {
+    final List<URL> allResources = new LinkedList<>();
+
+    // Load resource from this classloader
+    Enumeration<URL> thisResources = this.findResources(name);
+    if (thisResources != null) {
+      while (thisResources.hasMoreElements()) {
+        allResources.add(thisResources.nextElement());
+      }
+    }
+
+    // Then try finding resources from parent classloaders
+    Enumeration<URL> parentResources = super.findResources(name);
+    if (parentResources != null) {
+      while (parentResources.hasMoreElements()) {
+        allResources.add(parentResources.nextElement());
+      }
+    }
+
+    return new Enumeration<URL>() {
+      final Iterator<URL> it = allResources.iterator();
+
+      @Override
+      public boolean hasMoreElements() {
+        return it.hasNext();
+      }
+
+      @Override
+      public URL nextElement() {
+        return it.next();
+      }
+    };
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public synchronized URL getResource(final String name) {
+    URL resource = this.findResource(name);
+    if (resource == null) {
+      resource = super.getResource(name);
+    }
+    return resource;
+  }
+
 }
