@@ -152,7 +152,7 @@ elif [ "$INSTRUMENTATION" == "offline" ]; then
   echo "Run each unit test case in isolation ..."
 
   # Run each unit test case in isolation
-  java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
+  java -javaagent:$GZOLTAR_AGENT_RT_JAR=destfile=$SER_FILE -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_AGENT_RT_JAR:$GZOLTAR_CLI_JAR \
     -Dgzoltar-agent.destfile=$SER_FILE \
     -Dgzoltar-agent.output="file" \
     com.gzoltar.cli.Main runTestMethods \

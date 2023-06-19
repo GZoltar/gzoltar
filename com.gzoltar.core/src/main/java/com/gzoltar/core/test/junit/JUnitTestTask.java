@@ -28,9 +28,11 @@ import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
+import org.junit.runner.notification.RunListener;
 import org.junit.vintage.engine.descriptor.VintageEngineDescriptor;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
@@ -59,33 +61,24 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
         // the old/original classloader when it finishes.
         Thread.currentThread().setContextClassLoader(classLoader);
 
-        Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
-                : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
-
         System.out.println(testMethod.getTestMethodName() + testMethod.getTestClassName());
 
 
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                 .selectors(
                     selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
-                )
-                .build();
+                ).build();
 
-        Listener listener = new Listener();
-        /*
-        if (this.collectCoverage) {
-            if (this.offline) {
-                listener = this.initTestClass
-                ? (Listener) Class.forName("com.gzoltar.core.listeners.Listener").newInstance()
-                : (Listener) Class
-                    .forName("com.gzoltar.core.listeners.Listener", false, classLoader)
-                    .newInstance();
-            } else {
-                listener = new Listener();
-            }
-            //requestBuilder.listeners(listener);
+        Listener listener;
+        if (this.offline){
+            listener =  (this.initTestClass
+                        ? (Listener) Class.forName("com.gzoltar.core.listeners.junit5.Listener").newInstance()
+                        : (Listener) (Class
+                        .forName("com.gzoltar.core.listeners.junit5.Listener",true,Listener.class.getClassLoader())
+                        .newInstance()));
+        }else {
+            listener = new Listener();
         }
-        */
 
         try (LauncherSession session = LauncherFactory.openSession()) {
             Launcher launcher = session.getLauncher();
@@ -93,7 +86,6 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
             launcher.registerTestExecutionListeners(listener);
             // Discover tests and build a test plan
             TestPlan testPlan = launcher.discover(request);
-
             if (isJUnit5Test(testPlan,testPlan.getRoots())){
                 testPlan = launcher.discover(LauncherDiscoveryRequestBuilder.request()
                         .selectors(
@@ -108,14 +100,17 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
                         .build());
             }
             // Execute test plan
+
             launcher.execute(testPlan);
 
         }
 
         TestExecutionSummary summary = listener.getSummary();
-        JUnitTestResult result = new JUnitTestResult(summary);
 
+        JUnitTestResult result = new JUnitTestResult(summary);
         classLoader.close();
+
+        System.out.println(result);
         return result;
     }
 
