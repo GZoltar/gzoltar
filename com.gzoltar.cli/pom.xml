@@ -139,6 +139,14 @@
                   <pattern>com.beust</pattern>
                   <shadedPattern>com.gzoltar.internal.com.beust</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>io.github.classgraph</pattern>
+                  <shadedPattern>com.gzoltar.internal.io.github.classgraph</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>nonapi.io.github.classgraph</pattern>
+                  <shadedPattern>com.gzoltar.internal.nonapi.io.github.classgraph</shadedPattern>
+                </relocation>
               </relocations>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
