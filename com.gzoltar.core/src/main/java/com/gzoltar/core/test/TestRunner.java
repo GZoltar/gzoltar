@@ -16,19 +16,30 @@
  */
 package com.gzoltar.core.test;
 
+import com.gzoltar.core.util.IsolatingClassLoader;
+
+import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 public class TestRunner {
 
-  public static TestResult run(final TestTask testTask) {
+  public static TestResult run(final URL[] classpathURLs, final TestTask testTask) {
     FutureTask<TestResult> task = new FutureTask<TestResult>(testTask);
     ThreadGroup group = new ThreadGroup("[thread group for " + testTask.toString() + "]");
     Thread thread = new Thread(group, task, "[thread for " + testTask.toString() + "]");
+    // Create a new isolated classloader with the one that runs GZoltar as base classloader.
+    IsolatingClassLoader classLoader = new IsolatingClassLoader(classpathURLs, ClassLoader.getSystemClassLoader());
+    // Make the isolating classloader the thread's new classloader.
+    thread.setContextClassLoader(classLoader);
+    // Start
     thread.start();
     try {
-      return task.get();
-    } catch (ExecutionException | InterruptedException e) {
+      TestResult result = task.get();
+      classLoader.close();
+      return result;
+    } catch (ExecutionException | InterruptedException | IOException e) {
       e.printStackTrace();
       killThreadGroup(group);
       thread.interrupt();

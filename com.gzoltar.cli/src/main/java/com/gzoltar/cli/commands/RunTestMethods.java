@@ -90,11 +90,11 @@ public class RunTestMethods extends Command {
 
         switch (testMethod.getClassType()) {
           case JUNIT:
-            testTask = new JUnitTestTask(classpathURLs, this.offline, this.collectCoverage,
+            testTask = new JUnitTestTask(this.offline, this.collectCoverage,
                 this.initTestClass, testMethod);
             break;
           case TESTNG:
-            testTask = new TestNGTestTask(classpathURLs, this.offline, this.collectCoverage,
+            testTask = new TestNGTestTask(this.offline, this.collectCoverage,
                 this.initTestClass, testMethod);
             break;
           default:
@@ -102,7 +102,7 @@ public class RunTestMethods extends Command {
         }
         assert testTask != null;
 
-        TestRunner.run(testTask);
+        TestRunner.run(classpathURLs, testTask);
         testTask = null;
 
         // restore system properties

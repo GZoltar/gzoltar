@@ -16,20 +16,18 @@
  */
 package com.gzoltar.core.test.testng;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.runner.notification.RunListener;
 import org.testng.TestNG;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
-import com.gzoltar.core.util.IsolatingClassLoader;
 
 public class TestNGTestTask extends TestTask {
 
-  public TestNGTestTask(final URL[] searchPathURLs, final boolean offline,
-      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
-    super(searchPathURLs, offline, collectCoverage, initTestClass, testMethod);
+  public TestNGTestTask(final boolean offline, final boolean collectCoverage,
+                        final boolean initTestClass, final TestMethod testMethod) {
+    super(offline, collectCoverage, initTestClass, testMethod);
   }
 
   /**
@@ -40,15 +38,7 @@ public class TestNGTestTask extends TestTask {
   @SuppressWarnings("deprecation")
   @Override
   public TestNGTestResult call() throws Exception {
-    // Create a new isolated classloader with the same classpath as the current one
-    IsolatingClassLoader classLoader = new IsolatingClassLoader(this.searchPathURLs,
-        Thread.currentThread().getContextClassLoader());
-
-    // Make the isolated classloader the thread's new classloader. This method is called in a
-    // dedicated thread that ends right after this method returns, so there is no need to restore
-    // the old/original classloader when it finishes.
-    Thread.currentThread().setContextClassLoader(classLoader);
-
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
         : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 

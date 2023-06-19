@@ -16,19 +16,17 @@
  */
 package com.gzoltar.core.test.junit;
 
-import java.net.URL;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
 import org.junit.runner.notification.RunListener;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
-import com.gzoltar.core.util.IsolatingClassLoader;
 
 public class JUnitTestTask extends TestTask {
 
-  public JUnitTestTask(final URL[] searchPathURLs, final boolean offline,
-      final boolean collectCoverage, final boolean initTestClass, final TestMethod testMethod) {
-    super(searchPathURLs, offline, collectCoverage, initTestClass, testMethod);
+  public JUnitTestTask(final boolean offline, final boolean collectCoverage,
+                       final boolean initTestClass, final TestMethod testMethod) {
+    super(offline, collectCoverage, initTestClass, testMethod);
   }
 
   /**
@@ -38,15 +36,7 @@ public class JUnitTestTask extends TestTask {
    */
   @Override
   public JUnitTestResult call() throws Exception {
-    // Create a new isolated classloader with the same classpath as the current one
-    IsolatingClassLoader classLoader = new IsolatingClassLoader(this.searchPathURLs,
-        Thread.currentThread().getContextClassLoader());
-
-    // Make the isolating classloader the thread's new classloader. This method is called in a
-    // dedicated thread that ends right after this method returns, so there is no need to restore
-    // the old/original classloader when it finishes.
-    Thread.currentThread().setContextClassLoader(classLoader);
-
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
         : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
 
@@ -65,7 +55,6 @@ public class JUnitTestTask extends TestTask {
       }
     }
     JUnitTestResult result = new JUnitTestResult(runner.run(request));
-    classLoader.close();
     return result;
   }
 }
