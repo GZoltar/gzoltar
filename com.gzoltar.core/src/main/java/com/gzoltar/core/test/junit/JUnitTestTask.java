@@ -17,7 +17,7 @@
 package com.gzoltar.core.test.junit;
 
 import com.gzoltar.core.listeners.JUnitListener;
-import com.gzoltar.core.listeners.junit5.Listener;
+import com.gzoltar.core.listeners.Listener;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.util.IsolatingClassLoader;
@@ -27,6 +27,7 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 import org.junit.runner.notification.RunListener;
 import org.junit.vintage.engine.descriptor.VintageEngineDescriptor;
@@ -69,15 +70,15 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
                     selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())
                 ).build();
 
-        Listener listener;
+        SummaryGeneratingListener listener;
         if (this.offline){
             listener =  (this.initTestClass
-                        ? (Listener) Class.forName("com.gzoltar.core.listeners.junit5.Listener").newInstance()
-                        : (Listener) (Class
-                        .forName("com.gzoltar.core.listeners.junit5.Listener",true,Listener.class.getClassLoader())
+                        ? (SummaryGeneratingListener) Class.forName("com.gzoltar.core.listeners.JUnitListener").newInstance()
+                        : (SummaryGeneratingListener) (Class
+                        .forName("com.gzoltar.core.listeners.JUnitListener",false, classLoader)
                         .newInstance()));
         }else {
-            listener = new Listener();
+            listener = new com.gzoltar.core.listeners.JUnitListener();
         }
 
         try (LauncherSession session = LauncherFactory.openSession()) {
