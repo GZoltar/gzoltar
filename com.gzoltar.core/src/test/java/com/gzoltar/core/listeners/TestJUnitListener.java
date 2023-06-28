@@ -60,7 +60,7 @@ public class TestJUnitListener {
       instrumenter.instrument(pool.get(classUnderTest));
     }
     JUnitCore core = new JUnitCore();
-    core.addListener(new RunListener());
+    //core.addListener(new JUnitListener());
     core.run(TestEnumClass.class);
 
     ISpectrum spectrum = Collector.instance().getSpectrum();
