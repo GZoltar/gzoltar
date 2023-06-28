@@ -30,6 +30,7 @@ import com.gzoltar.core.instr.granularity.GranularityLevel;
 import com.gzoltar.core.runtime.Collector;
 import com.gzoltar.core.spectrum.ISpectrum;
 import javassist.ClassPool;
+import org.junit.runner.notification.RunListener;
 
 public class TestJUnitListener {
 
@@ -59,7 +60,7 @@ public class TestJUnitListener {
       instrumenter.instrument(pool.get(classUnderTest));
     }
     JUnitCore core = new JUnitCore();
-    core.addListener(new JUnitListener());
+    //core.addListener(new JUnitListener());
     core.run(TestEnumClass.class);
 
     ISpectrum spectrum = Collector.instance().getSpectrum();
