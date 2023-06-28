@@ -73,11 +73,11 @@ public final class JUnitListener extends Listener {
     if (testIdentifier.isTest()){
       if (testExecutionResult.getStatus() == TestExecutionResult.Status.FAILED) {
         Optional<Throwable> throwableOp = testExecutionResult.getThrowable();
-        throwableOp.ifPresent(throwable -> onTestFailure(traceToString(throwable)));
+        throwableOp.ifPresent(throwable -> onTestFailure("ricardo"));
       }
-      onTestFinish(testIdentifier.getDisplayName());
+      String className = Description.createSuiteDescription(testIdentifier.getDisplayName(),testIdentifier.getUniqueId()).getClassName();
+      onTestFinish(className + TEST_CLASS_NAME_SEPARATOR + testIdentifier.getDisplayName());
     }
-
 
   }
 
