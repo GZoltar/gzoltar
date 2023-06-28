@@ -33,17 +33,6 @@ import java.util.Optional;
  * JUnit listener.
  */
 public final class JUnitListener extends Listener {
-
-  public static final String TEST_CLASS_NAME_SEPARATOR = "#";
-
-  private boolean hasFailed = false;
-
-  private long startTime;
-
-  protected String stackTrace;
-
-
-
   /*
    * Called when the execution of the TestPlan has finished,
    * after all tests have been executed.
@@ -53,7 +42,7 @@ public final class JUnitListener extends Listener {
   @Override
   public void testPlanExecutionFinished(TestPlan testPlan) {
     super.testPlanExecutionFinished(testPlan);
-    Collector.instance().endSession();
+    onRunFinish();
   }
 
 
@@ -66,10 +55,7 @@ public final class JUnitListener extends Listener {
   @Override
   public void executionStarted(TestIdentifier testIdentifier) {
     super.executionStarted(testIdentifier);
-    this.hasFailed = false;
-    this.startTime = System.nanoTime();
-    this.stackTrace = "";
-
+    onTestStart();
   }
 
   /**
@@ -83,22 +69,16 @@ public final class JUnitListener extends Listener {
   @Override
   public void executionFinished(TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
     super.executionFinished(testIdentifier,testExecutionResult);
-
+    System.out.println("test:"+testIdentifier.getDisplayName());
     if (testIdentifier.isTest()){
       if (testExecutionResult.getStatus() == TestExecutionResult.Status.FAILED) {
-        this.hasFailed = true;
-        //this.stackTrace = trace;
         Optional<Throwable> throwableOp = testExecutionResult.getThrowable();
-        if (throwableOp.isPresent()) {
-          Throwable exception= throwableOp.get();
-          this.stackTrace = traceToString(exception);
-        }
+        throwableOp.ifPresent(throwable -> onTestFailure(traceToString(throwable)));
       }
+      onTestFinish(testIdentifier.getDisplayName());
     }
 
-    Collector.instance().endTransaction(testIdentifier.getDisplayName(),
-            this.hasFailed ? TransactionOutcome.FAIL : TransactionOutcome.PASS,
-            System.nanoTime() - this.startTime, this.stackTrace);
+
   }
 
 }
