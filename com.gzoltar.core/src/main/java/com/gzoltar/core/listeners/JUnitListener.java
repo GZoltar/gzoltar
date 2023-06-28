@@ -18,6 +18,7 @@ package com.gzoltar.core.listeners;
 
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.runtime.Collector;
+import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
@@ -73,9 +74,9 @@ public final class JUnitListener extends Listener {
     if (testIdentifier.isTest()){
       if (testExecutionResult.getStatus() == TestExecutionResult.Status.FAILED) {
         Optional<Throwable> throwableOp = testExecutionResult.getThrowable();
-        throwableOp.ifPresent(throwable -> onTestFailure("ricardo"));
+        throwableOp.ifPresent(throwable -> onTestFailure(traceToString(throwable)));
       }
-      String className = Description.createSuiteDescription(testIdentifier.getDisplayName(),testIdentifier.getUniqueId()).getClassName();
+      String className = ((MethodSource) testIdentifier.getSource().get()).getClassName();
       onTestFinish(className + TEST_CLASS_NAME_SEPARATOR + testIdentifier.getDisplayName());
     }
 
