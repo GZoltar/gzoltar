@@ -16,28 +16,23 @@
  */
 package com.gzoltar.core.test.junit;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.Collection;
-import org.jacoco.core.runtime.WildcardMatcher;
-import org.junit.platform.launcher.*;
-import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
-import org.junit.platform.launcher.core.LauncherFactory;
-import org.junit.jupiter.engine.JupiterTestEngine;
-import com.gzoltar.core.util.ClassType;
 import com.gzoltar.core.listeners.Listener;
 import com.gzoltar.core.test.TestMethod;
+import com.gzoltar.core.util.ClassType;
+import org.jacoco.core.runtime.WildcardMatcher;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.TestIdentifier;
+import org.junit.platform.launcher.TestPlan;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
-import org.junit.vintage.engine.VintageTestEngine;
-import org.junit.platform.launcher.listeners.UniqueIdTrackingListener;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.junit.jupiter.api.io.TempDirFactory;
-import static org.junit.platform.commons.support.ReflectionSupport.streamNestedClasses;
 public final class FindJUnitTestMethods {
 
   /**

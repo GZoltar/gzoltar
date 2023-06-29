@@ -16,20 +16,15 @@
  */
 package com.gzoltar.core.test.junit;
 
-import java.util.Optional;
-
-import org.junit.platform.engine.support.descriptor.MethodSource;
-import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
-//import org.junit.platform.launcher.TestExecutionListener;
-import org.junit.platform.launcher.TestIdentifier;
-import org.junit.platform.launcher.TestPlan;
-
+import com.gzoltar.core.listeners.Listener;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestSource;
-import org.junit.platform.engine.reporting.ReportEntry;
-import org.junit.platform.engine.support.descriptor.ClassSource;
+import org.junit.platform.engine.support.descriptor.MethodSource;
+import org.junit.platform.launcher.TestIdentifier;
+import org.junit.platform.launcher.TestPlan;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 
-import com.gzoltar.core.listeners.Listener;
+import java.util.Optional;
 
 public class JUnitTextListener extends SummaryGeneratingListener {
 
