@@ -16,7 +16,6 @@
  */
 package com.gzoltar.core.test.junit;
 
-//import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
 
 import com.gzoltar.core.test.TestResult;

@@ -16,27 +16,18 @@
  */
 package com.gzoltar.core.test.junit;
 
-import com.gzoltar.core.listeners.JUnitListener;
-import com.gzoltar.core.listeners.Listener;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
 import com.gzoltar.core.util.IsolatingClassLoader;
-import org.junit.platform.commons.util.ReflectionUtils;
-import org.junit.platform.engine.DiscoveryFilter;
-import org.junit.platform.engine.UniqueId;
 import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 import org.junit.platform.launcher.listeners.TestExecutionSummary;
-import org.junit.runner.notification.RunListener;
-import org.junit.vintage.engine.descriptor.VintageEngineDescriptor;
 
 import java.net.URL;
-import java.util.Objects;
 import java.util.Set;
 
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
 
 public class JUnitTestTask extends TestTask implements TestExecutionListener{
@@ -61,9 +52,6 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
         // dedicated thread that ends right after this method returns, so there is no need to restore
         // the old/original classloader when it finishes.
         Thread.currentThread().setContextClassLoader(classLoader);
-
-        System.out.println(testMethod.getTestMethodName() + testMethod.getTestClassName());
-
 
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                 .selectors(
