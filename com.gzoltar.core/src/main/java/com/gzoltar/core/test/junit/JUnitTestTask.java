@@ -62,9 +62,6 @@ public class JUnitTestTask extends TestTask implements TestExecutionListener{
         // the old/original classloader when it finishes.
         Thread.currentThread().setContextClassLoader(classLoader);
 
-        System.out.println(testMethod.getTestMethodName() + testMethod.getTestClassName());
-
-
         LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                 .selectors(
                     selectMethod(testMethod.getTestClassName() + "#" + testMethod.getTestMethodName())

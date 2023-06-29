@@ -48,12 +48,6 @@ public final class FindJUnitTestMethods {
    */
   public static List<TestMethod> find(final WildcardMatcher testsMatcher,
                                       final String testClassName) throws ClassNotFoundException {
-    System.out.println("dsnmfjnfdnj");
-    //I think that this prevents the optimization of needed dependencies
-    VintageTestEngine vintageTestEngine = new VintageTestEngine();
-    JupiterTestEngine JupiterTestEngine = new JupiterTestEngine();
-    System.out.println("sddfbgdf" + testClassName);
-    UniqueIdTrackingListener a = new UniqueIdTrackingListener();
     LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
             .selectors(
                     selectClass(testClassName)
@@ -64,18 +58,13 @@ public final class FindJUnitTestMethods {
     TestPlan testPlan = launcher.discover(request);
 
     return new ArrayList<>(getTests(testPlan, testPlan.getRoots(),testClassName));
-
-
   }
 
   public static Collection<TestMethod> getTests(TestPlan testPlan, Set<TestIdentifier> roots,String classname){
     List<TestMethod> testsList = new ArrayList<>();
 
     for (TestIdentifier test: roots){
-      System.out.println(test.getDisplayName());
-      System.out.println(test.getUniqueId());
       if (test.isTest()){
-        System.out.println(test.getDisplayName());
         testsList.add(new TestMethod(ClassType.JUNIT,classname + Listener.TEST_CLASS_NAME_SEPARATOR + test.getDisplayName()));
       }else{
         testsList.addAll(getTests(testPlan,testPlan.getChildren(test),classname));
