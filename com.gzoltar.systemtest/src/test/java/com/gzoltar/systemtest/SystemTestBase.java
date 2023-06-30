@@ -156,7 +156,7 @@ public abstract class SystemTestBase {
 
       String row;
       while ((row = br.readLine()) != null) {
-        String[] split = row.split(",");
+        String[] split = row.split(",", 4);
         assert split.length == 3 || split.length == 4;
         tests.put(split[0], "PASS".equals(split[1]) ? true : false);
       }
