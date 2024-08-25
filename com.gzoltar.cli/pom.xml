@@ -72,6 +72,11 @@
       <artifactId>classgraph</artifactId>
       <version>4.8.160</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.javaparser</groupId>
+      <artifactId>javaparser-core</artifactId>
+      <version>3.23.1</version>
+    </dependency>
   </dependencies>
 
   <build>

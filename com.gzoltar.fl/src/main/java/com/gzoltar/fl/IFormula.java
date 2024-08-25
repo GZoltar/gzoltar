@@ -24,7 +24,7 @@ public interface IFormula {
    * 
    * @param spectrum
    */
-  public void diagnose(final ISpectrum spectrum);
+  public void diagnose(final ISpectrum spectrum, boolean improveMultiplication);
 
   /**
    * Returns the name of the SBL formula

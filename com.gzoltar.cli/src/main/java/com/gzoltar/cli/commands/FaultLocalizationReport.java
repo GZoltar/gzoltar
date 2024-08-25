@@ -63,6 +63,9 @@ public class FaultLocalizationReport extends AbstractReport {
       required = false)
   private String formula = SFLFormulas.OCHIAI.name();
 
+  @Option(name = "--improveMultiplication", usage = "multiplication to improve general score", metaVar = "<improveMultiplication>",  required = false)
+  private Boolean improveMultiplication = false;
+
   @Option(name = "--metric", usage = "fault localization ranking metric (use ':' to define more than one metric)", metaVar = "<metric>",
       required = false)
   private String metric = Metric.AMBIGUITY.name();
@@ -98,6 +101,7 @@ public class FaultLocalizationReport extends AbstractReport {
     this.agentConfigs.setInclDeprecatedMethods(this.inclDeprecatedMethods);
     this.agentConfigs.setIncludes(this.includes);
     this.agentConfigs.setExcludes(this.excludes);
+    this.agentConfigs.setImproveMultiplication(this.improveMultiplication);
 
     final ConfigFaultLocalizationFamily configFlFamily = new ConfigFaultLocalizationFamily();
 

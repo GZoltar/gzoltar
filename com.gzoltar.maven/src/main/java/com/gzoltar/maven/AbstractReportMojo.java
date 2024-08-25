@@ -99,6 +99,9 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
   @Parameter(property = "gzoltar.inclDeprecatedMethods", defaultValue = "true")
   private Boolean inclDeprecatedMethods;
 
+  @Parameter(property = "gzoltar.improveMultiplicatiion", defaultValue = "false")
+  private Boolean improveMultiplicatiion;
+
   @Override
   public String getName(Locale locale) {
     return "GZoltar";
@@ -166,6 +169,10 @@ public abstract class AbstractReportMojo extends AbstractMavenReport {
 
     if (this.inclDeprecatedMethods != null) {
       agentConfigs.setInclDeprecatedMethods(this.inclDeprecatedMethods);
+    }
+
+    if (this.improveMultiplicatiion != null) {
+      agentConfigs.setImproveMultiplication(this.improveMultiplicatiion);
     }
 
     return agentConfigs;

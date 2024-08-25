@@ -44,9 +44,9 @@ public class SFL<F extends IFormula> implements IFaultLocalization<F> {
   /**
    * {@inheritDoc}
    */
-  public void diagnose(final ISpectrum spectrum) {
+  public void diagnose(final ISpectrum spectrum, boolean improveMultiplication) {
     for (F formula : this.formulas) {
-      formula.diagnose(spectrum);
+      formula.diagnose(spectrum, improveMultiplication);
     }
   }
 }

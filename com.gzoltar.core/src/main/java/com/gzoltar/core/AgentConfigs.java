@@ -155,6 +155,13 @@ public final class AgentConfigs {
 
   public static final InstrumentationLevel DEFAULT_INSTRUMENTATION_LEVEL = InstrumentationLevel.FULL;
 
+  /**
+   * Specifies whether to use the improvement multiplication. Default is <code>false</code>.
+   */
+  public static final String IMPROVEMULTIPLICATION_KEY = "improveMultiplication";
+
+  public static final boolean DEFAULT_IMPROVEMULTIPLICATION = false;
+
   private final Map<String, String> configs;
 
   private static final Collection<String> VALID_CONFIGS =
@@ -441,7 +448,7 @@ public final class AgentConfigs {
   /**
    * Sets whether public static constructors should be instrumented.
    * 
-   * @param inclPublicMethods <code>true</code> if public static constructors should be instrumented
+   * @param inclStaticConstructors <code>true</code> if public static constructors should be instrumented
    */
   public void setInclStaticConstructors(final boolean inclStaticConstructors) {
     this.setConfig(INCLSTATICCONSTRUCTORS_KEY, inclStaticConstructors);
@@ -464,6 +471,24 @@ public final class AgentConfigs {
    */
   public void setInclDeprecatedMethods(final boolean inclDeprecatedMethods) {
     this.setConfig(INCLDEPRECATEDMETHODS_KEY, inclDeprecatedMethods);
+  }
+
+  /**
+   * Returns whether the improvement multiplication should be executed.
+   *
+   * @return <code>true</code> if improvement multiplication should be executed
+   */
+  public Boolean getImproveMultiplication() {
+    return this.getConfig(IMPROVEMULTIPLICATION_KEY, DEFAULT_IMPROVEMULTIPLICATION);
+  }
+
+  /**
+   * Sets whether improve multiplication should be executed.
+   *
+   * @param improveMultiplication <code>true</code> if improvement multiplication should be executed
+   */
+  public void setImproveMultiplication(final boolean improveMultiplication) {
+    this.setConfig(IMPROVEMULTIPLICATION_KEY, improveMultiplication);
   }
 
   /**
