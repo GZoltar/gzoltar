@@ -71,6 +71,9 @@ public class FaultLocalizationReport extends AbstractReport {
       metaVar = "<formatter>", required = false)
   private String formatter = ReportFormatter.TXT.name();
 
+  @Option(name = "--weightedElements", usage = "weighted elements algorithm to improve general score", metaVar = "<weightedElements>", required = false)
+  private Boolean weightedElements = false;
+
   /**
    * {@inheritDoc}
    */
@@ -98,6 +101,7 @@ public class FaultLocalizationReport extends AbstractReport {
     this.agentConfigs.setInclDeprecatedMethods(this.inclDeprecatedMethods);
     this.agentConfigs.setIncludes(this.includes);
     this.agentConfigs.setExcludes(this.excludes);
+    this.agentConfigs.setWeightedElements(this.weightedElements);
 
     final ConfigFaultLocalizationFamily configFlFamily = new ConfigFaultLocalizationFamily();
 

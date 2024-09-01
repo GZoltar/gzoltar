@@ -54,7 +54,14 @@ public abstract class AbstractSFLFormula implements ISFLFormula {
           }
         }
 
-        probe.getNode().addSuspiciousnessValue(this.getName(), this.compute(n00, n01, n10, n11));
+        double suspScore = this.compute(n00, n01, n10, n11);
+
+        spectrum.maxScore(this.getName(), suspScore);
+
+        probe.getNode().addSuspiciousnessValue(this.getName(), suspScore);
+        if (n11 > 0) {
+          probe.getNode().setHaveFailedTest(true);
+        }
       }
     }
   }

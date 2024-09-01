@@ -155,6 +155,10 @@ public final class AgentConfigs {
 
   public static final InstrumentationLevel DEFAULT_INSTRUMENTATION_LEVEL = InstrumentationLevel.FULL;
 
+  public static final String WEIGHTED_ELEMENTS_KEY = "weightedElements";
+
+  public static final boolean DEFAULT_WEIGHTED_ELEMENTS = false;
+
   private final Map<String, String> configs;
 
   private static final Collection<String> VALID_CONFIGS =
@@ -493,6 +497,26 @@ public final class AgentConfigs {
   public void setInstrumentationLevel(final InstrumentationLevel instrumentationLevel) {
     this.setConfig(INSTRUMENTATION_LEVEL_KEY, instrumentationLevel.name());
   }
+
+  /**
+   * Returns whether weighted elements algorithm should be executed.
+   *
+   * @return <code>true</code> if weighted elements algorithm should be executed
+   */
+  public Boolean getWeightedElements() {
+    return this.getConfig(WEIGHTED_ELEMENTS_KEY, DEFAULT_WEIGHTED_ELEMENTS);
+  }
+
+  /**
+   * Sets whether weighted elements algorithm should be executed.
+   *
+   * @param weightedElements <code>true</code> if weighted elements algorithm should be executed
+   */
+  public void setWeightedElements(final boolean weightedElements) {
+    this.setConfig(WEIGHTED_ELEMENTS_KEY, weightedElements);
+  }
+
+
 
   /**
    * Generate required JVM argument based on current configuration and supplied agent jar location.

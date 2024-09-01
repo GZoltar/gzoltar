@@ -18,6 +18,9 @@ package com.gzoltar.sfl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.gzoltar.core.runtime.Probe;
+import com.gzoltar.core.runtime.ProbeGroup;
 import com.gzoltar.core.spectrum.ISpectrum;
 import com.gzoltar.fl.IFaultLocalization;
 import com.gzoltar.fl.IFormula;
@@ -44,9 +47,22 @@ public class SFL<F extends IFormula> implements IFaultLocalization<F> {
   /**
    * {@inheritDoc}
    */
-  public void diagnose(final ISpectrum spectrum) {
+  public void diagnose(final ISpectrum spectrum, Boolean weightedElements) {
     for (F formula : this.formulas) {
       formula.diagnose(spectrum);
+      if (weightedElements) {
+        weightedElements(spectrum, formula.getName());
+      }
+    }
+  }
+
+  public void weightedElements(final ISpectrum spectrum, String formula) {
+    for (ProbeGroup probeGroup : spectrum.getProbeGroups()) {
+      for (Probe probe : probeGroup.getProbes()) {
+        if (probe.getNode().getContainsMathOperator() && probe.getNode().getHaveFailedTest()) {
+          probe.getNode().addSuspiciousnessValue(formula, probe.getNode().getSuspiciousnessValue(formula) + spectrum.getMaxScore(formula));
+        }
+      }
     }
   }
 }

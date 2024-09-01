@@ -189,6 +189,7 @@ java -cp $BUILD_DIR:$JUNIT_JAR:$HAMCREST_JAR:$GZOLTAR_CLI_JAR \
     --family "sfl" \
     --formula "ochiai" \
     --metric "entropy" \
+    --weightedElements \
     --formatter "txt" || die "Generation of fault-localization report has failed!"
 
 [ -s "$SPECTRA_FILE" ] || die "$SPECTRA_FILE does not exist or it is empty!"

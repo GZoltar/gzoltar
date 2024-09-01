@@ -24,6 +24,10 @@ import com.gzoltar.core.runtime.ProbeGroup;
 
 public interface ISpectrum {
 
+  public void maxScore(String formula, double score);
+
+  public double getMaxScore(String formula);
+
   // === ProbeGroups ===
 
   /**

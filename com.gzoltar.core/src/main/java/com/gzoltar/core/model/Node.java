@@ -42,6 +42,10 @@ public class Node {
 
   private Map<String, Double> suspiciousnessValues = null;
 
+  private Boolean containsMathOperator = false;
+
+  private Boolean haveFailedTest = false;
+
   /**
    * 
    * @param name
@@ -360,4 +364,19 @@ public class Node {
     return builder.isEquals();
   }
 
+  public Boolean getContainsMathOperator() {
+    return containsMathOperator;
+  }
+
+  public void setContainsMathOperator(Boolean containsMathOperator) {
+    this.containsMathOperator = containsMathOperator;
+  }
+
+  public Boolean getHaveFailedTest() {
+    return haveFailedTest;
+  }
+
+  public void setHaveFailedTest(Boolean haveFailedTest) {
+    this.haveFailedTest = haveFailedTest;
+  }
 }

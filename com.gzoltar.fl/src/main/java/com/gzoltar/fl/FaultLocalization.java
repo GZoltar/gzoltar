@@ -63,7 +63,7 @@ public class FaultLocalization {
     FilteredSpectrum filter = new FilteredSpectrum(agentConfigs);
     ISpectrum filteredSpectrum = filter.filter(spectrum);
 
-    this.fl.diagnose(filteredSpectrum);
+    this.fl.diagnose(filteredSpectrum, agentConfigs.getWeightedElements());
 
     return filteredSpectrum;
   }

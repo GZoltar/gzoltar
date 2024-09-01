@@ -17,8 +17,10 @@
 package com.gzoltar.core.util;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public final class FileUtils {
 
@@ -42,6 +44,23 @@ public final class FileUtils {
     }
 
     return files;
+  }
+
+  /**
+   * Returns a list with all the lines in a given file.
+   *
+   * @param stream of the file to be read
+   * @return a {@link java.util.List} of all lines in the file
+   */
+  public static List<String> loadFileByLine(InputStream stream) {
+    List<String> lines = new ArrayList<>();
+    try (Scanner scanner = new Scanner(stream)) {
+      while (scanner.hasNextLine()) {
+        String line = scanner.nextLine().trim();
+        lines.add(line);
+      }
+    }
+    return lines;
   }
 
 }

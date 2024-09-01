@@ -1,21 +1,22 @@
 /**
  * Copyright (C) 2020 GZoltar contributors.
- * 
+ *
  * This file is part of GZoltar.
- * 
+ *
  * GZoltar is free software: you can redistribute it and/or modify it under the terms of the GNU
  * Lesser General Public License as published by the Free Software Foundation, either version 3 of
  * the License, or (at your option) any later version.
- * 
+ *
  * GZoltar is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
  * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along with GZoltar. If
  * not, see <https://www.gnu.org/licenses/>.
  */
 package com.gzoltar.core.spectrum;
 
+import com.gzoltar.core.util.FileUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.instr.Outcome;
@@ -35,6 +36,11 @@ import com.gzoltar.core.runtime.ProbeGroup;
 import com.gzoltar.core.util.ArrayUtils;
 import javassist.Modifier;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
+
 public class FilteredSpectrum {
 
   private final GranularityLevel granularity;
@@ -43,13 +49,19 @@ public class FilteredSpectrum {
 
   private final Filter methodFilter = new Filter();
 
+  private boolean WeightedElements = false;
+
+  HashMap<String, List<String>> classesContent = new HashMap<>();
+
   /**
-   * 
+   *
    * @param source
    */
   public FilteredSpectrum(AgentConfigs configs) {
 
     this.granularity = configs.getGranularity();
+
+    this.WeightedElements = configs.getWeightedElements() != null;
 
     // === Class level filters ===
 
@@ -73,18 +85,18 @@ public class FilteredSpectrum {
 
     if (!configs.getInclDeprecatedMethods()) {
       this.methodFilter
-          .add(new BlackList(new MethodAnnotationMatcher(Deprecated.class.getCanonicalName())));
+              .add(new BlackList(new MethodAnnotationMatcher(Deprecated.class.getCanonicalName())));
     }
   }
 
   /**
    * Returns a filtered {@link com.gzoltar.core.spectrum.ISpectrum} object according to user's
    * preferences.
-   * 
+   *
    * @param source
    * @return
    */
-  public ISpectrum filter(ISpectrum source) {
+  public ISpectrum filter(ISpectrum source) throws IOException {
     if (source == null) {
       return null;
     }
@@ -115,8 +127,10 @@ public class FilteredSpectrum {
         }
 
         if (this.granularity == GranularityLevel.LINE) {
+          Node node = WeightedElements ? verifyMathOperations(probe) : probe.getNode();
           // register Line probe
-          newProbeGroup.registerProbe(probe.getNode(), probe.getCtBehavior());
+          newProbeGroup.registerProbe(node, probe.getCtBehavior());
+
         } else if (this.granularity == GranularityLevel.CLASS) {
           // register Class probe
           newProbeGroup.registerProbe(probe.getNode(), probe.getCtBehavior());
@@ -127,8 +141,8 @@ public class FilteredSpectrum {
 
           Node node = probe.getNode();
           String methodName =
-              node.getName().substring(node.getName().indexOf(NodeType.METHOD.getSymbol()) + 1,
-                  node.getName().indexOf(NodeType.LINE.getSymbol()));
+                  node.getName().substring(node.getName().indexOf(NodeType.METHOD.getSymbol()) + 1,
+                          node.getName().indexOf(NodeType.LINE.getSymbol()));
 
           granularityMethodFilter.add(new BlackList(new MethodNameMatcher(methodName)));
         } else if (this.granularity == GranularityLevel.BASICBLOCK && probe.getNode().isStartBlock()) {
@@ -146,8 +160,8 @@ public class FilteredSpectrum {
 
     for (Transaction transaction : source.getTransactions()) {
       Transaction newTransaction =
-          new Transaction(transaction.getName(), transaction.getTransactionOutcome(),
-              transaction.getRuntime(), transaction.getStackTrace());
+              new Transaction(transaction.getName(), transaction.getTransactionOutcome(),
+                      transaction.getRuntime(), transaction.getStackTrace());
 
       for (String hash : transaction.getProbeGroupsHash()) {
         if (!filteredSpectrum.containsProbeGroupByHash(hash)) {
@@ -175,7 +189,7 @@ public class FilteredSpectrum {
 
         if (ArrayUtils.containsValue(newHitArray, true)) {
           newTransaction.addActivity(hash,
-              new ImmutablePair<String, boolean[]>(newProbeGroup.getName(), newHitArray));
+                  new ImmutablePair<String, boolean[]>(newProbeGroup.getName(), newHitArray));
         }
       }
 
@@ -196,12 +210,12 @@ public class FilteredSpectrum {
           switch (this.granularity) {
             case CLASS:
               newNodeName =
-                  node.getName().substring(0, node.getName().indexOf(NodeType.METHOD.getSymbol()));
+                      node.getName().substring(0, node.getName().indexOf(NodeType.METHOD.getSymbol()));
               newNodeType = NodeType.CLASS;
               break;
             case METHOD:
               newNodeName =
-                  node.getName().substring(0, node.getName().indexOf(NodeType.LINE.getSymbol()));
+                      node.getName().substring(0, node.getName().indexOf(NodeType.LINE.getSymbol()));
               newNodeType = NodeType.METHOD;
               break;
             case BASICBLOCK:
@@ -221,4 +235,41 @@ public class FilteredSpectrum {
     return filteredSpectrum;
   }
 
+  /**
+   * Only called when node in probe is a statement and weighted elements is activated
+   * @param probe
+   */
+  private Node verifyMathOperations(Probe probe) throws IOException {
+    Node node = probe.getNode();
+    String className = probe.getCtBehavior().getDeclaringClass().getName();
+    if (!classesContent.containsKey(className)) {
+      // build file path
+      String classPath = className.replace('.', '/') + ".java";
+      String baseDir = System.getProperty("user.dir") + "/src";
+      String filePath = baseDir + "/" + classPath;
+      File file = new File(filePath);
+      InputStream inputStream = Files.newInputStream(file.toPath());
+      List<String> classContent = FileUtils.loadFileByLine(inputStream);
+
+      classesContent.put(className, classContent);
+    }
+    String[] words = classesContent.get(className).get(node.getLineNumber() - 1).split(" ");
+    for (String word : words) {
+      if (containsMathOperator(word)) {
+        node.setContainsMathOperator(true);
+      }
+    }
+    return node;
+  }
+
+  private static Boolean containsMathOperator(String word) {
+    char[] operators = {'+', '-', '*', '/', '%', '^'};
+
+    for (char operator : operators) {
+      if (word.indexOf(operator) != -1) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

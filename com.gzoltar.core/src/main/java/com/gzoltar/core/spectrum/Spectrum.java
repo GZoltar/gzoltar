@@ -30,6 +30,8 @@ import com.gzoltar.core.runtime.ProbeGroup;
 
 public class Spectrum implements ISpectrum {
 
+  private final Map<String, Double> maxScore;
+
   /** <ProbeGroup hash, ProbeGroup> */
   private final Map<String, ProbeGroup> probeGroups;
 
@@ -39,8 +41,19 @@ public class Spectrum implements ISpectrum {
    * Constructs a new {@link com.gzoltar.core.spectrum.Spectrum}.
    */
   public Spectrum() {
+    this.maxScore = new LinkedHashMap<String, Double>();
     this.probeGroups = new LinkedHashMap<String, ProbeGroup>();
     this.transactions = new ArrayList<Transaction>();
+  }
+
+  @Override
+  public void maxScore(String formula, double score) {
+    this.maxScore.put(formula, Math.max(this.maxScore.getOrDefault(formula, score), score));
+  }
+
+  @Override
+  public double getMaxScore(String formula) {
+    return this.maxScore.get(formula);
   }
 
   // === ProbeGroups ===
