@@ -28,6 +28,7 @@ import com.gzoltar.core.instr.filter.AnonymousClassConstructorFilter;
 import com.gzoltar.core.instr.filter.EmptyMethodFilter;
 import com.gzoltar.core.instr.filter.EnumFilter;
 import com.gzoltar.core.instr.filter.IFilter;
+import com.gzoltar.core.instr.filter.RecordFilter;
 import com.gzoltar.core.instr.filter.SyntheticFilter;
 import com.gzoltar.core.instr.filter.Java7InterfaceFilter;
 import com.gzoltar.core.model.Node;
@@ -84,6 +85,10 @@ public class CoveragePass implements IPass {
 
     // exclude methods 'values' and 'valuesOf' of enum classes
     this.filtersAtMethodLevel.add(new EnumFilter());
+
+    // exclude a record's implicitly declared accessor, equals, hashCode and toString methods, as
+    // they are not marked as synthetic yet all collapse onto the record's own declaration line
+    this.filtersAtMethodLevel.add(new RecordFilter());
 
     // exclude methods without any source code
     this.filtersAtMethodLevel.add(new EmptyMethodFilter());

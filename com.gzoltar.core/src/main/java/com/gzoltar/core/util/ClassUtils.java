@@ -17,11 +17,12 @@
 package com.gzoltar.core.util;
 
 import javassist.CtClass;
+import javassist.NotFoundException;
 
 public class ClassUtils {
 
   /**
-   * 
+   *
    * @param clazz
    * @return
    */
@@ -33,5 +34,21 @@ public class ClassUtils {
     }
     return pos == clazz.getName().length() - 1
         || Character.isDigit(clazz.getName().charAt(pos + 1));
+  }
+
+  /**
+   * Checks whether a class is a Java record (Java 16+). Every record implicitly extends
+   * java.lang.Record, in the same way that every enum implicitly extends java.lang.Enum.
+   *
+   * @param clazz a class
+   * @return true if {@code clazz} is a record, false otherwise
+   */
+  public static boolean isRecord(CtClass clazz) {
+    try {
+      CtClass superclass = clazz.getSuperclass();
+      return superclass != null && "java.lang.Record".equals(superclass.getName());
+    } catch (NotFoundException e) {
+      return false;
+    }
   }
 }
