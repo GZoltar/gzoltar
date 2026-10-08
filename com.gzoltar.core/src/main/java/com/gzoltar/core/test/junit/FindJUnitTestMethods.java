@@ -16,18 +16,22 @@
  */
 package com.gzoltar.core.test.junit;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import org.jacoco.core.runtime.WildcardMatcher;
-import org.junit.internal.runners.JUnit38ClassRunner;
-import org.junit.runner.Description;
-import org.junit.runner.Request;
-import org.junit.runner.Runner;
 import com.gzoltar.core.util.ClassType;
 import com.gzoltar.core.listeners.Listener;
 import com.gzoltar.core.test.TestMethod;
+// importing the new Launcher API libraries
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.engine.support.descriptor.MethodSource;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.TestIdentifier;
+import org.junit.platform.launcher.TestPlan;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+
 
 public final class FindJUnitTestMethods {
 
@@ -45,64 +49,44 @@ public final class FindJUnitTestMethods {
     Class<?> clazz =
         Class.forName(testClassName, false, Thread.currentThread().getContextClassLoader());
     assert clazz != null;
+    // creating a request to find the tests inside this class.
+    LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+        .selectors(DiscoverySelectors.selectClass(clazz))
+        .build();
+    // discover tests using the JUnit Platform Launcher to build a test plan.
+    Launcher launcher = LauncherFactory.create();
+    TestPlan testPlan = launcher.discover(request);
+    
+    // iterate through all nodes in the test plan.
+    for (TestIdentifier root : testPlan.getRoots()) {
+      for (TestIdentifier test : testPlan.getDescendants(root)) {
+        
+        // checking containers, keep only actual test methods
+        if (test.isTest()) {
+          test.getSource().ifPresent(source -> {
+            
+            // ensure the test source is a Java method
+            if (source instanceof MethodSource) {
+              MethodSource methodSource = (MethodSource) source;
+              
+              // building the standard GZoltar format: ClassName#methodName
+              String testMethodFullName = methodSource.getClassName() 
+                  + Listener.TEST_CLASS_NAME_SEPARATOR + methodSource.getMethodName();
 
-    Request request = Request.aClass(clazz);
-    assert request != null;
-    Runner runner = request.getRunner();
-    assert runner != null;
-    Description description = null;
-
-    try {
-      description = runner.getDescription();
-    } catch (NullPointerException e) {
-      /**
-      public class XTestSuite extends TestCase {
-          public static Test suite() {
-              return null;
-          }
-      }
-      */
-      if (runner instanceof JUnit38ClassRunner) {
-        System.err.println("Failed to find unit test methods in " + testClassName);
-        e.printStackTrace();
-        return testMethods;
-      }
-      throw e;
-    }
-    assert description != null;
-
-    for (Description test : description.getChildren()) {
-      // a parameterised atomic test case does not have a method name
-      if (test.getMethodName() == null) {
-        for (Method m : clazz.getMethods()) {
-          if (looksLikeTest(m)) {
-            String testMethodFullName = clazz.getName() + Listener.TEST_CLASS_NAME_SEPARATOR
-                + m.getName() + test.getDisplayName();
-            if (testsMatcher.matches(testMethodFullName)) {
-              testMethods.add(new TestMethod(ClassType.JUNIT, testMethodFullName));
+              // if the display name differs from the method name, append it
+              if (!methodSource.getMethodName().equals(test.getDisplayName())) {
+                testMethodFullName += test.getDisplayName();
+              }
+              // Add to the list if the generated name matches the provided GZoltar wildcard matcher
+              if (testsMatcher.matches(testMethodFullName)) {
+                testMethods.add(new TestMethod(ClassType.JUNIT, testMethodFullName));
+              }
             }
-          }
-        }
-      } else {
-        // non-parameterised atomic test case
-        String testMethodFullName = test.getTestClass().getName()
-            + Listener.TEST_CLASS_NAME_SEPARATOR + test.getMethodName();
-        if (testsMatcher.matches(testMethodFullName)) {
-          testMethods.add(new TestMethod(ClassType.JUNIT, testMethodFullName));
+          });
         }
       }
     }
-
     return testMethods;
   }
-
-  private static boolean looksLikeTest(final Method m) {
-    // JUnit 3: an atomic test case is "public", does not return anything ("void"), has 0
-    // parameters and starts with the word "test"
-    // JUnit 4: an atomic test case is annotated with @Test
-    return (m.isAnnotationPresent(org.junit.Test.class) || (m.getParameterTypes().length == 0
-        && m.getReturnType().equals(Void.TYPE) && Modifier.isPublic(m.getModifiers())
-        && (m.getName().startsWith("test") || m.getName().endsWith("Test")
-            || m.getName().startsWith("Test") || m.getName().endsWith("test"))));
-  }
+    // JUnit 6 doesn't need manual controls. So removed looksLikeTest.
 }

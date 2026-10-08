@@ -15,15 +15,21 @@
  * not, see <https://www.gnu.org/licenses/>.
  */
 package com.gzoltar.core.test.junit;
-
-import org.junit.runner.Result;
 import com.gzoltar.core.test.TestResult;
+//importing the new Launcher library.
+import org.junit.platform.launcher.listeners.TestExecutionSummary;
+
 
 public class JUnitTestResult extends TestResult {
 
-  public JUnitTestResult(final Result result) {
-    super(result.getRunTime(),
-        !result.getFailures().isEmpty() ? result.getFailures().get(0).getException() : null,
-        result.wasSuccessful());
+  public JUnitTestResult(final TestExecutionSummary summary) {
+    super(
+      //calculate total execution time in milliseconds
+      summary.getTimeFinished() - summary.getTimeStarted(),
+      //extract the exception from the first failure,if any exist
+      !summary.getFailures().isEmpty() ? summary.getFailures().get(0).getException():null,
+      //the test run is considered succesful if the failure list is empty
+      summary.getFailures().isEmpty()
+    );
   }
 }

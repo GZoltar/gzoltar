@@ -39,13 +39,20 @@ public class TestRunner {
       TestResult result = task.get();
       classLoader.close();
       return result;
-    } catch (ExecutionException | InterruptedException | IOException e) {
-      e.printStackTrace();
+    } catch (ExecutionException e) {
       killThreadGroup(group);
       thread.interrupt();
       group.destroy();
+      throw new RuntimeException("Test execution failed for " + testTask, e.getCause());
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      killThreadGroup(group);
+      thread.interrupt();
+      group.destroy();
+      throw new RuntimeException("Test execution was interrupted for " + testTask, e);
+    } catch (IOException e) {
+      throw new RuntimeException("Could not close test classloader for " + testTask, e);
     }
-    return null;
   }
 
   /**

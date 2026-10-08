@@ -20,8 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.gzoltar.examples.EnumClass;
 import org.gzoltar.examples.tests.TestEnumClass;
-import org.junit.Test;
-import org.junit.runner.JUnitCore;
+import org.junit.jupiter.api.Test;
+
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import com.gzoltar.core.AgentConfigs;
 import com.gzoltar.core.events.EmptyEventListener;
 import com.gzoltar.core.instr.InstrumentationLevel;
@@ -58,9 +64,22 @@ public class TestJUnitListener {
     for (String classUnderTest : classesUnderTest) {
       instrumenter.instrument(pool.get(classUnderTest));
     }
-    JUnitCore core = new JUnitCore();
-    core.addListener(new JUnitListener());
-    core.run(TestEnumClass.class);
+    // Replaced the legacy JUnit 4 (JUnitCore) execution engine.
+    // The old core engine relied on outdated socket communications that caused integration crashes.
+    // Transitioned to the modern JUnit Platform API to dynamically build execution requests.
+    LauncherDiscoveryRequest request =
+    LauncherDiscoveryRequestBuilder.request()
+        .selectors(selectClass(TestEnumClass.class))
+        .build();
+
+    // Initialize the modern JUnit Launcher to safely handle the execution lifecycle
+    Launcher launcher = LauncherFactory.create();
+
+    // Register the updated JUnitListener to capture execution metrics without legacy socket dependencies
+    launcher.registerTestExecutionListeners(new JUnitListener());
+
+    //Execute the test plan
+    launcher.execute(request);
 
     ISpectrum spectrum = Collector.instance().getSpectrum();
     spectrum.toString();

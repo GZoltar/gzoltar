@@ -18,9 +18,8 @@ package com.gzoltar.core.test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import org.junit.runner.notification.RunListener;
 
-public abstract class TestListener extends RunListener {
+public abstract class TestListener {
 
   /**
    * Converts the stack trace of a throwable exception to string.

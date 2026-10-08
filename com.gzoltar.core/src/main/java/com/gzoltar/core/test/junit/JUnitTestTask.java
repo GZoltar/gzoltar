@@ -16,11 +16,15 @@
  */
 package com.gzoltar.core.test.junit;
 
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Request;
-import org.junit.runner.notification.RunListener;
 import com.gzoltar.core.test.TestMethod;
 import com.gzoltar.core.test.TestTask;
+// importing the new Launcher libraries
+import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.Launcher;
+import org.junit.platform.launcher.TestExecutionListener;
+import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
+import org.junit.platform.launcher.core.LauncherFactory;
+import org.junit.platform.launcher.listeners.SummaryGeneratingListener;
 
 public class JUnitTestTask extends TestTask {
 
@@ -37,24 +41,41 @@ public class JUnitTestTask extends TestTask {
   @Override
   public JUnitTestResult call() throws Exception {
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-    Class<?> clazz = this.initTestClass ? Class.forName(this.testMethod.getTestClassName())
-        : Class.forName(this.testMethod.getTestClassName(), false, classLoader);
-
-    Request request = Request.method(clazz, this.testMethod.getTestMethodName());
-    JUnitCore runner = new JUnitCore();
-    runner.addListener(new JUnitTextListener());
+    if (this.initTestClass) {
+      Class.forName(this.testMethod.getTestClassName());
+    } else {
+      Class.forName(this.testMethod.getTestClassName(), false, classLoader);
+    }
+    // 1. Create modern Launcher request.
+    var request = LauncherDiscoveryRequestBuilder.request()
+      .selectors(DiscoverySelectors.selectMethod(this.testMethod.getTestClassName(),
+        this.testMethod.getTestMethodName()))
+        .build();
+    // 2. Create the modern Launcher engine
+    Launcher launcher = LauncherFactory.create();
+    // 3. Register listeners using the new TestExecutionListener interface
+    launcher.registerTestExecutionListeners(new JUnitTextListener());
+    
     if (this.collectCoverage) {
       if (this.offline) {
-        runner.addListener(this.initTestClass
-            ? (RunListener) Class.forName("com.gzoltar.core.listeners.JUnitListener").newInstance()
-            : (RunListener) Class
+        launcher.registerTestExecutionListeners(this.initTestClass
+            ? (TestExecutionListener) Class.forName("com.gzoltar.core.listeners.JUnitListener").newInstance()
+            : (TestExecutionListener) Class
                 .forName("com.gzoltar.core.listeners.JUnitListener", false, classLoader)
                 .newInstance());
       } else {
-        runner.addListener(new com.gzoltar.core.listeners.JUnitListener());
+        launcher.registerTestExecutionListeners(new com.gzoltar.core.listeners.JUnitListener());
       }
     }
-    JUnitTestResult result = new JUnitTestResult(runner.run(request));
+    // 4. Register a summary listener to collect test execution results
+    SummaryGeneratingListener summaryListener = new SummaryGeneratingListener();
+    launcher.registerTestExecutionListeners(summaryListener);
+
+    // 5. Execute the test request asynchronously via the Launcher
+    launcher.execute(request);
+
+    // 6. Wrap the JUnit execution summary into GZoltar's custom result format and return it
+    JUnitTestResult result = new JUnitTestResult(summaryListener.getSummary());
     return result;
   }
 }

@@ -18,14 +18,13 @@ package com.gzoltar.core.listeners;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import org.junit.runner.notification.RunListener;
 import com.gzoltar.core.model.TransactionOutcome;
 import com.gzoltar.core.runtime.Collector;
 
 /**
  * Test listener.
  */
-public class Listener extends RunListener {
+public class Listener {
 
   public static final String TEST_CLASS_NAME_SEPARATOR = "#";
 
